@@ -9,7 +9,6 @@
 #' @examples
 #' list_to_li(c("a","b"))
 #'
-#' @importFrom htmltools tags tagAppendAttributes tagList
 list_to_li <- function(list, class = NULL){
   if (is.null(class)){
     tagList(
@@ -37,7 +36,6 @@ list_to_li <- function(list, class = NULL){
   
 }
 
-#' @importFrom htmltools tags tagAppendAttributes tagList
 list_to_p <- function(list, class = NULL){
   if (is.null(class)){
     tagList(
@@ -65,7 +63,6 @@ list_to_p <- function(list, class = NULL){
   
 }
 
-#' @importFrom htmltools tags tagAppendAttributes tagList
 named_to_li <- function(list, class = NULL){
   if(is.null(class)){
     res <- mapply(
@@ -140,7 +137,6 @@ tagRemoveAttributes <- function(tag, ...) {
 #' b <- shiny::actionButton("go_filter", "go")
 #' undisplay(b)
 #' 
-#' @importFrom htmltools tagList
 undisplay <- function(tag) {
   # if not already hidden
   if (
@@ -157,7 +153,6 @@ undisplay <- function(tag) {
   tag
 }
 
-#' @importFrom htmltools tagList
 display <- function(tag) {
   if (
     !is.null(tag$attribs$style) && 
@@ -178,7 +173,6 @@ display <- function(tag) {
 #' 
 #' @noRd
 #' 
-#' @importFrom htmltools tags
 jq_hide <- function(id) {
   tags$script(sprintf("$('#%s').hide()", id))
 }
@@ -196,7 +190,6 @@ jq_hide <- function(id) {
 #' @examples
 #' with_red_star("Enter your name here")
 #' 
-#' @importFrom htmltools tags HTML
 with_red_star <- function(text) {
   tags$span(
     HTML(
@@ -222,7 +215,6 @@ with_red_star <- function(text) {
 #' @examples
 #' rep_br(5)
 #' 
-#' @importFrom htmltools HTML
 rep_br <- function(times = 1) {
   HTML(rep("<br/>", times = times))
 }
@@ -238,7 +230,6 @@ rep_br <- function(times = 1) {
 #' @examples
 #' enurl("https://www.thinkr.fr", "ThinkR")
 #' 
-#' @importFrom htmltools tags
 enurl <- function(url, text){
   tags$a(href = url, text)
 }
@@ -250,46 +241,34 @@ enurl <- function(url, text){
 #' 
 #' @noRd
 #' 
-#' @importFrom shiny column
 col_12 <- function(...){
   column(12, ...)
 }
 
-#' @importFrom shiny column
 col_10 <- function(...){
   column(10, ...)
 }
 
-#' @importFrom shiny column
 col_8 <- function(...){
   column(8, ...)
 }
 
-#' @importFrom shiny column
 col_6 <- function(...){
   column(6, ...)
 }
 
-
-#' @importFrom shiny column
 col_4 <- function(...){
   column(4, ...)
 }
 
-
-#' @importFrom shiny column
 col_3 <- function(...){
   column(3, ...)
 }
 
-
-#' @importFrom shiny column
 col_2 <- function(...){
   column(2, ...)
 }
 
-
-#' @importFrom shiny column
 col_1 <- function(...){
   column(1, ...)
 }

@@ -6,7 +6,6 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
 mod_compareTrajGroups_ui <- function(id, appdata) {
   module_config <- appdata$modules$compareTrajGroups
   compareTrajGroups_tab(

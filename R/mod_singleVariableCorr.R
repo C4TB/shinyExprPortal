@@ -6,7 +6,6 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
 mod_singleVariableCorr_ui <- function(id, appdata){
   singleVariableCorr_tab(sampleClassInputs(appdata$config$sample_classes, id), 
                         names(appdata$data$clinical),

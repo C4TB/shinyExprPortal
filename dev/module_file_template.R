@@ -6,7 +6,6 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
 mod_MODULENAME_ui <- function(id, appdata) {
   MODULENAME_tab(ARGUMENTS,
                      id)

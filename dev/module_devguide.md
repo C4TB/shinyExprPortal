@@ -45,7 +45,7 @@ If required, any module-exclusive plotting or data functions can be included in 
 
 ### Testing
 
-The `run_module` function allows testing a newly develoepd module in an isolated manner, from the rest of the application (which enables using `browser()`, for example, or react logs). Before this is possible, you need to add the module name to the available_modules list in `inst/golem-config.yml`, as mentioned above, and set up a .yaml configuration file appropriately. This configuration file should be as similar as possible to a final configuration file, with name/logo, data and global sections, as well as the specific module configuration. Then you can modify the function call in the end of the script `dev/run_module.R`, with `configuration.yaml` also located in `dev`:
+The `run_module` function allows testing a newly developed module in isolation from the rest of the application (which enables using `browser()`, for example, or react logs). Before this is possible, you need to add the module name to the available_modules list in `inst/golem-config.yml`, as mentioned above, and set up a .yaml configuration file appropriately. This configuration file should be as similar as possible to a final configuration file, with name/logo, data and global sections, as well as the specific module configuration. Then you can modify the function call in the end of the script `dev/run_module.R`, with `configuration.yaml` also located in `dev`:
 ```
 # Run the application
 run_module(module_name = "newModule",

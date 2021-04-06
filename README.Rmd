@@ -18,37 +18,22 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of clinvisx is to ...
+clinvisx is configurable Shiny app for visual exploration of clinical and transcriptomics studies. It includes multiple modules to facilitate exploring associations in the results of such studies, as well as showcasing analysis results (i.e. volcano plots).
 
 ## Installation
 
-You can install the released version of clinvisx from [CRAN](https://CRAN.R-project.org) with:
+You can install the latest version of clinvisx with:
 
 ``` r
-install.packages("clinvisx")
+devtools::install_github("clinvisx")
 ```
 
-## Example
+Note that the command above will only install basic package dependencies -- the modules in the app have specific dependencies that need to be installed separately. However, you can also run the following command to install all packages:
 
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(clinvisx)
-## basic example code
+``` r
+devtools::install_github("clinvisx", dependencies = TRUE)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+## Configuration and usage
 
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+Running clinvisx, in addition to all data files, requires writing a .yaml configuration file. There is a vignette detailing how to configure the global aspects of the app and each currently supported module. You can check it on the github pages website or by running `vignette("clinvisx_setup")`. There is also an example file included in the dev folder in this repository.

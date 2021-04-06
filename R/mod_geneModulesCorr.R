@@ -6,7 +6,6 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
 mod_geneModulesCorr_ui <- function(id, appdata){
   module_config <- appdata$modules$geneModulesCorr
   geneModulesCorr_tab(
