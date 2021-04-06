@@ -15,23 +15,66 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
-usethis::use_package( "thinkr" )
+usethis::use_package( "magrittr ")
+usethis::use_package( "yaml")
+usethis::use_package( "vroom" )
+usethis::use_package( "tools" )
+usethis::use_package( "dplyr" )
+usethis::use_package( "tidyr" )
+usethis::use_package( "tibble" )
+usethis::use_package( "ggplot2")
+usethis::use_package( "tidyselect")
+usethis::use_package( "stringr" )
+
+usethis::use_package( "gridExtra" )
+
+usethis::use_package( "r2d3")
+usethis::use_package("DT")
+usethis::use_package( "data.table")
+usethis::use_package( "plotly")
+usethis::use_package( "shinyjs")
+usethis::use_package( "shinycssloaders")
+usethis::use_package( "bsplus" )
+usethis::use_package( "htmlwidgets" )
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "name_of_module1" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "cohortOverview" ) # Name of the module
+golem::add_module( name = "degOverview" )
+golem::add_module( name = "singleGeneCorr" ) # Name of the module
+golem::add_module( name = "geneModulesCorr" )
+golem::add_module( name = "wholeDataCorr" )
+golem::add_module( name = "singleVariableCorr" )
+golem::add_module( name = "compareTrajGroups" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
-golem::add_fct( "helpers" ) 
-golem::add_utils( "helpers" )
+## Note: the fct suffix for modules were manually removed
+golem::add_fct( "config" ) 
+golem::add_fct( "config", module = "cohortOverview")
+golem::add_fct( "config", module = "singleGeneCorr")
+golem::add_fct( "config", module = "degOverview")
+golem::add_fct( "config", module = "singleVariableCorr")
+golem::add_fct( "config", module = "geneModulesCorr")
+golem::add_fct( "config", module = "wholeDataCorr")
+golem::add_fct( "config", module = "compareTrajGroups")
+golem::add_utils("", module = "geneModulesCorr")
+golem::add_utils("", module = "wholeDataCorr")
+golem::add_utils("", module = "degOverview")
+golem::add_utils( "inputs" )
+golem::add_utils( "outputs" )
+golem::add_utils( "plots" )
+golem::add_utils( "updates")
+golem::add_utils( "compute")
+golem::add_utils( "select")
+golem::add_utils( "filter")
+#golem::add_utils( "helpers" )
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
-golem::add_js_file( "script" )
+golem::add_js_file( "cohort_overview.js" )
 golem::add_js_handler( "handlers" )
-golem::add_css_file( "custom" )
+golem::add_css_file( "cohort_overview.css" )
 
 ## Add internal datasets ----
 ## If you have data in your package
@@ -42,9 +85,9 @@ usethis::use_data_raw( name = "my_dataset", open = FALSE )
 usethis::use_test( "app" )
 
 # Documentation
-
+usethis::use_pkgdown()
 ## Vignette ----
-usethis::use_vignette("test")
+usethis::use_vignette("config")
 devtools::build_vignettes()
 
 ## Code coverage ----

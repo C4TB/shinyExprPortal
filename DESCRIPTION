@@ -2,12 +2,41 @@ Package: clinvisx
 Title: A Shiny App for Exploring Clinical and Transcriptomics Data
 Version: 0.0.0.9000
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut'))
-Description: A configurable shiny app for visual exploration of datasets with clinical and transcriptomics data.
+Description: A configurable Shiny app for visual exploration of clinical and transcriptomics studies.
+Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
     config,
     golem,
-    shiny
+    shiny,
+    htmltools,
+    magrittr,
+    dplyr,
+    tidyr,
+    tibble,
+    ggplot2,
+    yaml,
+    vroom,
+    data.table,
+    DT,
+    plotly,
+    shinyjs,
+    shinycssloaders,
+    tools,
+    gridExtra,
+    stringr,
+    splines,
+    matrixStats,
+    bsplus,
+    htmlwidgets
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown,
+    processx,
+    r2d3
+VignetteBuilder: knitr

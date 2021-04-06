@@ -1,0 +1,29 @@
+.axis {
+	  font: 24pt;
+}
+
+.axis path, .axis line {
+	  fill: none;
+	  stroke: #000;
+	  stroke-width: 2px;
+	  shape-rendering: crispEdges;
+}
+
+.brushLabel {
+  fill: #000;
+  font-family: sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+
+}
+
+.tickBrush {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.selection {
+  fill-opacity: .25;
+  stroke: #BBB;
+  shape-rendering: crispEdges;
+}

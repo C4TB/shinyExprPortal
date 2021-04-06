@@ -1,0 +1,45 @@
+data:
+  clinical: "clinical.rds"
+  sample_lookup: "sample_lookup.rds"
+  expression: "expression.rds"
+global:
+  sample_classes:
+    - name: Type
+      label: "Type"
+      values:
+        - r
+        - s
+cohortOverview:
+  profile_variables:
+    das:
+      values:
+        - das_m0
+        - das_m6
+  colour_variables:
+    - plt_m0
+singleGeneCorr:
+  advanced: true
+  colour_variables:
+    - plt_m0
+  tabs:
+    - name: Pathology
+      scale: free
+      variables:
+        - hb_m0
+        - hb_m6
+        - plt_m0
+        - plt_m6
+    - name: Disease
+      scale: fixed
+      variables:
+        - das_m0
+        - das_m6
+degOverview:
+  models:
+    Disease:
+      "Baseline WB": deg1.txt
+      "Month 6 WB": deg2.txt
+    Response:
+      "Month 6 WB": deg2.txt
+allGenesCorrTable:
+  TRUE

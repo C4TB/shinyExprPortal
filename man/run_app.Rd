@@ -4,10 +4,15 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(...)
+run_app(config_file, data_folder = "", ...)
 }
 \arguments{
-\item{...}{A series of options to be used inside the app.}
+\item{config_file}{The name of the yaml configuration file}
+
+\item{data_folder}{Optional directory prefix for data files.
+Enables using the same configuration file under different file structures.}
+
+\item{...}{Further optional arguments.}
 }
 \description{
 Run the Shiny Application

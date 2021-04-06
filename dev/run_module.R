@@ -9,5 +9,9 @@ rm(list=ls(all.names = TRUE))
 golem::document_and_reload()
 
 # Run the application
-#run_app(fname = "../ramap_test/test.yaml", data_folder = "../ramap_test/")
-run_app(config_file = "../psort_test/psort.yaml", data_folder = "../psort_test")
+# run_module(module_name = "cohortOverview",
+#            config_file = "../ramap_test/test.yaml",
+#            data_folder = "../ramap_test/")
+run_module(module_name = "compareTrajGroups",
+  config_file = "../psort_test/psort.yaml",
+  data_folder = "../psort_test")

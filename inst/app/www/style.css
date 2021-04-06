@@ -1,0 +1,29 @@
+body {
+  /* default font-size is 16px - this is set in the default browser stylesheet */ 
+  /* font-family: Roboto; */
+} 
+
+.control-label {
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 5px 
+} 
+
+.legendCells {
+  cursor: hover;
+}
+
+.pointtext {
+  display: none
+}
+
+/* Remove margin of a row element to avoid scroling 
+      when verticallayout is inside a splitlayout*/
+.row { 
+  
+  margin-right: inherit;
+  margin-left: inherit;
+  
+}

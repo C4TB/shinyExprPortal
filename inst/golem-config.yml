@@ -2,6 +2,14 @@ default:
   golem_name: clinvisx
   golem_version: 0.0.0.9000
   app_prod: no
+  available_modules:
+  - cohortOverview
+  - degOverview
+  - singleGeneCorr
+  - singleVariableCorr
+  - geneModulesCorr
+  - wholeDataCorr
+  - compareTrajGroups
 production:
   app_prod: yes
 dev:
