@@ -6,7 +6,6 @@
 #'
 #' @return radioButtons
 #' @noRd
-#' @importFrom shiny radioButtons
 addRadioInputUI <- function(inputId, label, choices) {
     radioButtons(inputId, label, choices)
 }
