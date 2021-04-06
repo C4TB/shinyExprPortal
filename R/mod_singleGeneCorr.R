@@ -103,7 +103,6 @@ singleGeneCorr_tab <-
 }
 #' singleGeneCorr Server Function
 #'
-#' @importFrom gridExtra grid.arrange
 #' @noRd
 mod_singleGeneCorr_server <- function(module_name, appdata) {
   moduleServer(module_name, function(input, output, session) {
