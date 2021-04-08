@@ -10,7 +10,7 @@
 #'
 mod_cohortOverview_ui <- function(id, appdata) {
   cohortOverview_tab(sampleClassInputs(appdata$config$sample_classes, id),
-                     geneSelectInput(rownames(appdata$data$expression), id),
+                     geneSelectInput(NULL, id),
                      names(appdata$modules$cohortOverview$profile_variables),
                      appdata$modules$cohortOverview$colour_variables,
                      id)
@@ -93,6 +93,13 @@ mod_cohortOverview_server <- function(module_name, appdata) {
     clinical <- appdata$data$clinical
     expression_matrix <- appdata$data$expression_matrix
     sample_lookup <- appdata$data$sample_lookup
+    
+    # Load genes server side
+    updateSelectizeInput(session,
+                         "selected_gene",
+                         choices = rownames(expression_matrix),
+                         selected = "",
+                         server = TRUE)
     
     module_config <- appdata$modules$cohortOverview
     

@@ -14,7 +14,7 @@ mod_compareTrajGroups_ui <- function(id, appdata) {
       id,
       module_config$subset_classes
     ),
-    geneSelectInput(rownames(appdata$data$expression), id),
+    geneSelectInput(NULL, id),
     id)
 }
 
@@ -25,7 +25,11 @@ compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
              verticalLayout(
                wellPanel(
                  sample_select,
-                 gene_select
+                 gene_select,
+                 radioButtons(ns("showtraj"),
+                              "Show trajectories?",
+                              choices = c("No", "Yes"),
+                              selected = c("No"))
                )
              ),
              verticalLayout(
@@ -54,6 +58,14 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
     trajectory_class <- module_config$trajectory_class
     compare_col <- module_config$compare_col
     sidebyside_class <- module_config$sidebyside_class
+    
+    # Load genes server side
+    updateSelectizeInput(session,
+                         "selected_gene",
+                         choices = rownames(expression_matrix),
+                         selected = "",
+                         server = TRUE)
+    
     # Select only the sample classes required by this view
     # For each class, get the value selected by the user and filter the lookup
     selected_lookup <- reactive({
@@ -106,19 +118,25 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
       #   )
       # }
       #color = .data[[trajectory_class]],
-      ggplot(df[order(df$Subject_ID, df$Time), ], aes(x = .data[[compare_col]],
-                     y = log(.data$expression))) +
+      trajplot <-
+        ggplot(df[order(df$Subject_ID, df$Time), ],
+               aes(x = .data[[compare_col]], y = log(.data$expression))) +
         geom_point(aes(fill = .data[[trajectory_class]]),
                    colour="black",pch=21, size = 2) +
-        geom_path(aes(color = .data[[trajectory_class]],
-                      group = .data[[subject_col]]),
-                  alpha = 0.5,
-                  #linetype = 2,
-                  arrow = arrow(angle = 15, length = unit(0.1, "inches"),
-                                type = "closed")) +
         scale_fill_viridis_d() +
-        scale_colour_viridis_d() + 
         facet_wrap(stats::as.formula(paste("~", sidebyside_class)), scales = "fixed")
+      
+      if (input$showtraj == "Yes") {
+        trajplot <- trajplot + 
+          geom_path(aes(color = .data[[trajectory_class]],
+                        group = .data[[subject_col]]),
+                    alpha = 0.5,
+                    #linetype = 2,
+                    arrow = arrow(angle = 15, length = unit(0.1, "inches"),
+                                  type = "closed")) +
+          scale_colour_viridis_d()
+      }
+      trajplot 
     })
     
     

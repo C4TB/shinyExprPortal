@@ -8,7 +8,7 @@
 #'
 mod_singleGeneCorr_ui <- function(id, appdata) {
   singleGeneCorr_tab(sampleClassInputs(appdata$config$sample_classes, id),
-                     geneSelectInput(rownames(appdata$data$expression), id),
+                     geneSelectInput(NULL, id),
                      appdata$modules$singleGeneCorr$colour_variables,
                      appdata$modules$singleGeneCorr$tabs,
                      appdata$modules$singleGeneCorr$advanced,
@@ -113,6 +113,13 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
    sample_lookup <- appdata$data$sample_lookup
    subject_col <- appdata$config$subject_col
    sample_col <- appdata$config$sample_col
+   
+   # Load genes server side
+   updateSelectizeInput(session,
+                        "selected_gene",
+                        choices = rownames(expression_matrix),
+                        selected = "",
+                        server = TRUE)
    
    module_config <- appdata$modules$singleGeneCorr
 

@@ -43,7 +43,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   }
   if (is.null(config$data["clinical"]) ||
       is.null(config$data["sample_lookup"]) ||
-              is.null(config$data["expression"])) {
+              is.null(config$data["expression_matrix"])) {
     stop(
       "Data section in configuration file must include: clinical,
       sample_lookup and expression files."

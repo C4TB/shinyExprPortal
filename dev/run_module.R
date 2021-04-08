@@ -12,6 +12,6 @@ golem::document_and_reload()
 # run_module(module_name = "cohortOverview",
 #            config_file = "../ramap_test/test.yaml",
 #            data_folder = "../ramap_test/")
-run_module(module_name = "compareTrajGroups",
+run_module(module_name = "degSummary",
   config_file = "../psort_test/psort.yaml",
   data_folder = "../psort_test")

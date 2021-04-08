@@ -10,6 +10,7 @@ default:
   - geneModulesCorr
   - wholeDataCorr
   - compareTrajGroups
+  - degSummary
 production:
   app_prod: yes
 dev:

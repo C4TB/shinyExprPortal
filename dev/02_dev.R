@@ -46,6 +46,7 @@ golem::add_module( name = "geneModulesCorr" )
 golem::add_module( name = "wholeDataCorr" )
 golem::add_module( name = "singleVariableCorr" )
 golem::add_module( name = "compareTrajGroups" )
+golem::add_module( name = "degSummary" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -58,6 +59,7 @@ golem::add_fct( "config", module = "singleVariableCorr")
 golem::add_fct( "config", module = "geneModulesCorr")
 golem::add_fct( "config", module = "wholeDataCorr")
 golem::add_fct( "config", module = "compareTrajGroups")
+golem::add_fct( "config", module = "degSummary")
 golem::add_utils("", module = "geneModulesCorr")
 golem::add_utils("", module = "wholeDataCorr")
 golem::add_utils("", module = "degOverview")
