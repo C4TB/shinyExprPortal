@@ -10,4 +10,5 @@ golem::document_and_reload()
 
 # Run the application
 #run_app(fname = "../ramap_test/test.yaml", data_folder = "../ramap_test/")
-run_app(config_file = "../psort_test/psort.yaml", data_folder = "../psort_test")
+run_app(config_file = "../psort_test/psort_exp.yaml",
+        data_folder = "../psort_test")

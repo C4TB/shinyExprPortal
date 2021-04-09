@@ -4,13 +4,15 @@ default:
   app_prod: no
   available_modules:
   - cohortOverview
-  - degOverview
+  - degModules
   - singleGeneCorr
   - singleVariableCorr
   - geneModulesCorr
   - wholeDataCorr
   - compareTrajGroups
+  degModules:
   - degSummary
+  - degVolcano
 production:
   app_prod: yes
 dev:

@@ -1,7 +1,7 @@
 #' @import shiny
 #' @import ggplot2
 #' @importFrom magrittr %>%
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer pivot_wider
 NULL
 
 #' Run the Shiny Application

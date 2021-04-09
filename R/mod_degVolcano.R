@@ -1,12 +1,12 @@
-#' degOverview UI Function
+#' degVolcano UI Function
 #'
 #' @description A shiny Module.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd 
-mod_degOverview_ui <- function(id, appdata) {
-  degOverview_tab(appdata$modules$degOverview, id)
+mod_degVolcano_ui <- function(id, appdata) {
+  degVolcano_tab(appdata$modules$degModules$modules$degVolcano, id)
 }
 #' Differentially expressed genes tab UI
 #'
@@ -16,7 +16,7 @@ mod_degOverview_ui <- function(id, appdata) {
 #' @return tab panel with inputs
 #' @export
 #'
-degOverview_tab <- function(model_names, id = NULL) {
+degVolcano_tab <- function(model_names, id = NULL) {
   ns <- NS(id)
   tabPanel("DEA Results", value= "deg", 
            splitLayout(
@@ -69,15 +69,15 @@ degOverview_tab <- function(model_names, id = NULL) {
            )
   )
 }
-#' degOverview Server Function
+#' degVolcano Server Function
 #'
 #' @noRd 
-mod_degOverview_server <- function(module_name, appdata) {
+mod_degVolcano_server <- function(module_name, appdata) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
     observeEvent(input$model_category, { 
-      choices <- names(appdata$modules$degOverview[[input$model_category]])
+      choices <- names(appdata$modules$degVolcano[[input$model_category]])
       updateRadioButtons(session, "selected_model",
                    choices = choices)
     })
@@ -88,7 +88,7 @@ mod_degOverview_server <- function(module_name, appdata) {
     model_results <- reactive({ 
       req(input$selected_model)
       isolate({
-        model_cat <- appdata$modules$degOverview[[input$model_category]]
+        model_cat <- appdata$modules$degVolcano[[input$model_category]]
         table <- model_cat[[input$selected_model]] 
       })
       validate(need(not_null(table), "..."))
