@@ -62,7 +62,7 @@ mod_degSummary_server <- function(module_name, appdata) {
                     pivot_wider(names_from = all_of(partition),
                         values_from = c(pSignif, qSignif),
                         names_glue = paste0("{", partition, "}_{.value}")) %>%
-                    dplyr::relocate(any_of(header_cols), .after = last_col())
+                    relocate(any_of(header_cols), .after = last_col())
       model_wide %>% 
         knitr::kable(align = "r",
                      "html",

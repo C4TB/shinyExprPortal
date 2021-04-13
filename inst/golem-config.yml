@@ -12,7 +12,7 @@ default:
   - compareTrajGroups
   degModules:
   - degSummary
-  - degVolcano
+  - degOverview
 production:
   app_prod: yes
 dev:

@@ -41,7 +41,6 @@ compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
            )
   )
 }
-
 mod_compareTrajGroups_server <- function(module_name, appdata) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
@@ -98,7 +97,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
                                   -.data[[subject_col]],
                                   names_to = c(".value", trajectory_class),
                                   names_sep= "_")
-      combined <- dplyr::left_join(sel_lookup, subset_long, by = c("Subject_ID", "Time"))
+      combined <- left_join(sel_lookup, subset_long, by = c("Subject_ID", "Time"))
       combined$expression <- selected_expression[input$selected_gene, combined[[sample_col]]]
       df <- combined[, c(subject_col, trajectory_class, sidebyside_class, compare_col, "expression")]
       # df$Time_seq <- 

@@ -82,7 +82,6 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
 }
 #' geneModulesCorr Server Function
 #' @importFrom plotly renderPlotly plotlyProxy plotlyProxyInvoke
-#' @importFrom dplyr left_join
 #' @noRd 
 mod_geneModulesCorr_server <- function(module_name, appdata) {
   moduleServer(module_name, function(input, output, session) {
