@@ -199,14 +199,12 @@ plotClinExpScatterplot <-
 }
 
 #' @noRd
-#' @importFrom plotly plot_ly add_markers layout
-#' @importFrom htmlwidgets onRender
 plotModulesOverview <- function(overview_data, across_class) {
   across_formula <- stats::as.formula(paste("~", across_class))
   
   overview_data %>%
-    plot_ly(source="overview", key = ~Modules) %>%
-    add_markers(
+    plotly::plot_ly(source="overview", key = ~Modules) %>%
+    plotly::add_markers(
       x = ~ jittered,
       y = ~ Median_Expression,
       color = across_formula,
@@ -216,11 +214,11 @@ plotModulesOverview <- function(overview_data, across_class) {
       text = ~ paste0("Module: ", Modules,
                       "<br>Median Expression: ", signif(Median_Expression, 4))
     ) %>% 
-    layout(
+    plotly::layout(
       yaxis = list (title = "Median Expression"),
       xaxis = list(title = across_class,
                    showticklabels = FALSE)
-    ) %>% onRender(
+    ) %>% htmlwidgets::onRender(
       "
         function(el, x) {
           el.on('plotly_hover', function(d) {

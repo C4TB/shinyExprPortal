@@ -30,7 +30,6 @@ mod_geneModulesCorr_ui <- function(id, appdata){
 #' @return tab panel with inputs
 #' @export
 #'
-#' @importFrom plotly plotlyOutput
 #'
 geneModulesCorr_tab <- function(sample_select, sources_names,
                                 clinical_variables, id = NULL) {
@@ -66,7 +65,7 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
              ),
              verticalLayout(
                  splitLayout(
-                   plotlyOutput(ns("overview"), height = 300, width = 450),
+                   plotly::plotlyOutput(ns("overview"), height = 300, width = 450),
                    plotOutput(ns("profile_plot"), height = 200, width = "99%")
                   ),
                  hr(),
@@ -81,7 +80,6 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
            )
 }
 #' geneModulesCorr Server Function
-#' @importFrom plotly renderPlotly plotlyProxy plotlyProxyInvoke
 #' @noRd 
 mod_geneModulesCorr_server <- function(module_name, appdata) {
   moduleServer(module_name, function(input, output, session) {
@@ -174,8 +172,8 @@ mod_geneModulesCorr_server <- function(module_name, appdata) {
           yref = "y"
         )
       })
-      plotlyProxy("overview", session) %>%
-        plotlyProxyInvoke("relayout", list(annotations = annots))
+      plotly::plotlyProxy("overview", session) %>%
+        plotly::plotlyProxyInvoke("relayout", list(annotations = annots))
     })
     
     # Reactive computation of a selected_module profile
@@ -195,7 +193,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata) {
     })
     
     # Render the overview when median_across changes
-    output$overview <- renderPlotly({
+    output$overview <- plotly::renderPlotly({
       plotModulesOverview(modules_computed$medians_across, across_class)
     })
     
