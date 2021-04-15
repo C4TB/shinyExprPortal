@@ -4,12 +4,19 @@
 \alias{singleVariableCorr_tab}
 \title{All genes correlation tab UI}
 \usage{
-singleVariableCorr_tab(sample_select, clinical_variables, id = NULL)
+singleVariableCorr_tab(
+  sample_select,
+  clinical_variables,
+  advanced = TRUE,
+  id = NULL
+)
 }
 \arguments{
 \item{sample_select}{radio inputs for sample classes}
 
 \item{clinical_variables}{select input for clinical variables}
+
+\item{advanced}{boolean flag to show or hide advanced options}
 
 \item{id}{optional module ID}
 }

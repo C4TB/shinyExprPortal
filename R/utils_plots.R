@@ -109,7 +109,6 @@ plotCorrelationScatterplot <-
 #'
 #' @return a ggplot object
 #'
-#' @importFrom splines ns
 #'
 #' @noRd
 plotClinExpScatterplot <-

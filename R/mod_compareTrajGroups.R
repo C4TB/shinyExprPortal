@@ -119,7 +119,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
       #color = .data[[trajectory_class]],
       trajplot <-
         ggplot(df[order(df$Subject_ID, df$Time), ],
-               aes(x = .data[[compare_col]], y = log(.data$expression))) +
+               aes(x = .data[[compare_col]], y = .data$expression)) +
         geom_point(aes(fill = .data[[trajectory_class]]),
                    colour="black",pch=21, size = 2) +
         scale_fill_viridis_d() +

@@ -1,3 +1,17 @@
+outlier_inputs <- function(id) {
+  ns <- NS(id)
+  tagList(
+    radioButtons(ns("clinical_outliers"),
+               label = "Remove clinical outliers?",
+               choices = c("5/95 percentiles", "IQR", "No"),
+               selected = "No"),
+   radioButtons(ns("expression_outliers"),
+               label = "Remove expression outliers?",
+               choices = c("5/95 percentiles", "IQR", "No"),
+               selected = "No")
+   )
+}
+
 #' Add radio buttons 
 #
 #' @param inputId the inputID

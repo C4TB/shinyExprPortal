@@ -106,9 +106,9 @@ mod_degOverview_server <- function(module_name, appdata) {
       # output$model_controls <- renderUI({
         #tagList(taglist_args)
       # })
-        updateRadioButtons(session, "selected_model",
-                     choiceNames = do.call(paste, c(selected_category)),
-                     choiceValues = do.call(paste, c(selected_category, sep = "_")))
+      updateRadioButtons(session, "selected_model",
+                   choiceNames = do.call(paste, c(selected_category)),
+                   choiceValues = do.call(paste, c(selected_category, sep = "_")))
     })
     
     # selected_model_cond <- reactive({
@@ -125,12 +125,14 @@ mod_degOverview_server <- function(module_name, appdata) {
       req(input$selected_model)
       condition <- setNames(unlist(strsplit(input$selected_model, "_")),
                             colnames(table_subset))
-      # conditions <- selected_model_cond()
+      condition[[category_variable]] <- input$model_category
       model_res <- list()
       for (var_name in names(condition)) {
         model_cond_res <- models[models[, var_name] == condition[var_name], ]
         model_res[[var_name]] <- model_cond_res
       }
+      
+      browser()
       selected_model <- Reduce(
         function(x,y) dplyr::inner_join(x, y, by = colnames(x)), model_res)
       selected_model$Data[[1]]
@@ -168,6 +170,7 @@ mod_degOverview_server <- function(module_name, appdata) {
 
     output$volcanoplot <- renderPlot({
       table <- vp_table()
+      browser()
       if ("logFC" %in% colnames(table)) {
         max_x_data <- max(abs(min(table$logFC)), max(table$logFC))
         gg_volcano_plot(table,

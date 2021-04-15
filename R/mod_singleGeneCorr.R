@@ -84,7 +84,8 @@ singleGeneCorr_tab <-
                 conditionalPanel(
                    paste0("output[\'", ns('error_message'), "\'] == true"),
                    #textOutput(ns("error_message"))
-                   tags$span("Transcript not found in subset",
+                   tags$span("Transcript not found in subset or
+                             subset combination does not exist.",
                              style = "color: gray")
                 ),
                 conditionalPanel(
@@ -92,7 +93,12 @@ singleGeneCorr_tab <-
                    tags$span("No gene selected", style = "color: gray")
                 ),
                 conditionalPanel(
-                   paste0("input[\'", ns('selected_gene'), "\'] != ''"),
+                   paste0("input[\'",
+                          ns('selected_gene'),
+                          "\'] != ''",
+                          "&& output[\'",
+                          ns('error_message'),
+                          "\'] == false"),
                    do.call(tabsetPanel, plotsTabPanels(outputs, ns))
                 )
              ),
@@ -147,7 +153,7 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
      expression_outliers <- input$expression_outliers
      correlation_method <- input$correlation_method %||% "spearman"
      fit_method <- input$fit_method
-
+     
      list_of_values <- user_selection()
      # Return subset of lookup based on the user selection of sample classes
      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
@@ -155,13 +161,16 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
                                          matching_col = subject_col)
      selected_expression <- expression_matrix[selected_gene,
                                               selected_lookup[[sample_col]]]
-     if (all(is.na(selected_expression))) {
+     if (all(is.na(selected_expression)) | length(selected_expression) == 0) {
         output$error_message <- reactive({ TRUE })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
+     } else {
+        output$error_message <- reactive({ FALSE })
+        outputOptions(output, "error_message", suspendWhenHidden = FALSE)
      }
-     
-     req(all(not_na(selected_expression)))  
+     req(all(not_na(selected_expression)) & (length(selected_expression) > 0))  
      tab_output_list <- module_config$tabs
+     
 
      # We go through the list of outputs defined in the configuration file
      # as they were also used to create pairs of tabPanel-plotOutput
@@ -173,6 +182,8 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
          output_name <- tab_output$name
          output_scale <- tab_output$scale
          output_vars <- unique(tab_output$variables)
+         
+         # If a colour variable was provided AND it's not in subset yet, add it
          if (not_null(colour_var)) {
            if (!colour_var %in% output_vars) {
             subset_vars <- c(output_vars, colour_var)
