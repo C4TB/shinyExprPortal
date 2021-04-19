@@ -6,7 +6,7 @@
 #'
 #' @noRd 
 #'
-mod_degSummary_ui <- function(id, appdata) {
+mod_degSummary_ui <- function(id, appdata, global, module_config) {
   degSummary_tab(id)
 }
 
@@ -34,15 +34,15 @@ degSummary_tab <- function(id = NULL) {
            # )
 }
 
-mod_degSummary_server <- function(module_name, appdata) {
+mod_degSummary_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     
+    models <- appdata$models
+    partition <-  module_config$partition
+    partition_values <- unique(models[[partition]])
+    
     output$summary_table <- renderText({
-      
-      models <- appdata$modules$degModules$models
-      
-      partition <-  appdata$modules$degModules$modules$degSummary$partition
-      partition_values <- unique(models[[partition]])
+
       # Prepare table headers
       # Spec defines how many columns are shared across partition values
       header_spec <- setNames(rep(2, length(partition_values)),

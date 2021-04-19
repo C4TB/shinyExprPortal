@@ -51,9 +51,13 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   }
 
   # Load data section
-  loaded_data <- lapply(names(config$data), function(filename) {
-    message("Loading file: ", filename)
-    readFile(config$data[[filename]], filename, data_folder)
+  loaded_data <- lapply(names(config$data), function(file_type) {
+    message("Loading file: ", file_type, "\n", appendLF = FALSE)
+    if (file_type == "models") {
+      loadModels(config$data[[file_type]], data_folder)
+    } else {
+      readFile(config$data[[file_type]], file_type, data_folder)  
+    }
   })
   # Set global settings for sample and subject column
   config$global[["sample_col"]] <-
@@ -86,16 +90,16 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   } else {
     # Parse module configuration by calling each available module function
     appdata_modules <-
-      lapply(available_modules, function(module_name, config) {
+      lapply(available_modules, function(module_name) {
         if (!is.null(config[[module_name]]))
           do.call(paste0(module_name, "Config"),
                   list(config = config[[module_name]],
                        data_folder = data_folder))
-      }, config = config)
+      })
     names(appdata_modules) <- available_modules
   }
   appdata[["modules"]] <- appdata_modules
-  appdata[["config"]] <- config$global
+  appdata[["global"]] <- config$global
   appdata
 }
 
@@ -189,3 +193,22 @@ readFile <- function(filename, filetype, data_folder) {
   
 }
 
+loadModels <- function(models_file, data_folder = "") {
+  models_table <- vroom::vroom(file_path(data_folder, models_file),
+                               col_types = vroom::cols())
+  models_table$Data <- lapply(models_table$File, function(file_name) {
+    file_name <- file_path(data_folder, "models" ,file_name)
+    if (!file.exists(file_name)) { 
+      stop(paste("Model file ",
+                 file_name,
+                 " from degModules configuration not found."), call. = FALSE)
+    }
+    vroom::vroom(file_name, col_types = vroom::cols())  
+  })
+  
+  models_table$pSignif <- sapply(models_table$Data,
+                                 function(x) nrow(x[which(x$p.value < 0.05), ]))
+  models_table$qSignif <- sapply(models_table$Data,
+                                 function(x) nrow(x[which(x$q.value < 0.05), ]))
+  models_table
+}

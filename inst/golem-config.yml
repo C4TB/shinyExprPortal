@@ -13,6 +13,10 @@ default:
   degModules:
   - degSummary
   - degOverview
+  correlations:
+  - singleGeneCorr
+  - singleVariableCorr
+  - wholeDataCorr
 production:
   app_prod: yes
 dev:

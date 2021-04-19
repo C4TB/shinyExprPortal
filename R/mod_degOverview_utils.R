@@ -1,7 +1,8 @@
 gg_volcano_plot <- function(table,
                             fc_threshold,
                             pvalue_threshold,
-                            adjusted = "q.value") {
+                            adjusted = "q.value",
+                            gene_column = "Gene") {
   max_x_data <- max(abs(min(table$logFC)), max(table$logFC))
   data_fc_lim <- max(max_x_data, fc_threshold)
   signif_labels_colors <-
@@ -26,7 +27,7 @@ gg_volcano_plot <- function(table,
     geom_point() +
     ylab(ylab_text) + 
     xlab("Log fold change") +
-    geom_text(aes(label = .data$Gene),
+    geom_text(aes(label = .data[[gene_column]]),
               data = table[table$color == "log FC and p-value",],
               vjust = "top",
               hjust = "right") +

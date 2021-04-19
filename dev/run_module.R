@@ -12,6 +12,6 @@ golem::document_and_reload()
 # run_module(module_name = "cohortOverview",
 #            config_file = "../ramap_test/test.yaml",
 #            data_folder = "../ramap_test/")
-run_module(module_name = "singleVariableCorr",
+run_module(module_name = "degModules",
   config_file = "../psort_test/psort_exp.yaml",
   data_folder = "../psort_test")

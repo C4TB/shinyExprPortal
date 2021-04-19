@@ -7,5 +7,9 @@ degSummaryConfig <- function(config, data_folder = "") {
     stop("Package kableExtra required for degSummary module not found")
   }
   
+  if (not_null(config$models)) {
+    models_table <- loadModels(config$models, data_folder)
+    config$models <- models_table
+  }
   config
 }

@@ -6,11 +6,11 @@
 #'
 #' @noRd 
 #'
-mod_geneModulesCorr_ui <- function(id, appdata){
-  module_config <- appdata$modules$geneModulesCorr
+mod_geneModulesCorr_ui <- function(id, appdata, global, module_config) {
+  #module_config <- appdata$modules$geneModulesCorr
   geneModulesCorr_tab(
     sample_select = sampleClassInputs(
-      appdata$config$sample_classes,
+      global$sample_classes,
       id,
       module_config$subset_classes
     ),
@@ -81,24 +81,23 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
 }
 #' geneModulesCorr Server Function
 #' @noRd 
-mod_geneModulesCorr_server <- function(module_name, appdata) {
+mod_geneModulesCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression
-    sample_lookup <- appdata$data$sample_lookup
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression
+    sample_lookup <- appdata$sample_lookup
     
-    module_config <- appdata$modules$geneModulesCorr
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    sample_classes <- global$sample_classes
     
+   # module_config <- appdata$modules$geneModulesCorr
     subset_classes <- module_config$subset_classes
     across_class <- module_config$across_class
     modules_data <- module_config$modules_data
     scatterplot_variables <- module_config$scatterplot_variables
-    
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
-    sample_classes <- appdata$config$sample_classes
     
     modules_computed <- reactiveValues(medians = NULL, medians_across = NULL)
     

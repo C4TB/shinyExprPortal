@@ -6,11 +6,10 @@
 #'
 #' @noRd 
 #'
-mod_compareTrajGroups_ui <- function(id, appdata) {
-  module_config <- appdata$modules$compareTrajGroups
+mod_compareTrajGroups_ui <- function(id, appdata, global, module_config) {
   compareTrajGroups_tab(
     sampleClassInputs(
-      appdata$config$sample_classes,
+      global$sample_classes,
       id,
       module_config$subset_classes
     ),
@@ -41,18 +40,18 @@ compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
            )
   )
 }
-mod_compareTrajGroups_server <- function(module_name, appdata) {
+mod_compareTrajGroups_server <- function(module_name, appdata, global,
+                                         module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
-    sample_classes <- appdata$config$sample_classes
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    sample_classes <- global$sample_classes
     
-    module_config <- appdata$modules$compareTrajGroups
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class
     compare_col <- module_config$compare_col
@@ -97,9 +96,13 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
                                   -.data[[subject_col]],
                                   names_to = c(".value", trajectory_class),
                                   names_sep= "_")
-      combined <- left_join(sel_lookup, subset_long, by = c("Subject_ID", "Time"))
-      combined$expression <- selected_expression[input$selected_gene, combined[[sample_col]]]
-      df <- combined[, c(subject_col, trajectory_class, sidebyside_class, compare_col, "expression")]
+      combined <- left_join(sel_lookup,
+                            subset_long,
+                            by = c("Subject_ID", "Time"))
+      combined$expression <- selected_expression[input$selected_gene,
+                                                 combined[[sample_col]]]
+      df <- combined[, c(subject_col, trajectory_class,
+                         sidebyside_class, compare_col, "expression")]
       # df$Time_seq <- 
       #   as.numeric(
       #     as.character(
@@ -123,7 +126,8 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
         geom_point(aes(fill = .data[[trajectory_class]]),
                    colour="black",pch=21, size = 2) +
         scale_fill_viridis_d() +
-        facet_wrap(stats::as.formula(paste("~", sidebyside_class)), scales = "fixed")
+        facet_wrap(stats::as.formula(paste("~", sidebyside_class)),
+                   scales = "fixed")
       
       if (input$showtraj == "Yes") {
         trajplot <- trajplot + 

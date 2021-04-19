@@ -6,11 +6,11 @@
 #'
 #' @noRd 
 #'
-mod_wholeDataCorr_ui <- function(id, appdata){
+mod_wholeDataCorr_ui <- function(id, appdata, global, module_config) {
   wholeDataCorr_tab(
-    sampleClassInputs(appdata$config$sample_classes, id),
-    clinical_variables = names(appdata$modules$wholeDataCorr$heatmap_variables),
-    advanced = appdata$modules$wholeDataCorr$advanced,
+    sampleClassInputs(global$sample_classes, id),
+    clinical_variables = names(module_config$heatmap_variables),
+    advanced = module_config$advanced,
     id
   )
 }
@@ -94,27 +94,25 @@ wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
 #' wholeDataCorr Server Function
 #'
 #' @noRd 
-mod_wholeDataCorr_server <- function(module_name, appdata) {
+mod_wholeDataCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression
-    sample_lookup <- appdata$data$sample_lookup
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression
+    sample_lookup <- appdata$sample_lookup
     
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
-    sample_classes <- appdata$config$sample_classes
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    sample_classes <- global$sample_classes
     
 # Module configuration
 # This indicates which variable should be used to match a suffix 
 # (likely timepoint) of clinical variables with expression
 # Variables in the clinical data should contain a suffix matching e.g. 
 #    timepoint
-    subset_clinical_variable <-
-      appdata$modules$wholeDataCorr$subset_clinical_variable
-    heatmap_variables <-
-      appdata$modules$wholeDataCorr$heatmap_variables
+    subset_clinical_variable <- module_config$subset_clinical_variable
+    heatmap_variables <- module_config$heatmap_variables
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,

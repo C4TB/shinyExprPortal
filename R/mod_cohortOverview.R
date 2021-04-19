@@ -8,11 +8,11 @@
 #'
 #' @noRd 
 #'
-mod_cohortOverview_ui <- function(id, appdata) {
-  cohortOverview_tab(sampleClassInputs(appdata$config$sample_classes, id),
+mod_cohortOverview_ui <- function(id, appdata, global, module_config) {
+  cohortOverview_tab(sampleClassInputs(global$sample_classes, id),
                      geneSelectInput(NULL, id),
-                     names(appdata$modules$cohortOverview$profile_variables),
-                     appdata$modules$cohortOverview$colour_variables,
+                     names(module_config$profile_variables),
+                     module_config$colour_variables,
                      id)
   
 }
@@ -84,15 +84,15 @@ cohortOverview_tab <- function(sample_selection,
 #' cohortOverview Server Function
 #'
 #' @noRd 
-mod_cohortOverview_server <- function(module_name, appdata) {
+mod_cohortOverview_server <- function(module_name, appdata, global, module_config) {
   
   moduleServer(module_name, function(input, output, session) {
     
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
     
     # Load genes server side
     updateSelectizeInput(session,
@@ -100,8 +100,6 @@ mod_cohortOverview_server <- function(module_name, appdata) {
                          choices = rownames(expression_matrix),
                          selected = "",
                          server = TRUE)
-    
-    module_config <- appdata$modules$cohortOverview
     
     output$cohort_overview <- r2d3::renderD3({ 
     

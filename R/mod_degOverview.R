@@ -5,9 +5,8 @@
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd 
-mod_degOverview_ui <- function(id, appdata) {
-  module_config <- appdata$modules$degModules$modules$degOverview
-  models <- appdata$modules$degModules$models
+mod_degOverview_ui <- function(id, appdata, global, module_config) {
+  models <- appdata$models
   category_variable <- module_config$category_variable
   categories <- unique(unlist(models[, category_variable]))
   degOverview_tab(categories,
@@ -70,7 +69,7 @@ degOverview_tab <- function(categories, id = NULL) {
                                         width = "700px",
                                         height = "500px"),
                                     tags$div(uiOutput(ns("genelist"))),
-                                    cellWidths = c(700, 150)
+                                    cellWidths = c(700, 200)
                         )) %>%
                 bsplus::bs_append(title = "Table",
                          content = DT::DTOutput(ns("deg_table"))),
@@ -82,12 +81,11 @@ degOverview_tab <- function(categories, id = NULL) {
 #' degOverview Server Function
 #'
 #' @noRd 
-mod_degOverview_server <- function(module_name, appdata) {
+mod_degOverview_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
-    models <- appdata$modules$degModules$models
-    module_config <- appdata$modules$degModules$modules$degOverview
+    models <- appdata$models
     category_variable <- module_config$category_variable
     exc_columns <- c(category_variable,
                      c("pSignif", "qSignif", "File", "Data"))
@@ -132,7 +130,6 @@ mod_degOverview_server <- function(module_name, appdata) {
         model_res[[var_name]] <- model_cond_res
       }
       
-      browser()
       selected_model <- Reduce(
         function(x,y) dplyr::inner_join(x, y, by = colnames(x)), model_res)
       selected_model$Data[[1]]
@@ -170,13 +167,16 @@ mod_degOverview_server <- function(module_name, appdata) {
 
     output$volcanoplot <- renderPlot({
       table <- vp_table()
-      browser()
+      
+      gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
+        
       if ("logFC" %in% colnames(table)) {
         max_x_data <- max(abs(min(table$logFC)), max(table$logFC))
         gg_volcano_plot(table,
                         input$fc_threshold,
                         input$pvalue_threshold,
-                        input$pvalue_adjusted)
+                        input$pvalue_adjusted,
+                        gene_column)
       } else {
         max_x_data <- max(abs(min(table$AvgExpr)), max(table$AvgExpr))
         ggplot(table, aes(y = .data$p.value,
@@ -189,16 +189,24 @@ mod_degOverview_server <- function(module_name, appdata) {
 
     output$genelist <- renderUI({
       table <- vp_table()
+      gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
       if ("logFC" %in% colnames(table)) {
-        signif_table <- table[table$signif ==  3,]
+        tagList(p("logFC and p-value significant genes: "),
+                tags$ul(apply(
+                  table[table$signif ==  3,], 1,
+                  function(x) tags$li(x[gene_column]))),
+                p("p-value significant genes: "),
+                tags$ul(apply(
+                  table[table$signif ==  2,], 1,
+                  function(x) tags$li(x[gene_column]))))
       } else {
-        signif_table <- table[table$signif ==  2,]
+        tagList(p("Significant genes: "),
+                tags$ul(apply(
+                  table[table$signif ==  2,], 1,
+                  function(x) tags$li(x[gene_column]))))
       }
       
-      tagList(p("Significant genes: "),
-              tags$ul(apply(
-                signif_table, 1,
-                function(x) tags$li(x["Gene"] %||% x["GeneSymbol"]))))
+     
     })
 
     output$deg_table <- DT::renderDT({

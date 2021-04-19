@@ -21,19 +21,24 @@ app_ui <- function(request) {
         )
       ),
     # Need to use do.call to pass list of tabPanels to navbarPage
-    do.call(navbarPage, c(
-      title = list(appdata$logo),
-      append(list(about_tab),
-    # Cycle through the modules that were identified in the configuration file
-    # And call the corresponding UI function
-     lapply(seq_along(modules_to_include), function(i, modules, appdata) {
-        module_name <- names(modules)[[i]]
-        do.call(paste("mod", module_name, "ui", sep = "_"),
-                list(id = module_name, appdata = appdata))
-      }, modules = modules_to_include, appdata = appdata)
-      )
-    )
-    )
+    do.call(navbarPage,
+            c(title = list(appdata$logo),
+              append(
+                list(about_tab),
+            # Cycle through the modules that were identified in the configuration file
+            # And call the corresponding UI function
+                lapply(names(modules_to_include), function(module_name) {
+                  do.call(
+                    paste("mod", module_name, "ui", sep = "_"),
+                    list(
+                      id = module_name,
+                      appdata = appdata$data,
+                      global = appdata$global,
+                      module_config = modules_to_include[[module_name]]
+                    )
+                  )
+                })
+              )))
   )
 }
 
@@ -76,8 +81,15 @@ dev_module_ui <- function(request) {
     ),
     # Need to use do.call to pass list of tabPanels to navbarPage
     navbarPage(title = appdata$name,
-               do.call(paste("mod", module_name, "ui", sep = "_"),
-                       list(id = module_name, appdata = appdata))
+               do.call(
+                 paste("mod", module_name, "ui", sep = "_"),
+                 list(
+                   id = module_name,
+                   appdata = appdata$data,
+                   global = appdata$global,
+                   module_config = appdata$modules[[module_name]]
+                 )
+               )
     )
   )
 }

@@ -6,10 +6,10 @@
 #'
 #' @noRd 
 #'
-mod_singleVariableCorr_ui <- function(id, appdata){
-  singleVariableCorr_tab(sampleClassInputs(appdata$config$sample_classes, id), 
-                        names(appdata$data$clinical),
-                        appdata$modules$singleVariableCorr$advanced,
+mod_singleVariableCorr_ui <- function(id, appdata, global, module_config)  {
+  singleVariableCorr_tab(sampleClassInputs(global$sample_classes, id), 
+                        names(appdata$clinical),
+                        module_config$advanced,
                         id)
 }
 #' All genes correlation tab UI
@@ -80,15 +80,16 @@ singleVariableCorr_tab <- function(sample_select,
 #' singleVariableCorr Server Function
 #'
 #' @noRd 
-mod_singleVariableCorr_server <- function(module_name, appdata) {
+mod_singleVariableCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns 
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
+    sample_classes <- global$sample_classes
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,
@@ -101,7 +102,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata) {
       expression_outliers <- input$expression_outliers
       correlation_method <- input$correlation_method %||% "spearman"
       
-      list_of_values <- getSelectedSampleClasses(appdata$config$sample_classes,
+      list_of_values <- getSelectedSampleClasses(sample_classes,
                                                  input)
     # Return subset of lookup based on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
@@ -113,7 +114,6 @@ mod_singleVariableCorr_server <- function(module_name, appdata) {
                     "Selected variable is not numeric"))
       
       # Apply outlier filters
-      browser()
       selected_expression <- 
         replaceFalseWithNA(na.omit(expression_matrix[, selected_lookup[[sample_col]]]),
                            outlier_functions[[expression_outliers]])
@@ -138,7 +138,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata) {
     output$fulltable_download <- downloadHandler(
       filename = function() {
         list_of_values <-
-          getSelectedSampleClasses(appdata$config$sample_classes, input)
+          getSelectedSampleClasses(sample_classes, input)
         paste(c(list_of_values, "correlation_table"), collapse = "_") 
         },
       content = function(file) {

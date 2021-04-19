@@ -6,12 +6,12 @@
 #'
 #' @noRd
 #'
-mod_singleGeneCorr_ui <- function(id, appdata) {
-  singleGeneCorr_tab(sampleClassInputs(appdata$config$sample_classes, id),
+mod_singleGeneCorr_ui <- function(id, appdata, global, module_config) {
+  singleGeneCorr_tab(sampleClassInputs(global$sample_classes, id),
                      geneSelectInput(NULL, id),
-                     appdata$modules$singleGeneCorr$colour_variables,
-                     appdata$modules$singleGeneCorr$tabs,
-                     appdata$modules$singleGeneCorr$advanced,
+                     module_config$colour_variables,
+                     module_config$tabs,
+                     module_config$advanced,
                      id)
 }
 #' Single gene correlation tab UI
@@ -110,15 +110,17 @@ singleGeneCorr_tab <-
 #' singleGeneCorr Server Function
 #'
 #' @noRd
-mod_singleGeneCorr_server <- function(module_name, appdata) {
+mod_singleGeneCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
    ns <- session$ns
 
-   clinical <- appdata$data$clinical
-   expression_matrix <- appdata$data$expression_matrix
-   sample_lookup <- appdata$data$sample_lookup
-   subject_col <- appdata$config$subject_col
-   sample_col <- appdata$config$sample_col
+   clinical <- appdata$clinical
+   expression_matrix <- appdata$expression_matrix
+   sample_lookup <- appdata$sample_lookup
+   
+   subject_col <- global$subject_col
+   sample_col <- global$sample_col
+   sample_classes <- global$sample_classes
    
    # Load genes server side
    updateSelectizeInput(session,
@@ -127,14 +129,14 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
                         selected = "",
                         server = TRUE)
    
-   module_config <- appdata$modules$singleGeneCorr
+   #module_config <- appdata$modules$singleGeneCorr
 
    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                           "IQR" = valuesInsideTukeyFences,
                           "No" = function(x) TRUE)
    
    user_selection <- reactive({
-      getSelectedSampleClasses(appdata$config$sample_classes, input)
+      getSelectedSampleClasses(sample_classes, input)
    })
    
    # selected_expression <- reactive({
@@ -171,7 +173,6 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
      req(all(not_na(selected_expression)) & (length(selected_expression) > 0))  
      tab_output_list <- module_config$tabs
      
-
      # We go through the list of outputs defined in the configuration file
      # as they were also used to create pairs of tabPanel-plotOutput
      # Local scope is required otherwise the last tab_output will override 

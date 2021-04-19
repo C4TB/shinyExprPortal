@@ -7,16 +7,14 @@ app_server <- function(input, output, session) {
   # List the first level callModules here
   appdata <- golem::get_golem_options("appdata")
   modules_to_include <- Filter(Negate(is.null), appdata$modules)
-  for (module_num in seq_along(modules_to_include)) {
-    module_name <- names(modules_to_include)[module_num]
+  for (module_name in names(modules_to_include)) {
     do.call(
       paste("mod", module_name, "server", sep = "_"),
       list(
         module_name = module_name,
-        appdata = appdata
-        # input = input,
-        # output = output,
-        # session = session
+        appdata = appdata$data,
+        global = appdata$global,
+        module_config = modules_to_include[[module_name]]
       )
     )
   }
@@ -38,10 +36,14 @@ app_server <- function(input, output, session) {
 dev_module_server <- function(input, output, session) {
   module_name <- golem::get_golem_options("module_name")
   appdata <- golem::get_golem_options("appdata")
+  modules_to_include <- Filter(Negate(is.null), appdata$modules)
   do.call(
     paste("mod", module_name, "server", sep = "_"),
     list(
       module_name = module_name,
-      appdata = appdata)
+      appdata = appdata$data,
+      global = appdata$global,
+      module_config = modules_to_include[[module_name]]
+    )
   )
 }
