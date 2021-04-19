@@ -1,20 +1,13 @@
-#' module UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_compareTrajGroups_ui <- function(id, appdata, global, module_config) {
+# module UI Function
+mod_compareTrajGroups_ui <- function(module_name, appdata, global, module_config) {
   compareTrajGroups_tab(
     sampleClassInputs(
       global$sample_classes,
-      id,
+      module_name,
       module_config$subset_classes
     ),
-    geneSelectInput(NULL, id),
-    id)
+    geneSelectInput(NULL, module_name),
+    module_name)
 }
 
 compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {

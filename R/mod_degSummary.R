@@ -1,13 +1,6 @@
-#' module UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_degSummary_ui <- function(id, appdata, global, module_config) {
-  degSummary_tab(id)
+# module UI Function
+mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
+  degSummary_tab(module_name)
 }
 
 degSummary_tab <- function(id = NULL) {

@@ -1,16 +1,10 @@
-#' degOverview UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-mod_degOverview_ui <- function(id, appdata, global, module_config) {
+# degOverview UI Function
+mod_degOverview_ui <- function(module_name, appdata, global, module_config) {
   models <- appdata$models
   category_variable <- module_config$category_variable
   categories <- unique(unlist(models[, category_variable]))
   degOverview_tab(categories,
-                  id)
+                  module_name)
 }
 #' Differentially expressed genes tab UI
 #'

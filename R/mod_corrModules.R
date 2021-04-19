@@ -1,7 +1,7 @@
-# degModules UI Function
-mod_degModules_ui <- function(module_name, appdata, global, module_config) {
+# corrModules  UI Function
+mod_corrModules_ui <- function(module_name, appdata, global, module_config) {
   ns <- NS(module_name)
-  available_submodules <- get_golem_config("degModules")
+  available_submodules <- get_golem_config("corrModules")
   loaded_submodules <- module_config$modules
   module_tabs <- lapply(names(loaded_submodules), function(submodule_name) {
     if (!submodule_name %in% available_submodules)
@@ -12,14 +12,11 @@ mod_degModules_ui <- function(module_name, appdata, global, module_config) {
                  global = global,
                  module_config = loaded_submodules[[submodule_name]]))
   })
-  do.call(navbarMenu, c("Differential Expression Analysis",
+  do.call(navbarMenu, c("Correlations",
                         module_tabs))
 }
-    
-#' degModules Server Function
-#'
-#' @noRd 
-mod_degModules_server <- function(module_name, appdata, global, module_config) {
+
+mod_corrModules_server <- function(module_name, appdata, global, module_config) {
   loaded_submodules <- module_config$modules
   for (submodule_name in names(loaded_submodules)) {
     do.call(

@@ -5,6 +5,7 @@ default:
   available_modules:
   - cohortOverview
   - degModules
+  - corrModules
   - singleGeneCorr
   - singleVariableCorr
   - geneModulesCorr
@@ -13,7 +14,7 @@ default:
   degModules:
   - degSummary
   - degOverview
-  correlations:
+  corrModules:
   - singleGeneCorr
   - singleVariableCorr
   - wholeDataCorr

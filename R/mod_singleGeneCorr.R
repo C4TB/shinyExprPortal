@@ -1,18 +1,11 @@
-#' singleGeneCorr UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
-mod_singleGeneCorr_ui <- function(id, appdata, global, module_config) {
-  singleGeneCorr_tab(sampleClassInputs(global$sample_classes, id),
-                     geneSelectInput(NULL, id),
+# singleGeneCorr UI Function
+mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
+  singleGeneCorr_tab(sampleClassInputs(global$sample_classes, module_name),
+                     geneSelectInput(NULL, module_name),
                      module_config$colour_variables,
                      module_config$tabs,
                      module_config$advanced,
-                     id)
+                     module_name)
 }
 #' Single gene correlation tab UI
 #'

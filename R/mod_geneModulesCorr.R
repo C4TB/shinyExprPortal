@@ -1,23 +1,16 @@
-#' geneModulesCorr UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_geneModulesCorr_ui <- function(id, appdata, global, module_config) {
+# geneModulesCorr UI Function
+mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) {
   #module_config <- appdata$modules$geneModulesCorr
   geneModulesCorr_tab(
     sample_select = sampleClassInputs(
       global$sample_classes,
-      id,
+      module_name,
       module_config$subset_classes
     ),
     sources_names = lapply(module_config$modules_data,
                            function(x) x$name),
     clinical_variables = names(module_config$scatterplot_variables),
-    id
+    module_name
   )
 }
 #' Gene modules tab UI

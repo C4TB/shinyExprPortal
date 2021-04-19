@@ -1,19 +1,10 @@
-#' cohortOverview UI wrapper
-#'
-#' @description Cohort overview module, showing clinical trajectories for 
-#'  selected variables
-#' 
-#' @param id module ID
-#' @param appdata app configuration configuration
-#'
-#' @noRd 
-#'
-mod_cohortOverview_ui <- function(id, appdata, global, module_config) {
-  cohortOverview_tab(sampleClassInputs(global$sample_classes, id),
-                     geneSelectInput(NULL, id),
+# cohortOverview UI function
+mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
+  cohortOverview_tab(sampleClassInputs(global$sample_classes, module_name),
+                     geneSelectInput(NULL, module_name),
                      names(module_config$profile_variables),
                      module_config$colour_variables,
-                     id)
+                     module_name)
   
 }
 #' Cohort overview tab UI
