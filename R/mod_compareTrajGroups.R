@@ -12,7 +12,7 @@ mod_compareTrajGroups_ui <- function(module_name, appdata, global, module_config
 
 compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Compare Groups", value = "compareTrajGroups",
+  tabPanel(title = "Compare trajectories", value = "compareTrajGroups",
            splitLayout(
              verticalLayout(
                wellPanel(

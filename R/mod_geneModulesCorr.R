@@ -79,7 +79,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
     ns <- session$ns
     
     clinical <- appdata$clinical
-    expression_matrix <- appdata$expression
+    expression_matrix <- appdata$expression_matrix
     sample_lookup <- appdata$sample_lookup
     
     subject_col <- global$subject_col

@@ -16,7 +16,7 @@ mod_degOverview_ui <- function(module_name, appdata, global, module_config) {
 #'
 degOverview_tab <- function(categories, id = NULL) {
   ns <- NS(id)
-  tabPanel("Model Results", value= "degOverview", 
+  tabPanel("Model results", value= "degOverview", 
            splitLayout(
              verticalLayout(
                wellPanel(
@@ -199,8 +199,6 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
                   table[table$signif ==  2,], 1,
                   function(x) tags$li(x[gene_column]))))
       }
-      
-     
     })
 
     output$deg_table <- DT::renderDT({

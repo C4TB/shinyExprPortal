@@ -33,15 +33,6 @@ app_ui <- function(request) {
                               config$data,
                               config$global,
                               modules_to_include[[module_name]])
-                  # do.call(
-                  #   paste("mod", module_name, "ui", sep = "_"),
-                  #   list(
-                  #     id = module_name,
-                  #     appdata = config$data,
-                  #     global = config$global,
-                  #     module_config = modules_to_include[[module_name]]
-                  #   )
-                  # )
                 })
               )))
   )
@@ -91,15 +82,6 @@ dev_module_ui <- function(request) {
                            config$data,
                            config$global,
                            config$modules[[module_name]])
-               # do.call(
-               #   paste("mod", module_name, "ui", sep = "_"),
-               #   list(
-               #     id = module_name,
-               #     appdata = config$data,
-               #     global = config$global,
-               #     module_config = config$modules[[module_name]]
-               #   )
-               # )
     )
   )
 }

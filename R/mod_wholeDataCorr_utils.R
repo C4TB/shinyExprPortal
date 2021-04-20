@@ -14,29 +14,28 @@ plotCorrelationHeatmap <- function(df, min_pvalue = 0,
                  names_pattern = "(.*)_(.*)", 
                  names_to = c("Variable", ".value"))
   
-  p <- ggplot2::ggplot(heatmap_df,
-                       ggplot2::aes(
+  p <- ggplot(heatmap_df,
+                       aes(
                          x = .data$Variable,
                          y = .data$Gene,
                          fill = .data$estimate
                        )) +
-    ggplot2::scale_x_discrete(expand = c(0, 0), position = "top") +
-    ggplot2::scale_y_discrete(limits = rev(unique(heatmap_df$Gene))) +
-    ggplot2::scale_fill_distiller(palette = "RdBu", limits = c(-1, 1)) +
-    ggplot2::geom_tile() +
-    ggplot2::ylab("Gene ranked by highest significance")
-    ggplot2::theme_classic() +
-    ggplot2::theme(
-        axis.text.y = ggplot2::element_text(size = 9),
-        axis.text.x = ggplot2::element_text(
+    scale_x_discrete(expand = c(0, 0), position = "top") +
+    scale_y_discrete(limits = rev(unique(heatmap_df$Gene))) +
+    scale_fill_distiller(palette = "RdBu", limits = c(-1, 1)) +
+    geom_tile() +
+    ylab("Gene ranked by highest significance")
+    theme_classic() +
+    theme(
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(
           angle = 90,
           hjust = 1,
           vjust = 0.5
         )
     )
-  
-  pvalue_condition <- max(-log10(heatmap_df[[filter]])) > min_pvalue
-  corr_condition <- max(abs(heatmap_df$estimate)) > min_corr
+  pvalue_condition <- max(-log10(na.omit(heatmap_df[[filter]]))) > min_pvalue
+  corr_condition <- max(abs(na.omit(heatmap_df$estimate))) > min_corr
   
   if (pvalue_condition & corr_condition) {
     subset_condition <-
@@ -44,7 +43,7 @@ plotCorrelationHeatmap <- function(df, min_pvalue = 0,
       (abs(heatmap_df$estimate) > min_corr)
     subset_hm <- heatmap_df[subset_condition,]
     p <-
-      p + ggplot2::geom_text(ggplot2::aes(label = signif(.data$estimate, 2)),
+      p + geom_text(aes(label = signif(.data$estimate, 2)),
                              size = 3,
                              data = subset_hm)
   }

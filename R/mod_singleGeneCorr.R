@@ -57,14 +57,7 @@ singleGeneCorr_tab <-
                                               "Spearman" = "spearman",
                                               "Kendall" = "kendall"),
                                   selected = "pearson"),
-                     radioButtons(ns("clinical_outliers"),
-                                 label = "Remove clinical outliers?",
-                                 choices = c("5/95 percentiles", "IQR", "No"),
-                                 selected = "No"),
-                     radioButtons(ns("expression_outliers"),
-                                 label = "Remove expression outliers?",
-                                 choices = c("5/95 percentiles", "IQR", "No"),
-                                 selected = "No"),
+                     outlier_inputs(id),
                      radioButtons(ns("fit_method"),
                                   label = "Fitting method:",
                                   choices = c("Linear" = "linear",
@@ -218,16 +211,16 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
             if (length(output_vars) < 4) length(output_vars)*200 else 800 
             }
          output[[output_name]] <- renderPlot({ 
-           plotClinExpScatterplot(combined_df,
+           scatterplot <- plotClinExpScatterplot(combined_df,
                                   x = "Value",
                                   y = "Expression",
                                   facet_var = "ClinicalVariable",
-                                  correlation_df = corr_df,
                                   scales = output_scale,
-                                  fit_method = fit_method,
-                                  correlation_method = correlation_method,
                                   gene_name = input$selected_gene,
                                   ncol = 4, colour_variable = colour_var)
+          scatterplot + 
+             ggAnnotateCorr(corr_df, correlation_method) +
+             ggAddFit(fit_method)
          }, width = plotWidth , height = plotHeight)
        })
      }

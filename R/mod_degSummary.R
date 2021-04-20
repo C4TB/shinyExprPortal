@@ -5,26 +5,9 @@ mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
 
 degSummary_tab <- function(id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "DEG Summary", value = "degSummary",
+  tabPanel(title = "Summary table", value = "degSummary",
            htmlOutput(ns("summary_table"))
   )
-           # splitLayout(
-           #   verticalLayout(
-           #     wellPanel(
-           #       radioButtons(
-           #         ns("model_category"),
-           #         label = "Select category:",
-           #         choices = c("a", "b")
-           #       )
-           #     )
-           #   ),
-           #   verticalLayout(
-           #     #OUTPUTS
-           #     plotOutput(ns("degHeatmap"))
-           #   ),
-           #   cellWidths = c("20%", "80%"),
-           #   cellArgs = list(style = "white-space: normal;")
-           # )
 }
 
 mod_degSummary_server <- function(module_name, appdata, global, module_config) {

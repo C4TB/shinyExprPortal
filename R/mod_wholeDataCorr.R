@@ -22,7 +22,7 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
                                       id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Whole Data Correlations", value = "wholeDataCorr",
+  tabPanel(title = "Whole data", value = "wholeDataCorr",
            splitLayout(
              verticalLayout(
                wellPanel(
@@ -61,14 +61,7 @@ wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
                                               "Spearman" = "spearman",
                                               "Kendall"= "kendall"),
                                   selected = "pearson"),
-                     radioButtons(ns("clinical_outliers"), 
-                                  label= "Remove clinical outliers?", 
-                                  choices = c("5/95 percentiles", "IQR", "No"), 
-                                  selected = "No"),
-                     radioButtons(ns("expression_outliers"), 
-                                  label = "Remove expression outliers?", 
-                                  choices = c("5/95 percentiles", "IQR", "No"), 
-                                  selected = "No")
+                     outlier_inputs(id)
                    )
                  } else NULL
                )
@@ -87,7 +80,10 @@ wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
 #' wholeDataCorr Server Function
 #'
 #' @noRd 
-mod_wholeDataCorr_server <- function(module_name, appdata, global, module_config) {
+mod_wholeDataCorr_server <- function(module_name,
+                                     appdata,
+                                     global,
+                                     module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
@@ -121,6 +117,8 @@ mod_wholeDataCorr_server <- function(module_name, appdata, global, module_config
       list_of_values <- getSelectedSampleClasses(sample_classes, input)
       # Return subset of lookup conditional on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
+      validate(need(nrow(selected_lookup) > 0,
+                    "No data for selected parameters."))
       subset_clinical <- selectFromLookup(clinical, selected_lookup,
                                           matching_col = subject_col)
       
@@ -132,7 +130,8 @@ mod_wholeDataCorr_server <- function(module_name, appdata, global, module_config
               subset_values,
               sep="_")
       
-      selected_clinical <- subset_clinical[, selected_clinical_vars]
+      selected_clinical <-
+        subset_clinical[, colnames(subset_clinical) %in% selected_clinical_vars]
       selected_expression <- expression_matrix[, selected_lookup[[sample_col]]]
       
       #Apply outlier functions to clinical
@@ -143,13 +142,14 @@ mod_wholeDataCorr_server <- function(module_name, appdata, global, module_config
       selected_expression <-
         replaceFalseWithNA(t(selected_expression),
                            outlier_functions[[expression_outliers]])
-      
       corr_df <- correlateMatrices(selected_expression,
                                    selected_clinical,
                                    method = correlation_method,
                                    rowname_var = "Gene")
       pvalues_rank <- do.call(pmin,
-                              corr_df[, endsWith(colnames(corr_df), "pvalue")])
+                              c(corr_df[, endsWith(colnames(corr_df), "pvalue")],
+                                   na.rm = TRUE)
+                              )
       combined_df <- cbind(corr_df, pvalues_rank)
       combined_df <- combined_df[order(combined_df$pvalues_rank),]
       combined_df[1:50, ]

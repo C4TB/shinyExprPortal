@@ -1,7 +1,7 @@
 # singleVariableCorr UI Function
 mod_singleVariableCorr_ui <- function(module_name, appdata, global, module_config)  {
   singleVariableCorr_tab(sampleClassInputs(global$sample_classes, module_name), 
-                        names(appdata$clinical),
+                        names(appdata$clinical %>% dplyr::select(where(is.numeric))),
                         module_config$advanced,
                         module_name)
 }
@@ -21,7 +21,7 @@ singleVariableCorr_tab <- function(sample_select,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = "Single Variable",
+    title = "Single variable",
     value = "singleVariableCorr",
     splitLayout(
       verticalLayout(

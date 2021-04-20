@@ -98,10 +98,7 @@ plotCorrelationScatterplot <-
 #' @param x horizontal axis variable
 #' @param y vertical axis variable
 #' @param facet_var list of variables for facet_wrap
-#' @param correlation_df data frame with correlation info
 #' @param gene_name gene name for labels
-#' @param correlation_method correlation method for labels
-#' @param fit_method fit method to add curve
 #' @param scales scales parameter
 #' @param colour_variable categorical variable for color
 #' @param ncol number of columns for facet_wrap
@@ -116,10 +113,7 @@ plotClinExpScatterplot <-
            x,
            y,
            facet_var = NULL,
-           correlation_df = NULL,
            gene_name = NULL,
-           correlation_method = NULL,
-           fit_method = NULL,
            scales = "free",
            colour_variable = NULL,
            ncol = NULL,
@@ -140,16 +134,7 @@ plotClinExpScatterplot <-
       panel.spacing.y = unit(10, "mm"),
       plot.margin = margin(20, 2, 2, 2, unit = "pt")
     )
-  if (!is.null(fit_method))
-  if (fit_method == "linear") {
-    p <- p + geom_smooth(formula = y ~ x,
-                     method = "lm",
-                     fullrange = TRUE)
-  } else if (fit_method == "cubic") { 
-    p <- p + geom_smooth(formula = y ~ splines::ns(x, df = 3),
-                     method = "lm",
-                     fullrange = TRUE)
-  }
+  
   
   if (!is.null(colour_variable))
     p <- p +
@@ -157,32 +142,6 @@ plotClinExpScatterplot <-
       scale_color_brewer(palette = "Set1") 
   else
     p <- p + geom_point(size = 1)
-  
-  if (!is.null(correlation_df)) {
-    corr_labels <- c("pearson" = "r:",
-                     "spearman" = "\u03c1:",
-                     "kendall" = "\u03C4:")
-    p <- p + geom_text(
-      data = correlation_df,
-      aes(
-        label = paste(
-          corr_labels[correlation_method],
-          signif(.data$var_estimate, 2),
-          ", P: ",
-          signif(.data$var_pvalue, 2),
-          ", P_adj: ",
-          signif(.data$var_padj, 2),
-          sep = ""
-        )
-      ),
-      x = -Inf,
-      y = Inf,
-      hjust = 0,
-      vjust = -0.5,
-      size = 12 / .pt,
-      inherit.aes = FALSE
-    )
-  }
   
   if (!is.null(facet_var)) {
     p <- p + facet_wrap(facet_var,
@@ -195,6 +154,42 @@ plotClinExpScatterplot <-
   if (!is.null(gene_name))
     p <- p + ylab(paste("Expression level of", gene_name, sep = " "))
   p
+}
+
+ggAddFit <- function(fit_method = c("linear", "cubic")) {
+  fit_method <- match.arg(fit_method)
+  fit_formula <- switch(fit_method,
+                    linear = y ~ x,
+                    cubic = y ~ splines::ns(x, df = 3))
+  geom_smooth(formula = fit_formula,
+              method = "lm",
+              fullrange = TRUE)
+}
+
+ggAnnotateCorr <- function(correlation_df, correlation_method) {
+  corr_labels <- c("pearson" = "r:",
+                   "spearman" = "\u03c1:",
+                   "kendall" = "\u03C4:")
+  geom_text(
+    data = correlation_df,
+    aes(
+      label = paste(
+        corr_labels[correlation_method],
+        signif(.data$var_estimate, 2),
+        ", P: ",
+        signif(.data$var_pvalue, 2),
+        ", P_adj: ",
+        signif(.data$var_padj, 2),
+        sep = ""
+      )
+    ),
+    x = -Inf,
+    y = Inf,
+    hjust = 0,
+    vjust = -0.5,
+    size = 12 / .pt,
+    inherit.aes = FALSE
+  )
 }
 
 #' @noRd
@@ -234,34 +229,33 @@ plotModuleProfile <- function(module_profile, expression_col, sample_col,
                               across_class, plot_title = "") {
   module_exp <- module_profile[, expression_col]
   y_pos <- sum(module_exp) / length(module_exp)
-  
   ggplot(module_profile, aes(x = .data[[sample_col]],
                              y = .data[[expression_col]])) +
     geom_tile(height = Inf,
               aes(
-                x = .data$sample_col,
+                x = .data[[sample_col]],
                 y = y_pos,
-                fill = as.factor(.data$across_class)
+                fill = as.factor(.data[[across_class]])
               )) +
     geom_line(aes(group = 1)) +
     scale_fill_brewer(palette = "Set1") +
     theme(
       plot.title = element_text(
         lineheight = 0.8,
-        face = 'bold',
-        colour = 'black',
+        face = "bold",
+        colour = "black",
         size = 15
       ),
       axis.title = element_text(
-        face = 'bold',
-        colour = 'black',
+        face = "bold",
+        colour = "black",
         size = 15
       ),
       axis.text = element_blank(),
       axis.ticks.x = element_blank(),
       axis.ticks.y = element_blank(),
       panel.grid = element_blank(),
-      legend.position = 'none'
+      legend.position = "none"
     ) +
     ggtitle(paste(strwrap(plot_title, 50), collapse = "\n"))
   
