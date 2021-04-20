@@ -1,23 +1,16 @@
-#' geneModulesCorr UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_geneModulesCorr_ui <- function(id, appdata){
-  module_config <- appdata$modules$geneModulesCorr
+# geneModulesCorr UI Function
+mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) {
+  #module_config <- appdata$modules$geneModulesCorr
   geneModulesCorr_tab(
     sample_select = sampleClassInputs(
-      appdata$config$sample_classes,
-      id,
+      global$sample_classes,
+      module_name,
       module_config$subset_classes
     ),
     sources_names = lapply(module_config$modules_data,
                            function(x) x$name),
     clinical_variables = names(module_config$scatterplot_variables),
-    id
+    module_name
   )
 }
 #' Gene modules tab UI
@@ -30,7 +23,6 @@ mod_geneModulesCorr_ui <- function(id, appdata){
 #' @return tab panel with inputs
 #' @export
 #'
-#' @importFrom plotly plotlyOutput
 #'
 geneModulesCorr_tab <- function(sample_select, sources_names,
                                 clinical_variables, id = NULL) {
@@ -66,7 +58,7 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
              ),
              verticalLayout(
                  splitLayout(
-                   plotlyOutput(ns("overview"), height = 300, width = 450),
+                   plotly::plotlyOutput(ns("overview"), height = 300, width = 450),
                    plotOutput(ns("profile_plot"), height = 200, width = "99%")
                   ),
                  hr(),
@@ -81,27 +73,24 @@ geneModulesCorr_tab <- function(sample_select, sources_names,
            )
 }
 #' geneModulesCorr Server Function
-#' @importFrom plotly renderPlotly plotlyProxy plotlyProxyInvoke
-#' @importFrom dplyr left_join
 #' @noRd 
-mod_geneModulesCorr_server <- function(module_name, appdata) {
+mod_geneModulesCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression
-    sample_lookup <- appdata$data$sample_lookup
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
     
-    module_config <- appdata$modules$geneModulesCorr
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    sample_classes <- global$sample_classes
     
+   # module_config <- appdata$modules$geneModulesCorr
     subset_classes <- module_config$subset_classes
     across_class <- module_config$across_class
     modules_data <- module_config$modules_data
     scatterplot_variables <- module_config$scatterplot_variables
-    
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
-    sample_classes <- appdata$config$sample_classes
     
     modules_computed <- reactiveValues(medians = NULL, medians_across = NULL)
     
@@ -175,8 +164,8 @@ mod_geneModulesCorr_server <- function(module_name, appdata) {
           yref = "y"
         )
       })
-      plotlyProxy("overview", session) %>%
-        plotlyProxyInvoke("relayout", list(annotations = annots))
+      plotly::plotlyProxy("overview", session) %>%
+        plotly::plotlyProxyInvoke("relayout", list(annotations = annots))
     })
     
     # Reactive computation of a selected_module profile
@@ -196,7 +185,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata) {
     })
     
     # Render the overview when median_across changes
-    output$overview <- renderPlotly({
+    output$overview <- plotly::renderPlotly({
       plotModulesOverview(modules_computed$medians_across, across_class)
     })
     

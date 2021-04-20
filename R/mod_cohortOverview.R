@@ -1,19 +1,10 @@
-#' cohortOverview UI wrapper
-#'
-#' @description Cohort overview module, showing clinical trajectories for 
-#'  selected variables
-#' 
-#' @param id module ID
-#' @param appdata app configuration configuration
-#'
-#' @noRd 
-#'
-mod_cohortOverview_ui <- function(id, appdata) {
-  cohortOverview_tab(sampleClassInputs(appdata$config$sample_classes, id),
-                     geneSelectInput(rownames(appdata$data$expression), id),
-                     names(appdata$modules$cohortOverview$profile_variables),
-                     appdata$modules$cohortOverview$colour_variables,
-                     id)
+# cohortOverview UI function
+mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
+  cohortOverview_tab(sampleClassInputs(global$sample_classes, module_name),
+                     geneSelectInput(NULL, module_name),
+                     names(module_config$profile_variables),
+                     module_config$colour_variables,
+                     module_name)
   
 }
 #' Cohort overview tab UI
@@ -84,17 +75,22 @@ cohortOverview_tab <- function(sample_selection,
 #' cohortOverview Server Function
 #'
 #' @noRd 
-mod_cohortOverview_server <- function(module_name, appdata) {
+mod_cohortOverview_server <- function(module_name, appdata, global, module_config) {
   
   moduleServer(module_name, function(input, output, session) {
     
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
     
-    module_config <- appdata$modules$cohortOverview
+    # Load genes server side
+    updateSelectizeInput(session,
+                         "selected_gene",
+                         choices = rownames(expression_matrix),
+                         selected = "",
+                         server = TRUE)
     
     output$cohort_overview <- r2d3::renderD3({ 
     

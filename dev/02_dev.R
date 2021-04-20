@@ -39,13 +39,17 @@ usethis::use_package( "htmlwidgets" )
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "cohortOverview" ) # Name of the module
+golem::add_module( name = "cohortOverview" )
+golem::add_module( name = "degModules")
 golem::add_module( name = "degOverview" )
-golem::add_module( name = "singleGeneCorr" ) # Name of the module
+golem::add_module( name = "degSummary" )
+golem::add_module( name = "singleGeneCorr" )
 golem::add_module( name = "geneModulesCorr" )
 golem::add_module( name = "wholeDataCorr" )
 golem::add_module( name = "singleVariableCorr" )
-golem::add_module( name = "compareTrajGroups" )
+golem::add_module( name = "compareTrajGroups")
+golem::add_module( name = "corrModules")
+
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -58,6 +62,9 @@ golem::add_fct( "config", module = "singleVariableCorr")
 golem::add_fct( "config", module = "geneModulesCorr")
 golem::add_fct( "config", module = "wholeDataCorr")
 golem::add_fct( "config", module = "compareTrajGroups")
+golem::add_fct( "config", module = "degSummary")
+golem::add_fct( "config", module = "degModules")
+golem::add_fct( "config", module = "corrModules")
 golem::add_utils("", module = "geneModulesCorr")
 golem::add_utils("", module = "wholeDataCorr")
 golem::add_utils("", module = "degOverview")

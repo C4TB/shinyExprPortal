@@ -1,31 +1,27 @@
-#' module UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_compareTrajGroups_ui <- function(id, appdata) {
-  module_config <- appdata$modules$compareTrajGroups
+# module UI Function
+mod_compareTrajGroups_ui <- function(module_name, appdata, global, module_config) {
   compareTrajGroups_tab(
     sampleClassInputs(
-      appdata$config$sample_classes,
-      id,
+      global$sample_classes,
+      module_name,
       module_config$subset_classes
     ),
-    geneSelectInput(rownames(appdata$data$expression), id),
-    id)
+    geneSelectInput(NULL, module_name),
+    module_name)
 }
 
 compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Compare Groups", value = "compareTrajGroups",
+  tabPanel(title = "Compare trajectories", value = "compareTrajGroups",
            splitLayout(
              verticalLayout(
                wellPanel(
                  sample_select,
-                 gene_select
+                 gene_select,
+                 radioButtons(ns("showtraj"),
+                              "Show trajectories?",
+                              choices = c("No", "Yes"),
+                              selected = c("No"))
                )
              ),
              verticalLayout(
@@ -37,23 +33,30 @@ compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
            )
   )
 }
-
-mod_compareTrajGroups_server <- function(module_name, appdata) {
+mod_compareTrajGroups_server <- function(module_name, appdata, global,
+                                         module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
-    sample_classes <- appdata$config$sample_classes
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    sample_classes <- global$sample_classes
     
-    module_config <- appdata$modules$compareTrajGroups
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class
     compare_col <- module_config$compare_col
     sidebyside_class <- module_config$sidebyside_class
+    
+    # Load genes server side
+    updateSelectizeInput(session,
+                         "selected_gene",
+                         choices = rownames(expression_matrix),
+                         selected = "",
+                         server = TRUE)
+    
     # Select only the sample classes required by this view
     # For each class, get the value selected by the user and filter the lookup
     selected_lookup <- reactive({
@@ -86,9 +89,13 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
                                   -.data[[subject_col]],
                                   names_to = c(".value", trajectory_class),
                                   names_sep= "_")
-      combined <- dplyr::left_join(sel_lookup, subset_long, by = c("Subject_ID", "Time"))
-      combined$expression <- selected_expression[input$selected_gene, combined[[sample_col]]]
-      df <- combined[, c(subject_col, trajectory_class, sidebyside_class, compare_col, "expression")]
+      combined <- left_join(sel_lookup,
+                            subset_long,
+                            by = c("Subject_ID", "Time"))
+      combined$expression <- selected_expression[input$selected_gene,
+                                                 combined[[sample_col]]]
+      df <- combined[, c(subject_col, trajectory_class,
+                         sidebyside_class, compare_col, "expression")]
       # df$Time_seq <- 
       #   as.numeric(
       #     as.character(
@@ -106,19 +113,26 @@ mod_compareTrajGroups_server <- function(module_name, appdata) {
       #   )
       # }
       #color = .data[[trajectory_class]],
-      ggplot(df[order(df$Subject_ID, df$Time), ], aes(x = .data[[compare_col]],
-                     y = log(.data$expression))) +
+      trajplot <-
+        ggplot(df[order(df$Subject_ID, df$Time), ],
+               aes(x = .data[[compare_col]], y = .data$expression)) +
         geom_point(aes(fill = .data[[trajectory_class]]),
                    colour="black",pch=21, size = 2) +
-        geom_path(aes(color = .data[[trajectory_class]],
-                      group = .data[[subject_col]]),
-                  alpha = 0.5,
-                  #linetype = 2,
-                  arrow = arrow(angle = 15, length = unit(0.1, "inches"),
-                                type = "closed")) +
         scale_fill_viridis_d() +
-        scale_colour_viridis_d() + 
-        facet_wrap(stats::as.formula(paste("~", sidebyside_class)), scales = "fixed")
+        facet_wrap(stats::as.formula(paste("~", sidebyside_class)),
+                   scales = "fixed")
+      
+      if (input$showtraj == "Yes") {
+        trajplot <- trajplot + 
+          geom_path(aes(color = .data[[trajectory_class]],
+                        group = .data[[subject_col]]),
+                    alpha = 0.5,
+                    #linetype = 2,
+                    arrow = arrow(angle = 15, length = unit(0.1, "inches"),
+                                  type = "closed")) +
+          scale_colour_viridis_d()
+      }
+      trajplot 
     })
     
     

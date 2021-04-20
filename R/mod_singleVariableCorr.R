@@ -1,20 +1,15 @@
-#' singleVariableCorr UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
-mod_singleVariableCorr_ui <- function(id, appdata){
-  singleVariableCorr_tab(sampleClassInputs(appdata$config$sample_classes, id), 
-                        names(appdata$data$clinical),
-                        id)
+# singleVariableCorr UI Function
+mod_singleVariableCorr_ui <- function(module_name, appdata, global, module_config)  {
+  singleVariableCorr_tab(sampleClassInputs(global$sample_classes, module_name), 
+                        names(appdata$clinical %>% dplyr::select(where(is.numeric))),
+                        module_config$advanced,
+                        module_name)
 }
 #' All genes correlation tab UI
 #'
 #' @param sample_select radio inputs for sample classes
 #' @param clinical_variables select input for clinical variables
+#' @param advanced  boolean flag to show or hide advanced options
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
@@ -22,24 +17,43 @@ mod_singleVariableCorr_ui <- function(id, appdata){
 #'
 singleVariableCorr_tab <- function(sample_select,
                                    clinical_variables,
+                                   advanced = TRUE,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = "Single Variable",
+    title = "Single variable",
     value = "singleVariableCorr",
     splitLayout(
-      verticalLayout(wellPanel(
-        sample_select,
-        selectizeInput(
-          ns("selected_variable"),
-          label = with_red_star("Select a clinical variable"),
-          choices = clinical_variables,
-          options = list(
-            dropdownParent = "body",
-            onInitialize = I("function(){this.setValue(''); }")
-          )
+      verticalLayout(
+        wellPanel(
+          sample_select,
+          selectizeInput(
+            ns("selected_variable"),
+            label = with_red_star("Select a clinical variable"),
+            choices = clinical_variables,
+            options = list(
+              dropdownParent = "body",
+              onInitialize = I("function(){this.setValue(''); }")
+            )
+          ),
+          if (advanced) {
+            tagList(
+              radioButtons(
+                ns("correlation_method"),
+                label = "Correlation method:",
+                choices = c(
+                  "Pearson" = "pearson",
+                  "Spearman" = "spearman",
+                  "Kendall" = "kendall"
+                ),
+                selected = "pearson"
+              ),
+              outlier_inputs(id)
+            )
+          } else
+            NULL
         )
-      )),
+      ),
       verticalLayout(
         conditionalPanel(
           paste0('input[\'', ns('selected_variable'), "\'] == ''"),
@@ -59,34 +73,51 @@ singleVariableCorr_tab <- function(sample_select,
 #' singleVariableCorr Server Function
 #'
 #' @noRd 
-mod_singleVariableCorr_server <- function(module_name, appdata) {
+mod_singleVariableCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns 
     
-    clinical <- appdata$data$clinical
-    expression_matrix <- appdata$data$expression_matrix
-    sample_lookup <- appdata$data$sample_lookup
-    subject_col <- appdata$config$subject_col
-    sample_col <- appdata$config$sample_col
+    clinical <- appdata$clinical
+    expression_matrix <- appdata$expression_matrix
+    sample_lookup <- appdata$sample_lookup
+    sample_classes <- global$sample_classes
+    subject_col <- global$subject_col
+    sample_col <- global$sample_col
+    
+    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
+                           "IQR" = valuesInsideTukeyFences,
+                           "No" = function(x) TRUE)
     
     correlation_table <- reactive({
       req(input$selected_variable)
       selected_variable <- input$selected_variable
-      list_of_values <- getSelectedSampleClasses(appdata$config$sample_classes,
+      clinical_outliers <- input$clinical_outliers
+      expression_outliers <- input$expression_outliers
+      correlation_method <- input$correlation_method %||% "spearman"
+      
+      list_of_values <- getSelectedSampleClasses(sample_classes,
                                                  input)
     # Return subset of lookup based on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
+      validate(need(nrow(selected_lookup) > 0, "No data for selected parameters."))
       selected_clinical <- selectFromLookup(clinical, selected_lookup,
                                             matching_col = subject_col,
                                             return_col = selected_variable)
-      selected_expression <- expression_matrix[, selected_lookup[[sample_col]]]
-
       validate(need(is.numeric(selected_clinical),
                     "Selected variable is not numeric"))
+      
+      # Apply outlier filters
+      selected_expression <- 
+        replaceFalseWithNA(na.omit(expression_matrix[, selected_lookup[[sample_col]]]),
+                           outlier_functions[[expression_outliers]])
+      selected_clinical <- 
+        replaceFalseWithNA(selected_clinical,
+                           outlier_functions[[clinical_outliers]])
+
       correlation_df <- correlateMatrices(t(selected_expression),
                                                   selected_clinical,
-                                                  method = "spearman")
-      names(correlation_df) <- c("Gene", "Estimate", "p value", "FDR")
+                                                  method = correlation_method)
+      names(correlation_df) <- c("Gene", "Estimate", "p value", "q value")
       correlation_df
     })
     
@@ -94,12 +125,13 @@ mod_singleVariableCorr_server <- function(module_name, appdata) {
       correlation_table()
     },
     caption = "Correlation between genes and selected variable",
-    filter = "top")
+    filter = "top",
+    rownames = FALSE)
     
     output$fulltable_download <- downloadHandler(
       filename = function() {
         list_of_values <-
-          getSelectedSampleClasses(appdata$config$sample_classes, input)
+          getSelectedSampleClasses(sample_classes, input)
         paste(c(list_of_values, "correlation_table"), collapse = "_") 
         },
       content = function(file) {

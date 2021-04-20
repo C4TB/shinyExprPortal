@@ -1,4 +1,7 @@
 singleVariableCorrConfig <- function(config, data_folder = "") { 
   message("Checking singleVariableCorr configuration")
-  as.logical(config)
+  if (is.null(config$advanced)) { 
+    config$advanced <- TRUE
+  }
+  config
 }

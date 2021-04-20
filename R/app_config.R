@@ -33,3 +33,16 @@ get_golem_config <- function(
   )
 }
 
+call_module <- function(module_name, type = c("server", "ui"), appdata, global, 
+                        module_config) {
+  type <- match.arg(type)
+  do.call(
+    paste("mod", module_name, type, sep = "_"),
+    list(
+      module_name = module_name,
+      appdata = appdata,
+      global = global,
+      module_config = module_config
+    )
+  )  
+}

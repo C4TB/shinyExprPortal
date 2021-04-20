@@ -1,7 +1,8 @@
 #' @import shiny
 #' @import ggplot2
+#' @import dplyr
 #' @importFrom magrittr %>%
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer pivot_wider
 NULL
 
 #' Run the Shiny Application
@@ -22,7 +23,7 @@ run_app <- function(
       ui = app_ui, 
       server = app_server
     ), 
-    golem_opts = list(appdata = parseConfig(config_file, data_folder), ...)
+    golem_opts = list(config = parseConfig(config_file, data_folder), ...)
   )
 }
 
@@ -39,6 +40,8 @@ run_app <- function(
 #' @param config_file The name of the yaml configuration file
 #' @param data_folder Optional directory prefix for data files
 #' @param ... 
+#' 
+#' @export
 #'
 #' @noRd
 #'
@@ -54,7 +57,7 @@ run_module <- function(
       server = dev_module_server,
     ), 
     golem_opts = list(module_name = module_name,
-                      appdata = parseConfig(config_file,
+                      config = parseConfig(config_file,
                                             data_folder,
                                             module_name),
                       ...)

@@ -4,12 +4,20 @@ default:
   app_prod: no
   available_modules:
   - cohortOverview
-  - degOverview
+  - degModules
+  - corrModules
   - singleGeneCorr
   - singleVariableCorr
   - geneModulesCorr
   - wholeDataCorr
   - compareTrajGroups
+  degModules:
+  - degSummary
+  - degOverview
+  corrModules:
+  - singleGeneCorr
+  - singleVariableCorr
+  - wholeDataCorr
 production:
   app_prod: yes
 dev:

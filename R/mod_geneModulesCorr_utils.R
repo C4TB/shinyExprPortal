@@ -39,7 +39,7 @@ computeModulesSummary <- function(module_medians, lookup,
     stats::aggregate(t(module_medians), by = agg_by,
               FUN = stats::median)
   median_across <- pivot_longer(agg_result,
-                                - dplyr::all_of(across_class),
+                                -all_of(across_class),
                                 names_to = "Modules",
                                 values_to = "Median_Expression")
   if (jitter_col)

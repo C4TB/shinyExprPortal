@@ -4,10 +4,10 @@
 \alias{degOverview_tab}
 \title{Differentially expressed genes tab UI}
 \usage{
-degOverview_tab(model_names, id = NULL)
+degOverview_tab(categories, id = NULL)
 }
 \arguments{
-\item{model_names}{list of model names}
+\item{categories}{model categories}
 
 \item{id}{optional module ID}
 }

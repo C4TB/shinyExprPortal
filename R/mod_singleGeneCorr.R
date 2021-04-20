@@ -1,18 +1,11 @@
-#' singleGeneCorr UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
-mod_singleGeneCorr_ui <- function(id, appdata) {
-  singleGeneCorr_tab(sampleClassInputs(appdata$config$sample_classes, id),
-                     geneSelectInput(rownames(appdata$data$expression), id),
-                     appdata$modules$singleGeneCorr$colour_variables,
-                     appdata$modules$singleGeneCorr$tabs,
-                     appdata$modules$singleGeneCorr$advanced,
-                     id)
+# singleGeneCorr UI Function
+mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
+  singleGeneCorr_tab(sampleClassInputs(global$sample_classes, module_name),
+                     geneSelectInput(NULL, module_name),
+                     module_config$colour_variables,
+                     module_config$tabs,
+                     module_config$advanced,
+                     module_name)
 }
 #' Single gene correlation tab UI
 #'
@@ -64,14 +57,7 @@ singleGeneCorr_tab <-
                                               "Spearman" = "spearman",
                                               "Kendall" = "kendall"),
                                   selected = "pearson"),
-                     radioButtons(ns("clinical_outliers"),
-                                 label = "Remove clinical outliers?",
-                                 choices = c("5/95 percentiles", "IQR", "No"),
-                                 selected = "No"),
-                     radioButtons(ns("expression_outliers"),
-                                 label = "Remove expression outliers?",
-                                 choices = c("5/95 percentiles", "IQR", "No"),
-                                 selected = "No"),
+                     outlier_inputs(id),
                      radioButtons(ns("fit_method"),
                                   label = "Fitting method:",
                                   choices = c("Linear" = "linear",
@@ -84,7 +70,8 @@ singleGeneCorr_tab <-
                 conditionalPanel(
                    paste0("output[\'", ns('error_message'), "\'] == true"),
                    #textOutput(ns("error_message"))
-                   tags$span("Transcript not found in subset",
+                   tags$span("Transcript not found in subset or
+                             subset combination does not exist.",
                              style = "color: gray")
                 ),
                 conditionalPanel(
@@ -92,7 +79,12 @@ singleGeneCorr_tab <-
                    tags$span("No gene selected", style = "color: gray")
                 ),
                 conditionalPanel(
-                   paste0("input[\'", ns('selected_gene'), "\'] != ''"),
+                   paste0("input[\'",
+                          ns('selected_gene'),
+                          "\'] != ''",
+                          "&& output[\'",
+                          ns('error_message'),
+                          "\'] == false"),
                    do.call(tabsetPanel, plotsTabPanels(outputs, ns))
                 )
              ),
@@ -104,24 +96,33 @@ singleGeneCorr_tab <-
 #' singleGeneCorr Server Function
 #'
 #' @noRd
-mod_singleGeneCorr_server <- function(module_name, appdata) {
+mod_singleGeneCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
    ns <- session$ns
 
-   clinical <- appdata$data$clinical
-   expression_matrix <- appdata$data$expression_matrix
-   sample_lookup <- appdata$data$sample_lookup
-   subject_col <- appdata$config$subject_col
-   sample_col <- appdata$config$sample_col
+   clinical <- appdata$clinical
+   expression_matrix <- appdata$expression_matrix
+   sample_lookup <- appdata$sample_lookup
    
-   module_config <- appdata$modules$singleGeneCorr
+   subject_col <- global$subject_col
+   sample_col <- global$sample_col
+   sample_classes <- global$sample_classes
+   
+   # Load genes server side
+   updateSelectizeInput(session,
+                        "selected_gene",
+                        choices = rownames(expression_matrix),
+                        selected = "",
+                        server = TRUE)
+   
+   #module_config <- appdata$modules$singleGeneCorr
 
    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                           "IQR" = valuesInsideTukeyFences,
                           "No" = function(x) TRUE)
    
    user_selection <- reactive({
-      getSelectedSampleClasses(appdata$config$sample_classes, input)
+      getSelectedSampleClasses(sample_classes, input)
    })
    
    # selected_expression <- reactive({
@@ -140,7 +141,7 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
      expression_outliers <- input$expression_outliers
      correlation_method <- input$correlation_method %||% "spearman"
      fit_method <- input$fit_method
-
+     
      list_of_values <- user_selection()
      # Return subset of lookup based on the user selection of sample classes
      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
@@ -148,14 +149,16 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
                                          matching_col = subject_col)
      selected_expression <- expression_matrix[selected_gene,
                                               selected_lookup[[sample_col]]]
-     if (all(is.na(selected_expression))) {
+     if (all(is.na(selected_expression)) | length(selected_expression) == 0) {
         output$error_message <- reactive({ TRUE })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
+     } else {
+        output$error_message <- reactive({ FALSE })
+        outputOptions(output, "error_message", suspendWhenHidden = FALSE)
      }
-     
-     req(all(not_na(selected_expression)))  
+     req(all(not_na(selected_expression)) & (length(selected_expression) > 0))  
      tab_output_list <- module_config$tabs
-
+     
      # We go through the list of outputs defined in the configuration file
      # as they were also used to create pairs of tabPanel-plotOutput
      # Local scope is required otherwise the last tab_output will override 
@@ -166,6 +169,8 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
          output_name <- tab_output$name
          output_scale <- tab_output$scale
          output_vars <- unique(tab_output$variables)
+         
+         # If a colour variable was provided AND it's not in subset yet, add it
          if (not_null(colour_var)) {
            if (!colour_var %in% output_vars) {
             subset_vars <- c(output_vars, colour_var)
@@ -206,16 +211,16 @@ mod_singleGeneCorr_server <- function(module_name, appdata) {
             if (length(output_vars) < 4) length(output_vars)*200 else 800 
             }
          output[[output_name]] <- renderPlot({ 
-           plotClinExpScatterplot(combined_df,
+           scatterplot <- plotClinExpScatterplot(combined_df,
                                   x = "Value",
                                   y = "Expression",
                                   facet_var = "ClinicalVariable",
-                                  correlation_df = corr_df,
                                   scales = output_scale,
-                                  fit_method = fit_method,
-                                  correlation_method = correlation_method,
                                   gene_name = input$selected_gene,
                                   ncol = 4, colour_variable = colour_var)
+          scatterplot + 
+             ggAnnotateCorr(corr_df, correlation_method) +
+             ggAddFit(fit_method)
          }, width = plotWidth , height = plotHeight)
        })
      }

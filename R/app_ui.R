@@ -4,8 +4,13 @@
 #'     DO NOT REMOVE.
 #' @noRd
 app_ui <- function(request) {
-  appdata <- golem::get_golem_options("appdata")
-  modules_to_include <- Filter(Negate(is.null), appdata$modules)
+  config <- golem::get_golem_options("config")
+  modules_to_include <- Filter(Negate(is.null), config$modules)
+  
+  about_tab <- tabPanel("About",
+                        value = "about",
+                        fluidPage(htmlOutput("about_info")))
+  
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
@@ -16,20 +21,20 @@ app_ui <- function(request) {
         )
       ),
     # Need to use do.call to pass list of tabPanels to navbarPage
-    do.call(navbarPage, c(
-      title = list(appdata$logo),
-      append(list(tabPanel("About", value = "about",
-               fluidPage(htmlOutput("about_info")))),
-    # Cycle through the modules that were identified in the configuration file
-    # And call the corresponding UI function
-     lapply(seq_along(modules_to_include), function(i, modules, appdata) {
-        module_name <- names(modules)[[i]]
-        do.call(paste("mod", module_name, "ui", sep = "_"),
-                list(id = module_name, appdata = appdata))
-      }, modules = modules_to_include, appdata = appdata)
-      )
-    )
-    )
+    do.call(navbarPage,
+            c(title = list(config$logo),
+              append(
+                list(about_tab),
+            # Cycle through the modules that were identified in the configuration file
+            # And call the corresponding UI function
+                lapply(names(modules_to_include), function(module_name) {
+                  call_module(module_name,
+                              "ui",
+                              config$data,
+                              config$global,
+                              modules_to_include[[module_name]])
+                })
+              )))
   )
 }
 
@@ -61,7 +66,7 @@ golem_add_external_resources <- function(){
 
 dev_module_ui <- function(request) {
   module_name <- golem::get_golem_options("module_name")
-  appdata <- golem::get_golem_options("appdata")
+  config <- golem::get_golem_options("config")
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
@@ -71,9 +76,12 @@ dev_module_ui <- function(request) {
         tags$link(rel = "stylesheet", type = "text/css", href = "style.css"))
     ),
     # Need to use do.call to pass list of tabPanels to navbarPage
-    navbarPage(title = appdata$name,
-               do.call(paste("mod", module_name, "ui", sep = "_"),
-                       list(id = module_name, appdata = appdata))
+    navbarPage(title = config$name,
+               call_module(module_name,
+                           "ui",
+                           config$data,
+                           config$global,
+                           config$modules[[module_name]])
     )
   )
 }

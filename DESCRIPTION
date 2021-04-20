@@ -37,4 +37,5 @@ Suggests:
     DT,
     stringr,
     splines,
+    kableExtra
 VignetteBuilder: knitr
