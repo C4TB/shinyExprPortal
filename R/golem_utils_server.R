@@ -81,3 +81,17 @@ flattenlist <- function(x){
     return(out)
   }
 }
+
+buildURL <- function(keys, values, prefix = NULL) {
+  params <- paste0(keys, "=", values)
+  url_params <- stringr::str_c(params, collapse = "&") 
+  if (not_null(prefix)) {
+    URLencode(paste0(prefix, "&", url_params))
+  } else {
+    URLencode(url_params)
+  }
+}
+
+appendToURL <- function(url, key, value) {
+  URLencode(paste0(url, "&", key, "=", value))
+}

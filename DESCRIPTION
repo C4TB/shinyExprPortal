@@ -22,7 +22,8 @@ Imports:
     tools,
     matrixStats,
     bsplus,
-    htmlwidgets
+    htmlwidgets,
+    stringr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
@@ -35,7 +36,6 @@ Suggests:
     plotly,
     r2d3,
     DT,
-    stringr,
     splines,
     kableExtra
 VignetteBuilder: knitr

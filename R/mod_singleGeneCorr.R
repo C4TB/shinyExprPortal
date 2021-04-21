@@ -114,9 +114,27 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
                         choices = rownames(expression_matrix),
                         selected = "",
                         server = TRUE)
+   # UI updates from URL
+   observeEvent(session$userData$singleGeneCorr, {
+      params <- session$userData$singleGeneCorr
+      for (sample_class in global$sample_classes) {
+         sc_name <- sample_class$name
+         if (not_null(params[[sc_name]])) {
+            updateSelectizeInput(session,
+                                 sc_name,
+                                 selected = params[[sc_name]])
+         }
+      }
+      if (not_null(params$gene)) {
+         message(params$gene)
+         updateSelectizeInput(session,
+                              "selected_gene",
+                              choices = rownames(expression_matrix),
+                              selected = params$gene,
+                              server = TRUE)
+      }
+   })
    
-   #module_config <- appdata$modules$singleGeneCorr
-
    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                           "IQR" = valuesInsideTukeyFences,
                           "No" = function(x) TRUE)

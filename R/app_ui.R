@@ -23,6 +23,7 @@ app_ui <- function(request) {
     # Need to use do.call to pass list of tabPanels to navbarPage
     do.call(navbarPage,
             c(title = list(config$logo),
+              id = "tabSelect",
               append(
                 list(about_tab),
             # Cycle through the modules that were identified in the configuration file

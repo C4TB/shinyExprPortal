@@ -7,6 +7,16 @@ app_server <- function(input, output, session) {
   # List the first level callModules here
   config <- golem::get_golem_options("config")
   modules_to_include <- Filter(Negate(is.null), config$modules)
+
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    if (not_null(query[["tab"]])) {
+      tab <- query[["tab"]]
+      updateNavbarPage(session, inputId = "tabSelect", selected = tab)
+      session$userData[[tab]] <- query
+    }
+  })
+  
   for (module_name in names(modules_to_include)) {
     call_module(module_name,
                 "server",
@@ -14,6 +24,7 @@ app_server <- function(input, output, session) {
                 config$global,
                 modules_to_include[[module_name]])
   }
+  
   output$about_info <- renderUI({ 
     if (is.null(config$about)) {
       p("clinvisx exploration tool")

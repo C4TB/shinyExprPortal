@@ -32,6 +32,14 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
       # We don't need the actual data or file names here
       models_only <- models %>% dplyr::select(-Data, -File)
       
+      # url_cols <- sapply(global$sample_classes, function(x) x$name)
+      # models_only$pSignif <- apply(models_only, 1, function(row) {
+      #   as.character(a(href = buildURL(url_cols, row[url_cols], "/?tab=singleGeneCorr"), row["pSignif"]) )
+      # })
+      # models_only$qSignif <- apply(models_only, 1, function(row) {
+      #   as.character(a(href = buildURL(url_cols, row[url_cols], "/?tab=singleGeneCorr"), row["qSignif"]) )
+      # })
+      
       # By default pivot_wider will order by the values_from
       # We use relocate to rearrange only the pivoted columns
       model_wide <- models_only %>%
@@ -42,6 +50,7 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
       model_wide %>% 
         knitr::kable(align = "r",
                      "html",
+                     escape = "F",
                      col.names = c(model_cols,
                                    gsub(".*_(.*)", "\\1", header_cols))
                        ) %>%

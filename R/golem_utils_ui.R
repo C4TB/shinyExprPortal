@@ -273,6 +273,13 @@ col_1 <- function(...){
   column(1, ...)
 }
 
+itemURL <- function(content, href) {
+  tags$li(tags$a(
+    href = href,
+    content
+  ))
+}
+
 # UNCOMMENT AND USE 
 # 
 # usethis::use_package("markdown")
