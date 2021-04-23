@@ -88,6 +88,11 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
                            "IQR" = valuesInsideTukeyFences,
                            "No" = function(x) TRUE)
     
+    
+    user_selection <- reactive({
+      getSelectedSampleClasses(sample_classes, input)
+    })
+    
     correlation_table <- reactive({
       req(input$selected_variable)
       selected_variable <- input$selected_variable
@@ -95,8 +100,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
       expression_outliers <- input$expression_outliers
       correlation_method <- input$correlation_method %||% "spearman"
       
-      list_of_values <- getSelectedSampleClasses(sample_classes,
-                                                 input)
+      list_of_values <- user_selection()
     # Return subset of lookup based on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
       validate(need(nrow(selected_lookup) > 0, "No data for selected parameters."))
@@ -118,6 +122,11 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
                                                   selected_clinical,
                                                   method = correlation_method)
       names(correlation_df) <- c("Gene", "Estimate", "p value", "q value")
+      baseURL <- buildURL(list_of_values, "?tab=singleGeneCorr")
+      correlation_df$Gene <- sapply(correlation_df$Gene,
+                  function(x) paste0('<a href="',
+                                     appendToURL(baseURL, "gene", x),
+                                     '">',x,'</a>'), simplify = FALSE)
       correlation_df
     })
     

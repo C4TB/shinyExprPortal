@@ -126,7 +126,6 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
          }
       }
       if (not_null(params$gene)) {
-         message(params$gene)
          updateSelectizeInput(session,
                               "selected_gene",
                               choices = rownames(expression_matrix),
@@ -142,10 +141,6 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
    user_selection <- reactive({
       getSelectedSampleClasses(sample_classes, input)
    })
-   
-   # selected_expression <- reactive({
-   #    
-   # })
    
    observe({
      req(input$selected_gene)

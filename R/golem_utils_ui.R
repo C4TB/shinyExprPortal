@@ -280,6 +280,20 @@ itemURL <- function(content, href) {
   ))
 }
 
+characterURL <- function(content, href) { 
+  as.character(tags$a(
+    href = href,
+    content
+  ))
+}
+
+characterURLsub <- function(href) { 
+  as.character(tags$a(
+    href = href,
+    sub(".*\\=", "", href)
+  ))
+}
+
 # UNCOMMENT AND USE 
 # 
 # usethis::use_package("markdown")

@@ -63,7 +63,7 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
         #                        index = setNames(rle(model_wide$Tissue)[[1]], 
         #                                         rle(model_wide$Tissue)[[2]])) %>%
         kableExtra::collapse_rows(valign = "top",
-                                  columns = seq_along(model_cols)) %>%
+                                  columns = seq_along(model_cols[-length(model_cols)])) %>%
         kableExtra::add_header_above(c(" " = length(model_cols),
                                        header_spec))
 

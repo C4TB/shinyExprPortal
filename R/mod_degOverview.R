@@ -26,7 +26,7 @@ degOverview_tab <- function(categories, id = NULL) {
                  choices = categories,
                  selected = categories[[1]]
                ),
-               #uiOutput(ns("model_controls")),
+               # uiOutput(ns("selected_model")),
                radioButtons(
                  ns("selected_model"),
                  label = "Select model:",
@@ -56,10 +56,10 @@ degOverview_tab <- function(categories, id = NULL) {
                )
              )),
              bsplus::bs_accordion("deg_results") %>%
-               bsplus::bs_append(title = "Overview plot",
+               bsplus::bs_append(title = "Plot and list of genes",
                          content = splitLayout(
                                     style = "font-size: 75%;",
-                                    plotOutput(ns("volcanoplot"),
+                                    plotOutput(ns("results_plot"),
                                         width = "700px",
                                         height = "500px"),
                                     tags$div(uiOutput(ns("genelist")),
@@ -86,6 +86,8 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
                      c("pSignif", "qSignif", "File", "Data"))
     table_subset <- dplyr::select(models, -exc_columns)
     
+    model_update <- reactiveVal(FALSE)
+    
     observeEvent(input$model_category, { 
       selected_category_models <- models[
         models[, category_variable] == input$model_category, ] %>%
@@ -99,13 +101,14 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
       # output$model_controls <- renderUI({
         #tagList(taglist_args)
       # })
+      model_update(TRUE)
       updateRadioButtons(
         session,
         "selected_model",
         choiceNames = do.call(paste, c(selected_category_models)),
         choiceValues = do.call(paste, c(selected_category_models, sep = "_"))
       )
-                  
+
     })
     
     # selected_model_cond <- reactive({
@@ -116,11 +119,18 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
     #   input_values[[category_variable]] <- input$model_category
     #   input_values
     # })
-    condition_list <- reactive({
-      req(input$selected_model)
-      condition <- setNames(unlist(strsplit(input$selected_model, "_")),
-                            colnames(table_subset))
-      condition[[category_variable]] <- input$model_category
+    
+    observeEvent(input$selected_model, {
+      model_update(TRUE)
+    })
+
+    condition_list <- eventReactive(c(model_update(), input$selected_model), {
+      model_update(FALSE)
+      isolate({
+        condition <- setNames(unlist(strsplit(input$selected_model, "_")),
+                              colnames(table_subset))
+        condition[[category_variable]] <- input$model_category
+      })
       condition
     })
     
@@ -133,6 +143,7 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
       }
       selected_model <- Reduce(
         function(x,y) inner_join(x, y, by = colnames(x)), model_res)
+      req(nrow(selected_model) > 0)
       selected_model$Data[[1]]
     })
     
@@ -144,9 +155,11 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
     vp_table <- reactive({
       table <- model_results()
       pvalue_label <- pvalue_labels[input$pvalue_adjusted]
+      # Compute p-value significance
       table$pvalue_signif <-
         as.numeric(
-          table[[input$pvalue_adjusted]] < 10 ^ (-input$pvalue_threshold))
+          table[[input$pvalue_adjusted]] < 10 ^ (-input$pvalue_threshold)
+          )
       if ("logFC" %in% colnames(table)) {
         table$fc_signif <-
           as.numeric(abs(table$logFC) > abs(input$fc_threshold))
@@ -155,43 +168,41 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
         table$signif <-2 * table$pvalue_signif  
       }
       table$color <- sprintf(as.character(signif_labels[table$signif+1]), pvalue_label)
+      # Apply log transformation to p and q value
       table$p.value <- -log10(table$p.value)
       table$q.value <- -log10(table$q.value)
       table
     })
 
-    output$volcanoplot <- renderPlot({
+    output$results_plot <- renderPlot({
       table <- vp_table()
-      
       gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
-        
       if ("logFC" %in% colnames(table)) {
-        #max_x_data <- max(abs(min(table$logFC)), max(table$logFC))
         gg_volcano_plot(table,
                         input$fc_threshold,
                         input$pvalue_threshold,
                         input$pvalue_adjusted,
                         gene_column)
       } else {
-        #max_x_data <- max(abs(min(table$AvgExpr)), max(table$AvgExpr))
         gg_avgexpr_plot(table,
                         input$pvalue_threshold,
                         input$pvalue_adjusted,
                         gene_column)
       }
-
     })
 
     current_URL <- reactive({
       conditions <- condition_list()
+      # Last condition is the model name/category so we remove it
       conditions <- conditions[-length(conditions)]
-      buildURL(names(conditions), conditions, "/?tab=singleGeneCorr")
+      buildURL(conditions, "/?tab=singleGeneCorr")
     })
     
     gene_as_itemURL <- function(row, gene_column) {
       itemURL(row[gene_column],
-              appendToURL(isolate({current_URL()}),
-                          "gene", row[gene_column]))
+              appendToURL(isolate({ current_URL() }),
+                          "gene",
+                          row[gene_column]))
     }
     
     output$genelist <- renderUI({
