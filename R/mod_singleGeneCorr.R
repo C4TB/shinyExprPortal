@@ -96,7 +96,10 @@ singleGeneCorr_tab <-
 #' singleGeneCorr Server Function
 #'
 #' @noRd
-mod_singleGeneCorr_server <- function(module_name, appdata, global, module_config) {
+mod_singleGeneCorr_server <-function(module_name,
+                                     appdata,
+                                     global,
+                                     module_config) {
   moduleServer(module_name, function(input, output, session) {
    ns <- session$ns
 
@@ -205,10 +208,12 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
          corr_df <- correlateMatrices(x = combined_df[, output_vars],
                                       y = combined_df$Expression,
                                       method = correlation_method)
-         
+   
 # By default the first column returned by function above is named "variable"
 # We need to match it with the data frame below for the plotting function
          colnames(corr_df)[1] <- "ClinicalVariable"
+         corr_df[["ClinicalVariable"]] <- factor(corr_df[["ClinicalVariable"]],
+                                                 levels = output_vars)
          
          if (not_null(colour_var)) {
            combined_df <- combined_df %>%
@@ -219,6 +224,9 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
              pivot_longer(c(-.data$Expression),
                           names_to = "ClinicalVariable", values_to = "Value")
          }
+         
+         combined_df[["ClinicalVariable"]] <-
+            factor(combined_df[["ClinicalVariable"]], levels = output_vars)
          plotHeight <- ((length(output_vars) %/% 5) + 1) * 200
          plotWidth <- { 
             if (length(output_vars) < 4) length(output_vars)*200 else 800 
