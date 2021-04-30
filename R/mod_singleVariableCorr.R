@@ -17,7 +17,7 @@ mod_singleVariableCorr_ui <- function(module_name, appdata, global, module_confi
 #'
 singleVariableCorr_tab <- function(sample_select,
                                    clinical_variables,
-                                   advanced = TRUE,
+                                   advanced = NULL,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
@@ -36,22 +36,7 @@ singleVariableCorr_tab <- function(sample_select,
               onInitialize = I("function(){this.setValue(''); }")
             )
           ),
-          if (advanced) {
-            tagList(
-              radioButtons(
-                ns("correlation_method"),
-                label = "Correlation method:",
-                choices = c(
-                  "Pearson" = "pearson",
-                  "Spearman" = "spearman",
-                  "Kendall" = "kendall"
-                ),
-                selected = "pearson"
-              ),
-              outlier_inputs(id)
-            )
-          } else
-            NULL
+          advanced_settings_inputs(advanced, id)
         )
       ),
       verticalLayout(
@@ -96,9 +81,9 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
     correlation_table <- reactive({
       req(input$selected_variable)
       selected_variable <- input$selected_variable
-      clinical_outliers <- input$clinical_outliers
-      expression_outliers <- input$expression_outliers
-      correlation_method <- input$correlation_method %||% "spearman"
+      clinical_outliers <- input$clinical_outliers %||% "No"
+      expression_outliers <- input$expression_outliers %||% "No"
+      correlation_method <- input$correlation_method %||% "pearson"
       
       list_of_values <- user_selection()
     # Return subset of lookup based on the user selection of sample classes

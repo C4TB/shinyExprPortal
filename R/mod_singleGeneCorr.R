@@ -33,7 +33,7 @@ singleGeneCorr_tab <-
             gene_select,
             colours,
             outputs,
-            advanced = TRUE,
+            advanced = NULL,
             id = NULL) {
 
   ns <- NS(id)
@@ -49,27 +49,12 @@ singleGeneCorr_tab <-
                  choices = c("None" = "", colours),
                  options = list(allowEmptyOption = TRUE)
                ),
-               if (advanced) {
-                  tagList(
-                     radioButtons(ns("correlation_method"),
-                                  label = "Correlation method:",
-                                  choices = c("Pearson" = "pearson",
-                                              "Spearman" = "spearman",
-                                              "Kendall" = "kendall"),
-                                  selected = "pearson"),
-                     outlier_inputs(id),
-                     radioButtons(ns("fit_method"),
-                                  label = "Fitting method:",
-                                  choices = c("Linear" = "linear",
-                                              "Cubic" = "cubic"))
-                     )
-               } else NULL
+               advanced_settings_inputs(advanced, id)
                )
              ),
              verticalLayout(
                 conditionalPanel(
                    paste0("output[\'", ns('error_message'), "\'] == true"),
-                   #textOutput(ns("error_message"))
                    tags$span("Transcript not found in subset or
                              subset combination does not exist.",
                              style = "color: gray")
@@ -153,10 +138,10 @@ mod_singleGeneCorr_server <-function(module_name,
        colour_var <- NULL
      }
      selected_gene <- input$selected_gene
-     clinical_outliers <- input$clinical_outliers
-     expression_outliers <- input$expression_outliers
-     correlation_method <- input$correlation_method %||% "spearman"
-     fit_method <- input$fit_method
+     clinical_outliers <- input$clinical_outliers %||% "No"
+     expression_outliers <- input$expression_outliers %||% "No"
+     correlation_method <- input$correlation_method %||% "pearson"
+     fit_method <- input$fit_method %||% "linear"
      
      list_of_values <- user_selection()
      # Return subset of lookup based on the user selection of sample classes

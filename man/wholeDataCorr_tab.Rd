@@ -4,7 +4,12 @@
 \alias{wholeDataCorr_tab}
 \title{Title}
 \usage{
-wholeDataCorr_tab(sample_select, clinical_variables, advanced, id = NULL)
+wholeDataCorr_tab(
+  sample_select,
+  clinical_variables,
+  advanced = NULL,
+  id = NULL
+)
 }
 \arguments{
 \item{sample_select}{a}

@@ -9,7 +9,7 @@ singleGeneCorr_tab(
   gene_select,
   colours,
   outputs,
-  advanced = TRUE,
+  advanced = NULL,
   id = NULL
 )
 }

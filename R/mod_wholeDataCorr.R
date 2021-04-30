@@ -19,8 +19,10 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @export
 #'
 #' @importFrom shinycssloaders withSpinner
-wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
-                                      id = NULL) {
+wholeDataCorr_tab <- function(sample_select,
+                              clinical_variables,
+                              advanced = NULL,
+                              id = NULL) {
   ns <- NS(id)
   tabPanel(title = "Whole data", value = "wholeDataCorr",
            splitLayout(
@@ -36,34 +38,24 @@ wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
                                     'function(){this.setValue("");}'))
                  ),
                  numericInput(ns("min_pvalue"),
-                                 label = "P-value (-log10) label threshold: ",
+                                 label = "Minimum p-value for label: ",
                                  min = 0.0,
-                                 max = 50,
-                                 value = 2,
-                                 step = 1,
+                                 max = 0.2,
+                                 value = 0.05,
+                                 step = 0.01,
                                  #dragRange = FALSE,
                                  width = "150px"
                  ),
                  numericInput(ns("min_corr"),
-                             label = "Correlation label threshold:",
+                             label = "Minimum correlation for label:",
                              min = 0,
                              max = 1,
-                             value = 0,
+                             value = 0.25,
                              step = 0.05,
                              #dragRange = FALSE,
                              width = "150px"
                  ),
-                 if (advanced) { 
-                   tagList(
-                     radioButtons(ns("correlation_method"),
-                                  label = "Correlation method:",
-                                  choices = c("Pearson"= "pearson",
-                                              "Spearman" = "spearman",
-                                              "Kendall"= "kendall"),
-                                  selected = "pearson"),
-                     outlier_inputs(id)
-                   )
-                 } else NULL
+                 advanced_settings_inputs(advanced, id)
                )
              ),
              verticalLayout(
@@ -110,8 +102,8 @@ mod_wholeDataCorr_server <- function(module_name,
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
-      clinical_outliers <- input$clinical_outliers
-      expression_outliers <- input$expression_outliers
+      clinical_outliers <- input$clinical_outliers %||% "No"
+      expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "spearman"
       
       list_of_values <- getSelectedSampleClasses(sample_classes, input)
@@ -158,7 +150,7 @@ mod_wholeDataCorr_server <- function(module_name,
     
     output$heatmap <- renderPlot({ 
       hm <- heatmap_data()
-      plotCorrelationHeatmap(hm, input$min_pvalue, input$min_corr)
+      plotCorrelationHeatmap(hm, -log10(input$min_pvalue), input$min_corr)
       
     })
     

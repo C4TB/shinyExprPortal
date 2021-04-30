@@ -7,7 +7,7 @@
 singleVariableCorr_tab(
   sample_select,
   clinical_variables,
-  advanced = TRUE,
+  advanced = NULL,
   id = NULL
 )
 }

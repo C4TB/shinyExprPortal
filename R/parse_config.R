@@ -212,3 +212,17 @@ loadModels <- function(models_file, data_folder = "") {
                                  function(x) nrow(x[which(x$q.value < 0.05), ]))
   models_table
 }
+
+validateAdvancedSettings <- function(config, module_title = "") { 
+  valid_settings <-
+    c("clinical_outliers",
+      "expression_outliers",
+      "correlation_method",
+      "fit_method")
+  diff_advanced <- setdiff(names(config), valid_settings)
+  if (length(diff_advanced) > 0) {
+    stop(module_title, ": invalid advanced setting: \n\t",
+         diff_advanced,
+         "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
+  }
+}

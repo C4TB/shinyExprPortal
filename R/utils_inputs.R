@@ -1,3 +1,38 @@
+advanced_settings_inputs <- function(config, id = NULL) {
+  ns <- NS(id)
+  to_include <- list(
+    if (isTruthy(config$clinical_outliers)) { 
+      
+      radioButtons(ns("clinical_outliers"),
+                   label = "Remove clinical outliers?",
+                   choices = c("5/95 percentiles", "IQR", "No"),
+                   selected = "No")
+    } else NULL,
+    if (isTruthy(config$expression_outliers)) {
+      radioButtons(ns("expression_outliers"),
+                   label = "Remove expression outliers?",
+                   choices = c("5/95 percentiles", "IQR", "No"),
+                   selected = "No")
+    } else NULL,
+    if (isTruthy(config$correlation_method)) {
+      radioButtons(ns("correlation_method"),
+                   label = "Correlation method:",
+                   choices = c("Pearson" = "pearson",
+                               "Spearman" = "spearman",
+                               "Kendall" = "kendall"),
+                   selected = "pearson")
+    } else NULL,
+    if (isTruthy(config$fit_method)) {
+      radioButtons(ns("fit_method"),
+                   label = "Fitting method:",
+                   choices = c("Linear" = "linear",
+                               "Cubic" = "cubic"))
+    }
+  )
+  do.call(tagList, list(to_include))
+}
+
+
 outlier_inputs <- function(id) {
   ns <- NS(id)
   tagList(
