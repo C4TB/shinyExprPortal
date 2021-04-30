@@ -27,23 +27,33 @@ app_server <- function(input, output, session) {
   
   output$icon_menu <- renderUI({
     req(config$menu)
-    actionButtonList <- lapply(names(modules_to_include), function(module_name) {
+    actionButtonList <- lapply(config$menu, function(module_name) {
       local_image <- file_path(config$data_folder, "www", paste0(module_name, ".png"))
       if (file.exists(local_image)) {
         image_name <- file_path("local", paste0(module_name, ".png"))
       } else {
-        image_name <- paste0(module_name, ".png")
+        image_name <- file_path("www", paste0(module_name, ".png"))
       }
-      button_style <- paste0("width: 80px;
-                      height: 80px;
-                      background: url('", image_name ,"');
-                      background-size: cover;
-                      background-position: center;")
-      actionButton(paste0("goto_", module_name),
-                   label = NULL,
-                   style = button_style)
+      # button_style <- paste0("width: 250px;
+      #                 height: 250px;
+      #                 background: url('", image_name ,"');
+      #                 background-size: cover;
+      #                 background-position: center;")
+      img_style <- "cursor: pointer;
+                    height: 250px;
+                    width: 250px"
+      img(id = module_name, class = "iconclick", src = image_name, style = img_style)
+      # actionButton(paste0("goto_", module_name),
+      #              label = NULL,
+      #              style = button_style)
     })
-    do.call(flowLayout, list(width = "800px", actionButtonList))
+    actionButtonList$width <- "1000px"
+    actionButtonList$cellArgs <- list(style = "padding-right: unset; width: unset")
+    do.call(flowLayout, actionButtonList)
+  })
+  
+  observeEvent(input$iconclick, {
+    updateNavbarPage(session, inputId = "tabSelect", selected = input$iconclick)
   })
   
   output$about_info <- renderUI({ 

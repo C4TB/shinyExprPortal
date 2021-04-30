@@ -14,7 +14,9 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   available_modules <- get_golem_config("available_modules")
   appdata <- list()
   golem::add_resource_path(prefix = "local", directoryPath = file_path(data_folder, "www"))
-  appdata$data_folder <- data_folder
+  appdata[["data_folder"]] <- data_folder
+  appdata[["bootstrap"]] <- config$bootstrap %||% list(version = 4, bootswatch = "default")
+  print(config$bootstrap)
   appdata[["name"]] <- config$name %||% "clinvisx"
   if (not_null(config$logo))
   if (file.exists(file_path(data_folder, "www", config$logo))) {
@@ -22,15 +24,16 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
         img(
           src = file_path("local", config$logo),
           style = "height: 60px;
-                  margin-top: -14px;
-                  padding-right:10px;
-                  padding-bottom:10px",
+                
+                  padding-right:10px;",
+                  #  margin-top: -14px;
+                #  padding-bottom:10px",
           title = appdata[["name"]]
         )
   } else {
     stop("Logo image not found")
   }
-  
+  appdata[["menu"]] <- config$menu %||% NULL
   appdata[["about"]] <- config$about %||% NULL
   if (is.null(config$about)) {
     appdata[["about"]] <- NULL

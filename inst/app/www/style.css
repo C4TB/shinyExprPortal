@@ -22,8 +22,10 @@ body {
 /* Remove margin of a row element to avoid scroling 
       when verticallayout is inside a splitlayout*/
 .row { 
-  
   margin-right: inherit;
   margin-left: inherit;
-  
+}
+
+.iconclick:hover {
+  border: #337ab7 1px solid;
 }
