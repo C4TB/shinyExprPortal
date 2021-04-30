@@ -9,7 +9,8 @@ app_ui <- function(request) {
   
   about_tab <- tabPanel("About",
                         value = "about",
-                        fluidPage(htmlOutput("about_info")))
+                        fluidPage(uiOutput("icon_menu"),
+                                  htmlOutput("about_info")))
   
   tagList(
     # Leave this function for adding external resources

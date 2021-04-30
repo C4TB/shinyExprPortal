@@ -25,6 +25,27 @@ app_server <- function(input, output, session) {
                 modules_to_include[[module_name]])
   }
   
+  output$icon_menu <- renderUI({
+    req(config$menu)
+    actionButtonList <- lapply(names(modules_to_include), function(module_name) {
+      local_image <- file_path(config$data_folder, "www", paste0(module_name, ".png"))
+      if (file.exists(local_image)) {
+        image_name <- file_path("local", paste0(module_name, ".png"))
+      } else {
+        image_name <- paste0(module_name, ".png")
+      }
+      button_style <- paste0("width: 80px;
+                      height: 80px;
+                      background: url('", image_name ,"');
+                      background-size: cover;
+                      background-position: center;")
+      actionButton(paste0("goto_", module_name),
+                   label = NULL,
+                   style = button_style)
+    })
+    do.call(flowLayout, list(width = "800px", actionButtonList))
+  })
+  
   output$about_info <- renderUI({ 
     if (is.null(config$about)) {
       p("clinvisx exploration tool")

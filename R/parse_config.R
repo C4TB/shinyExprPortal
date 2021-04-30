@@ -10,10 +10,11 @@
 parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   message(paste("Reading configuration file", fname))
   config <- yaml::read_yaml(fname)
+  
   available_modules <- get_golem_config("available_modules")
   appdata <- list()
   golem::add_resource_path(prefix = "local", directoryPath = file_path(data_folder, "www"))
-  
+  appdata$data_folder <- data_folder
   appdata[["name"]] <- config$name %||% "clinvisx"
   if (not_null(config$logo))
   if (file.exists(file_path(data_folder, "www", config$logo))) {
