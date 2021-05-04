@@ -39,10 +39,10 @@ app_server <- function(input, output, session) {
       #                 background: url('", image_name ,"');
       #                 background-size: cover;
       #                 background-position: center;")
-      img_style <- "cursor: pointer;
-                    height: 250px;
-                    width: 250px"
-      img(id = module_name, class = "iconclick", src = image_name, style = img_style)
+      # img_style <- "cursor: pointer;
+      #               height: 250px;
+      #               width: 250px"
+      img(id = module_name, class = "iconclick", src = image_name)
       # actionButton(paste0("goto_", module_name),
       #              label = NULL,
       #              style = button_style)
@@ -58,11 +58,13 @@ app_server <- function(input, output, session) {
   
   output$about_info <- renderUI({ 
     if (is.null(config$about)) {
-      p("clinvisx exploration tool")
+      p("Welcome to clinvisx exploration tool. This is a placeholder 
+      introduction when the 'about' file has not been defined. The tool supports
+      text, HTML and markdown files. Create one in your application folder and 
+      point to it in your configuration file using 'about: file_name.ext'.
+  ")
    } else {
       ext <- tools::file_ext(config$about)
-      if (!file.exists(config$about)) 
-       stop("about file not found")
       switch(ext,
              txt = includeText(config$about),
              html = includeHTML(config$about),

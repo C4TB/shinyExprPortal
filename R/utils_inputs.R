@@ -101,6 +101,6 @@ sampleClassInputs <- function(sample_classes, id = NULL, match_name = NULL) {
   }
   do.call(tagList,
           lapply(sample_classes, function(sc, ns)
-            radioButtons(ns(sc$name), sc$label, sc$values), ns = ns)
+            radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values), ns = ns)
   )
 }
