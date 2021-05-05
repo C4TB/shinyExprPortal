@@ -12,11 +12,12 @@ mod_degOverview_ui <- function(module_name, appdata, global, module_config) {
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
-#' @export
+#' @noRd
 #'
 degOverview_tab <- function(categories, id = NULL) {
   ns <- NS(id)
   tabPanel("Model results", value= "degOverview", 
+           tags$h5("Individual model results"),
            splitLayout(
              verticalLayout(
                wellPanel(
@@ -61,7 +62,8 @@ degOverview_tab <- function(categories, id = NULL) {
                                     style = "font-size: 75%;",
                                     plotOutput(ns("results_plot"),
                                         width = "700px",
-                                        height = "500px"),
+                                        height = "500px") %>%
+                                      withSpinner(),
                                     tags$div(uiOutput(ns("genelist")),
                                              style = "max-height: 500px"),
                                     cellWidths = c(700, 200)

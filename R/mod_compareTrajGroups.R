@@ -6,18 +6,33 @@ mod_compareTrajGroups_ui <- function(module_name, appdata, global, module_config
       module_name,
       module_config$subset_classes
     ),
+    varsSelectInput(module_config$compare_col, module_name, FALSE),
     geneSelectInput(NULL, module_name),
+    module_config$title,
+    module_config$advanced,
     module_name)
 }
 
-compareTrajGroups_tab <- function(sample_select, gene_select, id = NULL) {
+compareTrajGroups_tab <-
+  function(sample_select,
+           vars_select,
+           gene_select,
+           title = NULL,
+           advanced = NULL,
+           id = NULL
+  ) {
   ns <- NS(id)
-  tabPanel(title = "Compare trajectories", value = "compareTrajGroups",
+  tabPanel(
+    title = "Compare trajectories",
+    value = "compareTrajGroups",
+    tags$h5(title %||% "Comparison between groups"),
            splitLayout(
              verticalLayout(
                wellPanel(
-                 sample_select,
                  gene_select,
+                 vars_select,
+                 sample_select,
+                 advanced_settings_inputs(advanced, id),
                  radioButtons(ns("showtraj"),
                               "Show trajectories?",
                               choices = c("No", "Yes"),
@@ -47,7 +62,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
     
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class
-    compare_col <- module_config$compare_col
+    #compare_col <- module_config$compare_col
     sidebyside_class <- module_config$sidebyside_class
     
     # Load genes server side
@@ -76,11 +91,12 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       req(input$selected_gene)
       
       sel_lookup <- selected_lookup()
-      selected_expression <- expression_matrix[, sel_lookup[[sample_col]]]
+      subset_expression <- expression_matrix[, sel_lookup[[sample_col]]]
       clinical <- subset_clinical()
+      fit_method <- input$fit_method %||% "linear"
       
       compare_col_id <-
-        grep(paste0("(", compare_col, ")\\_.*"), colnames(clinical))
+        grep(paste0("(", input$selected_variable, ")\\_.*"), colnames(clinical))
       compare_col_vars <- 
         colnames(clinical)[compare_col_id]
       subset_clinical <- 
@@ -92,10 +108,16 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       combined <- left_join(sel_lookup,
                             subset_long,
                             by = c("Subject_ID", "Time"))
-      combined$expression <- selected_expression[input$selected_gene,
+      selected_expression <- subset_expression[input$selected_gene,
                                                  combined[[sample_col]]]
+      validate(
+        need(all(not_na(selected_expression)) & (length(selected_expression) > 0),
+               "Transcript not found in subset or subset combination does not exist."
+      ))
+      combined$expression <- selected_expression
       df <- combined[, c(subject_col, trajectory_class,
-                         sidebyside_class, compare_col, "expression")]
+                         sidebyside_class, input$selected_variable, "expression")]
+      
       # df$Time_seq <- 
       #   as.numeric(
       #     as.character(
@@ -115,12 +137,17 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       #color = .data[[trajectory_class]],
       trajplot <-
         ggplot(df[order(df$Subject_ID, df$Time), ],
-               aes(x = .data[[compare_col]], y = .data$expression)) +
+               aes(x = .data[[input$selected_variable]], y = .data$expression)) +
         geom_point(aes(fill = .data[[trajectory_class]]),
                    colour="black",pch=21, size = 2) +
         scale_fill_viridis_d() +
         facet_wrap(stats::as.formula(paste("~", sidebyside_class)),
-                   scales = "fixed")
+                   scales = "fixed") +
+        theme_bw() +
+        theme(
+          strip.background = element_blank(),
+          strip.text.x = element_text(size = 12, face = "bold")
+        )
       
       if (input$showtraj == "Yes") {
         trajplot <- trajplot + 
@@ -132,7 +159,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
                                   type = "closed")) +
           scale_colour_viridis_d()
       }
-      trajplot 
+      trajplot + ggAddFit(fit_method)
     })
     
     

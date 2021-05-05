@@ -1,41 +1,43 @@
 # singleVariableCorr UI Function
-mod_singleVariableCorr_ui <- function(module_name, appdata, global, module_config)  {
-  singleVariableCorr_tab(sampleClassInputs(global$sample_classes, module_name), 
-                        names(appdata$clinical %>% dplyr::select(where(is.numeric))),
-                        module_config$advanced,
-                        module_name)
-}
+mod_singleVariableCorr_ui <-
+  function(module_name,
+           appdata,
+           global,
+           module_config)  {
+    singleVariableCorr_tab(
+      sampleClassInputs(global$sample_classes, module_name),
+      varsSelectInput(names(
+        appdata$clinical %>% dplyr::select(where(is.numeric))
+        ),
+        module_name),
+      module_config$advanced,
+      module_name
+    )
+  }
 #' All genes correlation tab UI
 #'
 #' @param sample_select radio inputs for sample classes
-#' @param clinical_variables select input for clinical variables
+#' @param vars_select select input for clinical variables
 #' @param advanced  boolean flag to show or hide advanced options
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
-#' @export
+#' @noRd
 #'
 singleVariableCorr_tab <- function(sample_select,
-                                   clinical_variables,
+                                   vars_select,
                                    advanced = NULL,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
     title = "Single variable",
     value = "singleVariableCorr",
+    tags$h5("Correlation between a selected clinical variable and all genes"),
     splitLayout(
       verticalLayout(
         wellPanel(
+          vars_select,
           sample_select,
-          selectizeInput(
-            ns("selected_variable"),
-            label = with_red_star("Select a clinical variable"),
-            choices = clinical_variables,
-            options = list(
-              dropdownParent = "body",
-              onInitialize = I("function(){this.setValue(''); }")
-            )
-          ),
           advanced_settings_inputs(advanced, id)
         )
       ),
@@ -68,6 +70,8 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
     sample_classes <- global$sample_classes
     subject_col <- global$subject_col
     sample_col <- global$sample_col
+    
+    link_to <- module_config$link_to
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,
@@ -107,20 +111,23 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
                                                   selected_clinical,
                                                   method = correlation_method)
       names(correlation_df) <- c("Gene", "Estimate", "p value", "q value")
-      baseURL <- buildURL(list_of_values, "?tab=singleGeneCorr")
-      correlation_df$Gene <- sapply(correlation_df$Gene,
-                  function(x) paste0('<a href="',
-                                     appendToURL(baseURL, "gene", x),
-                                     '">',x,'</a>'), simplify = FALSE)
+
+      if (not_null(link_to)) {
+        baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
+        correlation_df$Gene <- unlist(sapply(correlation_df$Gene,
+                    function(x) paste0('<a href="',
+                                       appendToURL(baseURL, "gene", x),
+                                       '">',x,'</a>'), simplify = FALSE))
+      }
       correlation_df
     })
     
     output$fulltable <- DT::renderDT({
       correlation_table()
     },
-    caption = "Correlation between genes and selected variable",
     filter = "top",
-    rownames = FALSE)
+    rownames = FALSE,
+    escape = FALSE)
     
     output$fulltable_download <- downloadHandler(
       filename = function() {

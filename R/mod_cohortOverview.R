@@ -4,8 +4,8 @@ mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
                      geneSelectInput(NULL, module_name),
                      names(module_config$profile_variables),
                      module_config$colour_variables,
+                     module_config$title,
                      module_name)
-  
 }
 #' Cohort overview tab UI
 #'
@@ -25,30 +25,32 @@ mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
 #'  c("measureA", "measureB"),
 #'  c("measureA_1", "measureA_2"))
 #' }
-#' @export
+#' @noRd
 cohortOverview_tab <- function(sample_selection,
                                gene_selection,
                                profile_variables,
                                colour_variables,
+                               title = NULL,
                                id = NULL) {
   ns <- NS(id)
   tabPanel(
     title = "Cohort overview",
     value = "cohortOverview",
+    tags$h5(title %||% "Cohort overview"),
     splitLayout(
       verticalLayout(
         wellPanel(
           h5("Profile settings"),
           selectizeInput(
             ns("profile_variable"),
-            label = "Select variable for profile:",
+            label = "Select clinical variable for trajectory:",
             choices = profile_variables
           ),
           selectizeInput(ns("profile_colour"),
-                         label = "Select variable for profile colour:",
+                         label = "Select variable for trajectory colour:",
                          choices = colour_variables),
           checkboxInput(ns("order_by_colour"),
-                        label = "order by this variable?")
+                        label = "order by colour variable?")
         ),
         wellPanel(
           h5("Expression settings"),
@@ -67,7 +69,7 @@ cohortOverview_tab <- function(sample_selection,
         )
       ),
       cellWidths = c("20%", "80%"),
-      cellArgs = list(style = 'white-space: normal;')
+      cellArgs = list(style = "white-space: normal;")
       #mainPanel(textOutput(ns("cohort_overview")))
     )
   )
@@ -110,13 +112,13 @@ mod_cohortOverview_server <- function(module_name, appdata, global, module_confi
       all_vars <- union(profile_variable_list, c(profile_colour))
       selected_clinical <- clinical[, all_vars]
       
-      replace_na <- function(x) replace(x, is.na(x), 0)
-      selected_clinical <- as.data.frame(do.call(cbind,
-                                   lapply(selected_clinical, replace_na)))
+      for (i in 1:ncol(selected_clinical)) {
+        selected_clinical[[i]][is.na(selected_clinical[[i]])] <- 0
+      }
+      
       profile_order <- ifelse(input$order_by_colour,
                               profile_colour, 
                               "estimate")
-      
       first_profile_var <- profile_variable_list[1]
       last_profile_var <- profile_variable_list[length(profile_variable_list)]
       selected_clinical$estimate <- selected_clinical[, last_profile_var] / 

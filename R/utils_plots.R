@@ -156,8 +156,9 @@ plotClinExpScatterplot <-
   p
 }
 
-ggAddFit <- function(fit_method = c("linear", "cubic")) {
+ggAddFit <- function(fit_method = c("linear", "cubic", "none")) {
   fit_method <- match.arg(fit_method)
+  if (fit_method == "none") return(NULL)
   fit_formula <- switch(fit_method,
                     linear = y ~ x,
                     cubic = y ~ splines::ns(x, df = 3))

@@ -5,8 +5,11 @@ mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
 
 degSummary_tab <- function(id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Summary table", value = "degSummary",
-           htmlOutput(ns("summary_table"))
+  tabPanel(
+    title = "Summary table",
+    value = "degSummary",
+    tags$h5("Summary of differential expression models"),
+    htmlOutput(ns("summary_table"))
   )
 }
 

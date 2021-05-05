@@ -18,7 +18,7 @@ mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
-#' @export
+#' @noRd
 #'
 #' @examples
 #' if (interactive()) {
@@ -37,45 +37,48 @@ singleGeneCorr_tab <-
             id = NULL) {
 
   ns <- NS(id)
-  tabPanel(title = "Single gene", value = "singleGeneCorr",
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-               sample_select,
-               gene_select,
-               selectizeInput(
-                 ns("colour_variable"),
-                 label = "Select colour:",
-                 choices = c("None" = "", colours),
-                 options = list(allowEmptyOption = TRUE)
-               ),
-               advanced_settings_inputs(advanced, id)
-               )
-             ),
-             verticalLayout(
-                conditionalPanel(
-                   paste0("output[\'", ns('error_message'), "\'] == true"),
-                   tags$span("Transcript not found in subset or
-                             subset combination does not exist.",
-                             style = "color: gray")
-                ),
-                conditionalPanel(
-                   paste0("input[\'", ns('selected_gene'), "\'] == ''"),
-                   tags$span("No gene selected", style = "color: gray")
-                ),
-                conditionalPanel(
-                   paste0("input[\'",
-                          ns('selected_gene'),
-                          "\'] != ''",
-                          "&& output[\'",
-                          ns('error_message'),
-                          "\'] == false"),
-                   do.call(tabsetPanel, plotsTabPanels(outputs, ns))
-                )
-             ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style = "white-space: normal;")
-           )
+  tabPanel(
+     title = "Single gene",
+     value = "singleGeneCorr",
+     tags$h5("Correlation between a selected gene and clinical variables"),
+     splitLayout(
+       verticalLayout(
+         wellPanel(
+            gene_select,
+            sample_select,
+            selectizeInput(
+              ns("colour_variable"),
+              label = "Select colour:",
+              choices = c("None" = "", colours),
+              options = list(allowEmptyOption = TRUE)
+            ),
+            advanced_settings_inputs(advanced, id)
+         )
+       ),
+       verticalLayout(
+          conditionalPanel(
+             paste0("output[\'", ns('error_message'), "\'] == true"),
+             tags$span("Transcript not found in subset or
+                       subset combination does not exist.",
+                       style = "color: gray")
+          ),
+          conditionalPanel(
+             paste0("input[\'", ns('selected_gene'), "\'] == ''"),
+             tags$span("No gene selected", style = "color: gray")
+          ),
+          conditionalPanel(
+             paste0("input[\'",
+                    ns('selected_gene'),
+                    "\'] != ''",
+                    "&& output[\'",
+                    ns('error_message'),
+                    "\'] == false"),
+             do.call(tabsetPanel, plotsTabPanels(outputs, ns))
+          )
+       ),
+       cellWidths = c("20%", "80%"),
+       cellArgs = list(style = "white-space: normal;")
+     )
   )
 }
 #' singleGeneCorr Server Function

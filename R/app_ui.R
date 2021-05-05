@@ -32,9 +32,9 @@ app_ui <- function(request) {
   args <- append(list(about_tab), modules_ui_list)
   args$title <- list(config$logo)
   args$windowTitle <- paste(config$name, "analysis portal")
+  if (not_null(config$bootstrap))
   args$theme <- do.call(bslib::bs_theme, config$bootstrap)
   args$id <- "tabSelect"
-  
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(paste(config$name, "analysis portal")),

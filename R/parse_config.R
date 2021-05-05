@@ -17,7 +17,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
                            directoryPath = file_path(data_folder, "www"))
   appdata[["data_folder"]] <- data_folder
   appdata[["bootstrap"]] <- 
-    config$bootstrap %||% list(version = 4, bootswatch = "default")
+    config$bootstrap %||% list(version = 4)
   appdata[["name"]] <- config$name %||% "clinvisx"
   if (not_null(config$logo))
   if (file.exists(file_path(data_folder, "www", config$logo))) {

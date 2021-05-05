@@ -21,7 +21,7 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
-#' @export
+#' @noRd
 #'
 #'
 geneModulesCorr_tab <- function(sample_select, sources_names,

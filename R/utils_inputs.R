@@ -26,8 +26,9 @@ advanced_settings_inputs <- function(config, id = NULL) {
       radioButtons(ns("fit_method"),
                    label = "Fitting method:",
                    choices = c("Linear" = "linear",
-                               "Cubic" = "cubic"))
-    }
+                               "Cubic" = "cubic",
+                               { if (config$fit_method == "AllowHide") c("None" = "none") else NULL }))
+    } else NULL
   )
   do.call(tagList, list(to_include))
 }
@@ -77,7 +78,26 @@ geneSelectInput <- function(gene_list, id = NULL) {
     options = list(
       dropdownParent = "body",
       onInitialize = I('function(){this.setValue(""); }'),
-      placeholder = ''
+      placeholder = ""
+    )
+  )
+}
+
+varsSelectInput <- function(clinical_vars, id = NULL, initEmpty = TRUE) {
+  ns <- NS(id)
+  
+  onInitString <- NULL
+  if (initEmpty) {
+    onInitString <- I("function(){this.setValue(''); }")
+  }
+  
+  selectizeInput(
+    ns("selected_variable"),
+    label = with_red_star("Select a clinical variable:"),
+    choices = clinical_vars,
+    options = list(
+      dropdownParent = "body",
+      onInitialize = onInitString
     )
   )
 }
