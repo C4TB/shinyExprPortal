@@ -5,6 +5,8 @@ default:
   available_modules:
   - cohortOverview
   - degModules
+  - degSummary
+  - degDetails
   - corrModules
   - singleGeneCorr
   - singleVariableCorr
@@ -13,7 +15,7 @@ default:
   - compareTrajGroups
   degModules:
   - degSummary
-  - degOverview
+  - degDetails
   corrModules:
   - singleGeneCorr
   - singleVariableCorr

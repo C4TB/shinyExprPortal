@@ -32,7 +32,7 @@ singleVariableCorr_tab <- function(sample_select,
   tabPanel(
     title = "Single variable",
     value = "singleVariableCorr",
-    tags$h5("Correlation between a selected clinical variable and all genes"),
+    tags$h5("Correlation between all genes and a selected clinical variable"),
     splitLayout(
       verticalLayout(
         wellPanel(

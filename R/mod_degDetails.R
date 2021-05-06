@@ -1,9 +1,9 @@
-# degOverview UI Function
-mod_degOverview_ui <- function(module_name, appdata, global, module_config) {
+# degDetails UI Function
+mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
   models <- appdata$models
   category_variable <- module_config$category_variable
   categories <- unique(unlist(models[, category_variable]))
-  degOverview_tab(categories,
+  degDetails_tab(categories,
                   module_name)
 }
 #' Differentially expressed genes tab UI
@@ -14,9 +14,9 @@ mod_degOverview_ui <- function(module_name, appdata, global, module_config) {
 #' @return tab panel with inputs
 #' @noRd
 #'
-degOverview_tab <- function(categories, id = NULL) {
+degDetails_tab <- function(categories, id = NULL) {
   ns <- NS(id)
-  tabPanel("Model results", value= "degOverview", 
+  tabPanel("Model results", value= "degDetails", 
            tags$h5("Individual model results"),
            splitLayout(
              verticalLayout(
@@ -43,14 +43,14 @@ degOverview_tab <- function(categories, id = NULL) {
                ),
                numericInput(
                  ns("pvalue_threshold"),
-                 label = "Significance threshold (-log10):",
-                 value = 1.3 ,
-                 min = 1 ,
-                 max = 50,
-                 step = 0.1
+                 label = "Significance threshold:",
+                 value = 0.05,
+                 min = 0,
+                 max = 1,
+                 step = 0.01
                ),
                radioButtons(
-                 ns("pvalue_adjusted"),
+                 ns("pvalue_adjusted_flag"),
                     label = "Adjusted p-values?",
                     choices = list("No" = "p.value", "Yes" = "q.value"),
                     selected = "p.value"
@@ -75,10 +75,10 @@ degOverview_tab <- function(categories, id = NULL) {
            )
   )
 }
-#' degOverview Server Function
+#' degDetails Server Function
 #'
 #' @noRd 
-mod_degOverview_server <- function(module_name, appdata, global, module_config) {
+mod_degDetails_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
@@ -156,11 +156,11 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
     
     vp_table <- reactive({
       table <- model_results()
-      pvalue_label <- pvalue_labels[input$pvalue_adjusted]
+      pvalue_label <- pvalue_labels[input$pvalue_adjusted_flag]
       # Compute p-value significance
       table$pvalue_signif <-
         as.numeric(
-          table[[input$pvalue_adjusted]] < 10 ^ (-input$pvalue_threshold)
+          table[[input$pvalue_adjusted_flag]] < input$pvalue_threshold
           )
       if ("logFC" %in% colnames(table)) {
         table$fc_signif <-
@@ -182,13 +182,13 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
       if ("logFC" %in% colnames(table)) {
         gg_volcano_plot(table,
                         input$fc_threshold,
-                        input$pvalue_threshold,
-                        input$pvalue_adjusted,
+                        -log10(input$pvalue_threshold),
+                        input$pvalue_adjusted_flag,
                         gene_column)
       } else {
         gg_avgexpr_plot(table,
-                        input$pvalue_threshold,
-                        input$pvalue_adjusted,
+                        -log10(input$pvalue_threshold),
+                        input$pvalue_adjusted_flag,
                         gene_column)
       }
     })
@@ -211,7 +211,7 @@ mod_degOverview_server <- function(module_name, appdata, global, module_config) 
       table <- vp_table()
       gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
       if ("logFC" %in% colnames(table)) {
-        pvalue_label <- isolate({ pvalue_labels[input$pvalue_adjusted] })
+        pvalue_label <- isolate({ pvalue_labels[input$pvalue_adjusted_flag] })
         fc_header <- sprintf("logFC and %s significant genes:",
                              pvalue_label)
         pvalue_header <- sprintf("%s significant genes:",

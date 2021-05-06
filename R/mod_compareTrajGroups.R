@@ -62,7 +62,6 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
     
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class
-    #compare_col <- module_config$compare_col
     sidebyside_class <- module_config$sidebyside_class
     
     # Load genes server side
@@ -154,7 +153,6 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
           geom_path(aes(color = .data[[trajectory_class]],
                         group = .data[[subject_col]]),
                     alpha = 0.5,
-                    #linetype = 2,
                     arrow = arrow(angle = 15, length = unit(0.1, "inches"),
                                   type = "closed")) +
           scale_colour_viridis_d()
