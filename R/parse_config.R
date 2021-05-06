@@ -10,33 +10,39 @@
 parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   message(paste("Reading configuration file", fname))
   config <- yaml::read_yaml(fname)
+  
   available_modules <- get_golem_config("available_modules")
   appdata <- list()
-  golem::add_resource_path(prefix = "local", directoryPath = file_path(data_folder, "www"))
-  
+  golem::add_resource_path(prefix = "local",
+                           directoryPath = file_path(data_folder, "www"))
+  appdata[["data_folder"]] <- data_folder
+  appdata[["bootstrap"]] <- 
+    config$bootstrap %||% list(version = 4)
   appdata[["name"]] <- config$name %||% "clinvisx"
   if (not_null(config$logo))
   if (file.exists(file_path(data_folder, "www", config$logo))) {
     appdata$logo <-
         img(
           src = file_path("local", config$logo),
-          style = "height: 60px;
-                  margin-top: -14px;
-                  padding-right:10px;
-                  padding-bottom:10px",
+          height = "45px",
           title = appdata[["name"]]
         )
   } else {
     stop("Logo image not found")
   }
+  appdata[["menu"]] <- config$menu %||% NULL
   
-  appdata[["about"]] <- config$about %||% NULL
+  #appdata[["about"]] <- config$about %||% NULL
   if (is.null(config$about)) {
     appdata[["about"]] <- NULL
   } else {
-    appdata[["about"]] <- file_path(data_folder, config$about)
+    about_file <- file_path(data_folder, config$about)
+    if (file.exists(about_file)) {
+      appdata[["about"]] <- about_file  
+    } else {
+      stop("'About' file not found.")
+    }
   }
-  
   # Validate data section
   if (is.null(config$data)) {
     stop("Data section missing in configuration file")
@@ -211,4 +217,18 @@ loadModels <- function(models_file, data_folder = "") {
   models_table$qSignif <- sapply(models_table$Data,
                                  function(x) nrow(x[which(x$q.value < 0.05), ]))
   models_table
+}
+
+validateAdvancedSettings <- function(config, module_title = "") { 
+  valid_settings <-
+    c("clinical_outliers",
+      "expression_outliers",
+      "correlation_method",
+      "fit_method")
+  diff_advanced <- setdiff(names(config), valid_settings)
+  if (length(diff_advanced) > 0) {
+    stop(module_title, ": invalid advanced setting: \n\t",
+         diff_advanced,
+         "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
+  }
 }

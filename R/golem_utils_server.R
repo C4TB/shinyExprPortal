@@ -81,3 +81,36 @@ flattenlist <- function(x){
     return(out)
   }
 }
+
+buildURL <- function(key_values, prefix = NULL) {
+  key_values <- key_values[key_values != "-"]
+  keys <- names(key_values)
+  values <- key_values
+  params <- paste0(keys, "=", values)
+  url_params <- stringr::str_c(params, collapse = "&") 
+  if (!is.null(prefix)) {
+    URLencode(paste0(prefix, "&", url_params))
+  } else {
+    URLencode(url_params)
+  }
+}
+
+appendToURLv <- function(url, key, values) {
+  list_of_urls <- paste0(url, "&", key, "=", values)
+  vencode <- Vectorize(URLencode)
+  vencode(list_of_urls)
+}
+
+appendToURL <- function(url, key, value) {
+  URLencode(paste0(url, "&", key, "=", value))
+}
+
+urlAsTag <- function(values) {
+  curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
+  curlv(values)
+}
+
+valuesToURL <- function(url, key, values) {
+  curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
+  curlv(appendToURLv(url, key, values))
+}

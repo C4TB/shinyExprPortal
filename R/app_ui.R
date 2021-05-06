@@ -7,34 +7,40 @@ app_ui <- function(request) {
   config <- golem::get_golem_options("config")
   modules_to_include <- Filter(Negate(is.null), config$modules)
   
-  about_tab <- tabPanel("About",
-                        value = "about",
-                        fluidPage(htmlOutput("about_info")))
+  about_tab <- 
+    tabPanel("About",
+      value = "about",
+      fluidPage(
+        uiOutput("icon_menu"),
+        tags$script(
+          HTML(
+            "$(document).on('click', '.iconclick', function() {
+                    Shiny.setInputValue('iconclick', $(this).attr('id'));
+                  });"
+          )
+        ),
+        htmlOutput("about_info")
+      ))
   
+  modules_ui_list <- lapply(names(modules_to_include), function(module_name) {
+    call_module(module_name,
+                "ui",
+                config$data,
+                config$global,
+                modules_to_include[[module_name]])
+  })
+  args <- append(list(about_tab), modules_ui_list)
+  args$title <- list(config$logo)
+  args$windowTitle <- paste(config$name, "analysis portal")
+  if (not_null(config$bootstrap))
+  args$theme <- do.call(bslib::bs_theme, config$bootstrap)
+  args$id <- "tabSelect"
   tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(),
+    golem_add_external_resources(paste(config$name, "analysis portal")),
     # List the first level UI elements here 
-    fluidPage(
-      tags$head(
-        tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
-        )
-      ),
     # Need to use do.call to pass list of tabPanels to navbarPage
-    do.call(navbarPage,
-            c(title = list(config$logo),
-              append(
-                list(about_tab),
-            # Cycle through the modules that were identified in the configuration file
-            # And call the corresponding UI function
-                lapply(names(modules_to_include), function(module_name) {
-                  call_module(module_name,
-                              "ui",
-                              config$data,
-                              config$global,
-                              modules_to_include[[module_name]])
-                })
-              )))
+    do.call(navbarPage, args)
   )
 }
 
@@ -46,17 +52,17 @@ app_ui <- function(request) {
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @importFrom shinyjs useShinyjs
 #' @noRd
-golem_add_external_resources <- function(){
+golem_add_external_resources <- function(name){
   
   add_resource_path(
-    'www', app_sys('app/www')
+    "www", app_sys("app/www")
   )
  
   tags$head(
     favicon(),
     bundle_resources(
-      path = app_sys('app/www'),
-      app_title = 'clinvisx'
+      path = app_sys("app/www"),
+      app_title = name
     ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
@@ -69,7 +75,7 @@ dev_module_ui <- function(request) {
   config <- golem::get_golem_options("config")
   tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(),
+    golem_add_external_resources(paste(config$name, "analysis portal")),
     # List the first level UI elements here 
     fluidPage(
       tags$head(

@@ -18,7 +18,7 @@ mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
-#' @export
+#' @noRd
 #'
 #' @examples
 #' if (interactive()) {
@@ -33,70 +33,61 @@ singleGeneCorr_tab <-
             gene_select,
             colours,
             outputs,
-            advanced = TRUE,
+            advanced = NULL,
             id = NULL) {
 
   ns <- NS(id)
-  tabPanel(title = "Single gene", value = "singleGeneCorr",
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-               sample_select,
-               gene_select,
-               selectizeInput(
-                 ns("colour_variable"),
-                 label = "Select colour:",
-                 choices = c("None" = "", colours),
-                 options = list(allowEmptyOption = TRUE)
-               ),
-               if (advanced) {
-                  tagList(
-                     radioButtons(ns("correlation_method"),
-                                  label = "Correlation method:",
-                                  choices = c("Pearson" = "pearson",
-                                              "Spearman" = "spearman",
-                                              "Kendall" = "kendall"),
-                                  selected = "pearson"),
-                     outlier_inputs(id),
-                     radioButtons(ns("fit_method"),
-                                  label = "Fitting method:",
-                                  choices = c("Linear" = "linear",
-                                              "Cubic" = "cubic"))
-                     )
-               } else NULL
-               )
-             ),
-             verticalLayout(
-                conditionalPanel(
-                   paste0("output[\'", ns('error_message'), "\'] == true"),
-                   #textOutput(ns("error_message"))
-                   tags$span("Transcript not found in subset or
-                             subset combination does not exist.",
-                             style = "color: gray")
-                ),
-                conditionalPanel(
-                   paste0("input[\'", ns('selected_gene'), "\'] == ''"),
-                   tags$span("No gene selected", style = "color: gray")
-                ),
-                conditionalPanel(
-                   paste0("input[\'",
-                          ns('selected_gene'),
-                          "\'] != ''",
-                          "&& output[\'",
-                          ns('error_message'),
-                          "\'] == false"),
-                   do.call(tabsetPanel, plotsTabPanels(outputs, ns))
-                )
-             ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style = "white-space: normal;")
-           )
+  tabPanel(
+     title = "Single gene",
+     value = "singleGeneCorr",
+     tags$h5("Correlation between a selected gene and clinical variables"),
+     splitLayout(
+       verticalLayout(
+         wellPanel(
+            gene_select,
+            sample_select,
+            selectizeInput(
+              ns("colour_variable"),
+              label = "Select colour:",
+              choices = c("None" = "", colours),
+              options = list(allowEmptyOption = TRUE)
+            ),
+            advanced_settings_inputs(advanced, id)
+         )
+       ),
+       verticalLayout(
+          conditionalPanel(
+             paste0("output[\'", ns('error_message'), "\'] == true"),
+             tags$span("Transcript not found in subset or
+                       subset combination does not exist.",
+                       style = "color: gray")
+          ),
+          conditionalPanel(
+             paste0("input[\'", ns('selected_gene'), "\'] == ''"),
+             tags$span("No gene selected", style = "color: gray")
+          ),
+          conditionalPanel(
+             paste0("input[\'",
+                    ns('selected_gene'),
+                    "\'] != ''",
+                    "&& output[\'",
+                    ns('error_message'),
+                    "\'] == false"),
+             do.call(tabsetPanel, plotsTabPanels(outputs, ns))
+          )
+       ),
+       cellWidths = c("20%", "80%"),
+       cellArgs = list(style = "white-space: normal;")
+     )
   )
 }
 #' singleGeneCorr Server Function
 #'
 #' @noRd
-mod_singleGeneCorr_server <- function(module_name, appdata, global, module_config) {
+mod_singleGeneCorr_server <-function(module_name,
+                                     appdata,
+                                     global,
+                                     module_config) {
   moduleServer(module_name, function(input, output, session) {
    ns <- session$ns
 
@@ -114,9 +105,26 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
                         choices = rownames(expression_matrix),
                         selected = "",
                         server = TRUE)
+   # UI updates from URL
+   observeEvent(session$userData$singleGeneCorr, {
+      params <- session$userData$singleGeneCorr
+      for (sample_class in global$sample_classes) {
+         sc_name <- sample_class$name
+         if (not_null(params[[sc_name]])) {
+            updateSelectizeInput(session,
+                                 sc_name,
+                                 selected = params[[sc_name]])
+         }
+      }
+      if (not_null(params$gene)) {
+         updateSelectizeInput(session,
+                              "selected_gene",
+                              choices = rownames(expression_matrix),
+                              selected = params$gene,
+                              server = TRUE)
+      }
+   })
    
-   #module_config <- appdata$modules$singleGeneCorr
-
    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                           "IQR" = valuesInsideTukeyFences,
                           "No" = function(x) TRUE)
@@ -124,10 +132,6 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
    user_selection <- reactive({
       getSelectedSampleClasses(sample_classes, input)
    })
-   
-   # selected_expression <- reactive({
-   #    
-   # })
    
    observe({
      req(input$selected_gene)
@@ -137,10 +141,10 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
        colour_var <- NULL
      }
      selected_gene <- input$selected_gene
-     clinical_outliers <- input$clinical_outliers
-     expression_outliers <- input$expression_outliers
-     correlation_method <- input$correlation_method %||% "spearman"
-     fit_method <- input$fit_method
+     clinical_outliers <- input$clinical_outliers %||% "No"
+     expression_outliers <- input$expression_outliers %||% "No"
+     correlation_method <- input$correlation_method %||% "pearson"
+     fit_method <- input$fit_method %||% "linear"
      
      list_of_values <- user_selection()
      # Return subset of lookup based on the user selection of sample classes
@@ -192,10 +196,12 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
          corr_df <- correlateMatrices(x = combined_df[, output_vars],
                                       y = combined_df$Expression,
                                       method = correlation_method)
-         
+   
 # By default the first column returned by function above is named "variable"
 # We need to match it with the data frame below for the plotting function
          colnames(corr_df)[1] <- "ClinicalVariable"
+         corr_df[["ClinicalVariable"]] <- factor(corr_df[["ClinicalVariable"]],
+                                                 levels = output_vars)
          
          if (not_null(colour_var)) {
            combined_df <- combined_df %>%
@@ -206,6 +212,9 @@ mod_singleGeneCorr_server <- function(module_name, appdata, global, module_confi
              pivot_longer(c(-.data$Expression),
                           names_to = "ClinicalVariable", values_to = "Value")
          }
+         
+         combined_df[["ClinicalVariable"]] <-
+            factor(combined_df[["ClinicalVariable"]], levels = output_vars)
          plotHeight <- ((length(output_vars) %/% 5) + 1) * 200
          plotWidth <- { 
             if (length(output_vars) < 4) length(output_vars)*200 else 800 

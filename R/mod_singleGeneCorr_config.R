@@ -1,17 +1,21 @@
 singleGeneCorrConfig <- function(config, ...) { 
 
   message("Checking singleGeneCorr configuration")
-  if (is.null(config$advanced)) { 
-    config$advanced <- TRUE
+  # if (is.null(config$advanced)) { 
+  #   config$advanced$expression_outliers <- TRUE
+  #   config$advanced$clinical_outliers <- TRUE
+  # }
+  if (!is.null(config$advanced)) {
+    validateAdvancedSettings(config$advanced, "singleGeneCorr")
   }
 
   if (is.null(config$tabs)) {
-    stop("Single gene correlation tab:
+    stop("singleGeneCorr:
          output definitions missing in configuration file.")
   }
   
   if (is.null(config$colour_variables)) {
-    stop("Single gene correlation tab:
+    stop("singleGeneCorr:
          list of colour variables missing in configuration file.") 
   }
   config

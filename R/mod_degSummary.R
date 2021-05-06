@@ -5,8 +5,11 @@ mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
 
 degSummary_tab <- function(id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Summary table", value = "degSummary",
-           htmlOutput(ns("summary_table"))
+  tabPanel(
+    title = "Summary table",
+    value = "degSummary",
+    tags$h5("Summary of differential expression models"),
+    htmlOutput(ns("summary_table"))
   )
 }
 
@@ -32,6 +35,14 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
       # We don't need the actual data or file names here
       models_only <- models %>% dplyr::select(-Data, -File)
       
+      # url_cols <- sapply(global$sample_classes, function(x) x$name)
+      # models_only$pSignif <- apply(models_only, 1, function(row) {
+      #   as.character(a(href = buildURL(url_cols, row[url_cols], "/?tab=singleGeneCorr"), row["pSignif"]) )
+      # })
+      # models_only$qSignif <- apply(models_only, 1, function(row) {
+      #   as.character(a(href = buildURL(url_cols, row[url_cols], "/?tab=singleGeneCorr"), row["qSignif"]) )
+      # })
+      
       # By default pivot_wider will order by the values_from
       # We use relocate to rearrange only the pivoted columns
       model_wide <- models_only %>%
@@ -42,6 +53,7 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
       model_wide %>% 
         knitr::kable(align = "r",
                      "html",
+                     escape = "F",
                      col.names = c(model_cols,
                                    gsub(".*_(.*)", "\\1", header_cols))
                        ) %>%
@@ -54,7 +66,7 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
         #                        index = setNames(rle(model_wide$Tissue)[[1]], 
         #                                         rle(model_wide$Tissue)[[2]])) %>%
         kableExtra::collapse_rows(valign = "top",
-                                  columns = seq_along(model_cols)) %>%
+                                  columns = seq_along(model_cols[-length(model_cols)])) %>%
         kableExtra::add_header_above(c(" " = length(model_cols),
                                        header_spec))
 

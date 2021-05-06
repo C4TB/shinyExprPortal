@@ -1,7 +1,7 @@
 #' @importFrom tools file_ext
 #' @noRd
-degOverviewConfig <- function(config, data_folder = "") { 
-  message("Checking degOverview configuration")
+degDetailsConfig <- function(config, data_folder = "") { 
+  message("Checking degDetails configuration")
   
   if (not_null(config$models)) {
     models_table <- loadModels(config$models, data_folder)

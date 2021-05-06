@@ -23,7 +23,7 @@ getSelectedSampleClasses <- function(sample_classes, inputs) {
     values_list <- c(values_list, inputs[[sc_name]])
   }
   names(values_list) <- input_names
-  values_list
+  values_list[values_list != "NA"]
 }
 
 #' Return subset of sample classes in UI inputs

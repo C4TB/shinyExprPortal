@@ -8,75 +8,73 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
   )
 }
 
-#' Title
+#' Whole data correlation tab UI
 #'
-#' @param sample_select  a
-#' @param clinical_variables  b
-#' @param advanced advanced options?
+#' @param sample_select radio inputs for sample classes
+#' @param clinical_variables 
+#' @param advanced advanced options
 #' @param id optional module ID
 #'
 #' @return a tab panel
-#' @export
+#' @noRd
 #'
 #' @importFrom shinycssloaders withSpinner
-wholeDataCorr_tab <- function(sample_select, clinical_variables, advanced,
-                                      id = NULL) {
+wholeDataCorr_tab <- function(sample_select,
+                              clinical_variables,
+                              advanced = NULL,
+                              id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Whole data", value = "wholeDataCorr",
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-                 sample_select,
-                 selectizeInput(
-                   ns("heatmap_variables"),
-                   label = with_red_star("Select set of clinical variables:"),
-                   choices = clinical_variables,
-                   options = list(dropdownParent = "body",
-                                  onInitialize = I(
-                                    'function(){this.setValue("");}'))
-                 ),
-                 numericInput(ns("min_pvalue"),
-                                 label = "P-value (-log10) label threshold: ",
-                                 min = 0.0,
-                                 max = 50,
-                                 value = 2,
-                                 step = 1,
-                                 #dragRange = FALSE,
-                                 width = "150px"
-                 ),
-                 numericInput(ns("min_corr"),
-                             label = "Correlation label threshold:",
-                             min = 0,
-                             max = 1,
-                             value = 0,
-                             step = 0.05,
-                             #dragRange = FALSE,
-                             width = "150px"
-                 ),
-                 if (advanced) { 
-                   tagList(
-                     radioButtons(ns("correlation_method"),
-                                  label = "Correlation method:",
-                                  choices = c("Pearson"= "pearson",
-                                              "Spearman" = "spearman",
-                                              "Kendall"= "kendall"),
-                                  selected = "pearson"),
-                     outlier_inputs(id)
-                   )
-                 } else NULL
-               )
-             ),
-             verticalLayout(
-               plotOutput(ns("heatmap"), height = 800) %>% withSpinner()
-             ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style = "white-space: normal;")
-           )
+  tabPanel(
+    title = "Whole data",
+    value = "wholeDataCorr",
+    tags$h5("Correlation between all genes and clinical variables"),
+    splitLayout(
+      verticalLayout(
+        wellPanel(
+          selectizeInput(
+            ns("heatmap_variables"),
+            label = with_red_star("Select set of clinical variables:"),
+            choices = clinical_variables,
+            options = list(
+              dropdownParent = "body",
+              onInitialize = I('function(){this.setValue("");}')
+            )
+          ),
+          sample_select,
+          numericInput(
+            ns("max_pvalue"),
+            label = "Maximum p-value for label: ",
+            min = 0.0,
+            max = 0.2,
+            value = 0.05,
+            step = 0.01,
+            #dragRange = FALSE,
+            width = "150px"
+          ),
+          numericInput(
+            ns("min_corr"),
+            label = "Minimum correlation for label:",
+            min = 0,
+            max = 1,
+            value = 0.25,
+            step = 0.05,
+            #dragRange = FALSE,
+            width = "150px"
+          ),
+          advanced_settings_inputs(advanced, id)
+        )
+      ),
+      verticalLayout(
+        plotOutput(ns("heatmap"), height = 800) %>% withSpinner(),
+        conditionalPanel(
+          paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
+          downloadButton(ns("fulltable_download"), "Download Table CSV")
+        )),
+      cellWidths = c("20%", "80%"),
+      cellArgs = list(style = "white-space: normal;")
+    )
   )
-
-  
 }
-    
 #' wholeDataCorr Server Function
 #'
 #' @noRd 
@@ -95,12 +93,6 @@ mod_wholeDataCorr_server <- function(module_name,
     sample_col <- global$sample_col
     sample_classes <- global$sample_classes
     
-# Module configuration
-# This indicates which variable should be used to match a suffix 
-# (likely timepoint) of clinical variables with expression
-# Variables in the clinical data should contain a suffix matching e.g. 
-#    timepoint
-    subset_clinical_variable <- module_config$subset_clinical_variable
     heatmap_variables <- module_config$heatmap_variables
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
@@ -110,8 +102,8 @@ mod_wholeDataCorr_server <- function(module_name,
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
-      clinical_outliers <- input$clinical_outliers
-      expression_outliers <- input$expression_outliers
+      clinical_outliers <- input$clinical_outliers %||% "No"
+      expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "spearman"
       
       list_of_values <- getSelectedSampleClasses(sample_classes, input)
@@ -122,13 +114,8 @@ mod_wholeDataCorr_server <- function(module_name,
       subset_clinical <- selectFromLookup(clinical, selected_lookup,
                                           matching_col = subject_col)
       
-      subset_values <- getSubsetSampleClasses(c(subset_clinical_variable),
-                                               sample_classes, input)
       # Get subset of variables selected by user
-      selected_clinical_vars <-
-        paste(heatmap_variables[[input$heatmap_variables]],
-              subset_values,
-              sep="_")
+      selected_clinical_vars <- heatmap_variables[[input$heatmap_variables]]
       
       selected_clinical <-
         subset_clinical[, colnames(subset_clinical) %in% selected_clinical_vars]
@@ -147,7 +134,7 @@ mod_wholeDataCorr_server <- function(module_name,
                                    method = correlation_method,
                                    rowname_var = "Gene")
       pvalues_rank <- do.call(pmin,
-                              c(corr_df[, endsWith(colnames(corr_df), "pvalue")],
+                            c(corr_df[, endsWith(colnames(corr_df), "pvalue")],
                                    na.rm = TRUE)
                               )
       combined_df <- cbind(corr_df, pvalues_rank)
@@ -158,9 +145,18 @@ mod_wholeDataCorr_server <- function(module_name,
     
     output$heatmap <- renderPlot({ 
       hm <- heatmap_data()
-      plotCorrelationHeatmap(hm, input$min_pvalue, input$min_corr)
-      
+      plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr)
     })
+    
+    output$fulltable_download <- downloadHandler(
+      filename = function() {
+        list_of_values <-
+          getSelectedSampleClasses(sample_classes, input)
+        paste(c(list_of_values, "heatmap_data"), collapse = "_") 
+      },
+      content = function(file) {
+        utils::write.csv(heatmap_data(), file, row.names = FALSE) 
+      },contentType = 'text/csv')
     
   })
 }

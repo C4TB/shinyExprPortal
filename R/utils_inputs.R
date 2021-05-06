@@ -1,3 +1,39 @@
+advanced_settings_inputs <- function(config, id = NULL) {
+  ns <- NS(id)
+  to_include <- list(
+    if (isTruthy(config$clinical_outliers)) { 
+      
+      radioButtons(ns("clinical_outliers"),
+                   label = "Remove clinical outliers?",
+                   choices = c("5/95 percentiles", "IQR", "No"),
+                   selected = "No")
+    } else NULL,
+    if (isTruthy(config$expression_outliers)) {
+      radioButtons(ns("expression_outliers"),
+                   label = "Remove expression outliers?",
+                   choices = c("5/95 percentiles", "IQR", "No"),
+                   selected = "No")
+    } else NULL,
+    if (isTruthy(config$correlation_method)) {
+      radioButtons(ns("correlation_method"),
+                   label = "Correlation method:",
+                   choices = c("Pearson" = "pearson",
+                               "Spearman" = "spearman",
+                               "Kendall" = "kendall"),
+                   selected = "pearson")
+    } else NULL,
+    if (isTruthy(config$fit_method)) {
+      radioButtons(ns("fit_method"),
+                   label = "Fitting method:",
+                   choices = c("Linear" = "linear",
+                               "Cubic" = "cubic",
+                               { if (config$fit_method == "AllowHide") c("None" = "none") else NULL }))
+    } else NULL
+  )
+  do.call(tagList, list(to_include))
+}
+
+
 outlier_inputs <- function(id) {
   ns <- NS(id)
   tagList(
@@ -42,7 +78,26 @@ geneSelectInput <- function(gene_list, id = NULL) {
     options = list(
       dropdownParent = "body",
       onInitialize = I('function(){this.setValue(""); }'),
-      placeholder = ''
+      placeholder = ""
+    )
+  )
+}
+
+varsSelectInput <- function(clinical_vars, id = NULL, initEmpty = TRUE) {
+  ns <- NS(id)
+  
+  onInitString <- NULL
+  if (initEmpty) {
+    onInitString <- I("function(){this.setValue(''); }")
+  }
+  
+  selectizeInput(
+    ns("selected_variable"),
+    label = with_red_star("Select a clinical variable:"),
+    choices = clinical_vars,
+    options = list(
+      dropdownParent = "body",
+      onInitialize = onInitString
     )
   )
 }
@@ -66,6 +121,6 @@ sampleClassInputs <- function(sample_classes, id = NULL, match_name = NULL) {
   }
   do.call(tagList,
           lapply(sample_classes, function(sc, ns)
-            radioButtons(ns(sc$name), sc$label, sc$values), ns = ns)
+            radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values), ns = ns)
   )
 }
