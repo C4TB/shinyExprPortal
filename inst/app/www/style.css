@@ -49,3 +49,8 @@ caption {
 .navbar-brand {
   padding: 5px;
 }
+
+span.navbar-brand {
+  padding-top: 5px;
+  line-height: 45px;
+}

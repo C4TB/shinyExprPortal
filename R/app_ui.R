@@ -30,7 +30,7 @@ app_ui <- function(request) {
                 modules_to_include[[module_name]])
   })
   args <- append(list(about_tab), modules_ui_list)
-  args$title <- list(config$logo)
+  args$title <- list(config$logo %||% config$name)
   args$windowTitle <- paste(config$name, "analysis portal")
   if (not_null(config$bootstrap))
   args$theme <- do.call(bslib::bs_theme, config$bootstrap)

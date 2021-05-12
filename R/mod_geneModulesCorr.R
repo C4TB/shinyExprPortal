@@ -27,50 +27,53 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
 geneModulesCorr_tab <- function(sample_select, sources_names,
                                 clinical_variables, id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "Gene Modules", value = "geneModulesCorr",
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-                 sample_select,
-                 radioButtons(
-                   ns("source"),
-                   label = "Modules source:",
-                   choiceValues = seq(sources_names),
-                   choiceNames = sources_names,
-                   selected = 1
-                 ),
-                 selectizeInput(
-                   ns("selected_module"),
-                   label = "Select a module to inspect:",
-                   choices = NULL,
-                   options = list(dropdownParent = "body")
-                 )
-               ),
-               wellPanel(
-                 selectizeInput(
-                   ns("selected_clinical"),
-                   label = "Select a clinical variable to compare across:",
-                   choices = clinical_variables,
-                   options = list(dropdownParent = "body",
-                            onInitialize = I('function(){this.setValue("");}'))
-                 )
-               )
-             ),
-             verticalLayout(
-                 splitLayout(
-                   plotly::plotlyOutput(ns("overview"), height = 300, width = 450),
-                   plotOutput(ns("profile_plot"), height = 200, width = "99%")
-                  ),
-                 hr(),
-                 conditionalPanel(
-                   condition = "input.selected_module != ''",
-                    plotOutput(ns("scatterplot"))
-                  )
-               ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style='white-space: normal;')
-             )
-           )
+  tabPanel(
+    title = "Gene Modules",
+    value = "geneModulesCorr",
+    tags$h5("Gene modules profiles and correlation with clinical variables"),
+    splitLayout(
+      verticalLayout(
+        wellPanel(
+          sample_select,
+          radioButtons(
+            ns("source"),
+            label = "Modules source:",
+            choiceValues = seq(sources_names),
+            choiceNames = sources_names,
+            selected = 1
+          ),
+          selectizeInput(
+            ns("selected_module"),
+            label = with_red_star("Select a module to inspect:"),
+            choices = NULL,
+            options = list(dropdownParent = "body")
+          )
+        ),
+        wellPanel(
+          selectizeInput(
+            ns("selected_clinical"),
+            label = with_red_star("Select a clinical variable to compare across"),
+            choices = clinical_variables,
+            options = list(
+              dropdownParent = "body",
+              onInitialize = I('function(){this.setValue("");}')
+            )
+          )
+        )
+      ),
+      verticalLayout(
+        splitLayout(
+          plotly::plotlyOutput(ns("overview"), height = 300, width = 450),
+          plotOutput(ns("profile_plot"), height = 200, width = "99%")
+        ),
+        hr(),
+        conditionalPanel(condition = "input.selected_module != ''",
+                         plotOutput(ns("scatterplot")))
+      ),
+      cellWidths = c("20%", "80%"),
+      cellArgs = list(style = 'white-space: normal;')
+    )
+  )
 }
 #' geneModulesCorr Server Function
 #' @noRd 

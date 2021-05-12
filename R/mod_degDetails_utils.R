@@ -31,7 +31,7 @@ gg_volcano_plot <- function(table,
            aes(
              .data$logFC,
              .data[[adjusted]],
-             color = stringr::str_wrap(.data$color, width = 20)
+             color = .data$color, #stringr::str_wrap(.data$color, width = 20)
            )) +
     geom_point() +
     ylab(ylab_text) + 
@@ -85,6 +85,35 @@ gg_avgexpr_plot <- function(table,
     xlim(-max_x_data, max_x_data) +
     theme_classic() +
     theme(legend.title = element_blank())
+}
+
+prepareResultsTable <-
+  function(table,
+           fc_threshold = 1,
+           pvalue_threshold = -log10(0.05),
+           pvalue_adjusted_flag = "p.value"
+           ) {
     
+  signif_labels <- list("not significant", "log FC",
+                        "%s", "log FC and %s")
+  pvalue_labels <- list("p.value" = "p-value",
+                        "q.value" = "q-value")
   
+  pvalue_label <- pvalue_labels[pvalue_adjusted_flag]
+  table$pvalue_signif <-
+    as.numeric(
+      table[[pvalue_adjusted_flag]] < pvalue_threshold
+    )
+  if ("logFC" %in% colnames(table)) {
+    table$fc_signif <-
+      as.numeric(abs(table$logFC) > abs(fc_threshold))
+    table$signif <- table$fc_signif + 2 * table$pvalue_signif  
+  } else {
+    table$signif <- 2 * table$pvalue_signif  
+  }
+  table$color <- sprintf(as.character(signif_labels[table$signif+1]), pvalue_label)
+  # Apply log transformation to p and q value
+  table$p.value <- -log10(table$p.value)
+  table$q.value <- -log10(table$q.value)
+  table
 }

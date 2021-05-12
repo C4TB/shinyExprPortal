@@ -156,24 +156,12 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
     
     vp_table <- reactive({
       table <- model_results()
-      pvalue_label <- pvalue_labels[input$pvalue_adjusted_flag]
-      # Compute p-value significance
-      table$pvalue_signif <-
-        as.numeric(
-          table[[input$pvalue_adjusted_flag]] < input$pvalue_threshold
-          )
-      if ("logFC" %in% colnames(table)) {
-        table$fc_signif <-
-          as.numeric(abs(table$logFC) > abs(input$fc_threshold))
-        table$signif <- table$fc_signif + 2 * table$pvalue_signif  
-      } else {
-        table$signif <-2 * table$pvalue_signif  
-      }
-      table$color <- sprintf(as.character(signif_labels[table$signif+1]), pvalue_label)
-      # Apply log transformation to p and q value
-      table$p.value <- -log10(table$p.value)
-      table$q.value <- -log10(table$q.value)
-      table
+      prepareResultsTable(
+        table,
+        input$fc_threshold,
+        input$pvalue_threshold,
+        input$pvalue_adjusted_flag
+        )
     })
 
     output$results_plot <- renderPlot({
