@@ -26,8 +26,8 @@ app_server <- function(input, output, session) {
   }
   
   output$icon_menu <- renderUI({
-    req(config$menu)
-    actionButtonList <- lapply(config$menu, function(module_name) {
+    req(config$iconMenu)
+    actionButtonList <- lapply(config$iconMenu, function(module_name) {
       local_image <- file_path(config$data_folder, "www", paste0(module_name, ".png"))
       if (file.exists(local_image)) {
         image_name <- file_path("local", paste0(module_name, ".png"))

@@ -30,9 +30,8 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   } else {
     stop("Logo image not found")
   }
-  appdata[["menu"]] <- config$menu %||% NULL
+  appdata[["iconMenu"]] <- config$iconMenu %||% NULL
   
-  #appdata[["about"]] <- config$about %||% NULL
   if (is.null(config$about)) {
     appdata[["about"]] <- NULL
   } else {

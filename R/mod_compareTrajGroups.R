@@ -142,6 +142,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
         scale_fill_viridis_d() +
         facet_wrap(stats::as.formula(paste("~", sidebyside_class)),
                    scales = "fixed") +
+        ylab(paste("Expression level of", input$selected_gene, sep = " ")) +
         theme_bw() +
         theme(
           strip.background = element_blank(),
