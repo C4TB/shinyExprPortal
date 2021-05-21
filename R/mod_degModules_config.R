@@ -11,5 +11,5 @@ degModulesConfig <- function(config, data_folder = "") {
                 list(config = modules[[module_name]],
                      data_folder = data_folder))
     })
-  list(modules = setNames(submodules_config, names(modules)))
+  list(modules = stats::setNames(submodules_config, names(modules)))
 }

@@ -10,7 +10,7 @@ run_app(config_file, data_folder = "", ...)
 \item{config_file}{The name of the yaml configuration file}
 
 \item{data_folder}{Optional directory prefix for data files.
-Enables using the same configuration file under different file structures.}
+Enables using the same configuration file for different versions of data files.}
 
 \item{...}{Further optional arguments.}
 }

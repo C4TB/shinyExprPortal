@@ -1,0 +1,65 @@
+---
+title: "degDetails"
+author: "Rafael Henkin"
+date: "12/05/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load}
+library(profvis)
+devtools::load_all()
+config <- parseConfig(fname = "../../../ramap_test/config.yaml", data_folder = "../../../ramap_test")
+```
+
+```{r server_code}
+models <- config$data$models
+table <- models$Data[[1]]
+fc_threshold <- 1
+pvalue_threshold <- -log10(0.05) 
+pflag <- "p.value"
+
+results_table <- prepareResultsTable(
+        table,
+        fc_threshold,
+        pvalue_threshold,
+        pflag
+        )
+
+```
+
+### Static plot
+
+```{r ggplot}
+gg_volcano_plot(results_table,
+                        fc_threshold,
+                        -log10(pvalue_threshold),
+                        pflag,
+                        "Gene")
+```
+
+### ggplotly
+
+```{r ggplotly}
+plotly::ggplotly(gg_volcano_plot(results_table,
+                        fc_threshold,
+                        -log10(pvalue_threshold),
+                        pflag,
+                        "Gene")) %>% plotly::toWebGL()
+```
+
+## Profiling
+
+```{r profiling}
+profvis({ 
+  plotly::ggplotly(gg_volcano_plot(results_table,
+                        fc_threshold,
+                        -log10(pvalue_threshold),
+                        pflag,
+                        "Gene"))
+})
+```

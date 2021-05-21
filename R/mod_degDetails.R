@@ -14,6 +14,7 @@ mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
 #' @return tab panel with inputs
 #' @noRd
 #'
+#' @importFrom shinycssloaders withSpinner
 degDetails_tab <- function(categories, id = NULL) {
   ns <- NS(id)
   tabPanel("Model results", value= "degDetails", 
@@ -94,15 +95,6 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
       selected_category_models <- models[
         models[, category_variable] == input$model_category, ] %>%
         dplyr::select(-exc_columns)
-      # taglist_args <- lapply(colnames(table_subset), function(column_name) {
-      #   radioButtons(ns(paste0("selected_", column_name)),
-      #                label = paste("Select", column_name),
-      #                choices = unique(unlist(selected_category[, column_name]))
-      #   )
-      # })
-      # output$model_controls <- renderUI({
-        #tagList(taglist_args)
-      # })
       model_update(TRUE)
       updateRadioButtons(
         session,
@@ -113,15 +105,6 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
 
     })
     
-    # selected_model_cond <- reactive({
-    #   input_values <- sapply(colnames(table_subset), function(column_name, input) {
-    #     input_name <- paste0("selected_", column_name)
-    #     input()[[input_name]]
-    #   }, input = reactive(input), USE.NAMES = TRUE)
-    #   input_values[[category_variable]] <- input$model_category
-    #   input_values
-    # })
-    
     observeEvent(input$selected_model, {
       model_update(TRUE)
     })
@@ -129,7 +112,7 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
     condition_list <- eventReactive(c(model_update(), input$selected_model), {
       model_update(FALSE)
       isolate({
-        condition <- setNames(unlist(strsplit(input$selected_model, "_")),
+        condition <- stats::setNames(unlist(strsplit(input$selected_model, "_")),
                               colnames(table_subset))
         condition[[category_variable]] <- input$model_category
       })

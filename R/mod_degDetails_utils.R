@@ -14,12 +14,6 @@ gg_volcano_plot <- function(table,
       "log FC and p-value" = "red",
       "log FC and q-value" = "red"
     )
-  # signif_labels_colors <-
-  #   c("gray",
-  #     "darkgreen",
-  #     "blue",
-  #     "red"
-  #   )
   
   if (adjusted == "q.value") {
     ylab_text <- "-log10 q"
@@ -31,7 +25,7 @@ gg_volcano_plot <- function(table,
            aes(
              .data$logFC,
              .data[[adjusted]],
-             color = .data$color, #stringr::str_wrap(.data$color, width = 20)
+             color = .data$color,
            )) +
     geom_point() +
     ylab(ylab_text) + 

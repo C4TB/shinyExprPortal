@@ -1,3 +1,4 @@
+utils::globalVariables("where")
 # singleVariableCorr UI Function
 mod_singleVariableCorr_ui <-
   function(module_name,
