@@ -6,8 +6,8 @@ mod_compareTrajGroups_ui <- function(module_name, appdata, global, module_config
       module_name,
       module_config$subset_classes
     ),
-    varsSelectInput(module_config$compare_col, module_name, FALSE),
-    geneSelectInput(NULL, module_name),
+    varsSelectInput(module_config$compare_col, module_name, initEmpty = FALSE),
+    geneSelectInput(gene_list = NULL, module_name),
     module_config$title,
     module_config$advanced,
     module_name)
@@ -63,6 +63,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class
     sidebyside_class <- module_config$sidebyside_class
+    traj_palette <- module_config$palette %||% NULL
     
     # Load genes server side
     updateSelectizeInput(session,
@@ -94,6 +95,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       clinical <- subset_clinical()
       fit_method <- input$fit_method %||% "linear"
       
+      # Return variables + time that match the selected variable
       compare_col_id <-
         grep(paste0("(", input$selected_variable, ")\\_.*"), colnames(clinical))
       compare_col_vars <- 
@@ -133,20 +135,14 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       #     new_pasi = approx(v$Time_seq, log(v$PASI),rule = 2)$y,
       #   )
       # }
-      #color = .data[[trajectory_class]],
-      trajplot <-
-        ggplot(df[order(df$Subject_ID, df$Time), ],
-               aes(x = .data[[input$selected_variable]], y = .data$expression)) +
-        geom_point(aes(fill = .data[[trajectory_class]]),
-                   colour="black",pch=21, size = 2) +
-        scale_fill_viridis_d() +
-        facet_wrap(stats::as.formula(paste("~", sidebyside_class)),
-                   scales = "fixed") +
-        theme_bw() +
-        theme(
-          strip.background = element_blank(),
-          strip.text.x = element_text(size = 12, face = "bold")
-        )
+      trajplot <- plotTrajGroups(
+        df[order(df[[subject_col]], df[[trajectory_class]]), ],
+        input$selected_variable,
+        input$selected_gene,
+        trajectory_class,
+        sidebyside_class,
+        traj_palette
+      )
       
       if (input$showtraj == "Yes") {
         trajplot <- trajplot + 
@@ -154,14 +150,10 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
                         group = .data[[subject_col]]),
                     alpha = 0.5,
                     arrow = arrow(angle = 15, length = unit(0.1, "inches"),
-                                  type = "closed")) +
-          scale_colour_viridis_d()
+                                  type = "closed"))
       }
       trajplot + ggAddFit(fit_method)
     })
-    
-    
-    
     
   })
 }

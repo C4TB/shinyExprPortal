@@ -7,6 +7,7 @@ Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
     config,
+    rlang,
     golem,
     shiny,
     htmltools,
@@ -17,13 +18,13 @@ Imports:
     yaml,
     vroom,
     data.table,
-    shinyjs,
     shinycssloaders,
     tools,
     matrixStats,
     bsplus,
+    bslib,
     htmlwidgets,
-    stringr
+    iheatmapr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
@@ -37,5 +38,7 @@ Suggests:
     r2d3,
     DT,
     splines,
-    kableExtra
+    kableExtra,
+    RColorBrewer,
+    stringr
 VignetteBuilder: knitr

@@ -30,7 +30,7 @@ app_ui <- function(request) {
                 modules_to_include[[module_name]])
   })
   args <- append(list(about_tab), modules_ui_list)
-  args$title <- list(config$logo)
+  args$title <- list(config$logo %||% config$name)
   args$windowTitle <- paste(config$name, "analysis portal")
   if (not_null(config$bootstrap))
   args$theme <- do.call(bslib::bs_theme, config$bootstrap)
@@ -50,10 +50,9 @@ app_ui <- function(request) {
 #' resources inside the Shiny application. 
 #' 
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
-#' @importFrom shinyjs useShinyjs
 #' @noRd
 golem_add_external_resources <- function(name){
-  
+  # importFrom shinyjs useShinyjs
   add_resource_path(
     "www", app_sys("app/www")
   )
@@ -66,7 +65,7 @@ golem_add_external_resources <- function(name){
     ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
-    shinyjs::useShinyjs()
+    #shinyjs::useShinyjs()
   )
 }
 

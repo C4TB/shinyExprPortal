@@ -1,31 +1,28 @@
-#' module UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd 
-#'
 mod_MODULENAME_ui <- function(id, appdata, global, module_config) {
   MODULENAME_tab(ARGUMENTS,
                      id)
 }
 
-MODULENAME_tab <- function(ARGUMENTS, id = NULL) {
+MODULENAME_tab <- function(ARGUMENTS,
+                           title = NULL,
+                           id = NULL) {
   ns <- NS(id)
-  tabPanel(title = "MODULE TITLE", value = "MODULENAME",
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-                 #INPUTS
-               )
-             ),
-             verticalLayout(
-                #OUTPUTS
-             ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style = "white-space: normal;")
-           )
+  tabPanel(
+    title = "MODULE TITLE",
+    value = "MODULENAME",
+    tags$h5(title %||% "Module description"),
+    splitLayout(
+      verticalLayout(
+        wellPanel(
+          ## INPUTS
+          )
+        ),
+        verticalLayout(
+          ## OUTPUTS ,
+          cellWidths = c("20%", "80%"),
+          cellArgs = list(style = "white-space: normal;")
+        )
+    )
   )
 }
 

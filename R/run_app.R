@@ -9,7 +9,7 @@ NULL
 #'
 #' @param config_file The name of the yaml configuration file
 #' @param data_folder Optional directory prefix for data files. 
-#'  Enables using the same configuration file under different file structures.
+#'  Enables using the same configuration file for different versions of data files.
 #' @param ... Further optional arguments.
 #'
 #' @export
@@ -41,8 +41,6 @@ run_app <- function(
 #' @param data_folder Optional directory prefix for data files
 #' @param ... 
 #' 
-#' @export
-#'
 #' @noRd
 #'
 run_module <- function(

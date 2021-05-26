@@ -87,23 +87,31 @@ buildURL <- function(key_values, prefix = NULL) {
   keys <- names(key_values)
   values <- key_values
   params <- paste0(keys, "=", values)
-  url_params <- stringr::str_c(params, collapse = "&") 
+  url_params <- paste(params, collapse = "&") 
   if (!is.null(prefix)) {
-    URLencode(paste0(prefix, "&", url_params))
+    utils::URLencode(paste0(prefix, "&", url_params))
   } else {
-    URLencode(url_params)
+    utils::URLencode(url_params)
   }
 }
 
 appendToURLv <- function(url, key, values) {
   list_of_urls <- paste0(url, "&", key, "=", values)
-  vencode <- Vectorize(URLencode)
+  vencode <- Vectorize(utils::URLencode)
   vencode(list_of_urls)
 }
 
 appendToURL <- function(url, key, value) {
-  URLencode(paste0(url, "&", key, "=", value))
+  utils::URLencode(paste0(url, "&", key, "=", value))
 }
+
+urlVector <- function(values, name, baseURL) {
+   vapply(values,
+              FUN = function(x) paste0('<a href="',
+                                 appendToURL(baseURL, name, x),
+                                 '">', x ,'</a>'),
+              FUN.VALUE = character(1))
+ }
 
 urlAsTag <- function(values) {
   curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
@@ -113,4 +121,16 @@ urlAsTag <- function(values) {
 valuesToURL <- function(url, key, values) {
   curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
   curlv(appendToURLv(url, key, values))
+}
+
+stopIfNotInstalled <- function(packages, mod_name) {
+  lv <- vapply(packages,
+               function(pkg) !requireNamespace(pkg, quietly = TRUE),
+               logical(1)
+               )
+  not_inst <- packages[lv]
+  if (length(not_inst) > 0)
+    stop("Package(s) ",
+         paste(not_inst, collapse = ", "), " required for ", mod_name,
+         " not found.")
 }

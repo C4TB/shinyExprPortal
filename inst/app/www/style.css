@@ -28,10 +28,13 @@
   cursor: pointer;
   height: 250px;
   width: 250px;
+  border-radius: 5px;
+  border: black 1px solid;
 }
 
 .iconclick:hover {
-  border: #337ab7 1px solid;
+  border: #337ab7 2px solid;
+  border-radius: 5px;
 }
 
 .well {
@@ -45,4 +48,18 @@ caption {
 
 .navbar-brand {
   padding: 5px;
+  height: 50px;
+}
+
+span.navbar-brand {
+  padding-top: 5px;
+  line-height: 45px;
+}
+
+.navbar-brand > img {
+  height: 100%;
+}
+
+.navbar-nav {
+  margin-top: 5px;
 }

@@ -24,15 +24,14 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     appdata$logo <-
         img(
           src = file_path("local", config$logo),
-          height = "45px",
+          #height = "45px",
           title = appdata[["name"]]
         )
   } else {
     stop("Logo image not found")
   }
-  appdata[["menu"]] <- config$menu %||% NULL
+  appdata[["iconMenu"]] <- config$iconMenu %||% NULL
   
-  #appdata[["about"]] <- config$about %||% NULL
   if (is.null(config$about)) {
     appdata[["about"]] <- NULL
   } else {
@@ -161,7 +160,7 @@ validateData <-
 #' User-friendly readfile
 #'
 #' @param filename filename
-#' @param filetype "matrix" or something else
+#' @param filetype "expression_matrix" for matrix type
 #' @param data_folder Optional directory prefix for file
 #'
 #' @return parsed file
