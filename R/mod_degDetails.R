@@ -28,7 +28,6 @@ degDetails_tab <- function(categories, id = NULL) {
                  choices = categories,
                  selected = categories[[1]]
                ),
-               # uiOutput(ns("selected_model")),
                radioButtons(
                  ns("selected_model"),
                  label = "Select model:",
@@ -52,25 +51,26 @@ degDetails_tab <- function(categories, id = NULL) {
                ),
                radioButtons(
                  ns("pvalue_adjusted_flag"),
-                    label = "Adjusted p-values?",
+                    label = "FDR adjusted p-values?",
                     choices = list("No" = "p.value", "Yes" = "q.value"),
                     selected = "p.value"
                )
              )),
              bsplus::bs_accordion("deg_results") %>%
-               bsplus::bs_append(title = "Plot and list of genes",
+               bsplus::bs_append(title = "Plot",
                          content = splitLayout(
                                     style = "font-size: 75%;",
-                                    plotOutput(ns("results_plot"),
+                                    plotly::plotlyOutput(ns("results_plot"),
                                         width = "700px",
                                         height = "500px") %>%
                                       withSpinner(),
-                                    tags$div(uiOutput(ns("genelist")),
-                                             style = "max-height: 500px"),
                                     cellWidths = c(700, 200)
                         )) %>%
                 bsplus::bs_append(title = "Table",
-                         content = DT::DTOutput(ns("deg_table"))),
+                         content = verticalLayout(
+                           uiOutput(ns("ui_table_checkbox")),
+                           DT::DTOutput(ns("deg_table")))
+                         ),
              cellWidths = c("20%", "80%"),
              cellArgs = list(style = 'white-space: normal;')
            )
@@ -84,13 +84,17 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
     ns <- session$ns
 
     models <- appdata$models
+    
     category_variable <- module_config$category_variable
+    link_to <- module_config$link_to
+    
     exc_columns <- c(category_variable,
                      c("pSignif", "qSignif", "File", "Data"))
     table_subset <- dplyr::select(models, -exc_columns)
     
     model_update <- reactiveVal(FALSE)
     
+    # Update list of models after a category is selected
     observeEvent(input$model_category, { 
       selected_category_models <- models[
         models[, category_variable] == input$model_category, ] %>%
@@ -102,13 +106,14 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
         choiceNames = do.call(paste, c(selected_category_models)),
         choiceValues = do.call(paste, c(selected_category_models, sep = "_"))
       )
-
     })
     
     observeEvent(input$selected_model, {
       model_update(TRUE)
     })
-
+    
+    # Combine selected model category with model
+    # Model is a string separated by "_" that is split into a vector
     condition_list <- eventReactive(c(model_update(), input$selected_model), {
       model_update(FALSE)
       isolate({
@@ -119,9 +124,11 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
       condition
     })
     
+    # Retrieve results by matching the columns from the table
     model_results <- reactive({
       condition <- condition_list()
       model_res <- list()
+      # Iterate through multiple conditions to match rows
       for (var_name in names(condition)) {
         model_cond_res <- models[models[, var_name] == condition[var_name], ]
         model_res[[var_name]] <- model_cond_res
@@ -139,25 +146,25 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
     
     vp_table <- reactive({
       table <- model_results()
-      prepareResultsTable(
+      prepareModelResultsTable(
         table,
         input$fc_threshold,
         input$pvalue_threshold,
         input$pvalue_adjusted_flag
         )
     })
-
-    output$results_plot <- renderPlot({
+    
+    output$results_plot <- plotly::renderPlotly({
       table <- vp_table()
       gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
       if ("logFC" %in% colnames(table)) {
-        gg_volcano_plot(table,
+        plotly_volcano_plot(table,
                         input$fc_threshold,
                         -log10(input$pvalue_threshold),
                         input$pvalue_adjusted_flag,
                         gene_column)
       } else {
-        gg_avgexpr_plot(table,
+        plotly_avgexpr_plot(table,
                         -log10(input$pvalue_threshold),
                         input$pvalue_adjusted_flag,
                         gene_column)
@@ -168,54 +175,38 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
       conditions <- condition_list()
       # Last condition is the model name/category so we remove it
       conditions <- conditions[-length(conditions)]
-      buildURL(conditions, "/?tab=singleGeneCorr")
+      buildURL(conditions, paste0("?tab=", link_to))
     })
     
-    gene_as_itemURL <- function(row, gene_column) {
-      itemURL(row[gene_column],
-              appendToURL(isolate({ current_URL() }),
-                          "gene",
-                          row[gene_column]))
-    }
-    
-    output$genelist <- renderUI({
-      table <- vp_table()
-      gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
-      if ("logFC" %in% colnames(table)) {
-        pvalue_label <- isolate({ pvalue_labels[input$pvalue_adjusted_flag] })
-        fc_header <- sprintf("logFC and %s significant genes:",
-                             pvalue_label)
-        pvalue_header <- sprintf("%s significant genes:",
-                             pvalue_label)
-        tagList(
-          fc_header,
-          tags$ul(apply(
-            table[table$signif ==  3,], 1,
-            gene_as_itemURL, gene_column = gene_column
-          )),
-          pvalue_header,
-          tags$ul(apply(
-            table[table$signif ==  2,], 1,
-            gene_as_itemURL, gene_column = gene_column
-          ))
-        )
-      } else {
-        tagList(
-          p("Significant genes: "),
-          tags$ul(apply(
-            table[table$signif ==  2, ], 1,
-            gene_as_itemURL, gene_column = gene_column
-          ))
-        )
-      }
+    # Create checkbox from color column
+    output$ui_table_checkbox <- renderUI({
+      req(vp_table())
+      checkboxGroupInput(ns("deg_table_checkbox"),
+                         label = "Filter genes:",
+                         choices = levels(as.factor(vp_table()[["color"]])),
+                         selected = levels(as.factor(vp_table()[["color"]])))
     })
 
     output$deg_table <- DT::renderDT({
-        model_results()
-      },
+      req(input$deg_table_checkbox)
+        model_table <- vp_table()
+        gene_column <- { 
+          if ("Gene" %in% colnames(model_table)) "Gene" else "GeneSymbol"
+        }
+        # Optional link
+        if (not_null(link_to)) {
+          model_table[[gene_column]] <- urlVector(model_table[[gene_column]],
+                                                  "gene",
+                                                  isolate({ current_URL() }))
+        }
+        view_cols <- 
+          c("EnsemblID", "Gene", "GeneSymbol", "logFC", "AvgExpr", "p.value", "q.value")
+        model_table[model_table$color %in% input$deg_table_checkbox, ] %>%
+          dplyr::select(any_of(view_cols))
+        },
       filter = "top",
+      escape = FALSE,
       options = list(scrollX = TRUE)
     )
-    
   })
 }

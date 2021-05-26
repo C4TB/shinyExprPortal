@@ -1,10 +1,7 @@
 singleGeneCorrConfig <- function(config, ...) { 
 
   message("Checking singleGeneCorr configuration")
-  # if (is.null(config$advanced)) { 
-  #   config$advanced$expression_outliers <- TRUE
-  #   config$advanced$clinical_outliers <- TRUE
-  # }
+  
   if (!is.null(config$advanced)) {
     validateAdvancedSettings(config$advanced, "singleGeneCorr")
   }

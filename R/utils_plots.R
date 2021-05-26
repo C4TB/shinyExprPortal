@@ -156,11 +156,12 @@ plotClinExpScatterplot <-
   p
 }
 
-ggAddFit <- function(fit_method = c("linear", "cubic", "none")) {
+ggAddFit <- function(fit_method = c("linear", "quadratic", "cubic", "none")) {
   fit_method <- match.arg(fit_method)
   if (fit_method == "none") return(NULL)
   fit_formula <- switch(fit_method,
                     linear = y ~ x,
+                    quadratic = y ~ splines::ns(x, df = 2),
                     cubic = y ~ splines::ns(x, df = 3))
   geom_smooth(formula = fit_formula,
               method = "lm",

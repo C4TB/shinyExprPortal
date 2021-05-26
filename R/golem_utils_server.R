@@ -105,6 +105,14 @@ appendToURL <- function(url, key, value) {
   utils::URLencode(paste0(url, "&", key, "=", value))
 }
 
+urlVector <- function(values, name, baseURL) {
+   vapply(values,
+              FUN = function(x) paste0('<a href="',
+                                 appendToURL(baseURL, name, x),
+                                 '">', x ,'</a>'),
+              FUN.VALUE = character(1))
+ }
+
 urlAsTag <- function(values) {
   curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
   curlv(values)
