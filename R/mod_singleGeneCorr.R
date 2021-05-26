@@ -230,7 +230,7 @@ mod_singleGeneCorr_server <-function(module_name,
           scatterplot + 
              ggAnnotateCorr(corr_df, correlation_method) +
              ggAddFit(fit_method)
-         }, width = plotWidth , height = plotHeight)
+         }, width = plotWidth , height = plotHeight, bg = "transparent")
        })
      }
    })

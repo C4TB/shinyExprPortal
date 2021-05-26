@@ -4,14 +4,14 @@ geneModulesCorrConfig <- function(config, data_folder = "") {
   message("Checking geneModulesCorr configuration")
   
   if (is.null(config$subset_classes)) {
-    stop("Gene modules tab: subset_classes list missing in configuration file.")
+    stop("geneModulesCorr: subset_classes list missing in configuration file.")
   }
   
   if (is.null(config$sources)) {
-    stop("Gene modules tab: sources list missing in configuration file.")
+    stop("geneModulesCorr: sources list missing in configuration file.")
   }
   if (is.null(config$scatterplot_variables)) {
-    stop("Gene modules tab:
+    stop("geneModulesCorr:
          scatterplot_variables list missing in configuration file.")
   }
   
@@ -25,7 +25,7 @@ geneModulesCorrConfig <- function(config, data_folder = "") {
     }
     
     if (file_ext(source_file) != "rds") {
-      stop("Gene modules tab: module data must be in rds format")
+      stop("geneModulesCorr: module data must be in rds format")
     }
     
     module_data <- readRDS(source_file)

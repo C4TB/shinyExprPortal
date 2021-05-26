@@ -30,8 +30,7 @@ mod_degSummary_server <- function(module_name, appdata, global, module_config) {
       header_cols <- sort(as.vector(outer(partition_values,
                            c("pSignif", "qSignif"), paste, sep = "_")))
       # Get only the columns that define models (e.g. Response, Tissue, Time)
-      model_cols <- colnames(models)
-        colnames(models[, !colnames(models) %in%
+      model_cols <- colnames(models[, !colnames(models) %in%
                         c("pSignif", "qSignif", "File", "Data", partition)])
       # We don't need the actual data or file names here
       models_only <- models %>% 

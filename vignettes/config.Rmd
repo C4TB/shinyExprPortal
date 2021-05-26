@@ -1,0 +1,82 @@
+---
+title: "Configuration guide"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Configuration guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+This guide describes how to set up the configuration file for deploying a project with the package. It describes a minimal setup example, as well as optional advanced and customisation settings.
+
+## Required files
+
+A minimal project folder will have the following files:
+```{r}
+- app.R
+- expression_matrix.rds
+- sample_lookup.csv
+- clinical_data.csv
+- about.md
+- config.yaml
+```
+
+### app.R 
+
+The app.R file will almost always look like the following:
+
+```{r}
+library(clinvisx)
+run_app("config.yaml")
+```
+
+If needed, it is possible to place app.R in a different folder relative to the data files. In that case, the data_folder argument should also be passed to run_app:
+
+```{r}
+library(clinvisx)
+run_app("config.yaml", data_folder = "../files_version1")
+```
+
+### Data files
+
+The key data files are the expression matrix, the clinical data file and the sample lookup (or metadata) file. The expression matrix should contain gene symbols in rows and sample identifiers in columns. The following is a valid expression matrix:
+
+```{r, eval=TRUE, echo = FALSE}
+
+```
+
+All the sample ids should also be in a column of the lookup file (e.g. named Sample_ID). The others columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
+
+```{r, eval=TRUE, echo = FALSE}
+knitr::kable(data.frame(Sample_ID = c("01_01", "01_02", "02_01", "02_02", "03_01", "03_02"),
+                 Time = c("m01", "m02", "m01", "m02", "m01", "m02"),
+                 Tissue = c("A", "A", "A", "A", "A", "A"),
+                 Patient_ID = c("p01", "p01", "p02", "p02", "p03", "p03"))
+)
+```
+
+A clinical data file contains all observed clinical data, as well as demographics and additional information, for a patient. For data observed at multiple timepoints, it is expected that column names follow the pattern: `{Variable}_{Time}`, where all time values match a time column in the lookup file. The following is a valid clinical data file for the lookup above:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(
+  data.frame(Patient_ID = c("p01", "p02", "p03"),
+             Platelets_m01 = 150 + runif(3)*100,
+             Platelets_m02 = 150 + runif(3)*100,
+             Age = floor(runif(3, 30, 90)),
+             drugNaive = c("Yes", "Yes", "No"))
+)
+```
+
+**Supported formats:** common formats such as CSV and TSV (also with .txt extension) are supported. The expression matrix is loaded using the `{data.table}` package. The clinical and lookup files are loaded using the `{vroom}` package. RDS files are also supported -- in this case, the expression matrix object should be saved as a matrix into the RDS file. For the lookup and clinical data, normal data frames or tibbles are supported.
+
+

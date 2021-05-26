@@ -93,7 +93,8 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
       list_of_values <- user_selection()
     # Return subset of lookup based on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
-      validate(need(nrow(selected_lookup) > 0, "No data for selected parameters."))
+      validate(need(nrow(selected_lookup) > 0,
+                    "No data for selected parameters."))
       selected_clinical <- selectFromLookup(clinical, selected_lookup,
                                             matching_col = subject_col,
                                             return_col = selected_variable)
@@ -102,7 +103,8 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
       
       # Apply outlier filters
       selected_expression <- 
-        replaceFalseWithNA(na.omit(expression_matrix[, selected_lookup[[sample_col]]]),
+        replaceFalseWithNA(
+          na.omit(expression_matrix[, selected_lookup[[sample_col]]]),
                            outlier_functions[[expression_outliers]])
       selected_clinical <- 
         replaceFalseWithNA(selected_clinical,
@@ -115,10 +117,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
 
       if (not_null(link_to)) {
         baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
-        correlation_df$Gene <- unlist(sapply(correlation_df$Gene,
-                    function(x) paste0('<a href="',
-                                       appendToURL(baseURL, "gene", x),
-                                       '">',x,'</a>'), simplify = FALSE))
+        correlation_df$Gene <- urlVector(correlation_df$Gene, "gene", baseURL)
       }
       correlation_df
     })

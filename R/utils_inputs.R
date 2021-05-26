@@ -26,8 +26,9 @@ advanced_settings_inputs <- function(config, id = NULL) {
       radioButtons(ns("fit_method"),
                    label = "Fitting method:",
                    choices = c("Linear" = "linear",
+                               "Quadratic" = "quadratic",
                                "Cubic" = "cubic",
-                               { if (config$fit_method == "AllowHide") c("None" = "none") else NULL }))
+     { if (config$fit_method == "AllowHide") c("None" = "none") else NULL }))
     } else NULL
   )
   do.call(tagList, list(to_include))
