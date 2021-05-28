@@ -64,12 +64,20 @@ wholeDataCorr_tab <- function(sample_select,
           advanced_settings_inputs(advanced, id)
         )
       ),
-      verticalLayout(
-        plotOutput(ns("heatmap"), height = 800) %>% withSpinner(),
-        conditionalPanel(
-          paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
-          downloadButton(ns("fulltable_download"), "Download Table CSV")
-        )),
+      
+        bsplus::bs_accordion("wholeDataCorr_acc") %>% 
+          bsplus::bs_append(title = "Heatmap Top 50 significant genes",
+            plotly::plotlyOutput(ns("heatmap"), height = 800) %>% withSpinner()
+          ) %>%
+          bsplus::bs_append(title = "Table",
+          verticalLayout(
+            DT::DTOutput(ns("table")),
+            conditionalPanel(
+              paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
+              downloadButton(ns("fulltable_download"), "Download Table CSV")
+            )
+          )
+      ),
       cellWidths = c("20%", "80%"),
       cellArgs = list(style = "white-space: normal;")
     )
@@ -93,12 +101,17 @@ mod_wholeDataCorr_server <- function(module_name,
     sample_col <- global$sample_col
     sample_classes <- global$sample_classes
     
+    link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,
                            "No" = function(x) TRUE)
 
+    user_selection <- reactive({
+      getSelectedSampleClasses(sample_classes, input)
+    })
+    
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
@@ -106,7 +119,7 @@ mod_wholeDataCorr_server <- function(module_name,
       expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "spearman"
       
-      list_of_values <- getSelectedSampleClasses(sample_classes, input)
+      list_of_values <- user_selection()
       # Return subset of lookup conditional on the user selection of sample classes
       selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
       validate(need(nrow(selected_lookup) > 0,
@@ -139,13 +152,34 @@ mod_wholeDataCorr_server <- function(module_name,
                               )
       combined_df <- cbind(corr_df, pvalues_rank)
       combined_df <- combined_df[order(combined_df$pvalues_rank),]
-      combined_df[1:50, ]
+      combined_df
       
     })
     
-    output$heatmap <- renderPlot({ 
-      hm <- heatmap_data()
-      plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr)
+    output$table <- DT::renderDataTable({
+        df <- corrResultsToTable(heatmap_data(), input$max_pvalue)
+        if (not_null(link_to)) {
+          isolate({
+            list_of_values <- user_selection()
+            baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
+            df$Gene <- urlVector(df$Gene, "gene", baseURL)
+          })
+        }
+        df
+      },
+      options = list(scrollX = TRUE),
+      caption = "Significant correlations highlighted in bold",
+      escape = F,
+      rownames = FALSE)
+    
+    output$heatmap <- plotly::renderPlotly({ 
+      hm <- heatmap_data()[1:50, ]
+      plotly::ggplotly(
+        plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr),
+        tooltip = "text"
+      ) %>%
+        plotly::layout(xaxis = list(automargin = TRUE, tickfont = list(size = 9), side = "top"),
+                       font = list(size = 5))
     })
     
     output$fulltable_download <- downloadHandler(

@@ -168,7 +168,11 @@ ggAddFit <- function(fit_method = c("linear", "quadratic", "cubic", "none")) {
               fullrange = TRUE)
 }
 
-ggAnnotateCorr <- function(correlation_df, correlation_method) {
+ggAnnotateCorr <- function(correlation_df,
+                           correlation_method,
+                           vars = c("estimate",
+                                    "pvalue",
+                                    "padj")) {
   corr_labels <- c("pearson" = "r:",
                    "spearman" = "\u03c1:",
                    "kendall" = "\u03C4:")
@@ -177,11 +181,11 @@ ggAnnotateCorr <- function(correlation_df, correlation_method) {
     aes(
       label = paste(
         corr_labels[correlation_method],
-        signif(.data$var_estimate, 2),
+        signif(.data[[vars[1]]], 2),
         ", P: ",
-        signif(.data$var_pvalue, 2),
+        signif(.data[[vars[2]]], 2),
         ", P_adj: ",
-        signif(.data$var_padj, 2),
+        signif(.data[[vars[3]]], 2),
         sep = ""
       )
     ),

@@ -35,6 +35,7 @@ colMediansSubset <- function(x, rownames_list = NULL) {
 #' Compute p-values
 #'
 #' @param x vector x with correlation estimates
+#' @param n number of comparisons
 #'
 #' @noRd
 #' @return vector with p-values
@@ -96,3 +97,42 @@ correlateMatrices <-
     cor_mat
 }
 
+longCorrelationMatrix <- function(first_col_name = "Gene",
+                                  name_to = "ClinicalVariable",
+                                  ...) {
+  correlateMatrices(
+    rowname_var = first_col_name,
+    ...
+  ) %>%
+    pivot_longer(
+      cols = -.data[[first_col_name]],
+      names_to = c(name_to, ".value"),
+      names_pattern = "(.*_.*)_(estimate|pvalue|padj)"
+    )
+}
+
+corrResultsToTable <- function(df, max_pvalue = 0) {
+  selected_df <- df %>% dplyr::select(contains("estimate"))
+  colnames(selected_df) <- gsub("(.*_)*(_estimate)", "\\1", 
+                                colnames(selected_df))
+  rownames(selected_df) <- df$Gene
+  cormat <- as.matrix(selected_df)
+  
+  
+  pval_df <- df %>% dplyr::select(contains("_pvalue")) 
+  colnames(pval_df) <- gsub("(.*_)*(_pvalue)", "\\1", 
+                            colnames(pval_df))
+  rownames(pval_df) <- df$Gene
+  pmat <- as.matrix(pval_df)
+  
+  labels <- cormat
+  labels <- signif(labels, 2)
+  lv <- pmat < max_pvalue &
+    !is.na(cormat) & !is.na(pmat)
+  labels[lv] <-
+    vapply(labels[lv], function(x) paste0("<b>",x,"</b>"), character(1))
+  labels <- as.data.frame(labels)
+  labels <- cbind(Gene = rownames(labels), labels)
+  rownames(labels) <- NULL
+  labels
+}

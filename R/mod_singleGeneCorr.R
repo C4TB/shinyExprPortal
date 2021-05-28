@@ -151,16 +151,16 @@ mod_singleGeneCorr_server <-function(module_name,
      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
      subset_clinical <- selectFromLookup(clinical, selected_lookup,
                                          matching_col = subject_col)
-     selected_expression <- expression_matrix[selected_gene,
+     selected_expression <- expression_matrix[,
                                               selected_lookup[[sample_col]]]
-     if (all(is.na(selected_expression)) | length(selected_expression) == 0) {
+     if (all(is.na(selected_expression[selected_gene,])) | length(selected_expression) == 0) {
         output$error_message <- reactive({ TRUE })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
      } else {
         output$error_message <- reactive({ FALSE })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
      }
-     req(all(not_na(selected_expression)) & (length(selected_expression) > 0))  
+     req(all(not_na(selected_expression[selected_gene,])) & (length(selected_expression) > 0))  
      tab_output_list <- module_config$tabs
      
      # We go through the list of outputs defined in the configuration file
@@ -185,23 +185,29 @@ mod_singleGeneCorr_server <-function(module_name,
             subset_vars <- output_vars
          }
          selected_clinical <- subset_clinical[, subset_vars]
-         combined_df <- cbind(Expression = selected_expression,
-                              selected_clinical)
-         combined_df[, output_vars] <- 
-           replaceFalseWithNA(combined_df[, output_vars],
+         selected_clinical[, output_vars] <- 
+           replaceFalseWithNA(selected_clinical[, output_vars],
                               outlier_functions[[clinical_outliers]])
-         combined_df[, "Expression"] <-
-           replaceFalseWithNA(combined_df[, "Expression"],
-                              outlier_functions[[expression_outliers]])
-         corr_df <- correlateMatrices(x = combined_df[, output_vars],
-                                      y = combined_df$Expression,
-                                      method = correlation_method)
-   
-# By default the first column returned by function above is named "variable"
-# We need to match it with the data frame below for the plotting function
-         colnames(corr_df)[1] <- "ClinicalVariable"
-         corr_df[["ClinicalVariable"]] <- factor(corr_df[["ClinicalVariable"]],
-                                                 levels = output_vars)
+         selected_expression <- 
+            t(replaceFalseWithNA(t(selected_expression),
+                               outlier_functions[[expression_outliers]]))
+         
+         corr_df <- longCorrelationMatrix(first_col_name = "Gene",
+                                          name_to = "ClinicalVariable",
+                                          x = t(selected_expression),
+                                          y = selected_clinical[, output_vars],
+                                          method = correlation_method)
+         # Change to factor
+         corr_df[["ClinicalVariable"]] <-
+            factor(corr_df[["ClinicalVariable"]], levels = output_vars)
+         
+         # Filter to selected gene
+         corr_df <- corr_df[corr_df$Gene == selected_gene, ] %>%
+                     dplyr::select(-Gene)
+         
+         combined_df <-
+            cbind(Expression = selected_expression[selected_gene,],
+                  selected_clinical)
          
          if (not_null(colour_var)) {
            combined_df <- combined_df %>%
@@ -215,7 +221,7 @@ mod_singleGeneCorr_server <-function(module_name,
          
          combined_df[["ClinicalVariable"]] <-
             factor(combined_df[["ClinicalVariable"]], levels = output_vars)
-         plotHeight <- ((length(output_vars) %/% 5) + 1) * 200
+         plotHeight <- ceiling(length(output_vars)/4) * 200
          plotWidth <- { 
             if (length(output_vars) < 4) length(output_vars)*200 else 800 
             }

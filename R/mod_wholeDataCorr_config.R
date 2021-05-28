@@ -5,7 +5,7 @@ wholeDataCorrConfig <- function(config, data_folder = "") {
     validateAdvancedSettings(config$advanced, "wholeDatacorr")
   }
   
-  #list(subset_clinical_variable = config$subset_clinical_variable,
-  list(heatmap_variables = config$heatmap_variables,
+  list(link_to = config$link_to,
+       heatmap_variables = config$heatmap_variables,
        advanced = config$advanced)
 }
