@@ -129,8 +129,20 @@ mod_singleGeneCorr_server <-function(module_name,
                           "IQR" = valuesInsideTukeyFences,
                           "No" = function(x) TRUE)
    
-   user_selection <- reactive({
-      getSelectedSampleClasses(sample_classes, input)
+   selected_lookup <- reactive({
+      list_of_values <- getSelectedSampleClasses(sample_classes, input)
+      selectMatchingValues(sample_lookup, list_of_values)
+   })
+   
+   expression_from_lookup <- eventReactive(selected_lookup(), {
+      sel_lookup <- selected_lookup()
+      expression_matrix[, sel_lookup[[sample_col]]]
+   })
+   
+   clinical_from_lookup <- eventReactive(selected_lookup(), {
+      sel_lookup <- selected_lookup()
+      selectFromLookup(clinical, sel_lookup,
+                       matching_col = subject_col)
    })
    
    observe({
@@ -146,13 +158,8 @@ mod_singleGeneCorr_server <-function(module_name,
      correlation_method <- input$correlation_method %||% "pearson"
      fit_method <- input$fit_method %||% "linear"
      
-     list_of_values <- user_selection()
-     # Return subset of lookup based on the user selection of sample classes
-     selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
-     subset_clinical <- selectFromLookup(clinical, selected_lookup,
-                                         matching_col = subject_col)
-     selected_expression <- expression_matrix[,
-                                              selected_lookup[[sample_col]]]
+     selected_expression <- expression_from_lookup()
+     subset_clinical <- clinical_from_lookup()
      if (all(is.na(selected_expression[selected_gene,])) | length(selected_expression) == 0) {
         output$error_message <- reactive({ TRUE })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
@@ -167,6 +174,7 @@ mod_singleGeneCorr_server <-function(module_name,
      # as they were also used to create pairs of tabPanel-plotOutput
      # Local scope is required otherwise the last tab_output will override 
      # previous ones
+     
      for(i in seq_along(tab_output_list)) {
        local({
          tab_output <- tab_output_list[[i]]
@@ -191,7 +199,7 @@ mod_singleGeneCorr_server <-function(module_name,
          selected_expression <- 
             t(replaceFalseWithNA(t(selected_expression),
                                outlier_functions[[expression_outliers]]))
-         
+         # TODO: Find a way to share correlation computation across all tabs
          corr_df <- longCorrelationMatrix(first_col_name = "Gene",
                                           name_to = "ClinicalVariable",
                                           x = t(selected_expression),

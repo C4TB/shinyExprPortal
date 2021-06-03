@@ -22,6 +22,8 @@ plotTrajGroups <- function(df,
     theme_bw() +
     theme(
       strip.background = element_blank(),
+      panel.background= element_blank(),
+      plot.background = element_blank(),
       strip.text.x = element_text(size = 12, face = "bold"),
       aspect.ratio = 1,
     )

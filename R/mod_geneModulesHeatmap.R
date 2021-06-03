@@ -146,7 +146,9 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
                           scale = "rows",
                           scale_method = "standardize",
                           name = "Expression z-scores",
-                          layout = list(font = list(size = 9)))  %>%
+                          layout = list(font = list(size = 9),
+                                        plot_bgcolor = "transparent",
+                                        paper_bgcolor = "transparent"))  %>%
         add_row_clustering() %>% 
         add_col_clustering()
     })
@@ -182,10 +184,10 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
                              facet_var = "ClinicalVariable",
                              scales = "free",
                              gene_name = "eigengene", ncol = 4) +
-        ggAnnotateCorr(corr_df, "pearson") +
+        ggAnnotateCorr(corr_df, "pearson", c("var_estimate", "var_pvalue", "var_padj")) +
         ggAddFit("linear")
       
-    })
+    }, bg = "transparent")
     
     
     

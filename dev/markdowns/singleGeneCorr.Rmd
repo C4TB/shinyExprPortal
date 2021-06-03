@@ -1,0 +1,81 @@
+---
+title: "Single gene tests"
+author: "Rafael Henkin"
+date: "02/06/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r packages}
+library(profvis)
+library(microbenchmark)
+```
+
+```{r load_all}
+devtools::load_all()
+```
+
+```{r readconfig}
+config <- parseConfig(fname = "../../../psort_test/psort_reg.yaml", data_folder = "../../../psort_test")
+appdata <- config$data
+global <- config$global
+modules <- config$modules
+clinical <- appdata$clinical
+expression_matrix <- appdata$expression_matrix
+sample_lookup <- appdata$sample_lookup
+
+subject_col <- global$subject_col
+sample_col <- global$sample_col
+
+module_config <- modules$corrModules$modules$singleGeneCorr
+```
+
+```{r selection}
+inputs <- c(Time = "wk00", Tissue = "Lesional", Drug = "Adalimumab")
+sel_lookup <- selectMatchingValues(sample_lookup, inputs)
+selected_expression <- expression_matrix[, sel_lookup[[sample_col]]]
+selected_clinical <- selectFromLookup(clinical, sel_lookup,
+                       matching_col = subject_col)
+all_cols <- unique(do.call(c, sapply(module_config$tabs, function(x) x$variables )))
+```
+
+
+```{r pearson}
+profvis({
+  corr_df <- longCorrelationMatrix(first_col_name = "Gene",
+                                          name_to = "ClinicalVariable",
+                                          x = t(selected_expression),
+                                          y = selected_clinical[, all_cols],
+                                          method = "pearson")
+})
+```
+
+
+```{r spearman}
+profvis({
+  corr_df <- longCorrelationMatrix(first_col_name = "Gene",
+                                          name_to = "ClinicalVariable",
+                                          x = t(selected_expression),
+                                          y = selected_clinical[, all_cols],
+                                          method = "spearman")
+})
+```
+
+```{r benchmarking}
+microbenchmark(pearson = longCorrelationMatrix(first_col_name = "Gene",
+                                          name_to = "ClinicalVariable",
+                                          x = t(selected_expression),
+                                          y = selected_clinical[, all_cols],
+                                          method = "pearson"),
+               spearman = longCorrelationMatrix(first_col_name = "Gene",
+                                          name_to = "ClinicalVariable",
+                                          x = t(selected_expression),
+                                          y = selected_clinical[, all_cols],
+                                          method = "spearman"),
+               wgcna_p = 
+               wgcna = WGCNA::cor(t(selected_expression), selected_clinical[, all_cols], method = "spearman", use = "pairwise.complete.obs"), times = 1)
+```

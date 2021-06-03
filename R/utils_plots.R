@@ -128,6 +128,8 @@ plotClinExpScatterplot <-
       axis.title.x = element_blank(),
       legend.position = "bottom",
       legend.text = element_text(size = 12),
+      panel.background= element_blank(),
+      plot.background = element_blank(),
       strip.background = element_blank(),
       strip.text.x = element_text(size = 12, face = "bold"),
       strip.placement = "outside",

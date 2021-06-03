@@ -71,7 +71,10 @@ correlateMatrices <-
       y <-  matrix(y, ncol = 1, dimnames = list(NULL, colname_var))
     
     # Compute correlations
-    cor_mat <- cor(x, y, method, use = "pairwise.complete.obs")
+    if (!requireNamespace("WGCNA", quietly = TRUE))
+      cor_mat <- cor(x, y, method, use = "pairwise.complete.obs")
+    else 
+      cor_mat <- WGCNA::cor(x, y, method, use = "pairwise.complete.obs")
     colnames(cor_mat) <- paste0(colnames(cor_mat), "_estimate")
     
     # Compute p-values

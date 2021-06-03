@@ -294,6 +294,10 @@ characterURLsub <- function(href) {
   ))
 }
 
+bg_color <- function() {
+  bslib::bs_get_variables(bslib::bs_current_theme(), c("bg"))
+}
+
 # UNCOMMENT AND USE 
 # 
 # usethis::use_package("markdown")

@@ -153,7 +153,7 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
                                   type = "closed"))
       }
       trajplot + ggAddFit(fit_method)
-    })
+    }, bg = "transparent")
     
   })
 }

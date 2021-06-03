@@ -40,5 +40,6 @@ Suggests:
     splines,
     kableExtra,
     RColorBrewer,
-    stringr
+    stringr,
+    WGCNA
 VignetteBuilder: knitr
