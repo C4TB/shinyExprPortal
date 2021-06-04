@@ -3,8 +3,9 @@
 degDetailsConfig <- function(config, data_folder = "") { 
   message("Checking degDetails configuration")
   
-  if (!"kableExtra" %in% rownames(utils::installed.packages())) {
-    stop("Package kableExtra required for degSummary module not found")
+  if (is.null(config$category_variable)) {
+    stop("degDetails: 
+         'category_variable' to identify model results is missing")
   }
   
   if (not_null(config$models)) {

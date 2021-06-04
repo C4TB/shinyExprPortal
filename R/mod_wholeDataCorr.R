@@ -97,8 +97,8 @@ mod_wholeDataCorr_server <- function(module_name,
     expression_matrix <- appdata$expression
     sample_lookup <- appdata$sample_lookup
     
-    subject_col <- global$subject_col
-    sample_col <- global$sample_col
+    subject_var <- global$subject_variable
+    sample_var <- global$sample_variable
     sample_classes <- global$sample_classes
     
     link_to <- module_config$link_to
@@ -112,6 +112,23 @@ mod_wholeDataCorr_server <- function(module_name,
       getSelectedSampleClasses(sample_classes, input)
     })
     
+    selected_lookup <- reactive({
+      sel_lookup <- selectMatchingValues(sample_lookup, user_selection())
+      validate(need(nrow(sel_lookup) > 0,
+                    "No data for selected parameters."))
+      sel_lookup
+    })
+    
+    expression_from_lookup <- reactive({
+      expression_matrix[, selected_lookup()[[sample_var]]]
+    })
+    
+    clinical_from_lookup <- eventReactive(selected_lookup(), {
+      sel_lookup <- selected_lookup()
+      selectFromLookup(clinical, sel_lookup,
+                       matching_col = subject_var)
+    })
+    
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
@@ -119,31 +136,27 @@ mod_wholeDataCorr_server <- function(module_name,
       expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "spearman"
       
-      list_of_values <- user_selection()
-      # Return subset of lookup conditional on the user selection of sample classes
-      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
-      validate(need(nrow(selected_lookup) > 0,
+      validate(need(nrow(selected_lookup()) > 0,
                     "No data for selected parameters."))
-      subset_clinical <- selectFromLookup(clinical, selected_lookup,
-                                          matching_col = subject_col)
+      selected_clinical <- clinical_from_lookup()
+      selected_expression <- expression_from_lookup()
       
       # Get subset of variables selected by user
       selected_clinical_vars <- heatmap_variables[[input$heatmap_variables]]
-      
-      selected_clinical <-
-        subset_clinical[, colnames(subset_clinical) %in% selected_clinical_vars]
-      selected_expression <- expression_matrix[, selected_lookup[[sample_col]]]
+      cols_lv <- colnames(selected_clinical) %in% selected_clinical_vars
+      subset_clinical <- selected_clinical[, cols_lv]
       
       #Apply outlier functions to clinical
-      selected_clinical  <- 
-        replaceFalseWithNA(selected_clinical,
+      subset_clinical  <- 
+        replaceFalseWithNA(subset_clinical,
                            outlier_functions[[clinical_outliers]])
       #Apply outlier functions to expression
       selected_expression <-
         replaceFalseWithNA(t(selected_expression),
                            outlier_functions[[expression_outliers]])
+      
       corr_df <- correlateMatrices(selected_expression,
-                                   selected_clinical,
+                                   subset_clinical,
                                    method = correlation_method,
                                    rowname_var = "Gene")
       pvalues_rank <- do.call(pmin,
@@ -178,7 +191,9 @@ mod_wholeDataCorr_server <- function(module_name,
         plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr),
         tooltip = "text"
       ) %>%
-        plotly::layout(xaxis = list(automargin = TRUE, tickfont = list(size = 9), side = "top"),
+        plotly::layout(xaxis = list(automargin = TRUE,
+                                    tickfont = list(size = 9),
+                                    side = "top"),
                        font = list(size = 5))
     })
     
@@ -190,7 +205,7 @@ mod_wholeDataCorr_server <- function(module_name,
       },
       content = function(file) {
         utils::write.csv(heatmap_data(), file, row.names = FALSE) 
-      },contentType = 'text/csv')
+      }, contentType = "text/csv")
     
   })
 }

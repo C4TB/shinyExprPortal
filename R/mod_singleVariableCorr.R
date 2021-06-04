@@ -60,6 +60,7 @@ singleVariableCorr_tab <- function(sample_select,
 }
 #' singleVariableCorr Server Function
 #'
+#' @importFrom stats na.omit
 #' @noRd 
 mod_singleVariableCorr_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
@@ -69,8 +70,8 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
     expression_matrix <- appdata$expression_matrix
     sample_lookup <- appdata$sample_lookup
     sample_classes <- global$sample_classes
-    subject_col <- global$subject_col
-    sample_col <- global$sample_col
+    subject_var <- global$subject_variable
+    sample_var <- global$sample_variable
     
     link_to <- module_config$link_to
     
@@ -83,28 +84,40 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
       getSelectedSampleClasses(sample_classes, input)
     })
     
-    correlation_table <- reactive({
+    selected_lookup <- reactive({
+      sel_lookup <- selectMatchingValues(sample_lookup, user_selection())
+      validate(need(nrow(sel_lookup) > 0,
+                    "No data for selected parameters."))
+      sel_lookup
+    })
+    
+    expression_from_lookup <- reactive({
+      expression_matrix[, selected_lookup()[[sample_var]]]
+    })
+    
+    clinical_from_lookup <- reactive({
       req(input$selected_variable)
-      selected_variable <- input$selected_variable
+      selectFromLookup(clinical,
+                       selected_lookup(),
+                       matching_col = subject_var,
+                       return_col = input$selected_variable)
+    })
+    
+    
+    correlation_table <- reactive({
       clinical_outliers <- input$clinical_outliers %||% "No"
       expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "pearson"
       
       list_of_values <- user_selection()
-    # Return subset of lookup based on the user selection of sample classes
-      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
-      validate(need(nrow(selected_lookup) > 0,
-                    "No data for selected parameters."))
-      selected_clinical <- selectFromLookup(clinical, selected_lookup,
-                                            matching_col = subject_col,
-                                            return_col = selected_variable)
+      selected_clinical <- clinical_from_lookup()
+      selected_expression <- expression_from_lookup()
       validate(need(is.numeric(selected_clinical),
                     "Selected variable is not numeric"))
       
       # Apply outlier filters
-      selected_expression <- 
-        replaceFalseWithNA(
-          na.omit(expression_matrix[, selected_lookup[[sample_col]]]),
+      selected_expression <-
+        replaceFalseWithNA(na.omit(selected_expression),
                            outlier_functions[[expression_outliers]])
       selected_clinical <- 
         replaceFalseWithNA(selected_clinical,
@@ -131,9 +144,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
     
     output$fulltable_download <- downloadHandler(
       filename = function() {
-        list_of_values <-
-          getSelectedSampleClasses(sample_classes, input)
-        paste(c(list_of_values, "correlation_table"), collapse = "_") 
+        paste(c(user_selection(), "correlation_table"), collapse = "_") 
         },
       content = function(file) {
         utils::write.csv(correlation_table(), file, row.names = FALSE) 

@@ -95,8 +95,8 @@ mod_singleGeneCorr_server <-function(module_name,
    expression_matrix <- appdata$expression_matrix
    sample_lookup <- appdata$sample_lookup
    
-   subject_col <- global$subject_col
-   sample_col <- global$sample_col
+   subject_var <- global$subject_variable
+   sample_var <- global$sample_variable
    sample_classes <- global$sample_classes
    
    # Load genes server side
@@ -136,13 +136,13 @@ mod_singleGeneCorr_server <-function(module_name,
    
    expression_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
-      expression_matrix[, sel_lookup[[sample_col]]]
+      expression_matrix[, sel_lookup[[sample_var]]]
    })
    
    clinical_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
       selectFromLookup(clinical, sel_lookup,
-                       matching_col = subject_col)
+                       matching_col = subject_var)
    })
    
    observe({
@@ -181,7 +181,7 @@ mod_singleGeneCorr_server <-function(module_name,
          output_name <- tab_output$name
          output_scale <- tab_output$scale
          output_vars <- unique(tab_output$variables)
-         
+
          # If a colour variable was provided AND it's not in subset yet, add it
          if (not_null(colour_var)) {
            if (!colour_var %in% output_vars) {
@@ -197,12 +197,12 @@ mod_singleGeneCorr_server <-function(module_name,
            replaceFalseWithNA(selected_clinical[, output_vars],
                               outlier_functions[[clinical_outliers]])
          selected_expression <- 
-            t(replaceFalseWithNA(t(selected_expression),
-                               outlier_functions[[expression_outliers]]))
+            replaceFalseWithNA(t(na.omit(selected_expression)),
+                               outlier_functions[[expression_outliers]])
          # TODO: Find a way to share correlation computation across all tabs
          corr_df <- longCorrelationMatrix(first_col_name = "Gene",
                                           name_to = "ClinicalVariable",
-                                          x = t(selected_expression),
+                                          x = selected_expression,
                                           y = selected_clinical[, output_vars],
                                           method = correlation_method)
          # Change to factor
@@ -212,9 +212,8 @@ mod_singleGeneCorr_server <-function(module_name,
          # Filter to selected gene
          corr_df <- corr_df[corr_df$Gene == selected_gene, ] %>%
                      dplyr::select(-Gene)
-         
          combined_df <-
-            cbind(Expression = selected_expression[selected_gene,],
+            cbind(Expression = selected_expression[, selected_gene],
                   selected_clinical)
          
          if (not_null(colour_var)) {
@@ -226,13 +225,15 @@ mod_singleGeneCorr_server <-function(module_name,
              pivot_longer(c(-.data$Expression),
                           names_to = "ClinicalVariable", values_to = "Value")
          }
-         
+         # Use output_vars as levels to preserve order defined in config
          combined_df[["ClinicalVariable"]] <-
             factor(combined_df[["ClinicalVariable"]], levels = output_vars)
+         
          plotHeight <- ceiling(length(output_vars)/4) * 200
          plotWidth <- { 
             if (length(output_vars) < 4) length(output_vars)*200 else 800 
-            }
+         }
+         
          output[[output_name]] <- renderPlot({ 
            scatterplot <- plotClinExpScatterplot(combined_df,
                                   x = "Value",

@@ -134,3 +134,12 @@ stopIfNotInstalled <- function(packages, mod_name) {
          paste(not_inst, collapse = ", "), " required for ", mod_name,
          " not found.")
 }
+
+theme_bg <- function() {
+  theme(
+    strip.background = element_blank(),
+    panel.background= element_blank(),
+    plot.background = element_blank(),
+    legend.background = element_rect(fill="transparent")
+  )
+}

@@ -32,7 +32,7 @@ geneModulesCorrConfig <- function(config, data_folder = "") {
     validate_modules <- intersect(names(module_data),
                                   c("modules", "descriptions"))
     if (length(validate_modules) != 2) {
-      stop("Gene modules tab: module data must 
+      stop("geneModulesCorr: module data must 
            contain two data frames named modules and descriptions")
     }
     

@@ -206,6 +206,7 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
         },
       filter = "top",
       escape = FALSE,
+      rownames = FALSE,
       options = list(scrollX = TRUE)
     )
   })

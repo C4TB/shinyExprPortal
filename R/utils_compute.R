@@ -83,14 +83,18 @@ correlateMatrices <-
                                          colnames(pvalues_mat)), "_pvalue")
     
     # Adjust p-values
-    padjust_matrix <-
-      apply(pvalues_mat, 2, p.adjust, method = adjust_method)
-    colnames(padjust_matrix) <-
-      paste0(gsub("(.*)\\_estimate", "\\1",
-                  colnames(cor_mat)),
-             "_padj")
-    # Combine all and rename
-    cor_mat <- cbind(cor_mat, pvalues_mat, padjust_matrix)
+    if (not_null(adjust_method)) {
+      padjust_matrix <-
+        apply(pvalues_mat, 2, p.adjust, method = adjust_method)
+      colnames(padjust_matrix) <-
+        paste0(gsub("(.*)\\_estimate", "\\1",
+                    colnames(cor_mat)),
+               "_padj")
+      cor_mat <- cbind(cor_mat, pvalues_mat, padjust_matrix)
+    } else {
+      cor_mat <- cbind(cor_mat, pvalues_mat)
+    }
+  
     cor_mat <-
       cbind("variable" = rownames(cor_mat), data.frame(cor_mat,
                                                        row.names = NULL))
@@ -110,7 +114,7 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
     pivot_longer(
       cols = -.data[[first_col_name]],
       names_to = c(name_to, ".value"),
-      names_pattern = "(.*_.*)_(estimate|pvalue|padj)"
+      names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
     )
 }
 
@@ -130,6 +134,7 @@ corrResultsToTable <- function(df, max_pvalue = 0) {
   
   labels <- cormat
   labels <- signif(labels, 2)
+  # Find significant to higlight in bold
   lv <- pmat < max_pvalue &
     !is.na(cormat) & !is.na(pmat)
   labels[lv] <-

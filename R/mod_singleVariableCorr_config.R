@@ -3,6 +3,5 @@ singleVariableCorrConfig <- function(config, data_folder = "") {
   if (!is.null(config$advanced)) {
     validateAdvancedSettings(config$advanced, "singleVariableCorr")
   }
-  config$link_to <- config$link_to %||% NULL
   config
 }

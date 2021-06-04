@@ -4,8 +4,10 @@ wholeDataCorrConfig <- function(config, data_folder = "") {
   if (!is.null(config$advanced)) {
     validateAdvancedSettings(config$advanced, "wholeDatacorr")
   }
-  
-  list(link_to = config$link_to,
-       heatmap_variables = config$heatmap_variables,
-       advanced = config$advanced)
+ 
+  if (is.null(config$heatmap_variables))
+    stop("wholeDataCorr:
+         named 'scatterplot_variables' list is missing")
+   
+  config
 }

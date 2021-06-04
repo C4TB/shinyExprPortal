@@ -7,12 +7,12 @@ cohortOverviewConfig <- function(config, ...) {
   stopIfNotInstalled(requiredPackages, "cohortOverview")
   
   if (is.null(config$profile_variables)) {
-    stop("Cohort overview tab: 
-         profile variables lists missing in configuration file.")
+    stop("cohortOverview: 
+         list of 'profile_variables' is missing")
   }
   if (is.null(config$colour_variables)) { 
-    stop("Cohort overview tab: 
-         list of colour variables missing in configuration file")  
+    stop("cohortOverview: 
+         list of 'colour_variables' is missing")
   }
   config
 }
