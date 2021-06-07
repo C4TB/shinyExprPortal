@@ -64,7 +64,7 @@ app_server <- function(input, output, session) {
       point to it in your configuration file using 'about: file_name.ext'.
   ")
    } else {
-      ext <- tools::file_ext(config$about)
+      ext <- file_ext(config$about)
       switch(ext,
              txt = includeText(config$about),
              html = includeHTML(config$about),

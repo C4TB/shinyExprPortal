@@ -166,7 +166,7 @@ validateData <-
 #' @return parsed file
 #' @noRd
 readFile <- function(filename, filetype, data_folder) { 
-  fext <- tools::file_ext(filename)
+  fext <- file_ext(filename)
   filename <- file_path(data_folder, filename) 
   if (!file.exists(filename)) { 
     stop(paste("File ", filename, " in yaml configuration not found."),
@@ -182,12 +182,6 @@ readFile <- function(filename, filetype, data_folder) {
         as.data.frame(vroom::vroom(filename, col_types = vroom::cols()))
       }
     }
-    # else if (fext == "csv") {
-    #   read.csv(filename)
-    # }
-    # else if (fext == "tsv") { 
-    #   read.delim(filename)
-    # }
   },
   error = function(errormsg) {
     stop(errormsg)
@@ -230,4 +224,10 @@ validateAdvancedSettings <- function(config, module_title = "") {
          diff_advanced,
          "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
   }
+}
+
+# from tools::file_ext
+file_ext <- function(x) {
+  pos <- regexpr("\\.([[:alnum:]]+)$", x)
+  ifelse(pos > -1L, substring(x, pos + 1L), "")
 }

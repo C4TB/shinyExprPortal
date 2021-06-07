@@ -6,12 +6,11 @@
 #'
 #' @return a matrix with columnwise medians or an empty matrix
 #'   (if no entries in rownames_list match)
-#' @importFrom matrixStats colMedians
 #' @noRd
 colMediansSubset <- function(x, rownames_list = NULL) {
   
   if (is.null(rownames_list)) {
-    res <- colMedians(x)
+    res <- matrixStats::colMedians(x)
     names(res) <- colnames(x)
   }
   else {
@@ -25,7 +24,7 @@ colMediansSubset <- function(x, rownames_list = NULL) {
       res <- x[0,]
     } else {
       x <- x[rownames_list, ]
-      res <- colMedians(x)
+      res <- matrixStats::colMedians(x)
       names(res) <- colnames(x)
     }
   }

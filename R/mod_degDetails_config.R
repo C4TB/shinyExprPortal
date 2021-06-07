@@ -1,7 +1,9 @@
-#' @importFrom tools file_ext
 #' @noRd
 degDetailsConfig <- function(config, data_folder = "") { 
   message("Checking degDetails configuration")
+  
+  requiredPackages <- c("bsplus", "plotly", "DT", "shinycssloaders")
+  stopIfNotInstalled(requiredPackages, "degDetails")
   
   if (is.null(config$category_variable)) {
     stop("degDetails: 

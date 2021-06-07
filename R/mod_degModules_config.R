@@ -1,4 +1,3 @@
-#' @importFrom tools file_ext
 #' @noRd
 degModulesConfig <- function(config, data_folder = "") { 
   

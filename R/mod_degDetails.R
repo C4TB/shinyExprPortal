@@ -14,7 +14,6 @@ mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
 #' @return tab panel with inputs
 #' @noRd
 #'
-#' @importFrom shinycssloaders withSpinner
 degDetails_tab <- function(categories, id = NULL) {
   ns <- NS(id)
   tabPanel("Model results", value= "degDetails", 
@@ -63,7 +62,7 @@ degDetails_tab <- function(categories, id = NULL) {
                                     plotly::plotlyOutput(ns("results_plot"),
                                         width = "700px",
                                         height = "500px") %>%
-                                      withSpinner(),
+                                      shinycssloaders::withSpinner(),
                                     cellWidths = c(700, 200)
                         )) %>%
                 bsplus::bs_append(title = "Table",

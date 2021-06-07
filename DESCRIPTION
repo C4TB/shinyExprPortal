@@ -11,19 +11,13 @@ Imports:
     golem,
     shiny,
     htmltools,
-    magrittr,
     dplyr,
     tidyr,
     ggplot2,
     yaml,
     vroom,
     data.table,
-    shinycssloaders,
-    tools,
-    matrixStats,
-    bsplus,
     bslib,
-    htmlwidgets,
     iheatmapr
 Encoding: UTF-8
 LazyData: true
@@ -34,6 +28,8 @@ Suggests:
     knitr,
     rmarkdown,
     processx,
+    htmlwidgets,
+    matrixStats,
     plotly,
     r2d3,
     DT,
@@ -41,5 +37,7 @@ Suggests:
     kableExtra,
     RColorBrewer,
     stringr,
-    WGCNA
+    WGCNA,
+    bsplus,
+    shinycssloaders,
 VignetteBuilder: knitr

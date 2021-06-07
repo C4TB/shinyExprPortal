@@ -18,7 +18,6 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-#' @importFrom shinycssloaders withSpinner
 wholeDataCorr_tab <- function(sample_select,
                               clinical_variables,
                               advanced = NULL,
@@ -67,7 +66,8 @@ wholeDataCorr_tab <- function(sample_select,
       
         bsplus::bs_accordion("wholeDataCorr_acc") %>% 
           bsplus::bs_append(title = "Heatmap Top 50 significant genes",
-            plotly::plotlyOutput(ns("heatmap"), height = 800) %>% withSpinner()
+            plotly::plotlyOutput(ns("heatmap"), height = 800) %>% 
+              shinycssloaders::withSpinner()
           ) %>%
           bsplus::bs_append(title = "Table",
           verticalLayout(

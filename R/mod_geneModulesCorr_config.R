@@ -1,7 +1,9 @@
-#' @importFrom tools file_ext
 #' @noRd
 geneModulesCorrConfig <- function(config, data_folder = "") {
   message("Checking geneModulesCorr configuration")
+  
+  requiredPackages <- c("plotly", "matrixStats", "htmlwidgets")
+  stopIfNotInstalled(requiredPackages, "geneModulesCorr")
   
   if (is.null(config$subset_classes)) {
     stop("geneModulesCorr: subset_classes list missing in configuration file.")
