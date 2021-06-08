@@ -5,12 +5,13 @@ mod_singleVariableCorr_ui <-
            appdata,
            global,
            module_config)  {
+    
+    var_list <- module_config$clinical_variables %||%
+      names(appdata$clinical %>% dplyr::select(where(is.numeric)))
+    
     singleVariableCorr_tab(
       sampleClassInputs(global$sample_classes, module_name),
-      varsSelectInput(names(
-        appdata$clinical %>% dplyr::select(where(is.numeric))
-        ),
-        module_name),
+      varsSelectInput(var_list, module_name),
       module_config$advanced,
       module_config$title,
       module_name

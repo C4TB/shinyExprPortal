@@ -107,21 +107,25 @@ varsSelectInput <- function(clinical_vars, id = NULL, initEmpty = TRUE) {
 #'
 #' @param sample_classes sample classes configuration
 #' @param id module ID (optional)
-#' @param match_name list of names sample classes to filter (optional)
+#' @param subset_classes list of names sample classes to filter (optional)
 #'
 #' @return tag list with radio buttons
 #' @noRd
-sampleClassInputs <- function(sample_classes, id = NULL, match_name = NULL) {
+sampleClassInputs <-
+  function(sample_classes, id = NULL, subset_classes = NULL) {
+    
   ns <- NS(id)
-  
-  if (!is.null(match_name)) {
+  if (!is.null(subset_classes)) {
     sc_logic <-
       as.logical(unlist(lapply(sample_classes, function(sc)
-        sc$name %in% match_name)))
+        sc$name %in% subset_classes)))
     sample_classes <- sample_classes[which(sc_logic)]
   }
   do.call(tagList,
-          lapply(sample_classes, function(sc, ns)
-            radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values), ns = ns)
+          lapply(
+            sample_classes,
+            function(sc, ns)
+              radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values),
+            ns = ns)
   )
 }
