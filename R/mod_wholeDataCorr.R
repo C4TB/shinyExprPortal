@@ -1,10 +1,11 @@
 # wholeDataCorr UI Function
 mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
   wholeDataCorr_tab(
-    sampleClassInputs(global$sample_classes, module_name),
+    sample_select = sampleClassInputs(global$sample_classes, module_name),
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
-    module_name
+    title = module_config$title,
+    id = module_name
   )
 }
 
@@ -18,15 +19,18 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-wholeDataCorr_tab <- function(sample_select,
-                              clinical_variables,
-                              advanced = NULL,
-                              id = NULL) {
+wholeDataCorr_tab <-
+  function(sample_select,
+           clinical_variables,
+           advanced = NULL,
+           title = NULL,
+           id = NULL) {
+    
   ns <- NS(id)
   tabPanel(
     title = "Whole data",
     value = "wholeDataCorr",
-    tags$h5("Correlation between all genes and clinical variables"),
+    tags$h5(title %||% "Correlation between all genes and clinical variables"),
     splitLayout(
       verticalLayout(
         wellPanel(

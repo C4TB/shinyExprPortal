@@ -10,6 +10,7 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
     sources_names = lapply(module_config$modules_data,
                            function(x) x$name),
     clinical_variables = names(module_config$scatterplot_variables),
+    module_config$title,
     module_name
   )
 }
@@ -25,12 +26,13 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
 #'
 #'
 geneModulesCorr_tab <- function(sample_select, sources_names,
-                                clinical_variables, id = NULL) {
+                                clinical_variables, title = NULL, id = NULL) {
   ns <- NS(id)
   tabPanel(
     title = "Gene Modules",
     value = "geneModulesCorr",
-    tags$h5("Gene modules profiles and correlation with clinical variables"),
+    tags$h5(title %||% 
+              "Gene modules profiles and correlation with clinical variables"),
     splitLayout(
       verticalLayout(
         wellPanel(

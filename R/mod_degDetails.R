@@ -4,20 +4,22 @@ mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
   category_variable <- module_config$category_variable
   categories <- unique(unlist(models[, category_variable]))
   degDetails_tab(categories,
-                  module_name)
+                 module_config$title,
+                 module_name)
 }
 #' Differentially expressed genes tab UI
 #'
 #' @param categories model categories
+#' @param title optional title
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
 #' @noRd
 #'
-degDetails_tab <- function(categories, id = NULL) {
+degDetails_tab <- function(categories, title = NULL, id = NULL) {
   ns <- NS(id)
   tabPanel("Model results", value= "degDetails", 
-           tags$h5("Individual model results"),
+           tags$h5(title %||% "Individual model results"),
            splitLayout(
              verticalLayout(
                wellPanel(

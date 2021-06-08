@@ -9,12 +9,14 @@ mod_geneModulesHeatmap_ui <- function(module_name, appdata, global, module_confi
       module_name,
       subset_classes
     ),
+    module_config$annotation_variables,
     module_config$title,
     module_name)
 }
 
 geneModulesHeatmap_tab <- function(categories,
                                    sample_select,
+                                   annotation_variables,
                                    title = NULL,
                                    module_name = NULL) {
   
@@ -32,7 +34,16 @@ geneModulesHeatmap_tab <- function(categories,
             choices = categories,
             selected = categories[[1]]
           ),
-          sample_select
+          sample_select,
+          { if (not_null(annotation_variables)) 
+              selectizeInput(ns("selected_annotations"),
+                          label = "Select heatmap annotations (max 5):",
+                          choices = annotation_variables,
+                          multiple = TRUE,
+                          options = list(dropdownParent = "body",
+                                         maxItems = 5)
+                          )
+            else NULL }
         )
       ),
       fluidRow(
@@ -133,8 +144,10 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     })
     
     annotations <- reactive({
+      if (!isTruthy(input$selected_annotations))
+        return(NULL)
       selected_clinical <- clinical_from_lookup()
-      selected_clinical[, annotation_vars]
+      selected_clinical[input$selected_annotations]
     })
     
     # Find module genes and subset expression matrix
@@ -174,9 +187,10 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
         add_row_clustering()
       
       # Optional annotations
-      if (not_null(annotation_vars)) {
+      annots <- annotations()
+      if (not_null(annots)) {
         hm <- hm %>% 
-          add_col_annotation(annotations(),
+          add_col_annotation(annots,
                              colors = annotation_colors)
       }
       hm %>% add_col_clustering()
@@ -206,6 +220,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
                                    y = combined_df$Eigengene,
                                    adjust_method = NULL,
                                    rowname_var = "ClinicalVariable")
+      # Reassign clinical variable names to preserver order from configuration
       corr_df[["ClinicalVariable"]] <- factor(corr_df[["ClinicalVariable"]],
                                               levels = scatterplot_vars)
       combined_df <- combined_df %>% 
