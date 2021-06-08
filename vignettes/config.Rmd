@@ -17,6 +17,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, include = FALSE, eval = FALSE, echo = FALSE}
+library(clinvisx)
+```
+
 This guide describes how to set up the configuration file for deploying a project with the package. It describes a minimal setup example, as well as optional advanced and customisation settings.
 
 ## Required files
@@ -52,13 +56,20 @@ run_app("config.yaml", data_folder = "../files_version1")
 The key data files are the expression matrix, the clinical data file and the sample lookup (or metadata) file. The expression matrix should contain gene symbols in rows and sample identifiers in columns. The following is a valid expression matrix:
 
 ```{r, eval=TRUE, echo = FALSE}
-
+x <- t(sapply(1:10, function(x) rnorm(6)))
+rownames(x) <- lapply(1:10, function(x) { 
+  paste(LETTERS[x:(x+2)], collapse = "")
+})
+smp_ids <- expand.grid(c("S1", "S2", "S3"), 1:2)
+smp_ids <- sort(sprintf("%s_%02d", smp_ids[,1], smp_ids[,2]))
+colnames(x) <- smp_ids
+knitr::kable(as.data.frame(x))
 ```
 
-All the sample ids should also be in a column of the lookup file (e.g. named Sample_ID). The others columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
+All the sample ids should also be in a column of the lookup file (e.g. named Sample_ID). The other columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
 
 ```{r, eval=TRUE, echo = FALSE}
-knitr::kable(data.frame(Sample_ID = c("01_01", "01_02", "02_01", "02_02", "03_01", "03_02"),
+knitr::kable(data.frame(Sample_ID = smp_ids,
                  Time = c("m01", "m02", "m01", "m02", "m01", "m02"),
                  Tissue = c("A", "A", "A", "A", "A", "A"),
                  Patient_ID = c("p01", "p01", "p02", "p02", "p03", "p03"))
@@ -77,6 +88,138 @@ knitr::kable(
 )
 ```
 
+When matching samples and subjects, the app will verify the condition of every sample having a matching subject and every subject having at least one sample. If this does not hold, the app will not be launched.
+
 **Supported formats:** common formats such as CSV and TSV (also with .txt extension) are supported. The expression matrix is loaded using the `{data.table}` package. The clinical and lookup files are loaded using the `{vroom}` package. RDS files are also supported -- in this case, the expression matrix object should be saved as a matrix into the RDS file. For the lookup and clinical data, normal data frames or tibbles are supported.
 
+### Configuration file
 
+The configuration file is the key feature of the package, as it allows various kinds of arrangements and custom settings for projects without requiring a single line of code to be written. However, as it is a YAML text file, it must be written in the correct format to work. A YAML file is essentially a text file with appropriate indentations and colons, defining tree-like structures that will be read by the package and produce a corresponding Shiny website.
+
+The configuration file has three main categories of settings: project details, data and modules. Project details settings cover title, logo, theme, icon shortcut menu and about section. Data settings include the data files mentioned above, as well as sample metadata definitions for the website. The remaining settings define which modules of the package should be displayed to a visitor of the portal.
+
+The following minimal configuration file sets up a website for the data defined above:
+
+```yaml
+name: MyProject
+about: about.md
+data:
+  clinical: clinical.csv
+  sample_lookup: sample_lookup.csv
+  expression_matrix: matrix.csv
+global:
+  sample_variable: Sample_ID
+  subject_variable: Patient_ID
+  sample_classes:
+    - name: Time
+      label: Time
+      values:
+        Month 01: m01
+        Month 02: m02
+    - name: Tissue
+      label: Tissue
+      values:
+        - A
+singleGeneCorr:
+  colour_variables: [drugNaive]
+  tabs:
+    - name: Platelets
+      scale: fixed
+      variables: [Platelets_m01, Platelets_m02]
+```
+
+The rest of this guide describes in detail each section of the configuration file, with the required and optional settings.
+
+### Project details configuration
+
+The two required settings here are **name** and **about**, with the name of a markdown (.md) file. If a markdown file with a project description is not provided, the package will add a default text in the main page. The package also supports the following optional settings:
+
+#### Logo 
+
+A custom logo for the top-left corner can be provided as any web-supported format (e.g. png, jpeg). If a logo is not provided, the project name will be used instead.
+
+```yaml
+logo: logo.png
+```
+
+#### Bootswatch theme
+
+A custom [Bootswatch](http://www.bootswatch.com) theme can be used. At the moment, version 3 is strongly recommended. Version 4 can be used, but in certain modules, styling issues might appear in certain elements.
+
+```yaml
+bootstrap:
+  version: 3
+  bootswatch: cosmo
+```
+
+Under bootstrap, any other additional setting will be passed to the `bslib::theme()` command, allowing further customisation. For further information, check the [bs_theme](https://rstudio.github.io/bslib/reference/bs_theme.html) documentation for the supported arguments or run `?bslib::theme` for the local help page.
+
+#### Icon menu
+
+An icon menu with highlights can be displayed above the about section. For that, module names must be included in a list, and PNG images, with 1:1 aspect ratio and named after these modules, must be placed in a `www` folder (located in the same folder where app.R is). For example, to include a highlight shortcut to singleGeneCorr, the module name must be listed and a file singleGeneCorr.png placed under a `www` folder. The images will be rendered as 250px x 250px. Example:
+
+```yaml
+iconMenu:
+  - singleGeneCorr
+```
+
+### Data and global configurations
+
+For the data section, the **clinical**, **sample_lookup** and **expression_matrix** files must be defined. Additional files that are shared across multiple modules can also be defined in this section, e.g. a table mapping the files produced as results of a differential expression analysis (see [degModules](#degModules) further down for more details).
+
+```yaml
+data:
+  clinical: clinical.csv
+  sample_lookup: sample_lookup.csv
+  expression_matrix: matrix.csv
+  models: models.tsv
+```
+
+A separate *global* section contains the customisation of the sample metadata under **sample_classes**. This section can also include optional definitions of **sample_variable** and **subject_variable**, containing the names of variables in the lookup and clinical files that identify samples and subjects (and allow mapping them across expression matrix, lookup and clinical data). If these variables are not provided, the package will look for *Sample_ID* and *Subject_ID* variables. The sample_classes sub-section should be defined as follows:
+
+```yaml
+global:
+  sample_classes:
+    - name: variable_name
+      label: Variable Name
+      values:
+        Optional Label 1: value1
+        Optional Label 2: value2
+    - name: variable_name_2
+      label: Another Variable
+      values:
+        - anothervar_value1
+        - anothervar_value2
+```
+
+Each sample class should be defined through its corresponding variable name in the sample lookup file, a label to be displayed in the web app and a list of valid values for subsetting samples. As seen above with variable_name, the valid values can also be assigned nice labels for display through the format `Nice Label: originalValue `. In this case, hyphens or square brackets should not be used. As this section of the configuration file is used by the package to build the interface, it is possible narrow down the subsets visible to user, such as specific time points.
+
+#### Advanced setting: All subsets
+
+The package also supports an advanced option to enable selection of all samples for a particular class. To do that, a custom pair of label and value `All: NA` can be used. The example above would then look as follows:
+
+```yaml
+global:
+  sample_classes:
+    - name: variable_name
+      label: Variable Name
+      values:
+        Optional Label 1: value1
+        Optional Label 2: value2
+        All: NA
+    - name: variable_name_2
+      label: Another Variable
+      values:
+        - anothervar_value1
+        - anothervar_value2
+```
+
+### Modules 
+
+The last part of the configuration file is the definition of the package modules that will be included in the web app. These should be listed sequentially and should be listed at the same hierarchical level, unless a grouped module is used (see more below). The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can be used as reference. The following modules and grouped modules are currently supported:
+
+```{r list_modules, include=FALSE}
+clinvisx::show_avaiable_modules()
+```
+
+#### degModules {#degModules}
