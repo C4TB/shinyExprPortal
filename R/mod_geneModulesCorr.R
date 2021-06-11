@@ -10,6 +10,7 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
     sources_names = lapply(module_config$modules_data,
                            function(x) x$name),
     clinical_variables = names(module_config$scatterplot_variables),
+    module_config$title,
     module_name
   )
 }
@@ -25,12 +26,13 @@ mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) 
 #'
 #'
 geneModulesCorr_tab <- function(sample_select, sources_names,
-                                clinical_variables, id = NULL) {
+                                clinical_variables, title = NULL, id = NULL) {
   ns <- NS(id)
   tabPanel(
     title = "Gene Modules",
     value = "geneModulesCorr",
-    tags$h5("Gene modules profiles and correlation with clinical variables"),
+    tags$h5(title %||% 
+              "Gene modules profiles and correlation with clinical variables"),
     splitLayout(
       verticalLayout(
         wellPanel(
@@ -85,8 +87,8 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
     expression_matrix <- appdata$expression_matrix
     sample_lookup <- appdata$sample_lookup
     
-    subject_col <- global$subject_col
-    sample_col <- global$sample_col
+    subject_var <- global$subject_variable
+    sample_var <- global$sample_variable
     sample_classes <- global$sample_classes
     
    # module_config <- appdata$modules$geneModulesCorr
@@ -138,7 +140,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
       module_data <- selected_source_data$modules
       
       sel_lookup <- selected_lookup()
-      selected_expression <- expression_matrix[, sel_lookup[[sample_col]]]
+      selected_expression <- expression_matrix[, sel_lookup[[sample_var]]]
       
       # Compute medians per module
       medians_per_module <- mediansPerModule(module_data, selected_expression)
@@ -183,7 +185,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
       })
       
       computeModuleProfile(module_medians, input$selected_module,
-                           selected_lookup(), sample_col, across_class )
+                           selected_lookup(), sample_var, across_class )
       
     })
     
@@ -221,7 +223,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
       plotModuleProfile(
         selected_module_profile(),
         expression_col = "Expression",
-        sample_col = sample_col,
+        sample_col = sample_var,
         across_class = across_class,
         plot_title = profile_title
       )
@@ -234,7 +236,7 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
       sel_lookup <- selected_lookup()
       
       subset_clinical <- selectFromLookup(clinical, sel_lookup,
-                                          matching_col = subject_col)
+                                          matching_col = subject_var)
       module_expression <- selected_module_profile()
       
       subset_values <- getSubsetSampleClasses(subset_classes,
@@ -251,12 +253,12 @@ mod_geneModulesCorr_server <- function(module_name, appdata, global, module_conf
       # with different expressions
       # Finally, transform to a long format data frame to plot
       clinical_df <- left_join(sel_lookup,
-                               subset_clinical[, c(subject_col,
+                               subset_clinical[, c(subject_var,
                                                    selected_clinical_vars)],
-                               by = subject_col)
+                               by = subject_var)
       combined_df <- left_join(clinical_df,
-                               module_expression[, c(sample_col, "Expression")],
-                               by = sample_col) %>%
+                               module_expression[, c(sample_var, "Expression")],
+                               by = sample_var) %>%
         pivot_longer(selected_clinical_vars,
                      names_to = "Clinical",
                      values_to = "Value")

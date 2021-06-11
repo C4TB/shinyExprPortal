@@ -6,12 +6,11 @@
 #'
 #' @return a matrix with columnwise medians or an empty matrix
 #'   (if no entries in rownames_list match)
-#' @importFrom matrixStats colMedians
 #' @noRd
 colMediansSubset <- function(x, rownames_list = NULL) {
   
   if (is.null(rownames_list)) {
-    res <- colMedians(x)
+    res <- matrixStats::colMedians(x)
     names(res) <- colnames(x)
   }
   else {
@@ -25,7 +24,7 @@ colMediansSubset <- function(x, rownames_list = NULL) {
       res <- x[0,]
     } else {
       x <- x[rownames_list, ]
-      res <- colMedians(x)
+      res <- matrixStats::colMedians(x)
       names(res) <- colnames(x)
     }
   }
@@ -35,6 +34,7 @@ colMediansSubset <- function(x, rownames_list = NULL) {
 #' Compute p-values
 #'
 #' @param x vector x with correlation estimates
+#' @param n number of comparisons
 #'
 #' @noRd
 #' @return vector with p-values
@@ -70,7 +70,10 @@ correlateMatrices <-
       y <-  matrix(y, ncol = 1, dimnames = list(NULL, colname_var))
     
     # Compute correlations
-    cor_mat <- cor(x, y, method, use = "pairwise.complete.obs")
+    if (!requireNamespace("WGCNA", quietly = TRUE))
+      cor_mat <- cor(x, y, method, use = "pairwise.complete.obs")
+    else 
+      cor_mat <- WGCNA::cor(x, y, method, use = "pairwise.complete.obs")
     colnames(cor_mat) <- paste0(colnames(cor_mat), "_estimate")
     
     # Compute p-values
@@ -79,14 +82,18 @@ correlateMatrices <-
                                          colnames(pvalues_mat)), "_pvalue")
     
     # Adjust p-values
-    padjust_matrix <-
-      apply(pvalues_mat, 2, p.adjust, method = adjust_method)
-    colnames(padjust_matrix) <-
-      paste0(gsub("(.*)\\_estimate", "\\1",
-                  colnames(cor_mat)),
-             "_padj")
-    # Combine all and rename
-    cor_mat <- cbind(cor_mat, pvalues_mat, padjust_matrix)
+    if (not_null(adjust_method)) {
+      padjust_matrix <-
+        apply(pvalues_mat, 2, p.adjust, method = adjust_method)
+      colnames(padjust_matrix) <-
+        paste0(gsub("(.*)\\_estimate", "\\1",
+                    colnames(cor_mat)),
+               "_padj")
+      cor_mat <- cbind(cor_mat, pvalues_mat, padjust_matrix)
+    } else {
+      cor_mat <- cbind(cor_mat, pvalues_mat)
+    }
+  
     cor_mat <-
       cbind("variable" = rownames(cor_mat), data.frame(cor_mat,
                                                        row.names = NULL))
@@ -96,3 +103,43 @@ correlateMatrices <-
     cor_mat
 }
 
+longCorrelationMatrix <- function(first_col_name = "Gene",
+                                  name_to = "ClinicalVariable",
+                                  ...) {
+  correlateMatrices(
+    rowname_var = first_col_name,
+    ...
+  ) %>%
+    pivot_longer(
+      cols = -.data[[first_col_name]],
+      names_to = c(name_to, ".value"),
+      names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
+    )
+}
+
+corrResultsToTable <- function(df, max_pvalue = 0) {
+  selected_df <- df %>% dplyr::select(contains("estimate"))
+  colnames(selected_df) <- gsub("(.*_)*(_estimate)", "\\1", 
+                                colnames(selected_df))
+  rownames(selected_df) <- df$Gene
+  cormat <- as.matrix(selected_df)
+  
+  
+  pval_df <- df %>% dplyr::select(contains("_pvalue")) 
+  colnames(pval_df) <- gsub("(.*_)*(_pvalue)", "\\1", 
+                            colnames(pval_df))
+  rownames(pval_df) <- df$Gene
+  pmat <- as.matrix(pval_df)
+  
+  labels <- cormat
+  labels <- signif(labels, 2)
+  # Find significant to higlight in bold
+  lv <- pmat < max_pvalue &
+    !is.na(cormat) & !is.na(pmat)
+  labels[lv] <-
+    vapply(labels[lv], function(x) paste0("<b>",x,"</b>"), character(1))
+  labels <- as.data.frame(labels)
+  labels <- cbind(Gene = rownames(labels), labels)
+  rownames(labels) <- NULL
+  labels
+}

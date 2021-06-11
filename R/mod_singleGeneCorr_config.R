@@ -8,12 +8,12 @@ singleGeneCorrConfig <- function(config, ...) {
 
   if (is.null(config$tabs)) {
     stop("singleGeneCorr:
-         output definitions missing in configuration file.")
+         'tabs' definitions are missing")
   }
   
   if (is.null(config$colour_variables)) {
     stop("singleGeneCorr:
-         list of colour variables missing in configuration file.") 
+         list of 'colour_variables' is missing") 
   }
   config
   

@@ -52,7 +52,9 @@ plotly_volcano_plot <- function(table,
            key = table[[gene_column]], source = "volcano_plot") %>%
     plotly::layout(xaxis = xlayout_axis,
                    yaxis = ylayout_axis,
-                   shapes = lines) %>%
+                   shapes = lines,
+                   plot_bgcolor = "transparent",
+                   paper_bgcolor = "transparent") %>%
     plotly::config(toImageButtonOptions = list(format = "svg"))
 }
 
@@ -141,7 +143,9 @@ plotly_avgexpr_plot <- function(table,
                   key = table[[gene_column]], source = "avgexpr_plot") %>%
     plotly::layout(xaxis = xlayout_axis,
                    yaxis = ylayout_axis,
-                   shapes = lines) %>%
+                   shapes = lines,
+                   plot_bgcolor = "transparent",
+                   paper_bgcolor = "transparent") %>%
     plotly::config(toImageButtonOptions = list(format = "svg"))
   
 }

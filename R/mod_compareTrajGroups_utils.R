@@ -21,8 +21,8 @@ plotTrajGroups <- function(df,
     ylab(paste("Expression level of", selected_gene, sep = " ")) +
     theme_bw() +
     theme(
-      strip.background = element_blank(),
       strip.text.x = element_text(size = 12, face = "bold"),
       aspect.ratio = 1,
-    )
+    ) + 
+    theme_bg()
 }

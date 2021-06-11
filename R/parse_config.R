@@ -42,6 +42,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
       stop("'About' file not found.")
     }
   }
+  
   # Validate data section
   if (is.null(config$data)) {
     stop("Data section missing in configuration file")
@@ -65,16 +66,15 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     }
   })
   # Set global settings for sample and subject column
-  config$global[["sample_col"]] <-
-    config$global$sample_column %||% "Sample_ID"
-  config$global[["subject_col"]] <-
-    config$global$subject_column %||% "Subject_ID" 
+  config$global[["sample_variable"]] <-
+    config$global$sample_variable %||% "Sample_ID"
+  config$global[["subject_variable"]] <-
+    config$global$subject_variable %||% "Subject_ID" 
   
   validateData(loaded_data,
-               cols = list(
-                 sample_col = config$global[["sample_col"]],
-                 subject_col = config$global[["subject_col"]]
-               ))
+               sample_variable = config$global[["sample_variable"]],
+               subject_variable = config$global[["subject_variable"]]
+               )
   names(loaded_data) <- names(config$data)
   appdata[["data"]] <- loaded_data
   
@@ -110,16 +110,16 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
 
 validateData <-
   function(datafiles,
-           cols = list(sample_col = "Sample_ID",
-                       subject_col = "Subject_ID")) {
+           sample_variable = "Sample_ID",
+           subject_variable = "Subject_ID") {
     
   expression_matrix <- datafiles[["expression_matrix"]]
   clinical <- datafiles[["clinical"]]
   sample_lookup <- datafiles[["sample_lookup"]]
   
-  clinical_subjects <- clinical[, cols$subject_col]
-  lookup_subjects <- unique(sample_lookup[, cols$subject_col])
-  lookup_samples <- sample_lookup[, cols$sample_col]
+  clinical_subjects <- clinical[, subject_variable]
+  lookup_subjects <- unique(sample_lookup[, subject_variable])
+  lookup_samples <- sample_lookup[, sample_variable]
   expression_samples <- colnames(expression_matrix)
   
   error <- FALSE
@@ -166,7 +166,7 @@ validateData <-
 #' @return parsed file
 #' @noRd
 readFile <- function(filename, filetype, data_folder) { 
-  fext <- tools::file_ext(filename)
+  fext <- file_ext(filename)
   filename <- file_path(data_folder, filename) 
   if (!file.exists(filename)) { 
     stop(paste("File ", filename, " in yaml configuration not found."),
@@ -182,12 +182,6 @@ readFile <- function(filename, filetype, data_folder) {
         as.data.frame(vroom::vroom(filename, col_types = vroom::cols()))
       }
     }
-    # else if (fext == "csv") {
-    #   read.csv(filename)
-    # }
-    # else if (fext == "tsv") { 
-    #   read.delim(filename)
-    # }
   },
   error = function(errormsg) {
     stop(errormsg)
@@ -230,4 +224,10 @@ validateAdvancedSettings <- function(config, module_title = "") {
          diff_advanced,
          "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
   }
+}
+
+# from tools::file_ext
+file_ext <- function(x) {
+  pos <- regexpr("\\.([[:alnum:]]+)$", x)
+  ifelse(pos > -1L, substring(x, pos + 1L), "")
 }

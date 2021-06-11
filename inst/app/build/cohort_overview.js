@@ -5,6 +5,8 @@ $( document ).ready(function() {
 //
 //console = d3.window(svg.node()).console;/
 
+svg = svg.attr("background-color", "unset");
+
 if (typeof data === "undefined") {
   console.log("data undefined");
   return;  
@@ -79,7 +81,7 @@ var scale_y = d3.scaleLinear()
 svg.append('rect')
   .attr('width', max_col*cell_width)
   .attr('height', max_col*cell_height)
-  .style('fill', 'none')
+  .style('fill', 'white')
   .style('stroke', 'silver')
   .style('stroke-width', 0.25);
   

@@ -1,10 +1,11 @@
-# wholeDataCorr UI Function
-mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
-  wholeDataCorr_tab(
-    sampleClassInputs(global$sample_classes, module_name),
+# multiVariableCorr UI Function
+mod_multiVariableCorr_ui <- function(module_name, appdata, global, module_config) {
+  multiVariableCorr_tab(
+    sample_select = sampleClassInputs(global$sample_classes, module_name),
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
-    module_name
+    title = module_config$title,
+    id = module_name
   )
 }
 
@@ -18,16 +19,18 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-#' @importFrom shinycssloaders withSpinner
-wholeDataCorr_tab <- function(sample_select,
-                              clinical_variables,
-                              advanced = NULL,
-                              id = NULL) {
+multiVariableCorr_tab <-
+  function(sample_select,
+           clinical_variables,
+           advanced = NULL,
+           title = NULL,
+           id = NULL) {
+    
   ns <- NS(id)
   tabPanel(
-    title = "Whole data",
-    value = "wholeDataCorr",
-    tags$h5("Correlation between all genes and clinical variables"),
+    title = "Multiple variables",
+    value = "multiVariableCorr",
+    tags$h5(title %||% "Correlation between all genes and clinical variables"),
     splitLayout(
       verticalLayout(
         wellPanel(
@@ -64,21 +67,30 @@ wholeDataCorr_tab <- function(sample_select,
           advanced_settings_inputs(advanced, id)
         )
       ),
-      verticalLayout(
-        plotOutput(ns("heatmap"), height = 800) %>% withSpinner(),
-        conditionalPanel(
-          paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
-          downloadButton(ns("fulltable_download"), "Download Table CSV")
-        )),
+      
+        bsplus::bs_accordion("multiVariableCorr_acc") %>% 
+          bsplus::bs_append(title = "Heatmap Top 50 significant genes",
+            plotly::plotlyOutput(ns("heatmap"), height = 800) %>% 
+              shinycssloaders::withSpinner()
+          ) %>%
+          bsplus::bs_append(title = "Table",
+          verticalLayout(
+            DT::DTOutput(ns("table")),
+            conditionalPanel(
+              paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
+              downloadButton(ns("fulltable_download"), "Download Table CSV")
+            )
+          )
+      ),
       cellWidths = c("20%", "80%"),
       cellArgs = list(style = "white-space: normal;")
     )
   )
 }
-#' wholeDataCorr Server Function
+#' multiVariableCorr Server Function
 #'
 #' @noRd 
-mod_wholeDataCorr_server <- function(module_name,
+mod_multiVariableCorr_server <- function(module_name,
                                      appdata,
                                      global,
                                      module_config) {
@@ -89,16 +101,38 @@ mod_wholeDataCorr_server <- function(module_name,
     expression_matrix <- appdata$expression
     sample_lookup <- appdata$sample_lookup
     
-    subject_col <- global$subject_col
-    sample_col <- global$sample_col
+    subject_var <- global$subject_variable
+    sample_var <- global$sample_variable
     sample_classes <- global$sample_classes
     
+    link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,
                            "No" = function(x) TRUE)
 
+    user_selection <- reactive({
+      getSelectedSampleClasses(sample_classes, input)
+    })
+    
+    selected_lookup <- reactive({
+      sel_lookup <- selectMatchingValues(sample_lookup, user_selection())
+      validate(need(nrow(sel_lookup) > 0,
+                    "No data for selected parameters."))
+      sel_lookup
+    })
+    
+    expression_from_lookup <- reactive({
+      expression_matrix[, selected_lookup()[[sample_var]]]
+    })
+    
+    clinical_from_lookup <- eventReactive(selected_lookup(), {
+      sel_lookup <- selected_lookup()
+      selectFromLookup(clinical, sel_lookup,
+                       matching_col = subject_var)
+    })
+    
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
@@ -106,31 +140,27 @@ mod_wholeDataCorr_server <- function(module_name,
       expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "spearman"
       
-      list_of_values <- getSelectedSampleClasses(sample_classes, input)
-      # Return subset of lookup conditional on the user selection of sample classes
-      selected_lookup <- selectMatchingValues(sample_lookup, list_of_values)
-      validate(need(nrow(selected_lookup) > 0,
+      validate(need(nrow(selected_lookup()) > 0,
                     "No data for selected parameters."))
-      subset_clinical <- selectFromLookup(clinical, selected_lookup,
-                                          matching_col = subject_col)
+      selected_clinical <- clinical_from_lookup()
+      selected_expression <- expression_from_lookup()
       
       # Get subset of variables selected by user
       selected_clinical_vars <- heatmap_variables[[input$heatmap_variables]]
-      
-      selected_clinical <-
-        subset_clinical[, colnames(subset_clinical) %in% selected_clinical_vars]
-      selected_expression <- expression_matrix[, selected_lookup[[sample_col]]]
+      cols_lv <- colnames(selected_clinical) %in% selected_clinical_vars
+      subset_clinical <- selected_clinical[, cols_lv]
       
       #Apply outlier functions to clinical
-      selected_clinical  <- 
-        replaceFalseWithNA(selected_clinical,
+      subset_clinical  <- 
+        replaceFalseWithNA(subset_clinical,
                            outlier_functions[[clinical_outliers]])
       #Apply outlier functions to expression
       selected_expression <-
         replaceFalseWithNA(t(selected_expression),
                            outlier_functions[[expression_outliers]])
+      
       corr_df <- correlateMatrices(selected_expression,
-                                   selected_clinical,
+                                   subset_clinical,
                                    method = correlation_method,
                                    rowname_var = "Gene")
       pvalues_rank <- do.call(pmin,
@@ -139,13 +169,36 @@ mod_wholeDataCorr_server <- function(module_name,
                               )
       combined_df <- cbind(corr_df, pvalues_rank)
       combined_df <- combined_df[order(combined_df$pvalues_rank),]
-      combined_df[1:50, ]
+      combined_df
       
     })
     
-    output$heatmap <- renderPlot({ 
-      hm <- heatmap_data()
-      plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr)
+    output$table <- DT::renderDataTable({
+        df <- corrResultsToTable(heatmap_data(), input$max_pvalue)
+        if (not_null(link_to)) {
+          isolate({
+            list_of_values <- user_selection()
+            baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
+            df$Gene <- urlVector(df$Gene, "gene", baseURL)
+          })
+        }
+        df
+      },
+      options = list(scrollX = TRUE),
+      caption = "Significant correlations highlighted in bold",
+      escape = F,
+      rownames = FALSE)
+    
+    output$heatmap <- plotly::renderPlotly({ 
+      hm <- heatmap_data()[1:50, ]
+      plotly::ggplotly(
+        plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr),
+        tooltip = "text"
+      ) %>%
+        plotly::layout(xaxis = list(automargin = TRUE,
+                                    tickfont = list(size = 9),
+                                    side = "top"),
+                       font = list(size = 5))
     })
     
     output$fulltable_download <- downloadHandler(
@@ -156,7 +209,7 @@ mod_wholeDataCorr_server <- function(module_name,
       },
       content = function(file) {
         utils::write.csv(heatmap_data(), file, row.names = FALSE) 
-      },contentType = 'text/csv')
+      }, contentType = "text/csv")
     
   })
 }

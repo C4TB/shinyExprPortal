@@ -1,18 +1,25 @@
 # cohortOverview UI function
-mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
-  cohortOverview_tab(sampleClassInputs(global$sample_classes, module_name),
-                     geneSelectInput(NULL, module_name),
-                     names(module_config$profile_variables),
-                     module_config$colour_variables,
-                     module_config$title,
-                     module_name)
-}
+mod_cohortOverview_ui <-
+  function(module_name,
+           appdata,
+           global,
+           module_config) {
+    cohortOverview_tab(
+      sample_select = sampleClassInputs(global$sample_classes, module_name),
+      gene_select = geneSelectInput(NULL, module_name),
+      profile_variables = names(module_config$profile_variables),
+      colour_variables = module_config$colour_variables,
+      title = module_config$title,
+      id = module_name
+    )
+  }
 #' Cohort overview tab UI
 #'
-#' @param sample_selection radio input(s) for sample class(es)
-#' @param gene_selection select input with gene symbols
+#' @param sample_select radio inputs for sample classes
+#' @param gene_select select input with gene symbols
 #' @param profile_variables list of group variables for trajectory profile
 #' @param colour_variables list of unique variables for trajectory color
+#' @param title optional title
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
@@ -26,12 +33,14 @@ mod_cohortOverview_ui <- function(module_name, appdata, global, module_config) {
 #'  c("measureA_1", "measureA_2"))
 #' }
 #' @noRd
-cohortOverview_tab <- function(sample_selection,
-                               gene_selection,
-                               profile_variables,
-                               colour_variables,
-                               title = NULL,
-                               id = NULL) {
+cohortOverview_tab <-
+  function(sample_select,
+           gene_select,
+           profile_variables,
+           colour_variables,
+           title = NULL,
+           id = NULL) {
+    
   ns <- NS(id)
   tabPanel(
     title = "Cohort overview",
@@ -54,8 +63,8 @@ cohortOverview_tab <- function(sample_selection,
         ),
         wellPanel(
           h5("Expression settings"),
-          sample_selection,
-          gene_selection,
+          sample_select,
+          gene_select,
           checkboxInput(ns("flip_grouping"), label = p("group by type?"))
         )
       ),

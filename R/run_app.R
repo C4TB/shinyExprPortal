@@ -1,7 +1,6 @@
 #' @import shiny
 #' @import ggplot2
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_longer pivot_wider
 NULL
 
@@ -61,4 +60,17 @@ run_module <- function(
                       ...)
   )
   print(app)
+}
+
+#' Print list of currently supported modules
+#'
+#' See `vignette("config")` for details about how to configure each module.
+#'
+#' @return list of available modules
+#' @export
+#'
+#' @examples
+#' show_available_modules()
+show_available_modules <- function() {
+  print(get_golem_config("available_modules"))
 }

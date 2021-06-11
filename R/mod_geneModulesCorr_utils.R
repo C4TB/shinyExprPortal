@@ -83,3 +83,70 @@ computeModuleProfile <- function(module_medians, selected_module, lookup,
   
   module_profile
 }
+
+plotModulesOverview <- function(overview_data, across_class) {
+  across_formula <- stats::as.formula(paste("~", across_class))
+  
+  overview_data %>%
+    plotly::plot_ly(source="overview", key = ~Modules) %>%
+    plotly::add_markers(
+      x = ~ jittered,
+      y = ~ Median_Expression,
+      color = across_formula,
+      marker = list(size = 6, opacity = 0.5),
+      colors = "Set1",
+      hoverinfo = "text",
+      text = ~ paste0("Module: ", Modules,
+                      "<br>Median Expression: ", signif(Median_Expression, 4))
+    ) %>% 
+    plotly::layout(
+      yaxis = list (title = "Median Expression"),
+      xaxis = list(title = across_class,
+                   showticklabels = FALSE)
+    ) %>% htmlwidgets::onRender(
+      "
+        function(el, x) {
+          el.on('plotly_hover', function(d) {
+          Plotly.d3.select('.cursor-crosshair').style('cursor', 'pointer');
+          });
+          el.on('plotly_unhover', function(d) {
+          Plotly.d3.select('.cursor-crosshair').style('cursor', 'crosshair');
+          });
+        }
+    ")
+}
+
+plotModuleProfile <- function(module_profile, expression_col, sample_col,
+                              across_class, plot_title = "") {
+  module_exp <- module_profile[, expression_col]
+  y_pos <- sum(module_exp) / length(module_exp)
+  ggplot(module_profile, aes(x = .data[[sample_col]],
+                             y = .data[[expression_col]])) +
+    geom_tile(height = Inf,
+              aes(
+                x = .data[[sample_col]],
+                y = y_pos,
+                fill = as.factor(.data[[across_class]])
+              )) +
+    geom_line(aes(group = 1)) +
+    scale_fill_brewer(palette = "Set1") +
+    theme(
+      plot.title = element_text(
+        lineheight = 0.8,
+        face = "bold",
+        colour = "black",
+        size = 15
+      ),
+      axis.title = element_text(
+        face = "bold",
+        colour = "black",
+        size = 15
+      ),
+      axis.text = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.ticks.y = element_blank(),
+      panel.grid = element_blank(),
+      legend.position = "none"
+    ) +
+    ggtitle(paste(strwrap(plot_title, 50), collapse = "\n"))
+}
