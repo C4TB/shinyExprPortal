@@ -1,3 +1,7 @@
+svg {
+  background-color: unset !important;
+}
+
 .axis {
 	  font: 24pt;
 }

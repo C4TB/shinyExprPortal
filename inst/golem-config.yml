@@ -12,7 +12,7 @@ default:
   - singleVariableCorr
   - geneModulesCorr
   - geneModulesHeatmap
-  - wholeDataCorr
+  - multiVariableCorr
   - compareTrajGroups
   degModules:
   - degSummary
@@ -20,7 +20,7 @@ default:
   corrModules:
   - singleGeneCorr
   - singleVariableCorr
-  - wholeDataCorr
+  - multiVariableCorr
 production:
   app_prod: yes
 dev:

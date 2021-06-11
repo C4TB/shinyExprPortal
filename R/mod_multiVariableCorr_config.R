@@ -1,16 +1,16 @@
-wholeDataCorrConfig <- function(config, data_folder = "") { 
-  message("Checking wholeDataCorr configuration")
+multiVariableCorrConfig <- function(config, data_folder = "") { 
+  message("Checking multiVariableCorr configuration")
   
   requiredPackages <- c("bsplus", "RColorBrewer", "plotly", "DT",
                         "shinycssloaders")
   stopIfNotInstalled(requiredPackages, "degDetails")
   
   if (!is.null(config$advanced)) {
-    validateAdvancedSettings(config$advanced, "wholeDatacorr")
+    validateAdvancedSettings(config$advanced, "multiVariableCorr")
   }
  
   if (is.null(config$heatmap_variables))
-    stop("wholeDataCorr:
+    stop("multiVariableCorr:
          named 'scatterplot_variables' list is missing")
    
   config

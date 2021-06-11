@@ -1,6 +1,6 @@
-# wholeDataCorr UI Function
-mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
-  wholeDataCorr_tab(
+# multiVariableCorr UI Function
+mod_multiVariableCorr_ui <- function(module_name, appdata, global, module_config) {
+  multiVariableCorr_tab(
     sample_select = sampleClassInputs(global$sample_classes, module_name),
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
@@ -19,7 +19,7 @@ mod_wholeDataCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-wholeDataCorr_tab <-
+multiVariableCorr_tab <-
   function(sample_select,
            clinical_variables,
            advanced = NULL,
@@ -28,8 +28,8 @@ wholeDataCorr_tab <-
     
   ns <- NS(id)
   tabPanel(
-    title = "Whole data",
-    value = "wholeDataCorr",
+    title = "Multiple variables",
+    value = "multiVariableCorr",
     tags$h5(title %||% "Correlation between all genes and clinical variables"),
     splitLayout(
       verticalLayout(
@@ -68,7 +68,7 @@ wholeDataCorr_tab <-
         )
       ),
       
-        bsplus::bs_accordion("wholeDataCorr_acc") %>% 
+        bsplus::bs_accordion("multiVariableCorr_acc") %>% 
           bsplus::bs_append(title = "Heatmap Top 50 significant genes",
             plotly::plotlyOutput(ns("heatmap"), height = 800) %>% 
               shinycssloaders::withSpinner()
@@ -87,10 +87,10 @@ wholeDataCorr_tab <-
     )
   )
 }
-#' wholeDataCorr Server Function
+#' multiVariableCorr Server Function
 #'
 #' @noRd 
-mod_wholeDataCorr_server <- function(module_name,
+mod_multiVariableCorr_server <- function(module_name,
                                      appdata,
                                      global,
                                      module_config) {

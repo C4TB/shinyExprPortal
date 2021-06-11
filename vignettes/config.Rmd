@@ -3,6 +3,7 @@ title: "Configuration guide"
 output:
   rmarkdown::html_vignette:
     toc: true
+    toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Configuration guide}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,7 +22,7 @@ knitr::opts_chunk$set(
 library(clinvisx)
 ```
 
-This guide describes how to set up the configuration file for deploying a project with the package. It describes a minimal setup example, as well as optional advanced and customisation settings.
+This guide describes how to set up the configuration file for deploying a project with the package. It includes a minimal setup example, as well as optional advanced and customisation settings.
 
 ## Required files
 
@@ -66,17 +67,18 @@ colnames(x) <- smp_ids
 knitr::kable(as.data.frame(x))
 ```
 
-All the sample ids should also be in a column of the lookup file (e.g. named Sample_ID). The other columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
+Sample identifiers should also be in a column of the lookup file (e.g. named Sample_ID). The other columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
 
 ```{r, eval=TRUE, echo = FALSE}
 knitr::kable(data.frame(Sample_ID = smp_ids,
                  Time = c("m01", "m02", "m01", "m02", "m01", "m02"),
                  Tissue = c("A", "A", "A", "A", "A", "A"),
+                 Drug = c("d1", "d1", "d1", "d1", "d2", "d2"),
                  Patient_ID = c("p01", "p01", "p02", "p02", "p03", "p03"))
 )
 ```
 
-A clinical data file contains all observed clinical data, as well as demographics and additional information, for a patient. For data observed at multiple timepoints, it is expected that column names follow the pattern: `{Variable}_{Time}`, where all time values match a time column in the lookup file. The following is a valid clinical data file for the lookup above:
+A clinical data file contains all observed clinical data, as well as demographics and additional information (e.g. derived variables), for a patient. For data observed at multiple timepoints, it is expected that column names follow the pattern `{Variable}_{Time}`, with times formatted in the same way as the suffix and the time column in the lookup file. The following is a valid clinical data file for the lookup above:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(
@@ -88,13 +90,13 @@ knitr::kable(
 )
 ```
 
-When matching samples and subjects, the app will verify the condition of every sample having a matching subject and every subject having at least one sample. If this does not hold, the app will not be launched.
+When matching samples and subjects, the app will verify if every sample has a matching subject and every subject has at least one sample. If this does not hold, the app will not be launched.
 
 **Supported formats:** common formats such as CSV and TSV (also with .txt extension) are supported. The expression matrix is loaded using the `{data.table}` package. The clinical and lookup files are loaded using the `{vroom}` package. RDS files are also supported -- in this case, the expression matrix object should be saved as a matrix into the RDS file. For the lookup and clinical data, normal data frames or tibbles are supported.
 
-### Configuration file
+## Configuration file
 
-The configuration file is the key feature of the package, as it allows various kinds of arrangements and custom settings for projects without requiring a single line of code to be written. However, as it is a YAML text file, it must be written in the correct format to work. A YAML file is essentially a text file with appropriate indentations and colons, defining tree-like structures that will be read by the package and produce a corresponding Shiny website.
+The configuration file is the key feature of the package, allowing managing project websites without requiring a single line of code to be written. However, as it is a YAML text file, it must be written in the correct format to work. A YAML file is essentially a text file containing pairs of fields and values, with indentations defining a tree-like structure.
 
 The configuration file has three main categories of settings: project details, data and modules. Project details settings cover title, logo, theme, icon shortcut menu and about section. Data settings include the data files mentioned above, as well as sample metadata definitions for the website. The remaining settings define which modules of the package should be displayed to a visitor of the portal.
 
@@ -120,6 +122,12 @@ global:
       label: Tissue
       values:
         - A
+        - B
+    - name: Drug
+      label: Treatment
+      values:
+        - D1
+        - D2
 singleGeneCorr:
   colour_variables: [drugNaive]
   tabs:
@@ -128,13 +136,33 @@ singleGeneCorr:
       variables: [Platelets_m01, Platelets_m02]
 ```
 
+**YAML syntax**: most configuration fields are defined with a colon (:). Lists of values are defined using hyphens or square brackets. Hyphens can be use to defined complex settings such as the sample classes above. For simple definitions, either hyphens (see values of each sample class above) or square brackets (see variables in tabs above) work. In this app, pairs of key and values sometimes can replace common lists, such as in the custom labels used for the Time sample class above (see more below).
+
 The rest of this guide describes in detail each section of the configuration file, with the required and optional settings.
 
 ### Project details configuration
 
-The two required settings here are **name** and **about**, with the name of a markdown (.md) file. If a markdown file with a project description is not provided, the package will add a default text in the main page. The package also supports the following optional settings:
+#### Required settings
 
-#### Logo 
+**Name**
+
+A short name for a project (e.g. the acronym).
+
+```yaml
+name: PROJ
+```
+
+**About**
+
+The name of a text, markdown or HTML file located in the same folder of the app.R file. If a file is not provided, the application will show a default placeholder text.
+
+```yaml
+about: about.md
+```
+
+#### Optional settings
+
+**Logo**
 
 A custom logo for the top-left corner can be provided as any web-supported format (e.g. png, jpeg). If a logo is not provided, the project name will be used instead.
 
@@ -142,7 +170,7 @@ A custom logo for the top-left corner can be provided as any web-supported forma
 logo: logo.png
 ```
 
-#### Bootswatch theme
+**Bootswatch theme**
 
 A custom [Bootswatch](http://www.bootswatch.com) theme can be used. At the moment, version 3 is strongly recommended. Version 4 can be used, but in certain modules, styling issues might appear in certain elements.
 
@@ -154,7 +182,7 @@ bootstrap:
 
 Under bootstrap, any other additional setting will be passed to the `bslib::theme()` command, allowing further customisation. For further information, check the [bs_theme](https://rstudio.github.io/bslib/reference/bs_theme.html) documentation for the supported arguments or run `?bslib::theme` for the local help page.
 
-#### Icon menu
+**Icon menu**
 
 An icon menu with highlights can be displayed above the about section. For that, module names must be included in a list, and PNG images, with 1:1 aspect ratio and named after these modules, must be placed in a `www` folder (located in the same folder where app.R is). For example, to include a highlight shortcut to singleGeneCorr, the module name must be listed and a file singleGeneCorr.png placed under a `www` folder. The images will be rendered as 250px x 250px. Example:
 
@@ -194,7 +222,8 @@ global:
 
 Each sample class should be defined through its corresponding variable name in the sample lookup file, a label to be displayed in the web app and a list of valid values for subsetting samples. As seen above with variable_name, the valid values can also be assigned nice labels for display through the format `Nice Label: originalValue `. In this case, hyphens or square brackets should not be used. As this section of the configuration file is used by the package to build the interface, it is possible narrow down the subsets visible to user, such as specific time points.
 
-#### Advanced setting: All subsets
+<details>
+<summary>**Advanced setting: All subsets**</summary>
 
 The package also supports an advanced option to enable selection of all samples for a particular class. To do that, a custom pair of label and value `All: NA` can be used. The example above would then look as follows:
 
@@ -213,13 +242,342 @@ global:
         - anothervar_value1
         - anothervar_value2
 ```
+</details>
 
-### Modules 
+## Modules 
 
 The last part of the configuration file is the definition of the package modules that will be included in the web app. These should be listed sequentially and should be listed at the same hierarchical level, unless a grouped module is used (see more below). The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can be used as reference. The following modules and grouped modules are currently supported:
 
 ```{r list_modules, include=FALSE}
 clinvisx::show_avaiable_modules()
 ```
+To avoid installing too many packages, modules separate dependencies. The application will not run if there is a missing dependency for a module that is included in the configuration file.
 
-#### degModules {#degModules}
+<details>
+<summary>**Optional settings supported by all modules**</summary>
+
+**title**  
+A custom title, displayed under the menu bar, can be set for all modules. Example:
+
+```yaml
+moduleName:
+  requiredSetting1: TRUE
+  requiredSetting2: FALSE
+  title: This is my custom module title
+```
+</details>
+
+### cohortOverview {#cohortOverview}
+
+**Required packages:** `{r2d3}`
+
+This module displays a grid of small line plots for each subject in the clinical data file. The line plots are aimed at showing subjects' trajectories over time, with the option of a user-selected colour for each line. By clicking and dragging over the legend, the user can select a subset of patients and compare gene expression levels for a selected gene. The selection of sample classes is derived from the global settings.
+
+**Minimum configuration**
+
+```yaml
+cohortOverview:
+  profile_variables:
+    Platelets:
+      values: [Platelets_m01, Platelets_m02]
+  colour_variables: [drugNaive, Age, Platelets_m01, Platelets_m02]
+```
+
+### compareTrajGroups {#compareTrajGroups}
+
+**Optional required packages:** `{RColorBrewer}`
+
+This module shows the trajectory of subjects over time. Subjects are split based on a supplied `sidebyside_class` in the configuration file (e.g. two treatment subsets). The trajectory is defined by the combination of variables included in a list of `compare_variables` and values from a `trajectory_class` suffix. Following the example used so far, Platelets should be included in `compare_variables` and Time defined as `trajectory_class`. In such case, a subject's trajectory contains pairs of expression at time m01 and m02 and observed measures Platelets_m01 and Platelets_m02. 
+
+**Minimum configuration**
+```yaml
+compareTrajGroups:
+  subset_classes:
+    - Tissue
+  sidebyside_class: Drug
+  trajectory_class: Time
+  compare_variables:
+    - Platelets
+```
+
+<details>
+<summary>**Optional settings**</summary>
+
+**palette:** the name of a [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) palette or a list of valid colours (e.g. hex value) can be supplied using this keyword. This will be used to colour points based on the combination of compare_variables with trajectory_class.  
+
+**advanced**: under advanced, a regression line can be displayed by setting `fit_method` to TRUE. Optionally, `fit_method` can be set to AllowHide, enabling the regression line to be hidden.
+
+***Example of optional settings**
+```yaml
+compareTrajGroups:
+  ...
+  palette: ["purple", "yellow", "red", "blue"]
+  advanced:
+    fit_method: AllowHide
+```
+</details>
+
+### degDetails {#degDetails}
+
+**Required packages:** `{bsplus}, {plotly}, {DT}, {shinycssloaders}`
+
+This module displays volcano plots and a table with the results of differential expression analysis. It depends on a separate table mapping the files that have the DEA results. This table should contain a high level category variable that identifies different types of models and a `File` column with the corresponding file names. Other columns in this table should partially match the sample classes defined in global, when meaningful. The following is a valid model results table:
+
+```{r models, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  Model = c("Linear", "Linear", "Nonlinear", "Nonlinear"),
+  Time = c("m01", "m02", "m01", "m02"),
+  Drug = c("d1", "d2", "d1", "d2"),
+  File = c("Model_1.txt", "Model_2.txt", "Model_3.txt", "Model_4.txt")
+))
+```
+
+The configuration for this module requires specifying a `category_variable` to identify the models and a `models` file with the table; this file can be a TSV or CSV file. Individual model results should be placed in a `models` folder.
+
+**Minimum configuration:**
+```yaml
+degDetails:
+  category_variable: Model
+  models: model.tsv
+```
+
+**Model results variables**  
+
+This and other DE-related modules also require the following names for variables in model results:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  Type = c("Gene identifier", "Expression", "Fold change", "Significance", "FDR", "(Optional:) EnsemblID"),
+  Name =  c("Gene or GeneSymbol", "AvgExpr", "logFC", "p.value", "q.value", "EnsemblID")
+))
+```
+
+Fold change is optional and will be replaced by AvgExpr in the plots when not present.
+
+<details>
+<summary>**Optional settings**</summary>
+
+**link_to**: name of another module to create a link to in the results table. In combination with the remaining variables in the model results table, it enables inspecting directly a gene with the matching subsets, for example, of time and tissue type. The module linked to should also support this functionality for this setting to work.
+</details>
+
+### degSummary {#degSummary}
+
+**Required packages:** `{knitr}, {kableExtra}`
+
+This module displays a summary table of all models referenced in a models.tsv file. It aggregates the number of significant genes by p-value and q-value for each module. A `partition_variable`, matching a variable in the models table (e.g. Drug) is used to partition the results vertically. With two drugs d1 and 2, this means that the table will contain 4 columns: number of significant d1 p-value genes, d1 q-value genes, d2 p-value genes and d2 q-value genes. The other variables in the models file will be grouped row-wise.
+
+**Minimum configuration**
+```yaml
+degSummary:
+  partition_variable: Drug
+  models: models.tsv
+```
+
+### geneModulesCorr {#geneModulesCorr}
+
+
+### geneModulesHeatmap {#geneModulesHeatmap}
+
+**Required packages:** `{RColorBrewer}, {DT}`
+
+This modules enables visualising a subset of genes associated with a particular analysis (e.g. regulatory networks). It displays a heatmap with gene expression of the genes from a module, with the samples matching the subsets that are associated with the analysis. A table with a model/analysis category or source, sample classes, module name and a list of associated genes is required. As an example, the following is a valid modules table:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  Category = c("Linear", "Linear", "Linear", "Linear", "Linear", "Linear"),
+  Time = c("m01", "m01", "m01", "m01", "m02", "m02"),
+  Drug = c("d1", "d1", "d1", "d1", "d1", "d1"),
+  ModuleName = c("ABC (Activated)", "BCD (Inhibited)", "CDE (Activated)", "DEF (Activated)", "EFG (Activated)",
+                 "FGH (Activated)"),
+  targetGenes = c("PQR,QRS,RST", "QPP,PQQ,RST,TRR,WYX,WEX", "QQZ,ZZE,YYZ,YYE,PPA", "PP,APP,BBE", "HJK,JKL,MNJ",
+                  "MNO,NOP,PQR,QRS,RST,STU")
+))
+```
+
+The configuration requires a `modules_table` indicating the TSV or CSV with the table, a `category_variable`, which identifies the table column with the name of the source of the modules (e.g. a category of analysis), a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column containing a list of gene symbols separated by comma. In the interface, users select a Category and the values of the remaining classes on the table (e.g. Time and Drug above) to see a list of modules associated with that category and sample classes.
+
+**Minimum configuration**
+```yaml
+geneModulesHeatmap:
+  modules_table: modules.csv
+  category_variable: Category
+  modules_variable: ModuleName
+  genes_variable: targetGenes
+```
+
+<details>
+  <summary>**Optional settings**</summary>
+
+**annotation_variables**: a list of clinical variables can be supplied so that users can add annotations above the heatmap. The variables should be provided with a full name, so that variables at different time points can be included.  
+**annotation_colours:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colours for the annotations. Alternatively, an RColorBrewer palette or a list of colours (e.g. hex values) can be assigned to individual variables (not every variable needs to be assigned custom colours).
+**annotation_range:** for numeric variables that share an underlying range of values, but the data varies, it is possible to predefine the range to share the same colour scale. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is when the range of values of a clinical variable drop off at a later time point.
+
+**Example of optional settings:**
+```yaml
+geneModulesHeatmap:
+  ...
+  annotation_variables:
+    - Age
+    - Platelets_m01
+    - Platelets_m02
+    - drugNaive
+  annotation_colours:
+    drugNaive: ["yellow", "green"]
+    Age: Reds
+  annotation_range:
+    Age: [0, 99]
+```
+</details>
+
+### singleGeneCorr {#singleGeneCorr}
+
+**Required packages:** `{DT}`
+
+This module allows users to compare the expression of a single gene from a selected subset of samples with observed clinical variables through scatterplots. Groups of scatterplots are arranged in tabs, and there is an option to keep the same scale across all scatterplots in a single tab. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (scatterplots have unique horizontal axis) or `fixed`, and a list of variables for each scatterplot. By default, each scatterplot is annotated with Pearson correlation value, p-value and FDR. This module can be passed as a name to `link_to` in other modules.
+
+**Minimum configuration**
+```yaml
+singleGeneCorr:
+  tabs:
+    - name: Platelets
+      scale: free
+      variables:
+        - Platelets_m01
+        - Platelets_m02
+```
+
+<details>
+<summary>**Optional settings**</summary>
+
+**colour_variables**: a list of clinical variables, either numeric or discrete, can be supplied so that users can assign a colour to subjects.
+
+**advanced**: under advanced, several additional options can be enabled:  
+
+- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **fit_method**: if TRUE or AllowHide, lets users choose a regression method from the available ones (linear, quadratic or cubic).
+
+
+**Example of optional settings:**
+```yaml
+singleGeneCorr:
+  tabs:
+    ...
+  colour_variables: [DrugNaive, Age]
+  advanced:
+    correlation_method: TRUE
+    expression_outliers: TRUE
+    clinical_outliers: TRUE
+    fit_method: TRUE
+```
+</details>
+
+
+### singleVariableCorr {#singleVariableCorr}
+
+**Required packages:** `{DT}`
+
+This module allows users to view a table with the correlation betwen one single clinical variable and all genes from a selected subset. With default settings, this module does not require any configuration except being listed in the file with a value of TRUE. Without optional settings, the module will let users pick one from all numeric variables from the clinical table.
+
+**Minimum configuration**
+```yaml
+singleVariableCorr:
+  TRUE
+```
+<details>
+  <summary>**Optional settings**</summary>
+  
+**clinical_variables**: a custom list of clinical variables can be supplied. If not, all numeric variables will be made available for users to select.
+
+**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
+
+**advanced**: under advanced, several additional options can be enabled:  
+
+- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+
+**Example of optional settings:**
+```yaml
+singleVariableCorr:
+  clinical_variables:
+    - Age
+    - Platelets_m01
+  link_to: singleGeneCorr
+  advanced:
+    correlation_method: TRUE
+    clinical_outliers: TRUE
+```
+</details>
+
+### multiVariableCorr {#multiVariableCorr}
+
+**Required packages:** `{bsplus}`, `{RColorBrewer}`, `{plotly}`, `{DT}`, `{shinycssloaders}`
+
+This module allows users to view a heatmap and a table with the most significantly correlated genes across a predefined set of clinical variables. The genes are taken from a subset selected by user, based on the sample classes in the global configuration. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
+
+**Minimum configuration**
+```yaml
+multiVariableCorr:
+  heatmap_variables:
+    Platelets: [Platelets_m01, Platelets_m02]
+```
+
+<details>
+  <summary>**Optional settings**</summary>
+  
+**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
+
+**advanced**: under advanced, several additional options can be enabled:  
+
+- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+  
+**Example of optional settings:**
+```yaml
+multiVariableCorr:
+  ..
+  link_to: singleGeneCorr
+  advanced:
+    correlation_method: TRUE
+    clinical_outliers: TRUE
+```
+
+</details>
+
+## Grouped modules
+
+Each module defined above will appear as an independent choice in the menu. However, some modules share an underlying functionality or purpose, such as the differential expression modules or the correlation modules. Therefore, the package supports a few of these grouped modules that can be specified in the configuration file, and will be grouped in the menu of the website. The existence of these modules is defined internally in the package and is not customisable when deploying a project.
+
+### degModules {#degModules}
+
+This group of modules includes `degDetails` and `degSummary`. As both modules require a model table and files, when using degModules it is possible to specify the model file as part of the data section of the configuration. Please note below the indentation that is required when defining the sub-modules.
+
+**Configuration example**
+```yaml
+data:
+  ...
+  models: models.tsv
+degModules:
+  degSummary:
+    ...
+  degDetails:
+    ...
+```
+
+### corrModules {#corrModules}
+
+This group of modules include `singleGeneCorr`, `singleVariableCorr` and `multiVariableCorr`. To use it, only a correct indentation is needed:
+
+**Configuration example**
+```yaml
+corrModules:
+  singleGeneCorr:
+    ...
+  singleVariableCorr:
+    ...
+  multiVariableCorr:
+    ...
+```

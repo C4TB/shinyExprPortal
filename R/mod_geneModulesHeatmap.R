@@ -89,6 +89,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     scatterplot_vars <- module_config$scatterplot_variables
     annotation_vars <- module_config$annotation_variables
     annotation_colors <- module_config$annotation_colours %||% NULL
+    annotation_range <- module_config$annotation_range %||% NULL
     
     # REST OF CODE HERE
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
@@ -176,7 +177,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     output$module_heatmap <- renderIheatmap({
       req(nrow(heatmap_data()) > 0, cancelOutput = TRUE)
       hm <- iheatmap(heatmap_data(),
-                          colors = rev(RColorBrewer::brewer.pal(3, "RdBu")),
+                          colors = rev(RColorBrewer::brewer.pal(11, "RdBu")),
                           row_labels = if (nrow(heatmap_data()) > 80) F else T,
                           scale = "rows",
                           scale_method = "standardize",
@@ -190,8 +191,9 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       annots <- annotations()
       if (not_null(annots)) {
         hm <- hm %>% 
-          add_col_annotation(annots,
-                             colors = annotation_colors)
+          custom_add_col_annotations(annots,
+                             colors = annotation_colors,
+                             range = annotation_range)
       }
       hm %>% add_col_clustering()
     })
