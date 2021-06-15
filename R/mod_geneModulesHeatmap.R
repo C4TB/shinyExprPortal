@@ -129,6 +129,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       scrollY = "600px",
       scrollCollapse = TRUE
     ),
+    filter = "top",
     class = "compact hover",
     selection = "single",
     rownames = FALSE)
