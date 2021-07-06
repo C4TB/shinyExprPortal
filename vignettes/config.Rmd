@@ -409,8 +409,8 @@ geneModulesHeatmap:
   <summary>**Optional settings**</summary>
 
 **annotation_variables**: a list of clinical variables can be supplied so that users can add annotations above the heatmap. The variables should be provided with a full name, so that variables at different time points can be included.  
-**annotation_colours:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colours for the annotations. Alternatively, an RColorBrewer palette or a list of colours (e.g. hex values) can be assigned to individual variables (not every variable needs to be assigned custom colours).
-**annotation_range:** for numeric variables that share an underlying range of values, but the data varies, it is possible to predefine the range to share the same colour scale. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is when the range of values of a clinical variable drop off at a later time point.
+**annotation_colours:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colours for the annotations. Alternatively, an RColorBrewer palette or a list of colours (e.g. hex values) can be assigned to individual variables (not every variable needs to be assigned custom colours). For continuous variables, a list of colours will be interpolated. This method can be used to reverse RColorBrewer palettes.
+**annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the colour scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is when a maximum observed value changes over time.
 
 **Example of optional settings:**
 ```yaml

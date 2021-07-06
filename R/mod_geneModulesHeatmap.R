@@ -149,7 +149,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       if (!isTruthy(input$selected_annotations))
         return(NULL)
       selected_clinical <- clinical_from_lookup()
-      selected_clinical[input$selected_annotations]
+      selected_clinical[rev(input$selected_annotations)]
     })
     
     # Find module genes and subset expression matrix
@@ -177,15 +177,18 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     
     output$module_heatmap <- renderIheatmap({
       req(nrow(heatmap_data()) > 0, cancelOutput = TRUE)
-      hm <- iheatmap(heatmap_data(),
-                          colors = rev(RColorBrewer::brewer.pal(11, "RdBu")),
-                          row_labels = if (nrow(heatmap_data()) > 80) F else T,
-                          scale = "rows",
-                          scale_method = "standardize",
-                          name = "Expression z-scores",
-                          layout = list(font = list(size = 9),
-                                        plot_bgcolor = "transparent",
-                                        paper_bgcolor = "transparent"))  %>%
+      hm <- iheatmap(
+              heatmap_data(),
+              colors = rev(
+                RColorBrewer::brewer.pal(11, "RdBu")
+              ),
+              row_labels = if (nrow(heatmap_data()) > 80) F else T,
+              scale = "rows",
+              scale_method = "standardize",
+              name = "Expression z-scores",
+              layout = list(font = list(size = 9),
+                            plot_bgcolor = "transparent",
+                            paper_bgcolor = "transparent"))  %>%
         add_row_clustering()
       
       # Optional annotations

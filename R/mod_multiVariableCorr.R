@@ -127,7 +127,7 @@ mod_multiVariableCorr_server <- function(module_name,
       expression_matrix[, selected_lookup()[[sample_var]]]
     })
     
-    clinical_from_lookup <- eventReactive(selected_lookup(), {
+    clinical_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       selectFromLookup(clinical, sel_lookup,
                        matching_col = subject_var)

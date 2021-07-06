@@ -53,29 +53,32 @@ cohortOverview_tab <-
           selectizeInput(
             ns("profile_variable"),
             label = "Select clinical variable for trajectory:",
-            choices = profile_variables
+            choices = profile_variables,
+            options = list(dropdownParent = "body")
           ),
           selectizeInput(ns("profile_colour"),
                          label = "Select variable for trajectory colour:",
-                         choices = colour_variables),
+                         choices = colour_variables,
+                         options = list(dropdownParent = "body")
+                         ),
           checkboxInput(ns("order_by_colour"),
                         label = "order by colour variable?")
-        ),
-        wellPanel(
-          h5("Expression settings"),
-          sample_select,
-          gene_select,
-          checkboxInput(ns("flip_grouping"), label = p("group by type?"))
         )
+        # wellPanel(
+        #   h5("Expression settings"),
+        #   sample_select,
+        #   gene_select,
+        #   checkboxInput(ns("flip_grouping"), label = p("group by type?"))
+        # )
       ),
       flowLayout(
         r2d3::d3Output(ns("cohort_overview"), height = "500px", width =
-                         "500px"),
-        plotOutput(
-          ns("cohort_expression"),
-          height = 'auto',
-          width = "60%"
-        )
+                         "500px")
+        # plotOutput(
+        #   ns("cohort_expression"),
+        #   height = 'auto',
+        #   width = "60%"
+        # )
       ),
       cellWidths = c("20%", "80%"),
       cellArgs = list(style = "white-space: normal;")

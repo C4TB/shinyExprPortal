@@ -22,6 +22,7 @@ plotClinExpScatterplot <-
            gene_name = NULL,
            scales = "free",
            colour_variable = NULL,
+           manual_colors = NULL,
            ncol = NULL,
            nrow = NULL) {
   
@@ -41,10 +42,18 @@ plotClinExpScatterplot <-
     ) + 
     theme_bg()
   
-  if (!is.null(colour_variable))
+  if (!is.null(colour_variable)) {
     p <- p +
-      geom_point(aes(color = .data[[colour_variable]]), size = 1) +
-      scale_color_brewer(palette = "Set1") 
+      geom_point(aes(fill = .data[[colour_variable]]),
+                 color = "black",
+                 shape = 21,
+                 size = 2)
+    if (is.null(manual_colors)) {
+      p <- p + scale_fill_brewer(palette = "Set1") 
+    } else {
+      p <- p + scale_fill_manual(values = manual_colors)
+    }
+  }
   else
     p <- p + geom_point(size = 1)
   

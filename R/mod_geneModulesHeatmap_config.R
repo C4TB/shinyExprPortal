@@ -22,5 +22,9 @@ geneModulesHeatmapConfig <- function(config, data_folder = "") {
     stop("geneModulesHeatmap:
          'genes_variable' to identify genes is missing")
   
+  if (!is.null(config$annotation_colours)) {
+    config$annotation_colours <- lapply(config$annotation_colours, unlist)
+  }
+  
   config
 }
