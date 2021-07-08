@@ -37,11 +37,10 @@ geneModulesHeatmap_tab <- function(categories,
           sample_select,
           { if (not_null(annotation_variables)) 
               selectizeInput(ns("selected_annotations"),
-                          label = "Select heatmap annotations (max 5):",
+                          label = "Select heatmap annotations:",
                           choices = annotation_variables,
                           multiple = TRUE,
-                          options = list(dropdownParent = "body",
-                                         maxItems = 5)
+                          options = list(dropdownParent = "body")
                           )
             else NULL }
         )
