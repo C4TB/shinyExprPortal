@@ -118,20 +118,20 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     })
     
     output$modules_list <- DT::renderDT({
-      as.data.frame(selected_modules_table()[, modules_variable])
-    },
-    colnames = c("Select a module:"),
-    options = list(
-      dom = "t",
-      ordering = FALSE,
-      paging = FALSE,
-      scrollY = "600px",
-      scrollCollapse = TRUE
-    ),
-    filter = "top",
-    class = "compact hover",
-    selection = "single",
-    rownames = FALSE)
+        as.data.frame(selected_modules_table()[, modules_variable])
+      },
+      colnames = c("Select a module:"),
+      options = list(
+        dom = "t",
+        ordering = FALSE,
+        paging = FALSE,
+        scrollY = "600px",
+        scrollCollapse = TRUE
+      ),
+      filter = "top",
+      class = "compact hover",
+      selection = "single",
+      rownames = FALSE)
     outputOptions(output, "modules_list" ,suspendWhenHidden = TRUE)
     
     selected_lookup <- reactive({

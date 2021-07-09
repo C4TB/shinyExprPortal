@@ -4,10 +4,12 @@
 \alias{create_example}
 \title{Create example files}
 \usage{
-create_example(path = NULL)
+create_example(path = NULL, full = FALSE)
 }
 \arguments{
 \item{path}{(optional) a directory where to create the files, otherwise uses the output of getwd()}
+
+\item{full}{(optional) TRUE or FALSE (default); if TRUE, creates models and modules example files}
 }
 \value{
 

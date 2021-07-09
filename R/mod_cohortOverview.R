@@ -133,8 +133,8 @@ mod_cohortOverview_server <- function(module_name, appdata, global, module_confi
                               "estimate")
       first_profile_var <- profile_variable_list[1]
       last_profile_var <- profile_variable_list[length(profile_variable_list)]
-      selected_clinical$estimate <- selected_clinical[, last_profile_var] / 
-                                    selected_clinical[, first_profile_var]
+      selected_clinical$estimate <- selected_clinical[[last_profile_var]] / 
+                                    selected_clinical[[first_profile_var]]
       selected_clinical <-
         selected_clinical[order(selected_clinical[profile_order],
                                 decreasing = TRUE),]
