@@ -1,4 +1,4 @@
-compareTrajGroupsConfig <- function(config, ...) {
+compareTrajGroups_config <- function(config, ...) {
   message("Checking compareTrajGroups configuration")
   
   if (is.null(config$subset_classes))

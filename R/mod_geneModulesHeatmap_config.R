@@ -1,4 +1,4 @@
-geneModulesHeatmapConfig <- function(config, data_folder = "") { 
+geneModulesHeatmap_config <- function(config, data_folder = "") { 
   message("Checking geneModulesHeatmap configuration")
   
   requiredPackages <- c("RColorBrewer", "DT")

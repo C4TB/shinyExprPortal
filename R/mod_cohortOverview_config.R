@@ -1,4 +1,4 @@
-cohortOverviewConfig <- function(config, ...) {
+cohortOverview_config <- function(config, ...) {
   
   message("Checking cohortOverview configuration")
   

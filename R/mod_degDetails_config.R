@@ -1,5 +1,5 @@
 #' @noRd
-degDetailsConfig <- function(config, data_folder = "") { 
+degDetails_config <- function(config, data_folder = "") { 
   message("Checking degDetails configuration")
   
   requiredPackages <- c("bsplus", "plotly", "DT", "shinycssloaders")

@@ -83,7 +83,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     message("Module test mode")
     if (test_module %in% available_modules) {
       if (!is.null(config[[test_module]])) {
-        mod_conf <- do.call(paste0(test_module, "Config"),
+        mod_conf <- do.call(paste0(test_module, "_config"),
                 list(config = config[[test_module]],
                      data_folder = data_folder))
         appdata_modules <- list(mod_conf)
@@ -97,7 +97,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     appdata_modules <-
       lapply(available_modules, function(module_name) {
         if (!is.null(config[[module_name]]))
-          do.call(paste0(module_name, "Config"),
+          do.call(paste0(module_name, "_config"),
                   list(config = config[[module_name]],
                        data_folder = data_folder))
       })

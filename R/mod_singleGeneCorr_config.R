@@ -1,4 +1,4 @@
-singleGeneCorrConfig <- function(config, ...) { 
+singleGeneCorr_config <- function(config, ...) { 
 
   message("Checking singleGeneCorr configuration")
   

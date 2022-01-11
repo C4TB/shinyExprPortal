@@ -1,4 +1,4 @@
-singleVariableCorrConfig <- function(config, data_folder = "") { 
+singleVariableCorr_config <- function(config, data_folder = "") { 
   message("Checking singleVariableCorr configuration")
   
   requiredPackages <- c("DT")
