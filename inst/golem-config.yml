@@ -14,6 +14,7 @@ default:
   - geneModulesHeatmap
   - multiVariableCorr
   - compareTrajGroups
+  - networkViewer
   degModules:
   - degSummary
   - degDetails

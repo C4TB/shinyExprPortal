@@ -57,9 +57,9 @@ run_module <- function(
                       config = parseConfig(config_file,
                                             data_folder,
                                             module_name),
-                      ...)
+                      ...),
+    print = TRUE
   )
-  print(app)
 }
 
 #' Print list of currently supported modules
