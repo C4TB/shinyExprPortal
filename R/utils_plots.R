@@ -7,6 +7,7 @@
 #' @param gene_name gene name for labels
 #' @param scales scales parameter
 #' @param colour_variable categorical variable for color
+#' @param manual_colors custom palette
 #' @param ncol number of columns for facet_wrap
 #' @param nrow number of rows for facet_wrap
 #'

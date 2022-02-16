@@ -71,6 +71,9 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   config$global[["subject_variable"]] <-
     config$global$subject_variable %||% "Subject_ID" 
   
+  # Check if number of samples and subjects match across clinical data
+  # And matrices
+  # There should be no samples without a subject and no subjects without samples
   validateData(loaded_data,
                sample_variable = config$global[["sample_variable"]],
                subject_variable = config$global[["subject_variable"]]
