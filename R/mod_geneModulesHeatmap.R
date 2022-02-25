@@ -47,7 +47,7 @@ geneModulesHeatmap_tab <- function(categories,
       ),
       fluidRow(
         ## OUTPUTS ,
-        column(2, DT::DTOutput(ns("modules_list"), width = "100%")),
+        column(2, DTOutput(ns("modules_list"), width = "100%")),
         column(10, 
           conditionalPanel(
             condition = "typeof input.modules_list_rows_selected != 'undefined'
@@ -117,7 +117,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       table
     })
     
-    output$modules_list <- DT::renderDT({
+    output$modules_list <- renderDT({
         as.data.frame(selected_modules_table()[, modules_variable])
       },
       colnames = c("Select a module:"),

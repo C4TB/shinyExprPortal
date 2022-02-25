@@ -181,6 +181,10 @@ readFile <- function(filename, filetype, data_folder) {
     } else {
       if (filetype == "expression_matrix") {
         as.matrix(data.table::fread(filename))
+      } 
+      if (filetype == "edge_list") {
+        col_names <- c("source", "target", "weight")
+        as.data.frame(vroom::vroom(filename, col_names = col_names))
       } else {
         as.data.frame(vroom::vroom(filename, col_types = vroom::cols()))
       }

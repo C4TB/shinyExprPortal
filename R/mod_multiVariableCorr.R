@@ -75,7 +75,7 @@ multiVariableCorr_tab <-
           ) %>%
           bsplus::bs_append(title = "Table",
           verticalLayout(
-            DT::DTOutput(ns("table")),
+            DTOutput(ns("table")),
             conditionalPanel(
               paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
               downloadButton(ns("fulltable_download"), "Download Table CSV")

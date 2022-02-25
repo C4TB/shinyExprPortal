@@ -188,7 +188,7 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
                          selected = levels(as.factor(vp_table()[["color"]])))
     })
 
-    output$deg_table <- DT::renderDT({
+    output$deg_table <- renderDT({
       req(input$deg_table_checkbox)
         model_table <- vp_table()
         gene_column <- { 

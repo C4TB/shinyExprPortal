@@ -2,27 +2,35 @@
 networkViewer_config <- function(config, data_folder = "") { 
   message("Checking networkViewer configuration")
   
-  requiredPackages <- c("igraph")
+  requiredPackages <- c("igraph", "visNetwork")
   stopIfNotInstalled(requiredPackages, "networkViewer")
   
-  if (is.null(config$network_file)) {
+  if (is.null(config$network_files)) {
     stop("networkViewer: 
-         'network_file' is missing")
+         'network_files' property is missing")
   }
   
-  network_df <- readFile(config$network_file, "", data_folder)
-  
   file_type <- config$network_file_type %||% "edge_list"
+  read_nf <- function(x) readFile(x, file_type, data_folder)
+  network_dfs <- lapply(config$network_files, read_nf)
+  #network_df <- readFile(config$network_file, "edge_list", data_folder)
   sep <- config$name_separator %||% "_"
   
+  config$network_names <- names(config$network_files)
   config$overlap <- TRUE
   
   if (file_type == "edge_list") {
-    edge_graph <- igraph::graph_from_data_frame(network_df)
-    nodes_table <-  igraph::as_data_frame(edge_graph, "vertices")
-    nodes_table$group <- sub(paste0(sep,".*"),"",nodes_table$name)
-    config$nodes_table <- nodes_table
-    config$network_list <- igraph::decompose(edge_graph)
+    networks <- lapply(network_dfs, function(network_df) { 
+      edge_graph <- igraph::graph_from_data_frame(network_df)
+      nodes_table <-  igraph::as_data_frame(edge_graph, "vertices")
+      nodes_table$group <- sub(paste0(sep,".*"),"",nodes_table$name)
+      subnetworks <- igraph::decompose(edge_graph)
+      list(nodes_table, subnetworks)
+    })
+    config$nodes_table <- lapply(networks, function(x) x[[1]])
+    names(config$nodes_table) <- config$network_names
+    config$network_list <- lapply(networks, function(x) x[[2]])
+    names(config$network_list) <- config$network_names
     config$overlap <- FALSE
   }
   
