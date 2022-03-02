@@ -1,7 +1,6 @@
 mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
   networkViewer_tab(module_config$network_names,
                     module_config$node_types,
-                    module_config$overlap,
                     module_config$title,
                     module_name)
 }
@@ -10,7 +9,6 @@ mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
 #'
 #' @param network_names 
 #' @param node_types 
-#' @param overlap 
 #' @param title 
 #' @param id 
 #'
@@ -20,7 +18,6 @@ mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
 #' @importFrom visNetwork visNetworkOutput
 networkViewer_tab <- function(network_names,
                               node_types,
-                              overlap,
                               title = NULL,
                               id = NULL) {
 
@@ -59,16 +56,23 @@ networkViewer_tab <- function(network_names,
           )
         )
       ),
-      # fluidRow({
-      #   if (overlap)
-      #     column(2, DTOutput(ns("network_list"), width = "100%"))
-      # },
-        fluidRow(
-          column(5,
-                 visNetworkOutput(ns("network_output1"), height = "600px")), 
-          column(5,
-                 visNetworkOutput(ns("network_output2"), height = "600px"))
-        ),
+      fluidRow(column(5,
+                      tabsetPanel(tabPanel(
+                        "Network", visNetworkOutput(ns("network_output1"),
+                                                    height = "600px")
+                      ),
+                      tabPanel("Heatmap", iheatmaprOutput(
+                        ns("heatmap_output1")
+                      )))),
+               column(5,
+                      tabsetPanel(tabPanel(
+                        "Network", visNetworkOutput(ns("network_output2"),
+                                                    height = "600px")
+                      ),
+                      tabPanel("Heatmap", iheatmaprOutput(
+                        ns("heatmap_output2")
+                      ))))
+        ), 
         cellWidths = c("20%", "80%"),
         cellArgs = list(style = "white-space: normal;")
       )
@@ -83,7 +87,11 @@ mod_networkViewer_server <- function(module_name, appdata, global, module_config
     expression_matrix <- appdata$expression_matrix
     sample_lookup <- appdata$sample_lookup
     
-    overlap <- module_config$overlap
+    sample_col <- global$sample_column
+    sample_classes <- global$sample_classes
+    
+    sample_category <- module_config$sample_category
+    network_files <- module_config$network_files
     nodes_table <- module_config$nodes_table
     network_list <- module_config$network_list
     
@@ -118,77 +126,161 @@ mod_networkViewer_server <- function(module_name, appdata, global, module_config
              selected_network_list2())
     })
     
-    # if (overlap) {
-    #   output$network_list <- renderDT({
-    #     search_results <- results_list()
-    #     data.frame(Network = seq_along(search_results))
-    #   },
-    #   options = list(
-    #     dom = "t",
-    #     ordering = FALSE,
-    #     paging = FALSE,
-    #     scrollY = "600px",
-    #     scrollCollapse = TRUE
-    #   ),
-    #   filter = "top",
-    #   class = "compact hover",
-    #   selection = "single",
-    #   rownames = FALSE)
-    # }
-    
     # There will only be 1 result if the subnetworks are connected components
-    # This is defined by the 'overlap' setting in the configuration
-    selected_network <- reactive({
+    selected_network1 <- reactive({
       result_number <- 1
-      # if (overlap) {
-      #   req(input$network_list_row_last_clicked)
-      #   result_number <- input$network_list_row_last_clicked
-      # }
       search_results <- results_list()
       search_results[[result_number]]
     })
     
     selected_network2 <- reactive({
       result_number <- 1
-      # if (overlap) {
-      #   req(input$network_list_row_last_clicked)
-      #   result_number <- input$network_list_row_last_clicked
-      # }
       search_results <- results_list2()
       validate(need(length(search_results) > 0,"Node not found"))
       search_results[[result_number]]
     })
     
+    subset_network1 <- reactive({ 
+      req(input$node_name)
+      # Get nodes correspondening to selected network
+      vnd <- visNetwork::toVisNetworkData(selected_network1())
+      nt <- nodes_table[[input$network1]]
+      nt <- filter(nt, nt$name %in% vnd$nodes[["id"]])
+      
+      # Identify the types that are valid for the samples
+      # E.g Cell types prefixes 
+      sample_cat_values <- Filter(function(x) x$name == sample_category, 
+                                  sample_classes)[[1]][["values"]]
+      valid_classes <- intersect(unique(nt$group), sample_cat_values)
+      vc_list <- list(valid_classes)
+      names(vc_list) <- c(sample_category)
+      
+      # Get the remaining sample categories from the network_info
+      # (Exclude name and file)
+      network_info <- Filter(function(x) x$name == input$network1,
+                             network_files)[[1]]
+      lookup_info <- network_info[!names(network_info) %in% c("name", "file")]
+      
+      # Combine both filters
+      values_list <- c(vc_list, lookup_info)
+      
+      # Select subset of samples for this network
+      selected_samples <-
+        selectMatchingMultipleValues(sample_lookup, values_list)
+      # Select subset of genes for this network
+      gene_list <-
+        selectMatchingMultipleValues(nt, list("group" = valid_classes), "symbol")
+      # Select subset of expression matrix
+      expmat <- expression_matrix[unique(gene_list), 
+                        selected_samples[[sample_col]],
+                        drop = F]
+      annots <- data.frame(selected_samples[[sample_category]])
+      names(annots) <- sample_category
+      list(expression = expmat, annots = annots)
+    })
+    
+    output$heatmap_output1 <- renderIheatmap({
+      samples_network1 <- subset_network1()
+      nrows <- nrow(samples_network1$expression)
+      req(nrows > 0, cancelOutput = TRUE)
+      hm <- iheatmap(
+        samples_network1$expression,
+        colors = rev(
+          RColorBrewer::brewer.pal(11, "RdBu")
+        ),
+        row_labels = T,
+        col_labels = F,
+        scale = "rows",
+        scale_method = "standardize",
+        name = "Expression z-scores",
+        layout = list(font = list(size = 9),
+                      plot_bgcolor = "transparent",
+                      paper_bgcolor = "transparent")) %>%
+        add_col_annotation(samples_network1$annots)
+      if (nrows > 1)  
+        hm <- hm %>% add_row_clustering()
+      hm <- hm %>% add_col_clustering()
+      hm
+    })
+    
+    subset_network2 <- reactive({ 
+      req(input$node_name)
+      # Get nodes correspondening to selected network
+      vnd <- visNetwork::toVisNetworkData(selected_network2())
+      nt <- nodes_table[[input$network2]]
+      nt <- filter(nt, nt$name %in% vnd$nodes[["id"]])
+      
+      # Identify the types that are valid for the samples
+      # E.g Cell types prefixes 
+      sample_cat_values <- Filter(function(x) x$name == sample_category, 
+                                  sample_classes)[[1]][["values"]]
+      valid_classes <- intersect(unique(nt$group), sample_cat_values)
+      vc_list <- list(valid_classes)
+      names(vc_list) <- c(sample_category)
+      
+      # Get the remaining sample categories from the network_info
+      # (Exclude name and file)
+      network_info <- Filter(function(x) x$name == input$network2,
+                             network_files)[[1]]
+      lookup_info <- network_info[!names(network_info) %in% c("name", "file")]
+      
+      # Combine both filters
+      values_list <- c(vc_list, lookup_info)
+      
+      # Select subset of samples for this network
+      selected_samples <-
+        selectMatchingMultipleValues(sample_lookup, values_list)
+      # Select subset of genes for this network
+      gene_list <-
+        selectMatchingMultipleValues(nt, list("group" = valid_classes), "symbol")
+      # Select subset of expression matrix
+      expmat <- expression_matrix[unique(gene_list), 
+                                  selected_samples[[sample_col]],
+                                  drop = F]
+      annots <- data.frame(selected_samples[[sample_category]])
+      names(annots) <- sample_category
+      list(expression = expmat, annots = annots)
+    })
+    
+    output$heatmap_output2 <- renderIheatmap({
+      
+      samples_network2 <- subset_network2()
+      nrows <- nrow(samples_network2$expression)
+      req(nrows > 0, cancelOutput = TRUE)
+      hm <- iheatmap(
+        samples_network2$expression,
+        colors = rev(
+          RColorBrewer::brewer.pal(11, "RdBu")
+        ),
+        row_labels = T,
+        col_labels = F,
+        scale = "rows",
+        scale_method = "standardize",
+        name = "Expression z-scores",
+        layout = list(font = list(size = 9),
+                      plot_bgcolor = "transparent",
+                      paper_bgcolor = "transparent")) %>%
+        add_col_annotation(samples_network2$annots)
+      if (nrows > 1)  
+        hm <- hm %>% add_row_clustering()
+      hm <- hm %>% add_col_clustering()
+      hm
+    })
+    
     output$network_output1 <- visNetwork::renderVisNetwork({
-      vnd <- visNetwork::toVisNetworkData(selected_network())
-      # Get additional info from nodes_table
-      vnd$nodes <- merge(vnd$nodes, nodes_table[[input$network1]], by.x = "id", by.y = "name")
-      vnd$nodes$font.size <- 14
-      net <- visNetwork::visNetwork(vnd$nodes, vnd$edges) %>%
-        visNetwork::visIgraphLayout() %>%
-        visNetwork::visOptions(
-          nodesIdSelection = list(selected = input$node_name, main = "Select node to highlight:"),
-          highlightNearest = list(enabled = T, degree = 1, hover = T))
-        #visNetwork::visLegend(width = 0.1, position = "right", main = "Type")
-      #visNetwork::visNetworkProxy("network_output") %>%
-      #  visNetwork::visSelectNodes(input$node_name, highlightEdges = TRUE)
-      net
+      plotNetwork(
+        selected_network1(),
+        nodes_table[[input$network1]],
+        input$node_name
+      )
     })
     
     output$network_output2 <- visNetwork::renderVisNetwork({
-      vnd <- visNetwork::toVisNetworkData(selected_network2())
-      # Get additional info from nodes_table
-      vnd$nodes <- merge(vnd$nodes, nodes_table[[input$network2]], by.x = "id", by.y = "name")
-      vnd$nodes$font.size <- 14
-      net <- visNetwork::visNetwork(vnd$nodes, vnd$edges) %>%
-        visNetwork::visIgraphLayout() %>%
-        visNetwork::visOptions(
-          nodesIdSelection = list(selected = input$node_name, main = "Select node to highlight:"),
-          highlightNearest = list(enabled = T, degree = 1, hover = T))
-      #visNetwork::visLegend(width = 0.1, position = "right", main = "Type")
-      #visNetwork::visNetworkProxy("network_output") %>%
-      #  visNetwork::visSelectNodes(input$node_name, highlightEdges = TRUE)
-      net
+      plotNetwork(
+        selected_network2(),
+        nodes_table[[input$network2]],
+        input$node_name
+      )
     })
     
     

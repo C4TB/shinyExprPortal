@@ -90,7 +90,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     annotation_colors <- module_config$annotation_colours %||% NULL
     annotation_range <- module_config$annotation_range %||% NULL
     
-    # REST OF CODE HERE
+   
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
     
     user_selection <- reactive({
