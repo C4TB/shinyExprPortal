@@ -18,20 +18,20 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-clinvisx is configurable Shiny app for visual exploration of clinical and transcriptomics studies. It includes multiple modules to facilitate exploring associations in the results of such studies, as well as showcasing analysis results (i.e. volcano plots).
+clinvisx is configurable Shiny app for visual exploration of clinica multi-omics studies, based on count data. It includes multiple modules to facilitate exploring associations in the results of such studies, as well as showcasing analysis results (i.e. volcano plots).
 
 ## Installation
 
 You can install the latest version of clinvisx with:
 
 ``` r
-devtools::install_github("clinvisx")
+devtools::install_github("rhenkin/clinvisx")
 ```
 
-Note that the command above will only install basic package dependencies -- the modules in the app have specific dependencies that need to be installed separately. However, you can also run the following command to install all packages:
+Note that the command above will only install basic package dependencies -- the modules in the app have dependencies that need to be installed separately. To install all dependencies, you can install clinvsix with the following command:
 
 ``` r
-devtools::install_github("clinvisx", dependencies = TRUE)
+devtools::install_github("rhenkin/clinvisx", dependencies = TRUE)
 ```
 
 ## Configuration and usage
