@@ -39,3 +39,19 @@ mod_MODULENAME_server <- function(module_name, appdata, global, module_config) {
   })
 }
     
+# Config template
+
+#' @noRd
+MODULENAME_config <- function(config, data_folder = "") { 
+  message("Checking MODULENAME configuration")
+  
+  requiredPackages <- c("")
+  stopIfNotInstalled(requiredPackages, "MODULENAME")
+  
+  if (is.null(config$required_variable)) {
+    stop("MODULENAME: 
+         'required_variable' to ******* is missing")
+  }
+  
+  config
+}

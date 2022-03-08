@@ -1,5 +1,5 @@
 #' @noRd
-geneModulesCorrConfig <- function(config, data_folder = "") {
+geneModulesCorr_config <- function(config, data_folder = "") {
   message("Checking geneModulesCorr configuration")
   
   requiredPackages <- c("plotly", "matrixStats", "htmlwidgets")

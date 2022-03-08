@@ -75,7 +75,7 @@ multiVariableCorr_tab <-
           ) %>%
           bsplus::bs_append(title = "Table",
           verticalLayout(
-            DT::DTOutput(ns("table")),
+            DTOutput(ns("table")),
             conditionalPanel(
               paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
               downloadButton(ns("fulltable_download"), "Download Table CSV")
@@ -127,7 +127,7 @@ mod_multiVariableCorr_server <- function(module_name,
       expression_matrix[, selected_lookup()[[sample_var]]]
     })
     
-    clinical_from_lookup <- eventReactive(selected_lookup(), {
+    clinical_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       selectFromLookup(clinical, sel_lookup,
                        matching_col = subject_var)

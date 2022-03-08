@@ -1,5 +1,5 @@
 #' @noRd
-degSummaryConfig <- function(config, data_folder = "") { 
+degSummary_config <- function(config, data_folder = "") { 
   message("Checking degSummary configuration")
   
   requiredPackages <- c("knitr", "kableExtra")

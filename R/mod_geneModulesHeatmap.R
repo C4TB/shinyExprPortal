@@ -37,18 +37,17 @@ geneModulesHeatmap_tab <- function(categories,
           sample_select,
           { if (not_null(annotation_variables)) 
               selectizeInput(ns("selected_annotations"),
-                          label = "Select heatmap annotations (max 5):",
+                          label = "Select heatmap annotations:",
                           choices = annotation_variables,
                           multiple = TRUE,
-                          options = list(dropdownParent = "body",
-                                         maxItems = 5)
+                          options = list(dropdownParent = "body")
                           )
             else NULL }
         )
       ),
       fluidRow(
         ## OUTPUTS ,
-        column(2, DT::DTOutput(ns("modules_list"), width = "100%")),
+        column(2, DTOutput(ns("modules_list"), width = "100%")),
         column(10, 
           conditionalPanel(
             condition = "typeof input.modules_list_rows_selected != 'undefined'
@@ -91,7 +90,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     annotation_colors <- module_config$annotation_colours %||% NULL
     annotation_range <- module_config$annotation_range %||% NULL
     
-    # REST OF CODE HERE
+   
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
     
     user_selection <- reactive({
@@ -118,21 +117,21 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       table
     })
     
-    output$modules_list <- DT::renderDT({
-      as.data.frame(selected_modules_table()[, modules_variable])
-    },
-    colnames = c("Select a module:"),
-    options = list(
-      dom = "t",
-      ordering = FALSE,
-      paging = FALSE,
-      scrollY = "600px",
-      scrollCollapse = TRUE
-    ),
-    filter = "top",
-    class = "compact hover",
-    selection = "single",
-    rownames = FALSE)
+    output$modules_list <- renderDT({
+        as.data.frame(selected_modules_table()[, modules_variable])
+      },
+      colnames = c("Select a module:"),
+      options = list(
+        dom = "t",
+        ordering = FALSE,
+        paging = FALSE,
+        scrollY = "600px",
+        scrollCollapse = TRUE
+      ),
+      filter = "top",
+      class = "compact hover",
+      selection = "single",
+      rownames = FALSE)
     outputOptions(output, "modules_list" ,suspendWhenHidden = TRUE)
     
     selected_lookup <- reactive({
@@ -149,7 +148,7 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
       if (!isTruthy(input$selected_annotations))
         return(NULL)
       selected_clinical <- clinical_from_lookup()
-      selected_clinical[input$selected_annotations]
+      selected_clinical[rev(input$selected_annotations)]
     })
     
     # Find module genes and subset expression matrix
@@ -177,15 +176,18 @@ mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_c
     
     output$module_heatmap <- renderIheatmap({
       req(nrow(heatmap_data()) > 0, cancelOutput = TRUE)
-      hm <- iheatmap(heatmap_data(),
-                          colors = rev(RColorBrewer::brewer.pal(11, "RdBu")),
-                          row_labels = if (nrow(heatmap_data()) > 80) F else T,
-                          scale = "rows",
-                          scale_method = "standardize",
-                          name = "Expression z-scores",
-                          layout = list(font = list(size = 9),
-                                        plot_bgcolor = "transparent",
-                                        paper_bgcolor = "transparent"))  %>%
+      hm <- iheatmap(
+              heatmap_data(),
+              colors = rev(
+                RColorBrewer::brewer.pal(11, "RdBu")
+              ),
+              row_labels = if (nrow(heatmap_data()) > 80) F else T,
+              scale = "rows",
+              scale_method = "standardize",
+              name = "Expression z-scores",
+              layout = list(font = list(size = 9),
+                            plot_bgcolor = "transparent",
+                            paper_bgcolor = "transparent"))  %>%
         add_row_clustering()
       
       # Optional annotations

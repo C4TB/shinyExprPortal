@@ -88,12 +88,12 @@ mod_compareTrajGroups_server <- function(module_name, appdata, global,
       selectMatchingValues(sample_lookup, subset_values)
     })
     
-    expression_from_lookup <- eventReactive(selected_lookup(), {
+    expression_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       expression_matrix[, sel_lookup[[sample_var]]]
     })
     
-    clinical_from_lookup <- eventReactive(selected_lookup(), {
+    clinical_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       selectFromLookup(clinical, sel_lookup,
                        matching_col = subject_var)

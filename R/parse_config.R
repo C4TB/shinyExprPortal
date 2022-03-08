@@ -71,6 +71,9 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   config$global[["subject_variable"]] <-
     config$global$subject_variable %||% "Subject_ID" 
   
+  # Check if number of samples and subjects match across clinical data
+  # And matrices
+  # There should be no samples without a subject and no subjects without samples
   validateData(loaded_data,
                sample_variable = config$global[["sample_variable"]],
                subject_variable = config$global[["subject_variable"]]
@@ -83,7 +86,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     message("Module test mode")
     if (test_module %in% available_modules) {
       if (!is.null(config[[test_module]])) {
-        mod_conf <- do.call(paste0(test_module, "Config"),
+        mod_conf <- do.call(paste0(test_module, "_config"),
                 list(config = config[[test_module]],
                      data_folder = data_folder))
         appdata_modules <- list(mod_conf)
@@ -97,7 +100,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     appdata_modules <-
       lapply(available_modules, function(module_name) {
         if (!is.null(config[[module_name]]))
-          do.call(paste0(module_name, "Config"),
+          do.call(paste0(module_name, "_config"),
                   list(config = config[[module_name]],
                        data_folder = data_folder))
       })
@@ -178,6 +181,10 @@ readFile <- function(filename, filetype, data_folder) {
     } else {
       if (filetype == "expression_matrix") {
         as.matrix(data.table::fread(filename))
+      } 
+      if (filetype == "edge_list") {
+        col_names <- c("source", "target", "weight")
+        as.data.frame(vroom::vroom(filename, col_names = col_names))
       } else {
         as.data.frame(vroom::vroom(filename, col_types = vroom::cols()))
       }

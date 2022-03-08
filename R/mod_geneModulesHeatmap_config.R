@@ -1,4 +1,4 @@
-geneModulesHeatmapConfig <- function(config, data_folder = "") { 
+geneModulesHeatmap_config <- function(config, data_folder = "") { 
   message("Checking geneModulesHeatmap configuration")
   
   requiredPackages <- c("RColorBrewer", "DT")
@@ -21,6 +21,11 @@ geneModulesHeatmapConfig <- function(config, data_folder = "") {
   if (is.null(config$genes_variable))
     stop("geneModulesHeatmap:
          'genes_variable' to identify genes is missing")
+  
+  # Unlist because YAML will produce lists instead of named vectors
+  if (!is.null(config$annotation_colours)) {
+    config$annotation_colours <- lapply(config$annotation_colours, unlist)
+  }
   
   config
 }

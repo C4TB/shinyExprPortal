@@ -52,7 +52,7 @@ singleVariableCorr_tab <- function(sample_select,
           paste0('input[\'', ns('selected_variable'), "\'] == ''"),
           tags$span("No clinical variable selected", style = "color: gray")
         ),
-        DT::DTOutput(ns("fulltable")),
+        DTOutput(ns("fulltable")),
         conditionalPanel(
           paste0('input[\'', ns('selected_variable'), "\'] != ''"),
           downloadButton(ns("fulltable_download"), "Download Table CSV")
@@ -140,7 +140,7 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
       correlation_df
     })
     
-    output$fulltable <- DT::renderDT({
+    output$fulltable <- renderDT({
       correlation_table()
     },
     filter = "top",

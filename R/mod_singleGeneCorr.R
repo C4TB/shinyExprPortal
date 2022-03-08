@@ -105,6 +105,8 @@ mod_singleGeneCorr_server <- function(module_name,
       sample_var <- global$sample_variable
       sample_classes <- global$sample_classes
       
+      colour_palettes <- module_config$colour_palettes
+      
       # Load genes server side
       updateSelectizeInput(
          session,
@@ -148,12 +150,12 @@ mod_singleGeneCorr_server <- function(module_name,
          selectMatchingValues(sample_lookup, list_of_values)
       })
       
-      expression_from_lookup <- eventReactive(selected_lookup(), {
+      expression_from_lookup <- reactive({
          sel_lookup <- selected_lookup()
          expression_matrix[, sel_lookup[[sample_var]]]
       })
       
-      clinical_from_lookup <- eventReactive(selected_lookup(), {
+      clinical_from_lookup <- reactive({
          sel_lookup <- selected_lookup()
          selectFromLookup(clinical, sel_lookup,
                           matching_col = subject_var)
@@ -174,6 +176,8 @@ mod_singleGeneCorr_server <- function(module_name,
          
          selected_expression <- expression_from_lookup()
          subset_clinical <- clinical_from_lookup()
+         
+         # As we are in observe, we use a special output to show error
          if (all(is.na(selected_expression[selected_gene, ])) |
              length(selected_expression) == 0) {
             output$error_message <- reactive({
@@ -204,6 +208,9 @@ mod_singleGeneCorr_server <- function(module_name,
                
                # If a colour variable was provided AND it's not in subset yet, add it
                if (not_null(colour_var)) {
+                  if (colour_var %in% names(colour_palettes))
+                     manual_colors <- colour_palettes[[colour_var]]
+                  else manual_colors <- NULL
                   if (!colour_var %in% output_vars) {
                      subset_vars <- c(output_vars, colour_var)
                   } else {
@@ -236,23 +243,11 @@ mod_singleGeneCorr_server <- function(module_name,
                   dplyr::select(-Gene)
                combined_df <-
                   cbind(Expression = selected_expression[, selected_gene],
-                        selected_clinical)
-               
-               if (not_null(colour_var)) {
-                  combined_df <- combined_df %>%
-                     pivot_longer(
-                        c(-.data$Expression, -.data[[colour_var]]),
-                        names_to = "ClinicalVariable",
-                        values_to = "Value"
-                     )
-               } else {
-                  combined_df <- combined_df %>%
-                     pivot_longer(
-                        c(-.data$Expression),
-                        names_to = "ClinicalVariable",
-                        values_to = "Value"
-                     )
-               }
+                        selected_clinical) %>%
+                  pivot_longer(output_vars,
+                               names_to = "ClinicalVariable",
+                               values_to = "Value")
+              
                # Use output_vars as levels to preserve order defined in config
                combined_df[["ClinicalVariable"]] <-
                   factor(combined_df[["ClinicalVariable"]], levels = output_vars)
@@ -274,7 +269,8 @@ mod_singleGeneCorr_server <- function(module_name,
                      scales = output_scale,
                      gene_name = input$selected_gene,
                      ncol = 4,
-                     colour_variable = colour_var
+                     colour_variable = colour_var,
+                     manual_colors = manual_colors
                   )
                   scatterplot +
                      ggAnnotateCorr(corr_df, correlation_method) +

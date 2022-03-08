@@ -1,12 +1,12 @@
 #' @noRd
-degModulesConfig <- function(config, data_folder = "") { 
+degModules_config <- function(config, data_folder = "") { 
   
   message("Checking degModules configuration")
   modules <- config$modules
   submodules_config <-
     lapply(names(modules), function(module_name) {
       if (!is.null(modules[[module_name]]))
-        do.call(paste0(module_name, "Config"),
+        do.call(paste0(module_name, "_config"),
                 list(config = modules[[module_name]],
                      data_folder = data_folder))
     })

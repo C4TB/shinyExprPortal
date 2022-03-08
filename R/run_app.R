@@ -2,6 +2,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom DT DTOutput renderDT
 NULL
 
 #' Run the Shiny Application
@@ -57,9 +58,9 @@ run_module <- function(
                       config = parseConfig(config_file,
                                             data_folder,
                                             module_name),
-                      ...)
+                      ...),
+    print = TRUE
   )
-  print(app)
 }
 
 #' Print list of currently supported modules
