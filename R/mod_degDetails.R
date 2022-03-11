@@ -1,6 +1,10 @@
 # degDetails UI Function
 mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
-  models <- appdata$models
+  if ("models" %in% names(appdata)) {
+    models <- appdata$models
+  } else {
+    models <- module_config$models
+  }
   category_variable <- module_config$category_variable
   categories <- unique(unlist(models[, category_variable]))
   degDetails_tab(categories,
@@ -84,7 +88,11 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
-    models <- appdata$models
+    if ("models" %in% names(appdata)) {
+      models <- appdata$models
+    } else {
+      models <- module_config$models
+    }
     
     category_variable <- module_config$category_variable
     link_to <- module_config$link_to
@@ -92,7 +100,6 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
     exc_columns <- c(category_variable,
                      c("pSignif", "qSignif", "File", "Data"))
     table_subset <- dplyr::select(models, -exc_columns)
-    
     model_update <- reactiveVal(FALSE)
     
     # Update list of models after a category is selected
@@ -196,12 +203,13 @@ mod_degDetails_server <- function(module_name, appdata, global, module_config) {
         }
         # Optional link
         if (not_null(link_to)) {
-          model_table[[gene_column]] <- urlVector(model_table[[gene_column]],
+          model_table[[1]] <- urlVector(model_table[[1]],
                                                   "gene",
                                                   isolate({ current_URL() }))
         }
         view_cols <- 
-          c("EnsemblID", "Gene", "GeneSymbol", "logFC", "AvgExpr", "p.value", "q.value")
+          c("EnsemblID", "Gene", "GeneSymbol", "Protein",
+            "logFC", "AvgExpr", "p.value", "q.value")
         model_table[model_table$color %in% input$deg_table_checkbox, ] %>%
           dplyr::select(any_of(view_cols))
         },
