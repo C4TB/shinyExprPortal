@@ -48,8 +48,8 @@ plotly_volcano_plot <- function(table,
   plotly::plot_ly(table, x = ~logFC, y = to_form(adjusted), color = ~color, 
            colors = signif_labels_colors, type = "scattergl", mode = "markers",
            marker=list(size = 8, opacity = 0.6),
-           text = table[[gene_column]], hoverinfo = "text",
-           key = table[[gene_column]], source = "volcano_plot") %>%
+           text = table[[1]], hoverinfo = "text",
+           key = table[[1]], source = "volcano_plot") %>%
     plotly::layout(xaxis = xlayout_axis,
                    yaxis = ylayout_axis,
                    shapes = lines,
@@ -90,7 +90,7 @@ gg_volcano_plot <- function(table,
     geom_point() +
     ylab(ylab_text) + 
     xlab("Log fold change") +
-    geom_text(aes(label = .data[[gene_column]]),
+    geom_text(aes(label = .data[[1]]),
               data = table[table$signif == 3,],
               vjust = "top",
               hjust = "right") +
@@ -139,8 +139,8 @@ plotly_avgexpr_plot <- function(table,
   plotly::plot_ly(table, x = ~AvgExpr, y = to_form(adjusted), color = ~color, 
                   colors = signif_labels_colors, type = "scattergl", mode = "markers",
                   marker=list(size = 8, opacity = 0.6),
-                  text = table[[gene_column]], hoverinfo = "text",
-                  key = table[[gene_column]], source = "avgexpr_plot") %>%
+                  text = table[[1]], hoverinfo = "text",
+                  key = table[[1]], source = "avgexpr_plot") %>%
     plotly::layout(xaxis = xlayout_axis,
                    yaxis = ylayout_axis,
                    shapes = lines,
@@ -173,7 +173,7 @@ gg_avgexpr_plot <- function(table,
                     x = .data$AvgExpr,
                     color = stringr::str_wrap(.data$color, width = 20))) +
     geom_point() + 
-    geom_text(aes(label = .data[[gene_column]]),
+    geom_text(aes(label = .data[[1]]),
               data = table[table$signif == 3,],
               vjust = "top",
               hjust = "right") +

@@ -203,8 +203,15 @@ readFile <- function(filename, filetype, data_folder) {
 }
 
 loadModels <- function(models_file, data_folder = "") {
-  models_table <- vroom::vroom(file_path(data_folder, models_file),
-                               col_types = vroom::cols())
+  fext <- file_ext(models_file)
+  if (fext == "rds") {
+    models_table <- readRDS(file_path(data_folder, models_file))
+  } else {
+    delim <- ifelse(fext == "csv", ",", "\t")
+    models_table <- vroom::vroom(file_path(data_folder, models_file),
+                                 delim,
+                                 col_types = vroom::cols())  
+  }
   models_table$Data <- lapply(models_table$File, function(file_name) {
     file_name <- file_path(data_folder, "models" ,file_name)
     if (!file.exists(file_name)) { 
@@ -212,6 +219,7 @@ loadModels <- function(models_file, data_folder = "") {
                  file_name,
                  " from degModules configuration not found."), call. = FALSE)
     }
+    fext <- file_ext(file_name)
     delim <- ifelse(fext == "csv", ",", "\t")
     vroom::vroom(file_name, delim = delim, col_types = vroom::cols())  
   })

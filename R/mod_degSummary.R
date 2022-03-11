@@ -16,7 +16,11 @@ degSummary_tab <- function(title = NULL, id = NULL) {
 mod_degSummary_server <- function(module_name, appdata, global, module_config) {
   moduleServer(module_name, function(input, output, session) {
     
-    models <- appdata$models
+    if ("models" %in% names(appdata)) {
+      models <- appdata$models
+    } else {
+      models <- module_config$models
+    }
     partition <-  module_config$partition_variable
     partition_values <- unique(models[[partition]])
     
