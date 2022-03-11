@@ -186,7 +186,9 @@ readFile <- function(filename, filetype, data_folder) {
         col_names <- c("source", "target", "weight")
         as.data.frame(vroom::vroom(filename, col_names = col_names))
       } else {
-        as.data.frame(vroom::vroom(filename, col_types = vroom::cols()))
+        delim <- ifelse(fext == "csv", ",", "\t")
+          as.data.frame(
+            vroom::vroom(filename, delim = delim, col_types = vroom::cols()))
       }
     }
   },
