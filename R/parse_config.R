@@ -169,7 +169,7 @@ validateData <-
 #'
 #' @return parsed file
 #' @noRd
-readFile <- function(filename, filetype, data_folder) { 
+readFile <- function(filename, filetype = "", data_folder = "") { 
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename) 
   if (!file.exists(filename)) { 

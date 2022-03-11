@@ -1,6 +1,6 @@
-mod_MODULENAME_ui <- function(id, appdata, global, module_config) {
+mod_MODULENAME_ui <- function(module_name, appdata, global, module_config) {
   MODULENAME_tab(ARGUMENTS,
-                     id)
+                module_name)
 }
 
 MODULENAME_tab <- function(ARGUMENTS,
