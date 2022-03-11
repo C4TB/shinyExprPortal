@@ -2,15 +2,17 @@ mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
   networkViewer_tab(module_config$network_names,
                     module_config$node_types,
                     module_config$title,
+                    module_config$description,
                     module_name)
 }
 
 #' Network viewer tab
 #'
-#' @param network_names 
-#' @param node_types 
-#' @param title 
-#' @param id 
+#' @param network_names names of networks for selection
+#' @param node_types optional node types for filtering
+#' @param title optional module title
+#' @param description optional module description
+#' @param id module id
 #'
 #' @return a tab panel
 #' @noRd
@@ -19,13 +21,14 @@ mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
 networkViewer_tab <- function(network_names,
                               node_types,
                               title = NULL,
+                              description = NULL,
                               id = NULL) {
 
   ns <- NS(id)
   tabPanel(
-    title = "View Networks",
+    title = title %||% "View Networks",
     value = "networkViewer",
-    tags$h5(title %||% "Choose a node type and a name to search for
+    tags$h5(description %||% "Choose a node type and a name to search for
             networks containing it"),
     splitLayout(
       verticalLayout(

@@ -14,6 +14,7 @@ mod_singleVariableCorr_ui <-
       varsSelectInput(var_list, module_name),
       module_config$advanced,
       module_config$title,
+      module_config$description,
       module_name
     )
   }
@@ -22,7 +23,8 @@ mod_singleVariableCorr_ui <-
 #' @param sample_select radio inputs for sample classes
 #' @param vars_select select input for clinical variables
 #' @param advanced  boolean flag to show or hide advanced options
-#' @param id optional title
+#' @param title optional module title
+#' @param description optional module description
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
@@ -32,12 +34,13 @@ singleVariableCorr_tab <- function(sample_select,
                                    vars_select,
                                    advanced = NULL,
                                    title = NULL,
+                                   description = NULL,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = "Single variable",
+    title = title %||% "Single variable",
     value = "singleVariableCorr",
-    tags$h5(title %||% 
+    tags$h5(description %||% 
               "Correlation between all genes and a selected clinical variable"),
     splitLayout(
       verticalLayout(

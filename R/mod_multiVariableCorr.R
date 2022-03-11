@@ -5,6 +5,7 @@ mod_multiVariableCorr_ui <- function(module_name, appdata, global, module_config
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
     title = module_config$title,
+    description = module_config$description,
     id = module_name
   )
 }
@@ -14,6 +15,8 @@ mod_multiVariableCorr_ui <- function(module_name, appdata, global, module_config
 #' @param sample_select radio inputs for sample classes
 #' @param clinical_variables 
 #' @param advanced advanced options
+#' @param title optional module title
+#' @param description optional module description
 #' @param id optional module ID
 #'
 #' @return a tab panel
@@ -24,13 +27,15 @@ multiVariableCorr_tab <-
            clinical_variables,
            advanced = NULL,
            title = NULL,
+           description = NULL,
            id = NULL) {
     
   ns <- NS(id)
   tabPanel(
-    title = "Multiple variables",
+    title = title %||% "Multiple variables",
     value = "multiVariableCorr",
-    tags$h5(title %||% "Correlation between all genes and clinical variables"),
+    tags$h5(
+      description %||% "Correlation between all genes and clinical variables"),
     splitLayout(
       verticalLayout(
         wellPanel(

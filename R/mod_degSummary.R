@@ -1,14 +1,16 @@
 # module UI Function
 mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
-  degSummary_tab(module_config$title, module_name)
+  degSummary_tab(module_config$title,
+                 module_config$description,
+                 module_name)
 }
 
-degSummary_tab <- function(title = NULL, id = NULL) {
+degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
   ns <- NS(id)
   tabPanel(
     title = "Summary table",
     value = "degSummary",
-    tags$h5(title %||% "Summary of differential expression models"),
+    tags$h5(description %||% "Summary of differential expression models"),
     htmlOutput(ns("summary_table"))
   )
 }

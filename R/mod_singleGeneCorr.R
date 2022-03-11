@@ -7,6 +7,7 @@ mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
       outputs = module_config$tabs,
       advanced = module_config$advanced,
       title = module_config$title,
+      description = module_config$description,
       id = module_name
       )
 }
@@ -19,6 +20,7 @@ mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
 #' @param advanced boolean flag to show or hide advanced options 
 #'    such as outlier removal
 #' @param title optional title
+#' @param description optional description
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
@@ -39,13 +41,14 @@ singleGeneCorr_tab <-
             outputs,
             advanced = NULL,
             title = NULL,
+            description = NULL,
             id = NULL) {
 
   ns <- NS(id)
   tabPanel(
-     title = "Single gene",
+     title = title %||% "Single gene",
      value = "singleGeneCorr",
-     tags$h5(title %||% 
+     tags$h5(description %||% 
                 "Correlation between a selected gene and clinical variables"),
      splitLayout(
        verticalLayout(
