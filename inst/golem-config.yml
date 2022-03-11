@@ -15,6 +15,7 @@ default:
   - multiVariableCorr
   - compareTrajGroups
   - networkViewer
+  - allGenesScatterplot
   degModules:
   - degSummary
   - degDetails
