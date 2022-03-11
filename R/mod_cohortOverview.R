@@ -10,6 +10,7 @@ mod_cohortOverview_ui <-
       profile_variables = names(module_config$profile_variables),
       colour_variables = module_config$colour_variables,
       title = module_config$title,
+      description = module_config$description,
       id = module_name
     )
   }
@@ -20,6 +21,7 @@ mod_cohortOverview_ui <-
 #' @param profile_variables list of group variables for trajectory profile
 #' @param colour_variables list of unique variables for trajectory color
 #' @param title optional title
+#' @param description optional description
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
@@ -39,13 +41,14 @@ cohortOverview_tab <-
            profile_variables,
            colour_variables,
            title = NULL,
+           description = NULL,
            id = NULL) {
     
   ns <- NS(id)
   tabPanel(
-    title = "Cohort overview",
+    title = title %||% "Cohort overview",
     value = "cohortOverview",
-    tags$h5(title %||% "Cohort overview"),
+    tags$h5(description %||% "Cohort overview"),
     splitLayout(
       verticalLayout(
         wellPanel(

@@ -15,6 +15,7 @@ mod_compareTrajGroups_ui <-
                       initEmpty = FALSE),
       geneSelectInput(gene_list = NULL, module_name),
       module_config$title,
+      module_config$description,
       module_config$advanced,
       module_name
     )
@@ -25,14 +26,15 @@ compareTrajGroups_tab <-
            vars_select,
            gene_select,
            title = NULL,
+           description = NULL,
            advanced = NULL,
            id = NULL
   ) {
   ns <- NS(id)
   tabPanel(
-    title = "Compare trajectories",
+    title = title %||% "Compare trajectories",
     value = "compareTrajGroups",
-    tags$h5(title %||% "Comparison between groups"),
+    tags$h5(description %||% "Comparison between groups"),
            splitLayout(
              verticalLayout(
                wellPanel(

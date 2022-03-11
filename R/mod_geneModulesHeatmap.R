@@ -11,6 +11,7 @@ mod_geneModulesHeatmap_ui <- function(module_name, appdata, global, module_confi
     ),
     module_config$annotation_variables,
     module_config$title,
+    module_config$description,
     module_name)
 }
 
@@ -18,13 +19,15 @@ geneModulesHeatmap_tab <- function(categories,
                                    sample_select,
                                    annotation_variables,
                                    title = NULL,
+                                   description = NULL,
                                    module_name = NULL) {
   
   ns <- NS(module_name)
   tabPanel(
-    title = "Modules heatmap",
+    title = title %||% "Modules heatmap",
     value = "geneModulesHeatmap",
-    tags$h5(title %||% "Select subsets and a module to view heatmap of genes"),
+    tags$h5(
+      description %||% "Select subsets and a module to view heatmap of genes"),
     splitLayout(
       verticalLayout(
         wellPanel(

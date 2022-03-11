@@ -9,76 +9,88 @@ mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
   categories <- unique(unlist(models[, category_variable]))
   degDetails_tab(categories,
                  module_config$title,
+                 module_config$description,
                  module_name)
 }
 #' Differentially expressed genes tab UI
 #'
 #' @param categories model categories
 #' @param title optional title
+#' @param description optional description
 #' @param id optional module ID
 #'
 #' @return tab panel with inputs
 #' @noRd
 #'
-degDetails_tab <- function(categories, title = NULL, id = NULL) {
+degDetails_tab <- function(categories,
+                           title = NULL,
+                           description = NULL,
+                           id = NULL) {
   ns <- NS(id)
-  tabPanel("Model results", value= "degDetails", 
-           tags$h5(title %||% "Individual model results"),
-           splitLayout(
-             verticalLayout(
-               wellPanel(
-               radioButtons(
-                 ns("model_category"),
-                 label = "Select category:",
-                 choices = categories,
-                 selected = categories[[1]]
-               ),
-               radioButtons(
-                 ns("selected_model"),
-                 label = "Select model:",
-                 choices = c("1")
-               ),
-               numericInput(
-                 ns("fc_threshold"),
-                 label = "FC threshold:",
-                 value = 1,
-                 min = 0.5,
-                 max = 10,
-                 step = 0.25
-               ),
-               numericInput(
-                 ns("pvalue_threshold"),
-                 label = "Significance threshold:",
-                 value = 0.05,
-                 min = 0,
-                 max = 1,
-                 step = 0.01
-               ),
-               radioButtons(
-                 ns("pvalue_adjusted_flag"),
-                    label = "FDR adjusted p-values?",
-                    choices = list("No" = "p.value", "Yes" = "q.value"),
-                    selected = "p.value"
-               )
-             )),
-             bsplus::bs_accordion("deg_results") %>%
-               bsplus::bs_append(title = "Plot",
-                         content = splitLayout(
-                                    style = "font-size: 75%;",
-                                    plotly::plotlyOutput(ns("results_plot"),
-                                        width = "700px",
-                                        height = "500px") %>%
-                                      shinycssloaders::withSpinner(),
-                                    cellWidths = c(700, 200)
-                        )) %>%
-                bsplus::bs_append(title = "Table",
-                         content = verticalLayout(
-                           uiOutput(ns("ui_table_checkbox")),
-                           DT::DTOutput(ns("deg_table")))
-                         ),
-             cellWidths = c("20%", "80%"),
-             cellArgs = list(style = 'white-space: normal;')
-           )
+  tabPanel(
+    title = title %||% "Model results",
+    value = "degDetails",
+    tags$h5(description %||% "Individual model results"),
+    splitLayout(
+      verticalLayout(
+        wellPanel(
+          radioButtons(
+            ns("model_category"),
+            label = "Select category:",
+            choices = categories,
+            selected = categories[[1]]
+          ),
+          radioButtons(
+            ns("selected_model"),
+            label = "Select model:",
+            choices = c("1")
+          ),
+          numericInput(
+            ns("fc_threshold"),
+            label = "FC threshold:",
+            value = 1,
+            min = 0.5,
+            max = 10,
+            step = 0.25
+          ),
+          numericInput(
+            ns("pvalue_threshold"),
+            label = "Significance threshold:",
+            value = 0.05,
+            min = 0,
+            max = 1,
+            step = 0.01
+          ),
+          radioButtons(
+            ns("pvalue_adjusted_flag"),
+            label = "FDR adjusted p-values?",
+            choices = list("No" = "p.value", "Yes" = "q.value"),
+            selected = "p.value"
+          )
+        )
+      ),
+      bsplus::bs_accordion("deg_results") %>%
+        bsplus::bs_append(
+          title = "Plot",
+          content = splitLayout(
+            style = "font-size: 75%;",
+            plotly::plotlyOutput(ns("results_plot"),
+                                 width = "700px",
+                                 height = "500px") %>%
+              shinycssloaders::withSpinner(),
+            cellWidths = c(700, 200)
+          )
+        ) %>%
+        bsplus::bs_append(
+          title = "Table",
+          content = verticalLayout(uiOutput(ns(
+            "ui_table_checkbox"
+          )),
+          DT::DTOutput(ns("deg_table")))
+        ),
+      cellWidths = c("20%", "80%"),
+      cellArgs = list(style = 'white-space: normal;')
+    )
   )
 }
 #' degDetails Server Function
