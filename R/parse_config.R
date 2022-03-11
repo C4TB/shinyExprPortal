@@ -184,7 +184,8 @@ readFile <- function(filename, filetype, data_folder) {
       } 
       if (filetype == "edge_list") {
         col_names <- c("source", "target", "weight")
-        as.data.frame(vroom::vroom(filename, col_names = col_names))
+        delim <- ifelse(fext == "csv", ",", "\t")
+        as.data.frame(vroom::vroom(filename, delim, col_names = col_names))
       } else {
         delim <- ifelse(fext == "csv", ",", "\t")
           as.data.frame(
@@ -211,7 +212,8 @@ loadModels <- function(models_file, data_folder = "") {
                  file_name,
                  " from degModules configuration not found."), call. = FALSE)
     }
-    vroom::vroom(file_name, col_types = vroom::cols())  
+    delim <- ifelse(fext == "csv", ",", "\t")
+    vroom::vroom(file_name, delim = delim, col_types = vroom::cols())  
   })
   
   models_table$pSignif <- sapply(models_table$Data,
