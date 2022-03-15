@@ -91,7 +91,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     sample_lookup <- config$data$sample_lookup
     
     sample_col <- config$sample_column
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
     sample_category <- module_config$sample_category
     network_files <- module_config$network_files
@@ -153,9 +153,9 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       # Identify the types that are valid for the samples
       # E.g Cell types prefixes 
       sample_cat_values <- Filter(function(x) x$name == sample_category, 
-                                  sample_classes)[[1]][["values"]]
-      valid_classes <- intersect(unique(nt$group), sample_cat_values)
-      vc_list <- list(valid_classes)
+                                  sample_categories)[[1]][["values"]]
+      valid_categories <- intersect(unique(nt$group), sample_cat_values)
+      vc_list <- list(valid_categories)
       names(vc_list) <- c(sample_category)
       
       # Get the remaining sample categories from the network_info
@@ -172,7 +172,9 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
         selectMatchingMultipleValues(sample_lookup, values_list)
       # Select subset of genes for this network
       gene_list <-
-        selectMatchingMultipleValues(nt, list("group" = valid_classes), "symbol")
+        selectMatchingMultipleValues(nt,
+                                     list("group" = valid_categories),
+                                     "symbol")
       # Select subset of expression matrix
       expmat <- expression_matrix[unique(gene_list), 
                         selected_samples[[sample_col]],
@@ -216,9 +218,9 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       # Identify the types that are valid for the samples
       # E.g Cell types prefixes 
       sample_cat_values <- Filter(function(x) x$name == sample_category, 
-                                  sample_classes)[[1]][["values"]]
-      valid_classes <- intersect(unique(nt$group), sample_cat_values)
-      vc_list <- list(valid_classes)
+                                  sample_categories)[[1]][["values"]]
+      valid_categories <- intersect(unique(nt$group), sample_cat_values)
+      vc_list <- list(valid_categories)
       names(vc_list) <- c(sample_category)
       
       # Get the remaining sample categories from the network_info

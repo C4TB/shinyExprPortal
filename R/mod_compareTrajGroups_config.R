@@ -1,17 +1,17 @@
 compareTrajGroups_config <- function(config, ...) {
   message("Checking compareTrajGroups configuration")
   
-  if (is.null(config$subset_classes))
+  if (is.null(config$subset_categories))
     stop_nice(paste("compareTrajGroups:",
-         "a list of 'subset_classes' to filter expression is missing"))
+         "a list of 'subset_categories' to filter expression is missing"))
   
-  if (is.null(config$sidebyside_class))
+  if (is.null(config$sidebyside_category))
     stop_nice(paste("compareTrajGroups:",
-         "a 'sidebyside_class' to split subjects is missing"))
+         "a 'sidebyside_category' to split subjects is missing"))
   
-  if (is.null(config$trajectory_class))
+  if (is.null(config$trajectory_category))
     stop_nice(paste("compareTrajGroups:",
-         "a 'trajectory_class' to match clinical suffix is missing"))
+         "a 'trajectory_category' to match clinical suffix is missing"))
   
   if (is.null(config$compare_variables))
     stop_nice(paste("compareTrajGroups:",

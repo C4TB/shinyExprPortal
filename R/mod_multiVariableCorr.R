@@ -1,7 +1,7 @@
 # multiVariableCorr UI Function
 mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
   multiVariableCorr_tab(
-    sample_select = sampleClassInputs(config$sample_classes, module_name),
+    sample_select = sampleCategoryInputs(config$sample_categories, module_name),
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
     title = module_config$title,
@@ -105,7 +105,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
@@ -115,7 +115,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
                            "No" = function(x) TRUE)
 
     user_selection <- reactive({
-      getSelectedSampleClasses(sample_classes, input)
+      getSelectedSampleCategories(sample_categories, input)
     })
     
     selected_lookup <- reactive({
@@ -206,7 +206,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     output$fulltable_download <- downloadHandler(
       filename = function() {
         list_of_values <-
-          getSelectedSampleClasses(sample_classes, input)
+          getSelectedSampleCategories(sample_categories, input)
         paste(c(list_of_values, "heatmap_data"), collapse = "_") 
       },
       content = function(file) {

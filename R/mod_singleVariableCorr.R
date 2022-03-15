@@ -6,7 +6,7 @@ mod_singleVariableCorr_ui <- function(module_name, config, module_config) {
       names(config$data$clinical %>% dplyr::select(where(is.numeric)))
     
     singleVariableCorr_tab(
-      sampleClassInputs(config$sample_classes, module_name),
+      sampleCategoryInputs(config$sample_categories, module_name),
       varsSelectInput(var_list, module_name),
       module_config$advanced,
       module_config$title,
@@ -76,7 +76,7 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
     
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
     link_to <- module_config$link_to
     
@@ -85,7 +85,7 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
                            "No" = function(x) TRUE)
     
     user_selection <- reactive({
-      getSelectedSampleClasses(sample_classes, input)
+      getSelectedSampleCategories(sample_categories, input)
     })
     
     selected_lookup <- reactive({

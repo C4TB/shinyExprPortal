@@ -66,7 +66,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     }
   })
   # Set global settings for sample and subject column
-  config$sample_classes <- raw_config$sample_classes
+  config$sample_categories <- raw_config$sample_categories
   config$sample_variable <-
     raw_config$sample_variable %||% "Sample_ID"
   config$subject_variable <-
@@ -234,9 +234,9 @@ loadModels <- function(models_file, data_folder = "") {
   })
   
   models_table$pSignif <- sapply(models_table$Data,
-                                 function(x) nrow(x[which(x$p.value < 0.05), ]))
+                           function(x) nrow(x[which(x[["p.value"]] < 0.05), ]))
   models_table$qSignif <- sapply(models_table$Data,
-                                 function(x) nrow(x[which(x$q.value < 0.05), ]))
+                           function(x) nrow(x[which(x[["q.value"]] < 0.05), ]))
   models_table
 }
 

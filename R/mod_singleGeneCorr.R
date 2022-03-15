@@ -1,7 +1,7 @@
 # singleGeneCorr UI Function
 mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
    singleGeneCorr_tab(
-      sample_select = sampleClassInputs(config$sample_classes, module_name),
+      sample_select = sampleCategoryInputs(config$sample_categories, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       colours = module_config$colour_variables,
       outputs = module_config$tabs,
@@ -103,7 +103,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       
       subject_var <- config$subject_variable
       sample_var <- config$sample_variable
-      sample_classes <- config$sample_classes
+      sample_categories <- config$sample_categories
       
       colour_palettes <- module_config$colour_palettes
       
@@ -118,8 +118,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       # UI updates from URL
       observeEvent(session$userData$singleGeneCorr, {
          params <- session$userData$singleGeneCorr
-         for (sample_class in sample_classes) {
-            sc_name <- sample_class$name
+         for (sample_category in sample_categories) {
+            sc_name <- sample_category$name
             if (not_null(params[[sc_name]])) {
                updateSelectizeInput(session,
                                     sc_name,
@@ -146,7 +146,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
          )
       
       selected_lookup <- reactive({
-         list_of_values <- getSelectedSampleClasses(sample_classes, input)
+         list_of_values <- getSelectedSampleCategories(sample_categories, input)
          selectMatchingValues(sample_lookup, list_of_values)
       })
       
