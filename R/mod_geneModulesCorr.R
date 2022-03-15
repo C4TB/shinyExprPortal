@@ -1,9 +1,8 @@
 # geneModulesCorr UI Function
-mod_geneModulesCorr_ui <- function(module_name, appdata, global, module_config) {
-  #module_config <- appdata$modules$geneModulesCorr
+mod_geneModulesCorr_ui <- function(module_name, config, module_config) {
   geneModulesCorr_tab(
     sample_select = sampleClassInputs(
-      global$sample_classes,
+      config$sample_classes,
       module_name,
       module_config$subset_classes
     ),
@@ -86,19 +85,18 @@ geneModulesCorr_tab <- function(sample_select,
 }
 #' geneModulesCorr Server Function
 #' @noRd 
-mod_geneModulesCorr_server <- function(module_name, appdata, global, module_config) {
+mod_geneModulesCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
     
-    subject_var <- global$subject_variable
-    sample_var <- global$sample_variable
-    sample_classes <- global$sample_classes
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_classes
     
-   # module_config <- appdata$modules$geneModulesCorr
     subset_classes <- module_config$subset_classes
     across_class <- module_config$across_class
     modules_data <- module_config$modules_data

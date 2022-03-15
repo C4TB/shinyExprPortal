@@ -7,12 +7,12 @@ cohortOverview_config <- function(config, ...) {
   stopIfNotInstalled(requiredPackages, "cohortOverview")
   
   if (is.null(config$profile_variables)) {
-    stop("cohortOverview: 
-         list of 'profile_variables' is missing")
+    stop_nice(paste("cohortOverview:",
+         "list of 'profile_variables' is missing"))
   }
   if (is.null(config$colour_variables)) { 
-    stop("cohortOverview: 
-         list of 'colour_variables' is missing")
+    stop_nice(paste("cohortOverview:", 
+         "list of 'colour_variables' is missing"))
   }
   config
 }

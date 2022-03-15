@@ -1,11 +1,10 @@
 # cohortOverview UI function
 mod_cohortOverview_ui <-
   function(module_name,
-           appdata,
-           global,
+           config,
            module_config) {
     cohortOverview_tab(
-      sample_select = sampleClassInputs(global$sample_classes, module_name),
+      sample_select = sampleClassInputs(config$sample_classes, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       profile_variables = names(module_config$profile_variables),
       colour_variables = module_config$colour_variables,
@@ -92,15 +91,15 @@ cohortOverview_tab <-
 #' cohortOverview Server Function
 #'
 #' @noRd 
-mod_cohortOverview_server <- function(module_name, appdata, global, module_config) {
+mod_cohortOverview_server <- function(module_name, config, module_config) {
   
   moduleServer(module_name, function(input, output, session) {
     
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
     
     # Load genes server side
     updateSelectizeInput(session,

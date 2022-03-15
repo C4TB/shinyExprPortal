@@ -10,8 +10,8 @@ multiVariableCorr_config <- function(config, data_folder = "") {
   }
  
   if (is.null(config$heatmap_variables))
-    stop("multiVariableCorr:
-         named 'scatterplot_variables' list is missing")
+    stop_nice(paste("multiVariableCorr:",
+         "named 'scatterplot_variables' list is missing"))
    
   config
 }

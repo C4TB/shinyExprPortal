@@ -1,11 +1,11 @@
-mod_geneModulesHeatmap_ui <- function(module_name, appdata, global, module_config) {
+mod_geneModulesHeatmap_ui <- function(module_name, config, module_config) {
   category_variable <- module_config$category_variable
   modules_table <- module_config$modules_table
   subset_classes <- module_config$subset_classes
   geneModulesHeatmap_tab(
     unique(modules_table[[category_variable]]),
     sampleClassInputs(
-      global$sample_classes,
+      config$sample_classes,
       module_name,
       subset_classes
     ),
@@ -71,17 +71,17 @@ geneModulesHeatmap_tab <- function(categories,
 }
 
 #' @import iheatmapr
-mod_geneModulesHeatmap_server <- function(module_name, appdata, global, module_config) {
+mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
     
-    subject_var <- global$subject_variable
-    sample_var <- global$sample_variable
-    sample_classes <- global$sample_classes
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_classes
     
     category_variable <- module_config$category_variable
     modules_table <- module_config$modules_table

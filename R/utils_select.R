@@ -93,6 +93,7 @@ selectFromLookup <- function(input_df, lookup_df, matching_col,
   return_df <-
     input_df[input_df[[matching_col]] %in% lookup_df[[matching_col]], ]
   if (!is.null(return_col)) {
+    # Use unlist to return vector
     unlist(return_df[, return_col])
   } else {
     return_df

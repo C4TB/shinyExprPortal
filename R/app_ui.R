@@ -25,8 +25,7 @@ app_ui <- function(request) {
   modules_ui_list <- lapply(names(modules_to_include), function(module_name) {
     call_module(module_name,
                 "ui",
-                config$data,
-                config$global,
+                config,
                 modules_to_include[[module_name]])
   })
   args <- append(list(about_tab), modules_ui_list)
@@ -84,8 +83,7 @@ dev_module_ui <- function(request) {
     navbarPage(title = config$name,
                call_module(module_name,
                            "ui",
-                           config$data,
-                           config$global,
+                           config,
                            config$modules[[module_name]])
     )
   )

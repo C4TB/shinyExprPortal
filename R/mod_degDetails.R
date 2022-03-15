@@ -1,7 +1,7 @@
 # degDetails UI Function
-mod_degDetails_ui <- function(module_name, appdata, global, module_config) {
-  if ("models" %in% names(appdata)) {
-    models <- appdata$models
+mod_degDetails_ui <- function(module_name, config, module_config) {
+  if ("models" %in% names(config$data)) {
+    models <- config$data$models
   } else {
     models <- module_config$models
   }
@@ -96,12 +96,12 @@ degDetails_tab <- function(categories,
 #' degDetails Server Function
 #'
 #' @noRd 
-mod_degDetails_server <- function(module_name, appdata, global, module_config) {
+mod_degDetails_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
-    if ("models" %in% names(appdata)) {
-      models <- appdata$models
+    if ("models" %in% names(config$data)) {
+      models <- config$data$models
     } else {
       models <- module_config$models
     }
