@@ -1,16 +1,12 @@
 utils::globalVariables("where")
 # singleVariableCorr UI Function
-mod_singleVariableCorr_ui <-
-  function(module_name,
-           appdata,
-           global,
-           module_config)  {
+mod_singleVariableCorr_ui <- function(module_name, config, module_config) {
     
     var_list <- module_config$clinical_variables %||%
-      names(appdata$clinical %>% dplyr::select(where(is.numeric)))
+      names(config$data$clinical %>% dplyr::select(where(is.numeric)))
     
     singleVariableCorr_tab(
-      sampleClassInputs(global$sample_classes, module_name),
+      sampleClassInputs(config$sample_classes, module_name),
       varsSelectInput(var_list, module_name),
       module_config$advanced,
       module_config$title,
@@ -70,23 +66,23 @@ singleVariableCorr_tab <- function(sample_select,
 #'
 #' @importFrom stats na.omit
 #' @noRd 
-mod_singleVariableCorr_server <- function(module_name, appdata, global, module_config) {
+mod_singleVariableCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns 
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
-    sample_classes <- global$sample_classes
-    subject_var <- global$subject_variable
-    sample_var <- global$sample_variable
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
+    
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_classes
     
     link_to <- module_config$link_to
     
     outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
                            "IQR" = valuesInsideTukeyFences,
                            "No" = function(x) TRUE)
-    
     
     user_selection <- reactive({
       getSelectedSampleClasses(sample_classes, input)
@@ -111,8 +107,11 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
                        return_col = input$selected_variable)
     })
     
-    
     correlation_table <- reactive({
+      # Compute correlation table, steps:
+      # 1) Apply outlier filters
+      # 2) Compute correlation matrix
+      
       clinical_outliers <- input$clinical_outliers %||% "No"
       expression_outliers <- input$expression_outliers %||% "No"
       correlation_method <- input$correlation_method %||% "pearson"
@@ -131,10 +130,11 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
         replaceFalseWithNA(selected_clinical,
                            outlier_functions[[clinical_outliers]])
 
+      # Use the transposed expression to multiple columns vs vector
       correlation_df <- correlateMatrices(t(selected_expression),
                                                   selected_clinical,
                                                   method = correlation_method)
-      names(correlation_df) <- c("Gene", "Estimate", "p value", "q value")
+      names(correlation_df) <- c("Gene", "Estimate", "P", "FDR")
 
       if (not_null(link_to)) {
         baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
@@ -144,11 +144,12 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
     })
     
     output$fulltable <- renderDT({
-      correlation_table()
-    },
-    filter = "top",
-    rownames = FALSE,
-    escape = FALSE)
+        correlation_table()
+      },
+      filter = "top",
+      rownames = FALSE,
+      escape = FALSE
+    )
     
     output$fulltable_download <- downloadHandler(
       filename = function() {
@@ -156,7 +157,9 @@ mod_singleVariableCorr_server <- function(module_name, appdata, global, module_c
         },
       content = function(file) {
         utils::write.csv(correlation_table(), file, row.names = FALSE) 
-      },contentType = 'text/csv')
+      },
+      contentType = 'text/csv'
+    )
     
     
   })

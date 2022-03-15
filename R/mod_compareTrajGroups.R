@@ -1,12 +1,11 @@
 # module UI Function
 mod_compareTrajGroups_ui <-
   function(module_name,
-           appdata,
-           global,
+           config,
            module_config) {
     compareTrajGroups_tab(
       sampleClassInputs(
-        global$sample_classes,
+        config$sample_classes,
         module_name,
         module_config$subset_classes
       ),
@@ -57,17 +56,16 @@ compareTrajGroups_tab <-
            )
   )
 }
-mod_compareTrajGroups_server <- function(module_name, appdata, global,
-                                         module_config) {
+mod_compareTrajGroups_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
-    subject_var <- global$subject_variable
-    sample_var <- global$sample_variable
-    sample_classes <- global$sample_classes
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_classes
     
     subset_classes <- module_config$subset_classes
     trajectory_class <- module_config$trajectory_class

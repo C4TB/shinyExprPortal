@@ -5,51 +5,51 @@
 #' Enables using the same configuration file under different file structures.
 #' @param test_module A module_name to parse configuration and ignore all others
 #'
-#' @return appdata named list, containing `data`, `modules` and `global`
+#' @return config named list
 #' @noRd
 parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   message(paste("Reading configuration file", fname))
-  config <- yaml::read_yaml(fname)
+  raw_config <- yaml::read_yaml(fname)
   
   available_modules <- get_golem_config("available_modules")
-  appdata <- list()
+  config <- list()
   golem::add_resource_path(prefix = "local",
                            directoryPath = file_path(data_folder, "www"))
-  appdata[["data_folder"]] <- data_folder
-  appdata[["bootstrap"]] <- 
-    config$bootstrap %||% list(version = 4)
-  appdata[["name"]] <- config$name %||% "clinvisx"
-  if (not_null(config$logo))
-  if (file.exists(file_path(data_folder, "www", config$logo))) {
-    appdata$logo <-
+  config$data_folder <- data_folder
+  config$bootstrap <- 
+    raw_config$bootstrap %||% list(version = 4)
+  config$name <- raw_config$name %||% "clinvisx"
+  if (not_null(raw_config$logo))
+  if (file.exists(file_path(data_folder, "www", raw_config$logo))) {
+    config$logo <-
         img(
-          src = file_path("local", config$logo),
+          src = file_path("local", raw_config$logo),
           #height = "45px",
-          title = appdata[["name"]]
+          title = config$name
         )
   } else {
     stop("Logo image not found")
   }
-  appdata[["iconMenu"]] <- config$iconMenu %||% NULL
+  config[["iconMenu"]] <- raw_config$iconMenu %||% NULL
   
-  if (is.null(config$about)) {
-    appdata[["about"]] <- NULL
+  if (is.null(raw_config$about)) {
+    config$about <- NULL
   } else {
-    about_file <- file_path(data_folder, config$about)
+    about_file <- file_path(data_folder, raw_config$about)
     if (file.exists(about_file)) {
-      appdata[["about"]] <- about_file  
+      config$about <- about_file  
     } else {
       stop("'About' file not found.")
     }
   }
   
   # Validate data section
-  if (is.null(config$data)) {
+  if (is.null(raw_config$data)) {
     stop("Data section missing in configuration file")
   }
-  if (is.null(config$data["clinical"]) ||
-      is.null(config$data["sample_lookup"]) ||
-              is.null(config$data["expression_matrix"])) {
+  if (is.null(raw_config$data$clinical) ||
+      is.null(raw_config$data$sample_lookup) ||
+              is.null(raw_config$data$expression_matrix)) {
     stop(
       "Data section in configuration file must include: clinical,
       sample_lookup and expression files."
@@ -57,58 +57,59 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   }
 
   # Load data section
-  loaded_data <- lapply(names(config$data), function(file_type) {
+  loaded_data <- lapply(names(raw_config$data), function(file_type) {
     message("Loading file: ", file_type, "\n", appendLF = FALSE)
     if (file_type == "models") {
-      loadModels(config$data[[file_type]], data_folder)
+      loadModels(raw_config$data[[file_type]], data_folder)
     } else {
-      readFile(config$data[[file_type]], file_type, data_folder)  
+      readFile(raw_config$data[[file_type]], file_type, data_folder)  
     }
   })
   # Set global settings for sample and subject column
-  config$global[["sample_variable"]] <-
-    config$global$sample_variable %||% "Sample_ID"
-  config$global[["subject_variable"]] <-
-    config$global$subject_variable %||% "Subject_ID" 
+  config$sample_classes <- raw_config$sample_classes
+  config$sample_variable <-
+    raw_config$sample_variable %||% "Sample_ID"
+  config$subject_variable <-
+    raw_config$subject_variable %||% "Subject_ID" 
   
   # Check if number of samples and subjects match across clinical data
   # And matrices
   # There should be no samples without a subject and no subjects without samples
   validateData(loaded_data,
-               sample_variable = config$global[["sample_variable"]],
-               subject_variable = config$global[["subject_variable"]]
+               sample_variable = config$sample_variable,
+               subject_variable = config$subject_variable
                )
-  names(loaded_data) <- names(config$data)
-  appdata[["data"]] <- loaded_data
+  names(loaded_data) <- names(raw_config$data)
+  config$data <- loaded_data
   
   if (not_null(test_module)) {
     # Check single module configuration
     message("Module test mode")
     if (test_module %in% available_modules) {
-      if (!is.null(config[[test_module]])) {
+      if (!is.null(raw_config[[test_module]])) {
         mod_conf <- do.call(paste0(test_module, "_config"),
-                list(config = config[[test_module]],
+                list(config = raw_config[[test_module]],
                      data_folder = data_folder))
-        appdata_modules <- list(mod_conf)
-        names(appdata_modules) <- c(test_module)
+        loaded_modules <- list(mod_conf)
+        names(loaded_modules) <- c(test_module)
       }
     } else {
       stop("Module not found. Check if package supports it or spelling.")
     }
   } else {
     # Parse module configuration by calling each available module function
-    appdata_modules <-
+    # NB: The app does not check for wrong spelling of module names
+    loaded_modules <-
       lapply(available_modules, function(module_name) {
-        if (!is.null(config[[module_name]]))
+        if (!is.null(raw_config[[module_name]]))
           do.call(paste0(module_name, "_config"),
-                  list(config = config[[module_name]],
+                  list(config = raw_config[[module_name]],
                        data_folder = data_folder))
       })
-    names(appdata_modules) <- available_modules
+    names(loaded_modules) <- available_modules
   }
-  appdata[["modules"]] <- appdata_modules
-  appdata[["global"]] <- config$global
-  appdata
+  config$modules <- loaded_modules
+  config
 }
 
 validateData <-

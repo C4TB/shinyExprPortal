@@ -1,7 +1,7 @@
 # singleGeneCorr UI Function
-mod_singleGeneCorr_ui <- function(module_name, appdata, global, module_config) {
+mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
    singleGeneCorr_tab(
-      sample_select = sampleClassInputs(global$sample_classes, module_name),
+      sample_select = sampleClassInputs(config$sample_classes, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       colours = module_config$colour_variables,
       outputs = module_config$tabs,
@@ -93,20 +93,17 @@ singleGeneCorr_tab <-
 #' singleGeneCorr Server Function
 #'
 #' @noRd
-mod_singleGeneCorr_server <- function(module_name,
-                                      appdata,
-                                      global,
-                                      module_config) {
+mod_singleGeneCorr_server <- function(module_name, config, module_config) {
    moduleServer(module_name, function(input, output, session) {
       ns <- session$ns
       
-      clinical <- appdata$clinical
-      expression_matrix <- appdata$expression_matrix
-      sample_lookup <- appdata$sample_lookup
+      clinical <- config$data$clinical
+      expression_matrix <- config$data$expression_matrix
+      sample_lookup <- config$data$sample_lookup
       
-      subject_var <- global$subject_variable
-      sample_var <- global$sample_variable
-      sample_classes <- global$sample_classes
+      subject_var <- config$subject_variable
+      sample_var <- config$sample_variable
+      sample_classes <- config$sample_classes
       
       colour_palettes <- module_config$colour_palettes
       
@@ -121,7 +118,7 @@ mod_singleGeneCorr_server <- function(module_name,
       # UI updates from URL
       observeEvent(session$userData$singleGeneCorr, {
          params <- session$userData$singleGeneCorr
-         for (sample_class in global$sample_classes) {
+         for (sample_class in sample_classes) {
             sc_name <- sample_class$name
             if (not_null(params[[sc_name]])) {
                updateSelectizeInput(session,

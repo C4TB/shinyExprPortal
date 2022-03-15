@@ -1,4 +1,4 @@
-mod_networkViewer_ui <- function(module_name, appdata, global, module_config) {
+mod_networkViewer_ui <- function(module_name, config, module_config) {
   networkViewer_tab(module_config$network_names,
                     module_config$node_types,
                     module_config$title,
@@ -82,16 +82,16 @@ networkViewer_tab <- function(network_names,
   )
 }
 
-mod_networkViewer_server <- function(module_name, appdata, global, module_config) {
+mod_networkViewer_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
     
-    sample_col <- global$sample_column
-    sample_classes <- global$sample_classes
+    sample_col <- config$sample_column
+    sample_classes <- config$sample_classes
     
     sample_category <- module_config$sample_category
     network_files <- module_config$network_files

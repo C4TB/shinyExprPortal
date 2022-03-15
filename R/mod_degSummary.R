@@ -1,5 +1,5 @@
 # module UI Function
-mod_degSummary_ui <- function(module_name, appdata, global, module_config) {
+mod_degSummary_ui <- function(module_name, config, module_config) {
   degSummary_tab(module_config$title,
                  module_config$description,
                  module_name)
@@ -15,11 +15,11 @@ degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
   )
 }
 
-mod_degSummary_server <- function(module_name, appdata, global, module_config) {
+mod_degSummary_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     
-    if ("models" %in% names(appdata)) {
-      models <- appdata$models
+    if ("models" %in% names(config)) {
+      models <- config$models
     } else {
       models <- module_config$models
     }

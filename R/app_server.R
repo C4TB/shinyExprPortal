@@ -20,8 +20,7 @@ app_server <- function(input, output, session) {
   for (module_name in names(modules_to_include)) {
     call_module(module_name,
                 "server",
-                config$data,
-                config$global,
+                config,
                 modules_to_include[[module_name]])
   }
   
@@ -79,7 +78,6 @@ dev_module_server <- function(input, output, session) {
   modules_to_include <- Filter(Negate(is.null), config$modules)
   call_module(module_name,
               "server",
-              config$data,
-              config$global,
+              config,
               modules_to_include[[module_name]])
 }

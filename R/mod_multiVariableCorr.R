@@ -1,7 +1,7 @@
 # multiVariableCorr UI Function
-mod_multiVariableCorr_ui <- function(module_name, appdata, global, module_config) {
+mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
   multiVariableCorr_tab(
-    sample_select = sampleClassInputs(global$sample_classes, module_name),
+    sample_select = sampleClassInputs(config$sample_classes, module_name),
     clinical_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
     title = module_config$title,
@@ -95,20 +95,17 @@ multiVariableCorr_tab <-
 #' multiVariableCorr Server Function
 #'
 #' @noRd 
-mod_multiVariableCorr_server <- function(module_name,
-                                     appdata,
-                                     global,
-                                     module_config) {
+mod_multiVariableCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression
+    sample_lookup <- config$data$sample_lookup
     
-    subject_var <- global$subject_variable
-    sample_var <- global$sample_variable
-    sample_classes <- global$sample_classes
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_classes
     
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
