@@ -28,9 +28,9 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
           title = config$name
         )
   } else {
-    stop("Logo image not found")
+    stop_nice(paste("Logo image file",raw_config$logo,"not found"))
   }
-  config[["iconMenu"]] <- raw_config$iconMenu %||% NULL
+  config$iconMenu <- raw_config$iconMenu %||% NULL
   
   if (is.null(raw_config$about)) {
     config$about <- NULL
@@ -39,20 +39,20 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     if (file.exists(about_file)) {
       config$about <- about_file  
     } else {
-      stop("'About' file not found.")
+      stop_nice(paste("'About' file",about_file,"not found."))
     }
   }
   
   # Validate data section
   if (is.null(raw_config$data)) {
-    stop("Data section missing in configuration file")
+    stop_nice("'data' section missing in configuration file")
   }
   if (is.null(raw_config$data$clinical) ||
       is.null(raw_config$data$sample_lookup) ||
               is.null(raw_config$data$expression_matrix)) {
-    stop(
-      "Data section in configuration file must include: clinical,
-      sample_lookup and expression files."
+    stop_nice(
+      paste("Data section in configuration file must include:",
+      "clinical, sample_lookup and expression_matrix files.")
     )
   }
 
@@ -94,7 +94,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
         names(loaded_modules) <- c(test_module)
       }
     } else {
-      stop("Module not found. Check if package supports it or spelling.")
+      stop_nice("Module not found. Check if package supports it or spelling.")
     }
   } else {
     # Parse module configuration by calling each available module function
@@ -157,8 +157,8 @@ validateData <-
     error <- TRUE
   }
   if (error) 
-    stop("Problem found in data files. See printed messages for details.",
-         call. = FALSE)
+    stop_nice(paste("Problem(s) found in data files.",
+                    "See printed message(s) for details"))
 }
 
 #' User-friendly readfile
@@ -173,8 +173,7 @@ readFile <- function(filename, filetype, data_folder) {
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename) 
   if (!file.exists(filename)) { 
-    stop(paste("File ", filename, " in yaml configuration not found."),
-         call. = FALSE)
+    stop_nice(paste("File ", filename, " in yaml configuration not found."))
   }
   tryCatch({
     if (fext == "rds") {
@@ -210,19 +209,28 @@ loadModels <- function(models_file, data_folder = "") {
   } else {
     delim <- ifelse(fext == "csv", ",", "\t")
     models_table <- vroom::vroom(file_path(data_folder, models_file),
-                                 delim,
-                                 col_types = vroom::cols())  
+                                 delim = delim,
+                                 col_types = vroom::cols())
   }
+  if (ncol(models_table) < 2)
+  {
+    stop_nice(paste("models_table loaded incorrectly.", 
+    "Use comma separator in .csv files and tab with any other file extension"))
+  }
+  if (!"File" %in% colnames(models_table)) {
+    stop_nice("'File' column missing from models_table.")
+  }
+  # Go through list of files and load them
   models_table$Data <- lapply(models_table$File, function(file_name) {
     file_name <- file_path(data_folder, "models" ,file_name)
     if (!file.exists(file_name)) { 
-      stop(paste("Model file ",
+      stop_nice(paste("Model file ",
                  file_name,
-                 " from degModules configuration not found."), call. = FALSE)
+                 " from degModules configuration not found."))
     }
     fext <- file_ext(file_name)
     delim <- ifelse(fext == "csv", ",", "\t")
-    vroom::vroom(file_name, delim = delim, col_types = vroom::cols())  
+    model <- vroom::vroom(file_name, delim = delim, col_types = vroom::cols())
   })
   
   models_table$pSignif <- sapply(models_table$Data,
@@ -240,7 +248,7 @@ validateAdvancedSettings <- function(config, module_title = "") {
       "fit_method")
   diff_advanced <- setdiff(names(config), valid_settings)
   if (length(diff_advanced) > 0) {
-    stop(module_title, ": invalid advanced setting: \n\t",
+    stop_nice(module_title, ": invalid advanced setting: \n\t",
          diff_advanced,
          "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
   }

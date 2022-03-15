@@ -6,8 +6,8 @@ degDetails_config <- function(config, data_folder = "") {
   stopIfNotInstalled(requiredPackages, "degDetails")
   
   if (is.null(config$category_variable)) {
-    stop("degDetails: 
-         'category_variable' to identify model results is missing")
+    stop_nice(paste("degDetails:",
+         "'category_variable' to identify model results is missing"))
   }
   
   if (not_null(config$models)) {

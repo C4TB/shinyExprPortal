@@ -130,9 +130,15 @@ stopIfNotInstalled <- function(packages, mod_name) {
                )
   not_inst <- packages[lv]
   if (length(not_inst) > 0)
-    stop("Package(s) ",
+    stop_nice(paste("Package(s) ",
          paste(not_inst, collapse = ", "), " required for ", mod_name,
-         " not found.")
+         " not found."))
+}
+
+stop_nice <- function(msg) {
+  opt <- options(error = NULL)
+  on.exit(options(opt))
+  stop(msg, call. = FALSE)
 }
 
 theme_bg <- function() {

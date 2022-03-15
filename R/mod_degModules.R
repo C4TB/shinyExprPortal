@@ -5,7 +5,8 @@ mod_degModules_ui <- function(module_name, config, module_config) {
   loaded_submodules <- module_config$modules
   module_tabs <- lapply(names(loaded_submodules), function(submodule_name) {
     if (!submodule_name %in% available_submodules)
-      stop(submodule_name, " module is not supported. Please verify spelling.")
+      stop_nice(paste(submodule_name,
+                      "module is not supported. Please verify spelling."))
     do.call(paste("mod", submodule_name, "ui", sep = "_"),
             list(module_name = submodule_name,
                  config = config,

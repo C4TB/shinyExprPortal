@@ -1,7 +1,7 @@
 # degDetails UI Function
 mod_degDetails_ui <- function(module_name, config, module_config) {
-  if ("models" %in% names(config)) {
-    models <- config$models
+  if ("models" %in% names(config$data)) {
+    models <- config$data$models
   } else {
     models <- module_config$models
   }
@@ -100,8 +100,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
-    if ("models" %in% names(config)) {
-      models <- config$models
+    if ("models" %in% names(config$data)) {
+      models <- config$data$models
     } else {
       models <- module_config$models
     }
