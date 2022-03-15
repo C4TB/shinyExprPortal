@@ -5,18 +5,18 @@ geneModulesCorr_config <- function(config, data_folder = "") {
   requiredPackages <- c("plotly", "matrixStats", "htmlwidgets")
   stopIfNotInstalled(requiredPackages, "geneModulesCorr")
   
-  if (is.null(config$subset_classes)) {
+  if (is.null(config$subset_categories)) {
     stop_nice(paste("geneModulesCorr:",
-    "subset_classes list missing in configuration file."))
+    "'subset_categories' list missing in configuration file."))
   }
   
   if (is.null(config$sources)) {
     stop_nice(paste("geneModulesCorr:",
-              "sources list missing in configuration file."))
+              "'sources' list missing in configuration file."))
   }
   if (is.null(config$scatterplot_variables)) {
     stop_nice(paste("geneModulesCorr:",
-         "scatterplot_variables list missing in configuration file."))
+         "'scatterplot_variables' list missing in configuration file."))
   }
   
   modules_data <- lapply(config$sources, function(source_config) {
@@ -45,8 +45,8 @@ geneModulesCorr_config <- function(config, data_folder = "") {
     
   })
 
-  list(subset_classes = config$subset_classes,
-       across_class = config$across_class,
+  list(subset_categories = config$subset_categories,
+       across_category = config$across_category,
        modules_data = modules_data,
        scatterplot_variables = config$scatterplot_variables)
 }

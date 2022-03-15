@@ -22,46 +22,46 @@ mediansPerModule <- function(module_df, expression_matrix) {
 #' Compute a summary data frame of modules medians
 #'
 #' @param module_medians matrix of modules medians for all samples
-#' @param lookup lookup data frame to match samples to `across_class`
-#' @param across_class sample class to compare module medians
+#' @param lookup lookup data frame to match samples to `across_category`
+#' @param across_category sample class to compare module medians
 #' @param jitter_col if `TRUE`, add jitter to modules for plotting
 #'
-#' @return a data frame with median modules across sample classes
+#' @return a data frame with median modules across sample categories
 #' @noRd
 #' 
 computeModulesSummary <- function(module_medians, lookup, 
-                                  across_class, jitter_col = TRUE) {
+                                  across_category, jitter_col = TRUE) {
   
   # Compute summary of medians across a selected class
   agg_by <- list()
-  agg_by[[across_class]] <- lookup[[across_class]]
+  agg_by[[across_category]] <- lookup[[across_category]]
   agg_result <- 
     stats::aggregate(t(module_medians), by = agg_by,
               FUN = stats::median)
   median_across <- pivot_longer(agg_result,
-                                -all_of(across_class),
+                                -all_of(across_category),
                                 names_to = "Modules",
                                 values_to = "Median_Expression")
   if (jitter_col)
   median_across$jittered <- 
-    jitter(as.numeric(as.factor(median_across[[across_class]])))
+    jitter(as.numeric(as.factor(median_across[[across_category]])))
   
   median_across
 }
 
-#' Compute a profile for a module across a sample class
+#' Compute a profile for a module across a sample category
 #'
 #' @param module_medians matrix of modules medians for all samples
 #' @param selected_module module to compute profile for
 #' @param lookup a lookup data frame to match samples with classes
 #' @param sample_col sample ID column in `lookup`
-#' @param across_class sample class to compare module medians
+#' @param across_category sample category to compare module medians
 #'
-#' @return data frame including median expression, class and id for each sample
+#' @return data frame including median expression, category and id for each sample
 #' @noRd
 #'
 computeModuleProfile <- function(module_medians, selected_module, lookup,
-                                 sample_col, across_class) {
+                                 sample_col, across_category) {
   
   module_median_vector <- module_medians[selected_module, ]
   # Assemble data frame of profile:
@@ -69,14 +69,14 @@ computeModuleProfile <- function(module_medians, selected_module, lookup,
   # - class to compare
   # - sample ID column
   module_profile <- data.frame(as.numeric(module_median_vector),
-                               lookup[[across_class]],
+                               lookup[[across_category]],
                                lookup[[sample_col]])
-  colnames(module_profile) <- c("Expression", across_class, sample_col)
+  colnames(module_profile) <- c("Expression", across_category, sample_col)
   
   # Order by the comparison class then convert sample_col to factor
   # To preserve the order when plotting
   module_profile <-
-    module_profile[order(module_profile[[across_class]]), ]
+    module_profile[order(module_profile[[across_category]]), ]
   module_profile[, sample_col] <- 
     factor(module_profile[, sample_col],
            levels = module_profile[, sample_col])
@@ -84,8 +84,8 @@ computeModuleProfile <- function(module_medians, selected_module, lookup,
   module_profile
 }
 
-plotModulesOverview <- function(overview_data, across_class) {
-  across_formula <- stats::as.formula(paste("~", across_class))
+plotModulesOverview <- function(overview_data, across_category) {
+  across_formula <- stats::as.formula(paste("~", across_category))
   
   overview_data %>%
     plotly::plot_ly(source="overview", key = ~Modules) %>%
@@ -101,7 +101,7 @@ plotModulesOverview <- function(overview_data, across_class) {
     ) %>% 
     plotly::layout(
       yaxis = list (title = "Median Expression"),
-      xaxis = list(title = across_class,
+      xaxis = list(title = across_category,
                    showticklabels = FALSE)
     ) %>% htmlwidgets::onRender(
       "
@@ -117,7 +117,7 @@ plotModulesOverview <- function(overview_data, across_class) {
 }
 
 plotModuleProfile <- function(module_profile, expression_col, sample_col,
-                              across_class, plot_title = "") {
+                              across_category, plot_title = "") {
   module_exp <- module_profile[, expression_col]
   y_pos <- sum(module_exp) / length(module_exp)
   ggplot(module_profile, aes(x = .data[[sample_col]],
@@ -126,7 +126,7 @@ plotModuleProfile <- function(module_profile, expression_col, sample_col,
               aes(
                 x = .data[[sample_col]],
                 y = y_pos,
-                fill = as.factor(.data[[across_class]])
+                fill = as.factor(.data[[across_category]])
               )) +
     geom_line(aes(group = 1)) +
     scale_fill_brewer(palette = "Set1") +

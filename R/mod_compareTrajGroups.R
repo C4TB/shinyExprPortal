@@ -4,10 +4,10 @@ mod_compareTrajGroups_ui <-
            config,
            module_config) {
     compareTrajGroups_tab(
-      sampleClassInputs(
-        config$sample_classes,
+      sampleCategoryInputs(
+        config$sample_categories,
         module_name,
-        module_config$subset_classes
+        module_config$subset_categories
       ),
       varsSelectInput(module_config$compare_variables, 
                       module_name,
@@ -65,11 +65,11 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
-    subset_classes <- module_config$subset_classes
-    trajectory_class <- module_config$trajectory_class
-    sidebyside_class <- module_config$sidebyside_class
+    subset_categories <- module_config$subset_categories
+    trajectory_category <- module_config$trajectory_category
+    sidebyside_category <- module_config$sidebyside_category
     traj_palette <- module_config$palette %||% NULL
     
     # Load genes server side
@@ -82,8 +82,8 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
     # Select only the sample classes required by this view
     # For each class, get the value selected by the user and filter the lookup
     selected_lookup <- reactive({
-      subset_values <- getSubsetSampleClasses(subset_classes,
-                                              sample_classes,
+      subset_values <- getSubsetSampleCategories(subset_categories,
+                                              sample_categories,
                                               input)
       selectMatchingValues(sample_lookup, subset_values)
     })
@@ -119,11 +119,11 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       # Convert to long and separate unique variable from suffix
       subset_long <- pivot_longer(subset_clinical,
                                   -.data[[subject_var]],
-                                  names_to = c(".value", trajectory_class),
+                                  names_to = c(".value", trajectory_category),
                                   names_sep= "_")
       combined <- left_join(sel_lookup,
                             subset_long,
-                            by = c(subject_var, trajectory_class))
+                            by = c(subject_var, trajectory_category))
       selected_expression <- subset_expression[input$selected_gene,
                                                  combined[[sample_var]]]
       validate(
@@ -133,21 +133,21 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       ))
       combined$expression <- selected_expression
       df <-
-        combined[, c(subject_var, trajectory_class, sidebyside_class,
+        combined[, c(subject_var, trajectory_category, sidebyside_category,
                      input$selected_variable, "expression")]
       
       trajplot <- plotTrajGroups(
-        df = df[order(df[[subject_var]], df[[trajectory_class]]), ],
+        df = df[order(df[[subject_var]], df[[trajectory_category]]), ],
         selected_variable = input$selected_variable,
         selected_gene = input$selected_gene,
-        traj_var = trajectory_class,
-        facet_var = sidebyside_class,
+        traj_var = trajectory_category,
+        facet_var = sidebyside_category,
         pal = traj_palette
       )
       
       if (input$showtraj == "Yes") {
         trajplot <- trajplot + 
-          geom_path(aes(color = .data[[trajectory_class]],
+          geom_path(aes(color = .data[[trajectory_category]],
                         group = .data[[subject_var]]),
                     alpha = 0.5,
                     arrow = arrow(angle = 15, length = unit(0.1, "inches"),

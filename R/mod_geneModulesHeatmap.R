@@ -1,13 +1,12 @@
 mod_geneModulesHeatmap_ui <- function(module_name, config, module_config) {
   category_variable <- module_config$category_variable
   modules_table <- module_config$modules_table
-  subset_classes <- module_config$subset_classes
   geneModulesHeatmap_tab(
     unique(modules_table[[category_variable]]),
-    sampleClassInputs(
-      config$sample_classes,
+    sampleCategoryInputs(
+      config$sample_categories,
       module_name,
-      subset_classes
+      module_config$subset_categories
     ),
     module_config$annotation_variables,
     module_config$title,
@@ -81,7 +80,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
     category_variable <- module_config$category_variable
     modules_table <- module_config$modules_table
@@ -97,7 +96,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
     
     user_selection <- reactive({
-      getSelectedSampleClasses(sample_classes, input)
+      getSelectedSampleCategories(sample_categories, input)
     })
     
     # Reset table selection if modules subset changes

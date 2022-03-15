@@ -4,7 +4,7 @@ mod_cohortOverview_ui <-
            config,
            module_config) {
     cohortOverview_tab(
-      sample_select = sampleClassInputs(config$sample_classes, module_name),
+      sample_select = sampleCategoryInputs(config$sample_categories, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       profile_variables = names(module_config$profile_variables),
       colour_variables = module_config$colour_variables,

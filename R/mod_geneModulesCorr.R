@@ -1,10 +1,10 @@
 # geneModulesCorr UI Function
 mod_geneModulesCorr_ui <- function(module_name, config, module_config) {
   geneModulesCorr_tab(
-    sample_select = sampleClassInputs(
-      config$sample_classes,
+    sample_select = sampleCategoryInputs(
+      config$sample_categories,
       module_name,
-      module_config$subset_classes
+      module_config$subset_categories
     ),
     sources_names = lapply(module_config$modules_data,
                            function(x) x$name),
@@ -95,10 +95,10 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
     
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
-    sample_classes <- config$sample_classes
+    sample_categories <- config$sample_categories
     
-    subset_classes <- module_config$subset_classes
-    across_class <- module_config$across_class
+    subset_categories <- module_config$subset_categories
+    across_category <- module_config$across_category
     modules_data <- module_config$modules_data
     scatterplot_variables <- module_config$scatterplot_variables
     
@@ -107,8 +107,8 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
     # Select only the sample classes required by this view
     # For each class, get the value selected by the user and filter the lookup
     selected_lookup <- reactive({
-      subset_values <- getSubsetSampleClasses(subset_classes,
-                                              sample_classes,
+      subset_values <- getSubsetSampleCategories(subset_categories,
+                                              sample_categories,
                                               input)
       selectMatchingValues(sample_lookup, subset_values)
     })
@@ -136,7 +136,7 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
     
     # Calculate the medians per module and overview when:
     # - user changed the source of modules
-    # - or user changed subset_classes
+    # - or user changed subset_categories
     observeEvent(c(input$source, selected_lookup()), {
 
       req(input$source)
@@ -153,7 +153,7 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
       
       # Compute summary of medians across a selected class
       modules_computed$medians_across <-
-        computeModulesSummary(medians_per_module, sel_lookup, across_class)
+        computeModulesSummary(medians_per_module, sel_lookup, across_category)
     })
     
     # Annotate overview after a module is selected in dropdown
@@ -190,13 +190,13 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
       })
       
       computeModuleProfile(module_medians, input$selected_module,
-                           selected_lookup(), sample_var, across_class )
+                           selected_lookup(), sample_var, across_category )
       
     })
     
     # Render the overview when median_across changes
     output$overview <- plotly::renderPlotly({
-      plotModulesOverview(modules_computed$medians_across, across_class)
+      plotModulesOverview(modules_computed$medians_across, across_category)
     })
     
     # Render profile plot
@@ -229,7 +229,7 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
         selected_module_profile(),
         expression_col = "Expression",
         sample_col = sample_var,
-        across_class = across_class,
+        across_category = across_category,
         plot_title = profile_title
       )
     })
@@ -244,8 +244,8 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
                                           matching_col = subject_var)
       module_expression <- selected_module_profile()
       
-      subset_values <- getSubsetSampleClasses(subset_classes,
-                                              sample_classes,
+      subset_values <- getSubsetSampleCategories(subset_categories,
+                                              sample_categories,
                                               input)
       selected_clinical_vars <-
         paste(scatterplot_variables[[input$selected_clinical]],
@@ -269,7 +269,7 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
                      values_to = "Value")
       
       plotHeight <- 200 * length(selected_clinical_vars)
-      ac_length <- length(unique(sel_lookup[[across_class]]))
+      ac_length <- length(unique(sel_lookup[[across_category]]))
       plotWidth <- { if (ac_length < 4) ac_length*200 else 800 }
       
       output$scatterplot <- renderPlot({ 
@@ -277,8 +277,8 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
                                x = "Value",
                                y = "Expression",
                                scales = "free_x",
-                               facet_var = c("Clinical", across_class),
-                               colour_variable = across_class,
+                               facet_var = c("Clinical", across_category),
+                               colour_variable = across_category,
                                ncol = 5)
       }, plotWidth, plotHeight )
       
