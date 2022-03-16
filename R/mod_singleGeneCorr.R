@@ -250,14 +250,19 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               
                # Use output_vars as levels to preserve order defined in config
                combined_df[["ClinicalVariable"]] <-
-                  factor(combined_df[["ClinicalVariable"]], levels = output_vars)
-               
-               plotHeight <- ceiling(length(output_vars) / 4) * 200
+                  factor(combined_df[["ClinicalVariable"]],
+                         levels = output_vars)
+               # Retrieve element width and use that to resize plot
+               # It's reactive and seems to be drawing twice when first run
+               output_id <- paste("output",ns(output_name),"width",sep="_")
+               out_width <- 
+                  session$clientData[[output_id]]
+               facet_width <- (out_width/4)  %||% 200
+               plotHeight <- ceiling(length(output_vars) / 4) * facet_width
                plotWidth <- {
                   if (length(output_vars) < 4)
-                     length(output_vars) * 200
-                  else
-                     800
+                     length(output_vars) * facet_width
+                  else ifelse(not_null(out_width), out_width, 800)
                }
                
                output[[output_name]] <- renderPlot({

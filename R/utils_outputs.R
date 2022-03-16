@@ -13,8 +13,8 @@ plotsTabPanels <- function(tab_config_list, ns) {
     plotHeight <- ((length(output_vars) %/% 4) + 1) * 200
     tabPanel(tab_id,
                plotOutput(ns(tab_id), 
-                          width = plotWidth,
-                          height = plotHeight
+                          width = "auto",
+                          height = "auto"
               ),
              style = "height: 100%"
   )})
