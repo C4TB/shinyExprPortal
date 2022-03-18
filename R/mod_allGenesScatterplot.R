@@ -1,7 +1,7 @@
 mod_allGenesScatterplot_ui <- function(module_name, config, module_config) {
   allGenesScatterplot_tab(
-    gene_select = geneSelectInput(NULL, module_name),
-    sample_select = sampleClassInputs(config$sample_categories, module_name),
+    #gene_select = geneSelectInput(NULL, module_name),
+    sample_select = sampleCategoryInputs(config$sample_categories, module_name),
     id = module_name
   )
 }
@@ -21,7 +21,7 @@ allGenesScatterplot_tab <- function(gene_select,
       verticalLayout(
         wellPanel(
           ## INPUTS
-          gene_select,
+          #gene_select,
           sample_select
         )
       ),
@@ -55,13 +55,13 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     coordinates_data[[fill]] <- as.factor(coordinates_data[[fill]]) 
   
     # Load gene/proteins server-side
-    updateSelectizeInput(
-      session,
-      "selected_gene",
-      choices = rownames(expression_matrix),
-      selected = "",
-      server = TRUE
-    )
+    # updateSelectizeInput(
+    #   session,
+    #   "selected_gene",
+    #   choices = rownames(expression_matrix),
+    #   selected = "",
+    #   server = TRUE
+    # )
     
    output$scatterplot_coords <- renderPlot({
      x <- colnames(coordinates_data)[[2]]
@@ -70,11 +70,12 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
      
      ggplot(coordinates_data,
             aes(.data[[x]], .data[[y]], colour = .data[[fill]])) +
-       geom_point() + theme_transp_border()
+       geom_point() + theme_transp_border() + 
+       labs(title = "Projected data with cluster membership")
    })
    
    selected_lookup <- reactive({
-     list_of_values <- getSelectedSampleClasses(sample_classes, input)
+     list_of_values <- getSelectedSampleCategories(sample_classes, input)
      selectMatchingValues(sample_lookup, list_of_values)
    })
    
@@ -86,28 +87,34 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
      subset_mean <- rowMeans(subset_mat, na.rm = T)
      #fc <- (subset_mean/all_mean) - 1
      #fc <- log((subset_mean/all_mean), 2)
-     fc <- subset_mat - all_mean
+     fc <- subset_mean - all_mean
      fc
    })
    
    scatterplot_data <- reactive({
      fc <- fc_from_lookup()
      coordinates_data$fc <- fc[match(coordinates_data[[1]], names(fc))]
-     #df <- coordinates_data %>% 
-     #   mutate(fc = fc)
      coordinates_data
    })
+   
+   mid_rescaler <- function(mid = 0) {
+     function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
+       scales::rescale_mid(x, to, from, mid)
+     }
+   }
    
    output$scatterplot_overlay <- renderPlot({
      df <- scatterplot_data()
      x <- colnames(df)[[2]]
      y <- colnames(df)[[3]]
-     browser()
+     
      ggplot(df, aes(.data[[x]], .data[[y]], colour = fc)) +
        geom_point() +
-       scale_color_distiller(palette = "RdBu") +
-       #scale_color_gradient2(low="blue",mid = "white", high = "red", midpoint = 0,   limits = c(-1, 1)) +
-       theme_transp_border()
+       scale_color_distiller(palette = "RdBu", rescaler = mid_rescaler(), 
+                             label = function(x) sprintf("%.2f", x)) +
+       #scale_color_gradient2(low="#2166ac",mid = "white", high = "#b2182b", midpoint = 0,limits = c(-1, 1)) +
+       theme_transp_border() +
+       labs(title = "Expression difference between mean of subgroup and mean of all samples")
    })
     
   })
