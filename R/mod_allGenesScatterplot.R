@@ -1,7 +1,7 @@
-mod_allGenesScatterplot_ui <- function(module_name, appdata, global, module_config) {
+mod_allGenesScatterplot_ui <- function(module_name, config, module_config) {
   allGenesScatterplot_tab(
     gene_select = geneSelectInput(NULL, module_name),
-    sample_select = sampleClassInputs(global$sample_classes, module_name),
+    sample_select = sampleClassInputs(config$sample_categories, module_name),
     id = module_name
   )
 }
@@ -38,17 +38,17 @@ allGenesScatterplot_tab <- function(gene_select,
   )
 }
 
-mod_allGenesScatterplot_server <- function(module_name, appdata, global, module_config) {
+mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
     all_mean <- rowMeans(expression_matrix, na.rm = T)
     
-    sample_var <- global$sample_variable
-    sample_classes <- global$sample_classes
+    sample_var <- config$sample_variable
+    sample_classes <- config$sample_categories
     
     coordinates_data <- module_config$coordinates_data
     fill <- module_config$annotation_column
@@ -85,7 +85,8 @@ mod_allGenesScatterplot_server <- function(module_name, appdata, global, module_
        return(all_mean)
      subset_mean <- rowMeans(subset_mat, na.rm = T)
      #fc <- (subset_mean/all_mean) - 1
-     fc <- log((subset_mean/all_mean), 2)
+     #fc <- log((subset_mean/all_mean), 2)
+     fc <- subset_mat - all_mean
      fc
    })
    
