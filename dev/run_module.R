@@ -15,6 +15,7 @@ devtools::load_all()
 # run_module(module_name = "corrModules",
 #   config_file = "../psort_test/psort_reg.yaml",
 #   data_folder = "../psort_test")
+
 run_module(module_name = "allGenesScatterplot",
            config_file = "../traumaProt/prot_config.yaml",
            data_folder = "../traumaProt")
