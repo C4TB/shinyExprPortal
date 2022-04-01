@@ -11,10 +11,6 @@ singleGeneCorr_config <- function(config, ...) {
          "'tabs' definitions are missing"))
   }
   
-  if (is.null(config$colour_variables)) {
-    stop_nice(paste("singleGeneCorr:",
-         "list of 'colour_variables' is missing") )
-  }
   config
   
 }

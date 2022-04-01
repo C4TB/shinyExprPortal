@@ -1,7 +1,8 @@
 # singleGeneCorr UI Function
 mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
    singleGeneCorr_tab(
-      sample_select = sampleCategoryInputs(config$sample_categories, module_name),
+      sample_select = 
+         sampleCategoryInputs(config$sample_categories, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       colours = module_config$colour_variables,
       outputs = module_config$tabs,
@@ -55,12 +56,12 @@ singleGeneCorr_tab <-
          wellPanel(
             gene_select,
             sample_select,
-            selectizeInput(
+            if (!is.null(colours)) selectizeInput(
               ns("colour_variable"),
               label = "Select colour:",
               choices = c("None" = "", colours),
               options = list(allowEmptyOption = TRUE)
-            ),
+            ) else NULL,
             advanced_settings_inputs(advanced, id)
          )
        ),
@@ -161,6 +162,46 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                           matching_col = subject_var)
       })
       
+      # Compute correlation matrix and use cacheing
+      correlation_df <- reactive({
+         
+         clinical_outliers <- input$clinical_outliers %||% "No"
+         expression_outliers <- input$expression_outliers %||% "No"
+         correlation_method <- input$correlation_method %||% "pearson"
+         
+         selected_expression <- expression_from_lookup()
+         subset_clinical <- clinical_from_lookup()
+         
+         tab_output_list <- module_config$tabs
+         
+         clin_vars <- unique(unlist(lapply(tab_output_list, 
+                                           function(x) x$variables)))
+         selected_clinical <- 
+            replaceFalseWithNA(subset_clinical[, clin_vars],
+                               outlier_functions[[clinical_outliers]])
+         
+         selected_expression <-
+            replaceFalseWithNA(t(na.omit(selected_expression)),
+                               outlier_functions[[expression_outliers]])
+         
+         corr_df <- longCorrelationMatrix(
+            first_col_name = "Gene",
+            name_to = "ClinicalVariable",
+            x = selected_expression,
+            y = selected_clinical,
+            method = correlation_method
+         )
+         # Change to factor
+         corr_df[["ClinicalVariable"]] <-
+            factor(corr_df[["ClinicalVariable"]], levels = clin_vars)
+         corr_df
+      }) %>% bindCache(input$clinical_outliers, 
+                       input$expression_outliers,
+                       input$correlation_method,
+                       expression_from_lookup(),
+                       clinical_from_lookup())
+      # To create the plot for each tab we need to use observe
+      # and iterate through each tab
       observe({
          req(input$selected_gene)
          if (isTruthy(input$colour_variable)) {
@@ -178,6 +219,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
          subset_clinical <- clinical_from_lookup()
          
          # As we are in observe, we use a special output to show error
+         # If there are no genes for this subset, display message
          if (all(is.na(selected_expression[selected_gene, ])) |
              length(selected_expression) == 0) {
             output$error_message <- reactive({
@@ -194,6 +236,21 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                 (length(selected_expression) > 0))
          tab_output_list <- module_config$tabs
          
+         clin_vars <- unique(unlist(lapply(tab_output_list, 
+                              function(x) x$variables)))
+         
+         subset_clinical[,clin_vars] <- 
+            replaceFalseWithNA(subset_clinical[, clin_vars],
+                              outlier_functions[[clinical_outliers]])
+         
+         selected_expression <-
+            replaceFalseWithNA(t(na.omit(selected_expression)),
+                               outlier_functions[[expression_outliers]])
+         
+         corr_df <- correlation_df()
+         corr_df <- corr_df[corr_df$Gene == selected_gene,] %>%
+            dplyr::select(-Gene)
+         
          # We go through the list of outputs defined in the configuration file
          # as they were also used to create pairs of tabPanel-plotOutput
          # Local scope is required otherwise the last tab_output will override
@@ -206,8 +263,10 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                output_scale <- tab_output$scale
                output_vars <- unique(tab_output$variables)
                
-               # If a colour variable was provided AND it's not in subset yet, add it
+               # If a colour variable was provided AND it's not in subset yet,
+               # add it
                if (not_null(colour_var)) {
+                  # Check if an optional palette was provided
                   if (colour_var %in% names(colour_palettes))
                      manual_colors <- colour_palettes[[colour_var]]
                   else manual_colors <- NULL
@@ -219,31 +278,17 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                } else {
                   subset_vars <- output_vars
                }
-               selected_clinical <- subset_clinical[, subset_vars]
-               selected_clinical[, output_vars] <-
-                  replaceFalseWithNA(selected_clinical[, output_vars],
-                                     outlier_functions[[clinical_outliers]])
-               selected_expression <-
-                  replaceFalseWithNA(t(na.omit(selected_expression)),
-                                     outlier_functions[[expression_outliers]])
-               # TODO: Find a way to share correlation computation across all tabs
-               corr_df <- longCorrelationMatrix(
-                  first_col_name = "Gene",
-                  name_to = "ClinicalVariable",
-                  x = selected_expression,
-                  y = selected_clinical[, output_vars],
-                  method = correlation_method
-               )
-               # Change to factor
-               corr_df[["ClinicalVariable"]] <-
-                  factor(corr_df[["ClinicalVariable"]], levels = output_vars)
+               
+               # Get only the variables for this tab
+               tab_clinical <- subset_clinical[, subset_vars]
+               
+               corr_df_subset <- corr_df %>%
+                 filter(ClinicalVariable %in% subset_vars)
                
                # Filter to selected gene
-               corr_df <- corr_df[corr_df$Gene == selected_gene,] %>%
-                  dplyr::select(-Gene)
                combined_df <-
                   cbind(Expression = selected_expression[, selected_gene],
-                        selected_clinical) %>%
+                        tab_clinical) %>%
                   pivot_longer(output_vars,
                                names_to = "ClinicalVariable",
                                values_to = "Value")
@@ -254,7 +299,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                          levels = output_vars)
                # Retrieve element width and use that to resize plot
                # It's reactive and seems to be drawing twice when first run
-               output_id <- paste("output",ns(output_name),"width",sep="_")
+               output_id <- paste("output", ns(output_name), "width", sep = "_")
                out_width <- 
                   session$clientData[[output_id]]
                facet_width <- (out_width/4)  %||% 200
@@ -278,7 +323,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                      manual_colors = manual_colors
                   )
                   scatterplot +
-                     ggAnnotateCorr(corr_df, correlation_method) +
+                     ggAnnotateCorr(corr_df_subset, correlation_method) +
                      ggAddFit(fit_method)
                }, width = plotWidth , height = plotHeight, bg = "transparent")
             })

@@ -5,7 +5,8 @@
 #' @param y vertical axis variable
 #' @param facet_var list of variables for facet_wrap
 #' @param gene_name gene name for labels
-#' @param scales scales parameter
+#' @param scales scales parameter. 'shared' for same scale in X axes and 'free' 
+#' for independent X axes.
 #' @param colour_variable categorical variable for color
 #' @param manual_colors custom palette
 #' @param ncol number of columns for facet_wrap
