@@ -18,7 +18,7 @@ advanced_settings_inputs <- function(config, id = NULL) {
       radioButtons(ns("correlation_method"),
                    label = "Correlation method:",
                    choices = c("Pearson" = "pearson",
-                               "Spearman" = "spearman",
+                               "Spearman (slow)" = "spearman",
                                "Kendall" = "kendall"),
                    selected = "pearson")
     } else NULL,
