@@ -248,9 +248,9 @@ validateAdvancedSettings <- function(config, module_title = "") {
       "fit_method")
   diff_advanced <- setdiff(names(config), valid_settings)
   if (length(diff_advanced) > 0) {
-    stop_nice(module_title, ": invalid advanced setting: \n\t",
+    stop_nice(paste(module_title, ": invalid advanced setting: \n\t",
          diff_advanced,
-         "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t"))
+         "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t")))
   }
 }
 

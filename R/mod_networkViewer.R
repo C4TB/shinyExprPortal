@@ -237,7 +237,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
         selectMatchingMultipleValues(sample_lookup, values_list)
       # Select subset of genes for this network
       gene_list <-
-        selectMatchingMultipleValues(nt, list("group" = valid_classes), "symbol")
+        selectMatchingMultipleValues(nt, list("group" = valid_categories), "symbol")
       # Select subset of expression matrix
       expmat <- expression_matrix[unique(gene_list), 
                                   selected_samples[[sample_col]],
