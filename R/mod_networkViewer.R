@@ -90,7 +90,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     
-    sample_col <- config$sample_column
+    sample_col <- config$sample_variable
     sample_categories <- config$sample_categories
     
     sample_category <- module_config$sample_category
@@ -145,6 +145,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     
     subset_network1 <- reactive({ 
       req(input$node_name)
+      
       # Get nodes correspondening to selected network
       vnd <- visNetwork::toVisNetworkData(selected_network1())
       nt <- nodes_table[[input$network1]]
