@@ -52,14 +52,9 @@ caption {
 }
 
 span.navbar-brand {
-  padding-top: 5px;
   line-height: 45px;
 }
 
 .navbar-brand > img {
   height: 100%;
-}
-
-.navbar-nav {
-  margin-top: 5px;
 }
