@@ -1,6 +1,9 @@
 # All functions here should return actual values (data frames, vectors)
 
-#' Filter a lookup table based on a list of key-value pairs
+#' Filter a lookup table based on a list of key-value pairs. Optionally,
+#' if there is a * the lookup table, that row will be returned for that 
+#' condition.
+#' 
 #'
 #' @param lookup a data frame with the keys from `values_list` and `return_col`
 #'  (if supplied)
@@ -22,7 +25,8 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
     }
   }
   for (key in names(values_list)) {
-    lookup <- lookup[lookup[, key] == values_list[key], ]
+    lookup <- lookup[lookup[, key] == values_list[key] | 
+                       lookup[, key] == "*", ]
   }
   if (!is.null(return_col)) {
     lookup[,return_col]
@@ -53,7 +57,7 @@ selectMatchingMultipleValues <- function(lookup, values_list, return_col = NULL)
     paste0("(", paste(key, value, sep = op,collapse = " | "), ")")
     
   }, character(1))
-  # Parse list a expression and apply filter
+  # Parse list of expression and apply filter
   parsed_cond <- parse(text = paste(cond, collapse = " & "))
   subset <- lookup %>% dplyr::filter(eval(parsed_cond))
   if (!is.null(return_col)) {
