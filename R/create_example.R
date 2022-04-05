@@ -3,7 +3,6 @@
 #' @param path (optional) a directory where to create the files, otherwise uses the output of getwd()
 #' @param full (optional) TRUE or FALSE (default); if TRUE, creates models and modules example files
 #'
-#' @return
 #' @export
 #'
 create_example <- function(path = NULL, full = FALSE) {
@@ -28,33 +27,33 @@ create_example <- function(path = NULL, full = FALSE) {
   tissue_suffix <- paste0("_T", rep(seq_along(tissues), each = 3))
   sids <- paste0(sid_times, tissue_suffix)
   
-  da_m0 <- rpois(n, 2)
+  da_m0 <- stats::rpois(n, 2)
   da_m3 <- pmax(0, da_m0 + sample(c(-1,1), n, replace=T))
   da_m6 <- pmax(0, da_m3 + sample(c(-1,1), n, replace=T))
   
-  base_hb <- rnorm(n, 10) + 10
+  base_hb <- stats::rnorm(n, 10) + 10
   hb_cor <- 0.95
-  hb_m3 <- hb_cor * base_hb + sqrt(1 - hb_cor*hb_cor) * rnorm(n)
-  hb_m6 <- hb_cor * base_hb + sqrt(1 - hb_cor*hb_cor) * rnorm(n)
+  hb_m3 <- hb_cor * base_hb + sqrt(1 - hb_cor*hb_cor) * stats::rnorm(n)
+  hb_m6 <- hb_cor * base_hb + sqrt(1 - hb_cor*hb_cor) * stats::rnorm(n)
   
   clinical <- data.frame(
     Subject_ID =  ids,
     Haemoglobin_m0 = base_hb,
     Haemoglobin_m3 = hb_m3,
     Haemoglobin_m6 = hb_m6,
-    Platelets_m0 = rnorm(n, 100, 50) + 100,
-    Platelets_m3 = rnorm(n, 100, 50) + 100,
-    Platelets_m6 = rnorm(n, 100, 50) + 100,
+    Platelets_m0 = stats::rnorm(n, 100, 50) + 100,
+    Platelets_m3 = stats::rnorm(n, 100, 50) + 100,
+    Platelets_m6 = stats::rnorm(n, 100, 50) + 100,
     DiseaseActivity_m0 = da_m0,
     DiseaseActivity_m3 = da_m3,
     DiseaseActivity_m6 = da_m6,
     Sex = sample(c("F", "M"), n, TRUE),
-    Age = floor(50+10*rnorm(n)),
+    Age = floor(50+10*stats::rnorm(n)),
     Drug = sample(c("Drug A", "Drug B"), n, TRUE),
-    DrugNaive = ifelse(sample(rpois(n, 3), n, FALSE) > 3, "Yes", "No")
+    DrugNaive = ifelse(sample(stats::rpois(n, 3), n, FALSE) > 3, "Yes", "No")
   )
   
-  write.csv(clinical, file_path(dir, "clinical_data.csv"))
+  utils::write.csv(clinical, file_path(dir, "clinical_data.csv"))
   
   # Create fake gene symbols 
   m <- 5000
@@ -64,13 +63,13 @@ create_example <- function(path = NULL, full = FALSE) {
   
   expression <-
     matrix(
-      rnorm(m * length(sids)),
+      stats::rnorm(m * length(sids)),
       nrow = m,
       ncol = length(sids),
       dimnames = list(gene_names, sids)
     )
   
-  write.csv(expression, file_path(dir, "expression_matrix.csv"))
+  utils::write.csv(expression, file_path(dir, "expression_matrix.csv"))
   
   lookup <- data.frame(
     Subject_ID = rep(ids, each = 6),
@@ -80,6 +79,6 @@ create_example <- function(path = NULL, full = FALSE) {
     Drug = rep(clinical$Drug, each = 6)
   )
   
-  write.csv(lookup, file_path(dir, "lookup_table.csv"))
+  utils::write.csv(lookup, file_path(dir, "lookup_table.csv"))
   
 }

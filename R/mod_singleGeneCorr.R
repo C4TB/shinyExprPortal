@@ -248,8 +248,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                                outlier_functions[[expression_outliers]])
          
          corr_df <- correlation_df()
-         corr_df <- corr_df[corr_df$Gene == selected_gene,] %>%
-            dplyr::select(-Gene)
+         corr_df <- corr_df[corr_df$Gene == selected_gene, -1]
          
          # We go through the list of outputs defined in the configuration file
          # as they were also used to create pairs of tabPanel-plotOutput
@@ -283,7 +282,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                tab_clinical <- subset_clinical[, subset_vars]
                
                corr_df_subset <- corr_df %>%
-                 filter(ClinicalVariable %in% subset_vars)
+                 filter(.data[["ClinicalVariable"]] %in% subset_vars)
                
                # Filter to selected gene
                combined_df <-

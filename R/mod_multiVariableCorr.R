@@ -75,8 +75,7 @@ multiVariableCorr_tab <-
       
         bsplus::bs_accordion("multiVariableCorr_acc") %>% 
           bsplus::bs_append(title = "Heatmap Top 50 significant genes",
-            plotly::plotlyOutput(ns("heatmap"), height = 800) %>% 
-              shinycssloaders::withSpinner()
+            plotly::plotlyOutput(ns("heatmap"), height = 800)
           ) %>%
           bsplus::bs_append(title = "Table",
           verticalLayout(

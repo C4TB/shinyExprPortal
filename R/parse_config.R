@@ -178,6 +178,19 @@ readFile <- function(filename, filetype = "", data_folder = "") {
   tryCatch({
     if (fext == "rds") {
       readRDS(filename)
+    } else if (fext == "fst") {
+      if (!requireNamespace("fst", quietly = TRUE)) {
+        stop_nice("Package fst is required for reading .fst files")
+      }
+      df <- fst::read_fst(filename)
+      if (filetype == "expression_matrix")
+      {
+        rnames <- df[,1]
+        df <- as.matrix(df[-1])
+        rownames(df) <- rnames
+        df
+      }
+      else df
     } else {
       if (filetype == "expression_matrix") {
         as.matrix(data.table::fread(filename))

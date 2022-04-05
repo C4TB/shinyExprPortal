@@ -73,7 +73,7 @@ plotly_corr_heatmap <- function(df, max_pvalue = 0.05,
   lv <- !(abs(cormat) > min_corr & pmat < max_pvalue)
   labels[lv] <- ""
   
-  hm_colors <- colorRamp(rev(RColorBrewer::brewer.pal(5, "RdBu")))
+  hm_colors <- grDevices::colorRamp(rev(RColorBrewer::brewer.pal(5, "RdBu")))
   p <- plotly::plot_ly(x = colnames(cormat),
                        y = rownames(cormat),
                        z = cormat,
@@ -86,8 +86,10 @@ plotly_corr_heatmap <- function(df, max_pvalue = 0.05,
                             showarrow = FALSE,
                             font = list(size = 8)
     ) %>%
-    plotly::layout(yaxis = list(type ="category", dtick = 1, tickfont = list(size = 9)),
-                   xaxis = list(type ="category", side = "top", tickfont = list(size = 9)))
+    plotly::layout(
+      yaxis = list(type ="category", dtick = 1, tickfont = list(size = 9)),
+      xaxis = list(type ="category", side = "top", tickfont = list(size = 9))
+     )
 }
 
 plotInteractiveCorrHeatmap <- function(df, min_pvalue = 0,

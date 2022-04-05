@@ -3,7 +3,7 @@ plotly_volcano_plot <- function(table,
                                 pvalue_threshold,
                                 adjusted = "q.value",
                                 gene_column = "Gene") {
-  to_form <- function(x) as.formula(paste0("~", x))
+  to_form <- function(x) stats::as.formula(paste0("~", x))
   
   signif_labels_colors <-
     c(
@@ -109,7 +109,7 @@ plotly_avgexpr_plot <- function(table,
                                 pvalue_threshold,
                                 adjusted = "q.value",
                                 gene_column = "Gene") {
-  to_form <- function(x) as.formula(paste0("~", x))
+  to_form <- function(x) stats::as.formula(paste0("~", x))
   max_x_data <- max(abs(min(table$AvgExpr)), max(table$AvgExpr))
   signif_labels_colors <-
     c(

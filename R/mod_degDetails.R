@@ -76,8 +76,7 @@ degDetails_tab <- function(categories,
             style = "font-size: 75%;",
             plotly::plotlyOutput(ns("results_plot"),
                                  width = "700px",
-                                 height = "500px") %>%
-              shinycssloaders::withSpinner(),
+                                 height = "500px"),
             cellWidths = c(700, 200)
           )
         ) %>%

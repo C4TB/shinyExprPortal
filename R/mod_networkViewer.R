@@ -17,7 +17,6 @@ mod_networkViewer_ui <- function(module_name, config, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-#' @importFrom visNetwork visNetworkOutput
 networkViewer_tab <- function(network_names,
                               node_types,
                               title = NULL,
@@ -60,21 +59,37 @@ networkViewer_tab <- function(network_names,
         )
       ),
       fluidRow(column(5,
-                      tabsetPanel(tabPanel(
-                        "Network", visNetworkOutput(ns("network_output1"),
-                                                    height = "600px")
-                      ),
-                      tabPanel("Heatmap", iheatmaprOutput(
-                        ns("heatmap_output1")
-                      )))),
+                      tabsetPanel(
+                        tabPanel(
+                         "Network",
+                          visNetwork::visNetworkOutput(
+                            ns("network_output1"),
+                            height = "600px"
+                          )
+                        ),
+                        tabPanel(
+                          "Heatmap",
+                          iheatmaprOutput(
+                            ns("heatmap_output1")
+                          )
+                        )
+                      )),
                column(5,
-                      tabsetPanel(tabPanel(
-                        "Network", visNetworkOutput(ns("network_output2"),
-                                                    height = "600px")
-                      ),
-                      tabPanel("Heatmap", iheatmaprOutput(
-                        ns("heatmap_output2")
-                      ))))
+                      tabsetPanel(
+                        tabPanel(
+                          "Network",
+                          visNetwork::visNetworkOutput(
+                            ns("network_output2"),
+                            height = "600px"
+                          )
+                        ),
+                        tabPanel(
+                          "Heatmap",
+                          iheatmaprOutput(
+                            ns("heatmap_output2")
+                          )
+                        )
+                      ))
         ), 
         cellWidths = c("20%", "80%"),
         cellArgs = list(style = "white-space: normal;")

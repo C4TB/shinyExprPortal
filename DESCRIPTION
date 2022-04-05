@@ -19,7 +19,8 @@ Imports:
     data.table,
     bslib,
     iheatmapr,
-    vegawidget
+    vegawidget,
+    DT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
@@ -33,14 +34,13 @@ Suggests:
     matrixStats,
     plotly,
     r2d3,
-    DT,
     splines,
     kableExtra,
     RColorBrewer,
     stringr,
     WGCNA,
     bsplus,
-    shinycssloaders,
     visNetwork,
-    igraph
+    igraph,
+    fst
 VignetteBuilder: knitr

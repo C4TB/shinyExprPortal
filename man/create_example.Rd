@@ -11,9 +11,6 @@ create_example(path = NULL, full = FALSE)
 
 \item{full}{(optional) TRUE or FALSE (default); if TRUE, creates models and modules example files}
 }
-\value{
-
-}
 \description{
 Create example files
 }
