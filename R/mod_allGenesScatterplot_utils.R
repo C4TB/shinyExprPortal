@@ -1,4 +1,4 @@
-encoding_list <- function(x, y, color_field, field_type) {
+encoding_list <- function(x, y, color_field, field_type, tooltip_vars) {
   if (field_type == "quantitative") {
     color_list <- list(
       condition = list(
@@ -25,15 +25,25 @@ encoding_list <- function(x, y, color_field, field_type) {
     )
   }
   list(
+    tooltip = lapply(tooltip_vars,
+                     function(x) list(field = x, type = "nominal")),
     x = list(field = x, type = "quantitative"),
     y = list(field = y, type = "quantitative"),
     color = color_list
   )
 }
 
-vega_scatterplot_overlay <- 
-  function(data, x, y, color_var, overlay_var, title, width = 800) {
-    side <- width/2
+vega_scatterplot_overlay <-
+  function(data,
+           x,
+           y,
+           color_var,
+           overlay_var,
+           tooltip_vars,
+           title = NULL,
+           width = 800) {
+    
+  side <- width/2
   chart <- list(
     `$schema` = "https://vega.github.io/schema/vega-lite/v5.json",
     params = list(
@@ -43,25 +53,46 @@ vega_scatterplot_overlay <-
                          on = "click",
                          clear = "dblclick",
                          toggle = FALSE),
-           bind = "legend")
+           bind = "legend"),
+      { if (is.null(title)) list(name = "second_title",
+           value = "Mean expression") }
     ),
-    data = list(values = data),
+    data = {if (!is.null(data)) list(values = data) else list(name = "values")},
     hconcat = list(
       list(
         title = "Projected data with cluster membership",
         width = side,
         height = side,
-        mark = list(type = "point", filled = "true", opacity = 0.75),
-        encoding = encoding_list(x, y, color_var, "nominal")
+        mark = list(type = "point", filled = TRUE, opacity = 0.75),
+        encoding = encoding_list(x, y, color_var, "nominal", tooltip_vars)
       ),
       list(
-        title = title,
+        title = title %||% list(text = list(signal = "second_title")),
         width = side,
         height = side,
-        mark = list(type = "point", filled = "true"),
-        encoding = encoding_list(x, y, overlay_var, "quantitative")
+        mark = list(type = "point", filled = TRUE),
+        encoding = encoding_list(x, y, overlay_var, "quantitative", tooltip_vars)
       )
     )
   )
   vegawidget::as_vegaspec(chart)
+}
+
+custom_vw_shiny_get_signal <- function (outputId, name, body_value = "value", id = NULL) 
+{
+  session <- shiny::getDefaultReactiveDomain()
+  ns <- shiny::NS(id)
+  inputId <- glue::glue("{outputId}_signal_{name}")
+  shiny::observe({
+    shiny::isolate({
+      handler_body <- vegawidget:::vw_handler_signal(body_value) %>% 
+        vegawidget:::vw_handler_add_effect("shiny_input", inputId = ns(inputId)) %>% 
+        vegawidget:::vw_handler_body_compose(n_indent = 0L)
+      vegawidget:::vw_shiny_msg_addSignalListener(ns(outputId), name = name, 
+                                     handlerBody = handler_body)
+    })
+  })
+  shiny::reactive({
+    session$input[[inputId]]
+  })
 }
