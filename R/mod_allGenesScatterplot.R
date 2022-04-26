@@ -1,16 +1,20 @@
 mod_allGenesScatterplot_ui <- function(module_name, config, module_config) {
   coordinates_data <- module_config$coordinates_data
-  fill <- module_config$annotation_column
+  fill <- module_config$label_column
   
   allGenesScatterplot_tab(
     as.factor(sort(unique(coordinates_data[[fill]]))),
     sample_select = sampleCategoryInputs(config$sample_categories, module_name),
-    id = module_name
+    module_config$annotation_variables,
+    module_config$title,
+    module_config$description,
+    module_name
   )
 }
 
-allGenesScatterplot_tab <- function(list_of_groups,
+allGenesScatterplot_tab <- function(list_of_clusters,
                                     sample_select,
+                                    annotation_variables = NULL,
                                     title = NULL,
                                     description = NULL,
                                     id = NULL) {
@@ -20,16 +24,25 @@ allGenesScatterplot_tab <- function(list_of_groups,
     value = "allGenesScatterplot",
     tags$h5(description %||%
               "Select a subset of samples for fold change overlay. 
-            Click on a point or group in legend to highlight."),
+            Click on a point or cluster in legend to view heatmap; 
+            click in empty space to reset."),
     splitLayout(
       verticalLayout(
         wellPanel(
           sample_select,
           checkboxGroupInput(
-            inputId = ns("list_of_groups"),
-            label = "Select groups to display:",
-            choices = list_of_groups,
-            selected = list_of_groups)
+            inputId = ns("list_of_clusters"),
+            label = "Select cluster to display:",
+            choices = list_of_clusters,
+            selected = list_of_clusters),
+          { if (not_null(annotation_variables)) 
+            selectizeInput(ns("selected_annotations"),
+                           label = "Select heatmap annotations:",
+                           choices = annotation_variables,
+                           multiple = TRUE,
+                           options = list(dropdownParent = "body")
+            )
+            else NULL }
         )
       ),
       verticalLayout(
@@ -41,8 +54,6 @@ allGenesScatterplot_tab <- function(list_of_groups,
          verticalLayout(
            actionButton(ns("show_genes"), label = "View genes in cluster"),
            uiOutput(ns("heatmap_ui"))
-           # h5("Genes in selected module:"),
-           # textOutput(ns("listOfGenes"))
          )
         )
         ),
@@ -63,10 +74,11 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     all_mean <- rowMeans(expression_matrix, na.rm = T)
     
     sample_var <- config$sample_variable
+    subject_var <- config$subject_variable
     sample_classes <- config$sample_categories
     
     coordinates_data <- module_config$coordinates_data
-    fill <- module_config$annotation_column
+    fill <- module_config$label_column
     coordinates_data[[fill]] <- as.numeric(coordinates_data[[fill]]) 
     cols_df <- colnames(coordinates_data)
     name_col <- cols_df[[1]]
@@ -95,7 +107,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
       coordinates_data$Fold_Change <- fc[match(coordinates_data[[1]], names(fc))]
       coordinates_data$mean_type <- fc_list[[1]]
       coordinates_data %>%
-       filter(.data[[fill]] %in% input$list_of_groups)
+       filter(.data[[fill]] %in% input$list_of_clusters)
     })
   
     # Using custom function for now until vegawidget is updated
@@ -155,6 +167,8 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
       list_of_genes <- paste(subset_genes(), collapse = ", ")
       showModal(
         modalDialog(title = "Genes in selected cluster",
+                    easyClose = TRUE,
+                    span("Click to select all to copy"),
                     pre(list_of_genes,
                         class = "selectable",
                         style = "white-space: pre-wrap;")
@@ -163,8 +177,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     })
     
     heatmap_height <- function(n) {
-      if (n > 200) 50+n
-      if (n > 80) 50+(2.5*n) else 50+(15*n)
+      if (n > 200) 50+(5*n) else 50+(10*n)
     }
     
     output$heatmap_ui <- renderUI({
@@ -172,38 +185,47 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
                       height = heatmap_height(length(subset_genes())))
     })
     
-    custom_renderIheatmap <- function(expr, env = parent.frame(), quoted = FALSE) {
-      if (!quoted) { 
-        quoted <- TRUE
-        expr <- substitute(expr) 
-        } # force quoted
-      #func <- shiny::exprToFunction(expr, env, quoted = TRUE)
-      shiny::installExprFunction(expr, "func", env, quoted)
-      #expr2 <- quote(getFromNamespace("prepareWidget", "plotly")(func()))
-      expr2 <- quote(getFromNamespace("to_widget", "iheatmapr")(func()))
-      htmlwidgets::shinyRenderWidget(expr2, iheatmaprOutput, environment(), quoted = TRUE)
-    }
-    
-    output$cluster_heatmap <- renderIheatmap({
-      req(length(subset_genes()) > 0, cancelOutput = TRUE)
+    clinical_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
-      subset_mat <- expression_matrix[subset_genes(), sel_lookup[[sample_var]]]
-      req(nrow(subset_mat) > 0, cancelOutput = TRUE)
-      hm <- iheatmap(
-        subset_mat,
-        colors = rev(
-          RColorBrewer::brewer.pal(11, "RdBu")
-        ),
-        row_labels = if (nrow(subset_mat) > 80) F else T,
-        scale = "rows",
-        scale_method = "standardize",
-        name = "Expression z-scores",
-        layout = list(font = list(size = 9),
-                      plot_bgcolor = "transparent",
-                      paper_bgcolor = "transparent"))  %>%
-        add_col_clustering()
-      hm
+      selectFromLookup(clinical, sel_lookup,
+                       matching_col = subject_var)
     })
-
+    
+    annotations <- reactive({
+      if (!isTruthy(input$selected_annotations))
+        return(NULL)
+      selected_clinical <- clinical_from_lookup()
+      selected_clinical[rev(input$selected_annotations)]
+    })
+    
+    observeEvent(subset_genes(), {
+      sel_lookup <- selected_lookup()
+      list_of_genes <- rev(subset_genes())
+      if (length(list_of_genes) > 0) {
+      output$cluster_heatmap <- renderIheatmap({
+        subset_mat <- expression_matrix[list_of_genes, sel_lookup[[sample_var]]]
+        hm <- iheatmap(
+          subset_mat,
+          colors = rev(
+            RColorBrewer::brewer.pal(11, "RdBu")
+          ),
+          row_labels = if (nrow(subset_mat) > 200) F else T,
+          scale = "rows",
+          scale_method = "standardize",
+          name = "Expression z-scores",
+          layout = list(font = list(size = 9),
+                        plot_bgcolor = "transparent",
+                        paper_bgcolor = "transparent"))
+        # Optional annotations
+        annots <- annotations()
+        if (not_null(annots)) {
+          hm <- hm %>% 
+            custom_add_col_annotations(annots, size = 0.025)
+        }
+        if (length(list_of_genes) < 200) hm <- hm %>% add_row_clustering()
+        hm %>% add_col_clustering()
+        })
+    }
+    })
   })
 }
