@@ -4,17 +4,17 @@
 allGenesScatterplot_config <- function(config, data_folder = "") { 
   message("Checking allGenesScatterplot configuration")
   
-  #requiredPackages <- c("")
-  #stopIfNotInstalled(requiredPackages, "MODULENAME")
+  requiredPackages <- c("iheatmapr")
+  stopIfNotInstalled(requiredPackages, "allGenesScatterplot")
   
   if (is.null(config$coordinates_file)) {
     stop_nice(paste("allGenesScatterplot:", 
          "'coordinates_file' is missing"))
   }
   
-  if (is.null(config$annotation_column)) {
+  if (is.null(config$label_column)) {
     stop_nice(paste("allGenesScatterplot:",
-         "'annotation_column' is missing"))
+         "'label_column' is missing"))
   }
   
   config$coordinates_data <-
@@ -31,9 +31,9 @@ allGenesScatterplot_config <- function(config, data_folder = "") {
                     "second and third columns must be numeric"))
   }
 
-  if (!config$annotation_column %in% colnames(config$coordinates_data)) {
+  if (!config$label_column %in% colnames(config$coordinates_data)) {
     stop_nice(paste("allGenesScatterplot",
-                    "`annotation_column` not found in coordinates file"))
+                    "`label_column` not found in coordinates file"))
   }
   config
 }
