@@ -105,6 +105,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
       fc_list <- fc_from_lookup()
       fc <- fc_list[[2]]
       coordinates_data$Fold_Change <- fc[match(coordinates_data[[1]], names(fc))]
+      # fc_list[[1]] can be "all_samples" or "subset"
       coordinates_data$mean_type <- fc_list[[1]]
       coordinates_data %>%
        filter(.data[[fill]] %in% input$list_of_clusters)
@@ -116,7 +117,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
                                                      "value",
                                                      module_name)
     
-    # Use data = NULL because we use signal to update data
+    # Use data = NULL because we use a signal to set the data
     output$scatterplot <- renderVegawidget({
       vega_scatterplot_overlay(
         data = NULL,
@@ -128,29 +129,29 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
       )
     })
     
-    # Update data
-    observeEvent(scatterplot_data(), {
+    # Set title
+    plot_title <- reactive({
       df <- scatterplot_data()
       if (df$mean_type[[1]] == "all_samples") {
-        plot_title <-
           "Mean expression of all samples"
-      } else plot_title <-
+      } else 
         "Expression difference between mean of subgroup and mean of all samples"
-      # Update data
-      vegawidget::vw_shiny_set_data(ns("scatterplot"),
-                                    "values",
-                                    df)
-      # Update title of second plot
-      vegawidget::vw_shiny_set_signal(ns("scatterplot"),
-                                    "second_title",
-                                    plot_title)
     })
+    
+    # Update data
+    vegawidget::vw_shiny_set_data(ns("scatterplot"),
+                                  "values",
+                                  scatterplot_data())
+    # Update title of second plot
+    vegawidget::vw_shiny_set_signal(ns("scatterplot"),
+                                  "second_title",
+                                  plot_title())
    
     # Outputs after selecting a cluster
     output$show_heatmap <-
       eventReactive(getSelectedCluster(), {
         selected_cluster <- getSelectedCluster()
-        selected_cluster <-selected_cluster[[fill]][[1]]
+        selected_cluster <- selected_cluster[[fill]][[1]]
         if (!is.null(selected_cluster)) TRUE else FALSE
       }, ignoreInit = TRUE)
     outputOptions(output, "show_heatmap", suspendWhenHidden = FALSE)
