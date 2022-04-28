@@ -77,6 +77,8 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     subject_var <- config$subject_variable
     sample_classes <- config$sample_categories
     
+    annotation_colors <- module_config$annotation_colours %||% NULL
+    annotation_range <- module_config$annotation_range %||% NULL
     coordinates_data <- module_config$coordinates_data
     fill <- module_config$label_column
     coordinates_data[[fill]] <- as.numeric(coordinates_data[[fill]]) 
@@ -221,7 +223,9 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
         annots <- annotations()
         if (not_null(annots)) {
           hm <- hm %>% 
-            custom_add_col_annotations(annots, size = 0.025)
+            custom_add_col_annotations(annots, size = 0.025,
+                                       colors = annotation_colors,
+                                       range = annotation_range)
         }
         if (length(list_of_genes) < 200) hm <- hm %>% add_row_clustering()
         hm %>% add_col_clustering()

@@ -35,5 +35,11 @@ allGenesScatterplot_config <- function(config, data_folder = "") {
     stop_nice(paste("allGenesScatterplot",
                     "`label_column` not found in coordinates file"))
   }
+  
+  # Unlist because YAML will produce lists instead of named vectors
+  if (!is.null(config$annotation_colours)) {
+    config$annotation_colours <- lapply(config$annotation_colours, unlist)
+  }
+  
   config
 }
