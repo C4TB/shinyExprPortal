@@ -29,7 +29,10 @@ allGenesScatterplot_tab <- function(list_of_clusters,
     splitLayout(
       verticalLayout(
         wellPanel(
+          tags$b("Sample selection"),
           sample_select,
+          tags$hr(),
+          tags$b("Plot options"),
           checkboxGroupInput(
             inputId = ns("list_of_clusters"),
             label = "Select cluster to display:",

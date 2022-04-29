@@ -42,6 +42,7 @@ geneModulesCorr_tab <- function(sample_select,
     splitLayout(
       verticalLayout(
         wellPanel(
+          tags$b("Sample selection"),
           sample_select,
           radioButtons(
             ns("source"),

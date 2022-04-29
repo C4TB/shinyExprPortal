@@ -10,7 +10,7 @@ degSummary_config <- function(config, data_folder = "") {
          "'partition_variable' to split results table is missing"))
   
   if (not_null(config$models)) {
-    models_table <- loadModels(config$models, data_folder)
+    models_table <- loadModels(config$models, data_folder, config$max_p, config$padj_col)
     config$models <- models_table
   }
   config

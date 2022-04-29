@@ -43,6 +43,11 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     }
   }
   
+  # Global other settings
+  config$max_p <- raw_config$max_p %||% 0.05
+  config$padj_col <- raw_config$padj_col %||% "q.value"
+  config$adjust_method <- raw_config$adjust_method %||% "q.value"
+  
   # Validate data section
   if (is.null(raw_config$data)) {
     stop_nice("'data' section missing in configuration file")
@@ -60,7 +65,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   loaded_data <- lapply(names(raw_config$data), function(file_type) {
     message("Loading file: ", file_type, "\n", appendLF = FALSE)
     if (file_type == "models") {
-      loadModels(raw_config$data[[file_type]], data_folder)
+      loadModels(raw_config$data[[file_type]], data_folder,config$max_p, config$padj_col)
     } else {
       readFile(raw_config$data[[file_type]], file_type, data_folder)  
     }
@@ -215,7 +220,8 @@ readFile <- function(filename, filetype = "", data_folder = "") {
   
 }
 
-loadModels <- function(models_file, data_folder = "") {
+loadModels <- 
+  function(models_file, data_folder = "", max_p = 0.05, padj_col = "q.value") {
   fext <- file_ext(models_file)
   if (fext == "rds") {
     models_table <- readRDS(file_path(data_folder, models_file))
@@ -247,9 +253,9 @@ loadModels <- function(models_file, data_folder = "") {
   })
   
   models_table$pSignif <- sapply(models_table$Data,
-                           function(x) nrow(x[which(x[["p.value"]] < 0.05), ]))
+                           function(x) nrow(x[x[["P.value"]] < max_p, ]))
   models_table$qSignif <- sapply(models_table$Data,
-                           function(x) nrow(x[which(x[["q.value"]] < 0.05), ]))
+                           function(x) nrow(x[x[[padj_col]] < max_p, ]))
   models_table
 }
 

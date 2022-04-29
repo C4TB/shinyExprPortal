@@ -50,7 +50,8 @@ compute_pval <- function(x, n) {
 #'
 #' @param x a matrix or vector
 #' @param y a matrix or vector
-#' @param adjust_method method passed to [stats::p.adjust()]. Default is "fdr".
+#' @param adjust_method Adjustmend method. If "q.value", calls method
+#' [qvalue::qvalue()]. If not, calls [stats::p.adjust()]. Default is "q.value".
 #' @param ... Additional arguments passed to [stats::cor()].
 #'
 #' @return a data frame with row names as values, estimate, pvalue and padjust
@@ -61,7 +62,7 @@ compute_pval <- function(x, n) {
 correlateMatrices <-
   function(x,
            y,
-           adjust_method = "fdr",
+           adjust_method = "q.value",
            method = "pearson",
            rowname_var = NULL,
            colname_var = "var",
@@ -76,31 +77,33 @@ correlateMatrices <-
       cor_mat <- WGCNA::cor(x, y, method, use = "pairwise.complete.obs")
     colnames(cor_mat) <- paste0(colnames(cor_mat), "_estimate")
     
-    # Compute p-values
+    # Compute p-values and append to correlation matrix
     pvalues_mat <- compute_pval(cor_mat, nrow(x))
     colnames(pvalues_mat) <- paste0(gsub("(.*)\\_estimate", "\\1",
                                          colnames(pvalues_mat)), "_pvalue")
+    combined_mat <- cbind(cor_mat, pvalues_mat)
     
-    # Adjust p-values
+    # Adjust p-values and append to correlation matrix
+    # Use apply to through each column
+    # P values are adjusted based on number of genes, not number of genes x cols
     if (not_null(adjust_method)) {
-      padjust_matrix <-
-        apply(pvalues_mat, 2, p.adjust, method = adjust_method)
+      if (adjust_method == "q.value")
+        padjust_matrix <-
+          apply(pvalues_mat, 2, function(x) qvalue::qvalue(x)[["qvalues"]])
+      else padjust_matrix <-
+          apply(pvalues_mat, 2, p.adjust, method = adjust_method)
       colnames(padjust_matrix) <-
-        paste0(gsub("(.*)\\_estimate", "\\1",
-                    colnames(cor_mat)),
-               "_padj")
-      cor_mat <- cbind(cor_mat, pvalues_mat, padjust_matrix)
-    } else {
-      cor_mat <- cbind(cor_mat, pvalues_mat)
+        paste0(gsub("(.*)\\_estimate", "\\1", colnames(cor_mat)), "_padj")
+      combined_mat <- cbind(combined_mat, padjust_matrix)
     }
-  
-    cor_mat <-
-      cbind("variable" = rownames(cor_mat), data.frame(cor_mat,
-                                                       row.names = NULL))
+    # Append rownames as variable column
+    combined_mat <-
+      cbind("variable" = rownames(combined_mat),
+            data.frame(combined_mat, row.names = NULL))
     # Optionally rename first column
     if (!is.null(rowname_var))
-      colnames(cor_mat)[1] <- rowname_var
-    cor_mat
+      colnames(combined_mat)[1] <- rowname_var
+    combined_mat
 }
 
 longCorrelationMatrix <- function(first_col_name = "Gene",
@@ -117,25 +120,25 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
     )
 }
 
-corrResultsToTable <- function(df, max_pvalue = 0) {
-  selected_df <- df %>% dplyr::select(contains("estimate"))
+corrResultsToTable <- function(df, max_pvalue = 0.05, use_padj = F) {
+  selected_df <- df %>% dplyr::select(ends_with("estimate"))
   colnames(selected_df) <- gsub("(.*_)*(_estimate)", "\\1", 
                                 colnames(selected_df))
   rownames(selected_df) <- df$Gene
   cormat <- as.matrix(selected_df)
   
-  
-  pval_df <- df %>% dplyr::select(contains("_pvalue")) 
-  colnames(pval_df) <- gsub("(.*_)*(_pvalue)", "\\1", 
-                            colnames(pval_df))
+  # Get pvalues and match colnames with cormat
+  suffix <- if (use_padj) "padj" else "pvalue"
+  pval_df <- df %>% dplyr::select(ends_with(suffix))
+  gsub_expr <- paste0("(.*_)*(_", suffix, "$)")
+  colnames(pval_df) <- gsub(gsub_expr, "\\1", colnames(pval_df))
   rownames(pval_df) <- df$Gene
   pmat <- as.matrix(pval_df)
   
   labels <- cormat
   labels <- signif(labels, 2)
   # Find significant to higlight in bold
-  lv <- pmat < max_pvalue &
-    !is.na(cormat) & !is.na(pmat)
+  lv <- (pmat < max_pvalue) & !is.na(cormat) & !is.na(pmat)
   labels[lv] <-
     vapply(labels[lv], function(x) paste0("<b>",x,"</b>"), character(1))
   labels <- as.data.frame(labels)
