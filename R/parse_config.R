@@ -252,9 +252,9 @@ loadModels <-
     model <- vroom::vroom(file_name, delim = delim, col_types = vroom::cols())
   })
   
-  models_table$pSignif <- sapply(models_table$Data,
+  models_table$P <- sapply(models_table$Data,
                            function(x) nrow(x[x[["P.value"]] < max_p, ]))
-  models_table$qSignif <- sapply(models_table$Data,
+  models_table$P_adj <- sapply(models_table$Data,
                            function(x) nrow(x[x[[padj_col]] < max_p, ]))
   models_table
 }

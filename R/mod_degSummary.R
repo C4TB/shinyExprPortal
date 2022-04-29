@@ -34,10 +34,10 @@ mod_degSummary_server <- function(module_name, config, module_config) {
                               partition_values)
       # Cols is required because we need to sort after pivoting
       header_cols <- sort(as.vector(outer(partition_values,
-                           c("pSignif", "qSignif"), paste, sep = "_")))
+                           c("P", "P_adj"), paste, sep = "#")))
       # Get only the columns that define models (e.g. Response, Tissue, Time)
       model_cols <- colnames(models[, !colnames(models) %in%
-                        c("pSignif", "qSignif", "File", "Data", partition)])
+                        c("P", "P_adj", "File", "Data", partition)])
       # We don't need the actual data or file names here
       models_only <- models %>% 
         dplyr::select(-.data[["Data"]], -.data[["File"]])
@@ -47,16 +47,16 @@ mod_degSummary_server <- function(module_name, config, module_config) {
       model_wide <- 
         models_only %>%
           pivot_wider(names_from = all_of(partition),
-                      values_from = c("pSignif", "qSignif"),
-                      names_glue = paste0("{", partition, "}_{.value}")) %>%
+                      values_from = c("P", "P_adj"),
+                      names_glue = paste0("{", partition, "}#{.value}")) %>%
           relocate(any_of(header_cols), .after = last_col())
-      
+
       model_wide %>% 
         knitr::kable(
           align = "r",
           format ="html",
           escape = "F",
-          col.names = c(model_cols, gsub(".*_(.*)", "\\1", header_cols))) %>%
+          col.names = c(model_cols, gsub(".*#(.*)", "\\1", header_cols))) %>%
         kableExtra::kable_styling(
           full_width = F,
           position = "left",
