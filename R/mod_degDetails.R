@@ -108,7 +108,7 @@ mod_degDetails_server <- function(module_name, config, module_config) {
     link_to <- module_config$link_to
     
     exc_columns <- c(category_variable,
-                     c("pSignif", "qSignif", "File", "Data"))
+                     c("P", "P_adj", "File", "Data"))
     table_subset <- dplyr::select(models, -exc_columns)
     model_update <- reactiveVal(FALSE)
     
