@@ -59,6 +59,10 @@ span.navbar-brand {
   height: 100%;
 }
 
+.navbar-nav {
+    margin:5.5px
+}
+
 .selectable {
   -webkit-touch-callout: all; /* iOS Safari */
   -webkit-user-select: all; /* Safari */
