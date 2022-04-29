@@ -36,6 +36,8 @@ geneModulesHeatmap_tab <- function(categories,
             choices = categories,
             selected = categories[[1]]
           ),
+          tags$hr(),
+          tags$b("Sample selection"),
           sample_select,
           { if (not_null(annotation_variables)) 
               selectizeInput(ns("selected_annotations"),

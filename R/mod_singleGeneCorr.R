@@ -55,13 +55,19 @@ singleGeneCorr_tab <-
        verticalLayout(
          wellPanel(
             gene_select,
+            tags$hr(),
+            tags$b("Sample selection"),
             sample_select,
-            if (!is.null(colours)) selectizeInput(
-              ns("colour_variable"),
-              label = "Select colour:",
-              choices = c("None" = "", colours),
-              options = list(allowEmptyOption = TRUE)
-            ) else NULL,
+            if (!is.null(colours)) {
+               tagList(tags$hr(),
+                       tags$b("Plot options"),
+               selectizeInput(
+                 ns("colour_variable"),
+                 label = "Select colour:",
+                 choices = c("None" = "", colours),
+                 options = list(allowEmptyOption = TRUE)
+               ))
+            } else NULL,
             advanced_settings_inputs(advanced, id)
          )
        ),

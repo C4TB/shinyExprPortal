@@ -48,7 +48,11 @@ multiVariableCorr_tab <-
               onInitialize = I('function(){this.setValue("");}')
             )
           ),
+          tags$hr(),
+          tags$b("Sample selection"),
           sample_select,
+          tags$hr(),
+          tags$b("Plot options"),
           numericInput(
             ns("max_pvalue"),
             label = "Maximum p-value for label: ",
@@ -59,6 +63,7 @@ multiVariableCorr_tab <-
             #dragRange = FALSE,
             width = "150px"
           ),
+          checkboxInput(ns("use_padj"), "Use adjusted p-value?"),
           numericInput(
             ns("min_corr"),
             label = "Minimum correlation for label:",
@@ -102,6 +107,8 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     expression_matrix <- config$data$expression
     sample_lookup <- config$data$sample_lookup
     
+    adjust_method <- config$adjust_method
+    
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
@@ -134,6 +141,11 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
                        matching_col = subject_var)
     })
     
+    rank_suffix <- reactive({
+      browser()
+      if (input$use_padj) "padj" else "pvalue"
+    })
+    
     heatmap_data <- reactive({
       req(input$heatmap_variables)
       
@@ -162,38 +174,27 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       
       corr_df <- correlateMatrices(selected_expression,
                                    subset_clinical,
+                                   adjust_method = adjust_method,
                                    method = correlation_method,
                                    rowname_var = "Gene")
-      pvalues_rank <- do.call(pmin,
-                            c(corr_df[, endsWith(colnames(corr_df), "pvalue")],
+      rank_suffix <- if (input$use_padj) "padj" else "pvalue"
+      pvaluesrank <-
+        do.call(pmin, c(corr_df[, endsWith(colnames(corr_df), rank_suffix)],
                                    na.rm = TRUE)
                               )
-      combined_df <- cbind(corr_df, pvalues_rank)
-      combined_df <- combined_df[order(combined_df$pvalues_rank),]
+      combined_df <- cbind(corr_df, pvaluesrank)
+      combined_df <- combined_df[order(combined_df$pvaluesrank),]
       combined_df
       
     })
     
-    output$table <- DT::renderDataTable({
-        df <- corrResultsToTable(heatmap_data(), input$max_pvalue)
-        if (not_null(link_to)) {
-          isolate({
-            list_of_values <- user_selection()
-            baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
-            df$Gene <- urlVector(df$Gene, "gene", baseURL)
-          })
-        }
-        df
-      },
-      options = list(scrollX = TRUE),
-      caption = "Significant correlations highlighted in bold",
-      escape = F,
-      rownames = FALSE)
-    
     output$heatmap <- plotly::renderPlotly({ 
       hm <- heatmap_data()[1:50, ]
       plotly::ggplotly(
-        plotCorrelationHeatmap(hm, -log10(input$max_pvalue), input$min_corr),
+        plotCorrelationHeatmap(hm,
+                               input$max_pvalue,
+                               input$min_corr,
+                                if (input$use_padj) "padj" else "pvalue"),
         tooltip = "text"
       ) %>%
         plotly::layout(xaxis = list(automargin = TRUE,
@@ -201,6 +202,22 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
                                     side = "top"),
                        font = list(size = 5))
     })
+    
+    output$table <- DT::renderDataTable({
+      df <- corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
+      if (not_null(link_to)) {
+        isolate({
+          list_of_values <- user_selection()
+          baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
+          df$Gene <- urlVector(df$Gene, "gene", baseURL)
+        })
+      }
+      df
+    },
+    options = list(scrollX = TRUE),
+    caption = "Significant correlations highlighted in bold",
+    escape = F,
+    rownames = FALSE)
     
     output$fulltable_download <- downloadHandler(
       filename = function() {

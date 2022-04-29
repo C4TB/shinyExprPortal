@@ -45,6 +45,8 @@ degDetails_tab <- function(categories,
             label = "Select model:",
             choices = c("1")
           ),
+          tags$hr(),
+          tags$b("Plot options"),
           numericInput(
             ns("fc_threshold"),
             label = "FC threshold:",
@@ -61,12 +63,7 @@ degDetails_tab <- function(categories,
             max = 1,
             step = 0.01
           ),
-          radioButtons(
-            ns("pvalue_adjusted_flag"),
-            label = "FDR adjusted p-values?",
-            choices = list("No" = "p.value", "Yes" = "q.value"),
-            selected = "p.value"
-          )
+          checkboxInput(ns("use_padj"), "Use adjusted p-value?")
         )
       ),
       bsplus::bs_accordion("deg_results") %>%
@@ -99,6 +96,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session){
     ns <- session$ns
 
+    padj_col <- config$padj_col
+    
     if ("models" %in% names(config$data)) {
       models <- config$data$models
     } else {
@@ -160,32 +159,34 @@ mod_degDetails_server <- function(module_name, config, module_config) {
     
     signif_labels <- list("not significant", "log FC",
                           "%s", "log FC and %s")
-    pvalue_labels <- list("p.value" = "p-value",
-                         "q.value" = "q-value")
-    
+    # Volcano plo table
     vp_table <- reactive({
       table <- model_results()
+      pcol <- if (input$use_padj) padj_col else "P.value"
       prepareModelResultsTable(
         table,
         input$fc_threshold,
         input$pvalue_threshold,
-        input$pvalue_adjusted_flag
+        pcol
         )
     })
     
     output$results_plot <- plotly::renderPlotly({
       table <- vp_table()
+      
       gene_column <- { if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"}
+      pcol <- if (input$use_padj) padj_col else "P.value"
+      table[[pcol]] <- -log10(table[[pcol]])
       if ("logFC" %in% colnames(table)) {
         plotly_volcano_plot(table,
                         input$fc_threshold,
                         -log10(input$pvalue_threshold),
-                        input$pvalue_adjusted_flag,
+                        pcol,
                         gene_column)
       } else {
         plotly_avgexpr_plot(table,
                         -log10(input$pvalue_threshold),
-                        input$pvalue_adjusted_flag,
+                        pcol,
                         gene_column)
       }
     })
@@ -220,8 +221,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
         }
         view_cols <- 
           c("EnsemblID", "Gene", "GeneSymbol", "Protein",
-            "logFC", "AvgExpr", "p.value", "q.value")
-        model_table[model_table$color %in% input$deg_table_checkbox, ] %>%
+            "logFC", "AveExpr", "P.value", padj_col)
+        model_table[model_table$color %in% input$deg_table_checkbox, ] %>% 
           dplyr::select(any_of(view_cols))
         },
       filter = "top",

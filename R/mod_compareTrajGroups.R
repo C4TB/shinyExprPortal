@@ -39,6 +39,8 @@ compareTrajGroups_tab <-
                wellPanel(
                  gene_select,
                  vars_select,
+                 tags$hr(),
+                 tags$b("Sample selection"),
                  sample_select,
                  advanced_settings_inputs(advanced, id),
                  radioButtons(ns("showtraj"),

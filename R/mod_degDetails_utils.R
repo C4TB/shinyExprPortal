@@ -1,7 +1,7 @@
 plotly_volcano_plot <- function(table,
                                 fc_threshold,
                                 pvalue_threshold,
-                                adjusted = "q.value",
+                                pcol = "P.value",
                                 gene_column = "Gene") {
   to_form <- function(x) stats::as.formula(paste0("~", x))
   
@@ -10,13 +10,13 @@ plotly_volcano_plot <- function(table,
       "not significant" = "gray",
       "log FC" = "darkgreen",
       "p-value" = "blue",
-      "q-value" = "blue",
+      "adj. p-value" = "blue",
       "log FC and p-value" = "red",
-      "log FC and q-value" = "red"
+      "log FC and adj. p-value" = "red"
     )
   
-  if (adjusted == "q.value") {
-    ylab_text <- "-log10 q"
+  if (pcol != "P.value") {
+    ylab_text <- "-log10 p_adj"
   } else {
     ylab_text <- "-log10 p"
   }
@@ -45,7 +45,7 @@ plotly_volcano_plot <- function(table,
                        ticklen = 5, showline = TRUE, zeroline = F, 
                        range = c(-xaxis_max, xaxis_max))
   
-  plotly::plot_ly(table, x = ~logFC, y = to_form(adjusted), color = ~color, 
+  plotly::plot_ly(table, x = ~logFC, y = to_form(pcol), color = ~color, 
            colors = signif_labels_colors, type = "scattergl", mode = "markers",
            marker=list(size = 8, opacity = 0.6),
            text = table[[1]], hoverinfo = "text",
@@ -107,21 +107,21 @@ gg_volcano_plot <- function(table,
 
 plotly_avgexpr_plot <- function(table,
                                 pvalue_threshold,
-                                adjusted = "q.value",
+                                pcol = "P.value",
                                 gene_column = "Gene") {
   to_form <- function(x) stats::as.formula(paste0("~", x))
-  max_x_data <- max(abs(min(table$AvgExpr)), max(table$AvgExpr))
+  max_x_data <- max(abs(min(table$AveExpr)), max(table$AveExpr))
   signif_labels_colors <-
     c(
       "not significant" = "gray",
       "log FC" = "darkgreen",
       "p-value" = "blue",
-      "q-value" = "blue",
+      "adj. p-value" = "blue",
       "log FC and p-value" = "red",
-      "log FC and q-value" = "red"
+      "log FC and adj. p-value" = "red"
     )
-  if (adjusted == "q.value") {
-    ylab_text <- "-log10 q"
+  if (pcol != "P.value") {
+    ylab_text <- "-log10 p_adj"
   } else {
     ylab_text <- "-log10 p"
   }
@@ -136,7 +136,7 @@ plotly_avgexpr_plot <- function(table,
   xlayout_axis <- list(showgrid = FALSE, color = "black",
                        ticklen = 5, showline = TRUE, zeroline = F, 
                        range = c(-max_x_data, max_x_data))
-  plotly::plot_ly(table, x = ~AvgExpr, y = to_form(adjusted), color = ~color, 
+  plotly::plot_ly(table, x = ~AveExpr, y = to_form(pcol), color = ~color, 
                   colors = signif_labels_colors, type = "scattergl", mode = "markers",
                   marker=list(size = 8, opacity = 0.6),
                   text = table[[1]], hoverinfo = "text",
@@ -154,7 +154,7 @@ gg_avgexpr_plot <- function(table,
                             pvalue_threshold,
                             adjusted = "q.value",
                             gene_column = "Gene") {
-  max_x_data <- max(abs(min(table$AvgExpr)), max(table$AvgExpr))
+  max_x_data <- max(abs(min(table$AveExpr)), max(table$AveExpr))
   signif_labels_colors <-
     c(
       "not significant" = "gray",
@@ -165,12 +165,12 @@ gg_avgexpr_plot <- function(table,
       "log FC and q-value" = "red"
     )
   if (adjusted == "q.value") {
-    ylab_text <- "-log10 q"
+    ylab_text <- "-log10 P_adj"
   } else {
-    ylab_text <- "-log10 p"
+    ylab_text <- "-log10 P"
   }
   ggplot(table, aes(y = .data[[adjusted]],
-                    x = .data$AvgExpr,
+                    x = .data$AveExpr,
                     color = stringr::str_wrap(.data$color, width = 20))) +
     geom_point() + 
     geom_text(aes(label = .data[[1]]),
@@ -189,19 +189,18 @@ gg_avgexpr_plot <- function(table,
 prepareModelResultsTable <-
   function(table,
            fc_threshold = 1,
-           pvalue_threshold = -log10(0.05),
-           pvalue_adjusted_flag = "p.value"
+           pvalue_threshold = 0.05,
+           pvalue_col = "P.value"
            ) {
     
   signif_labels <- list("not significant", "log FC",
                         "%s", "log FC and %s")
-  pvalue_labels <- list("p.value" = "p-value",
-                        "q.value" = "q-value")
-  
-  pvalue_label <- pvalue_labels[pvalue_adjusted_flag]
+  pvalue_labels <- list("P.value" = "p-value",
+                        "q.value" = "adj. p-value")
+  pvalue_label <- pvalue_labels[pvalue_col]
   table$pvalue_signif <-
     as.numeric(
-      table[[pvalue_adjusted_flag]] < pvalue_threshold
+      table[[pvalue_col]] < pvalue_threshold
     )
   # Create numeric significance level
   # 0 = not, 1 = FC only, 2 pvalue only, 3 both
@@ -216,7 +215,5 @@ prepareModelResultsTable <-
   table$color <-
     sprintf(as.character(signif_labels[table$signif+1]), pvalue_label)
   # Apply log transformation to p and q value
-  table$p.value <- -log10(table$p.value)
-  table$q.value <- -log10(table$q.value)
   table
 }

@@ -31,6 +31,8 @@ advanced_settings_inputs <- function(config, id = NULL) {
      { if (config$fit_method == "AllowHide") c("None" = "none") else NULL }))
     } else NULL
   )
+  if (!all(sapply(to_include, is.null))) 
+    to_include <- c(list(tags$hr(), tags$b("Other options")), to_include)
   do.call(tagList, list(to_include))
 }
 
@@ -119,13 +121,11 @@ sampleCategoryInputs <-
     sc_logic <-
       as.logical(unlist(lapply(sample_categories, function(sc)
         sc$name %in% subset_categories)))
-    sample_categories <- sample_categories[which(sc_logic)]
+    sample_categories <- sample_categories[sc_logic]
   }
-  do.call(tagList,
-          lapply(
-            sample_categories,
-            function(sc, ns)
-              radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values),
-            ns = ns)
-  )
+  selection_tags <- lapply(
+    sample_categories,
+    function(sc)
+      radioButtons(ns(sc$name), paste(sc$label, "subset"), sc$values))
+  do.call(tagList, selection_tags)
 }

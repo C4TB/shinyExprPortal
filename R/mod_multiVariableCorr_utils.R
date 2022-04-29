@@ -1,16 +1,16 @@
 #' Creates a heatmap from correlations between genes and clinical variables
 #'
 #' @param df wide data frame with correlations
-#' @param min_pvalue threshold to display labels
+#' @param max_pvalue threshold to display labels
 #' @param min_corr absolute threshold to display labels
 #'
 #' @return a ggplot object
 #' 
 #' @noRd
-plotCorrelationHeatmap <- function(df, min_pvalue = 0,
+plotCorrelationHeatmap <- function(df, max_pvalue = 0.05,
                                    min_corr = 0, filter = "pvalue") { 
   heatmap_df <- df %>%
-    pivot_longer(c(-.data$Gene, -.data$pvalues_rank),
+    pivot_longer(c(-.data$Gene, -.data$pvaluesrank),
                  names_pattern = "(.*)_(.*)", 
                  names_to = c("Variable", ".value"))
   p <- ggplot(heatmap_df,
@@ -34,14 +34,16 @@ plotCorrelationHeatmap <- function(df, min_pvalue = 0,
           vjust = 0.5
         )
     )
-  pvalue_condition <- max(-log10(na.omit(heatmap_df[[filter]]))) > min_pvalue
+  pvalue_condition <- min(heatmap_df[[filter]], na.rm = T) <= max_pvalue
   corr_condition <- max(abs(na.omit(heatmap_df$estimate))) > min_corr
   
   if (pvalue_condition & corr_condition) {
     subset_condition <-
-      (-log10(heatmap_df[[filter]]) > min_pvalue) &
+      (heatmap_df[[filter]] <= max_pvalue) &
       (abs(heatmap_df$estimate) > min_corr)
-    subset_hm <- heatmap_df[subset_condition,]
+    #subset_hm <- heatmap_df[subset_condition,]
+    subset_hm <- heatmap_df %>%
+      filter(.data[[filter]] <= max_pvalue, abs(estimate) >= min_corr)
     p <-
       p + geom_text(aes(
           label = signif(.data$estimate, 2)),
