@@ -204,8 +204,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       }) %>% bindCache(input$clinical_outliers, 
                        input$expression_outliers,
                        input$correlation_method,
-                       expression_from_lookup(),
-                       clinical_from_lookup())
+                       selected_lookup())
       # To create the plot for each tab we need to use observe
       # and iterate through each tab
       observe({
@@ -315,22 +314,41 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                   else ifelse(not_null(out_width), out_width, 800)
                }
                
-               output[[output_name]] <- renderPlot({
-                  scatterplot <- plotClinExpScatterplot(
+               corr_labels <- c("pearson" = "r",
+                                "spearman" = "\u03c1",
+                                "kendall" = "\u03C4")
+               
+               corr_lookup <-
+                  paste0("{",paste(apply(corr_df_subset,1,function(x) {
+                     name <- x[["ClinicalVariable"]]
+                     corr <- round(as.numeric(x[["estimate"]]), digits =  2)
+                     pvalue <- round(as.numeric(x[["pvalue"]]), digits =  2)
+                     padj <- round(as.numeric(x[["padj"]]), digits = 2)
+#glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
+                     paste0("'",name, "': ['", name, 
+                         "', '",corr_labels[correlation_method],": ",
+                         corr,", P: ",pvalue,", P_adj: ",padj,"']")
+               }), collapse = ","),"}")
+               
+               output[[output_name]] <- renderVegawidget({
+                  scatterplot <- vega_layer_scatterplot(
                      combined_df,
                      x = "Value",
                      y = "Expression",
                      facet_var = "ClinicalVariable",
+                     facet_sort = output_vars,
+                     label_lookup = corr_lookup,
                      scales = output_scale,
+                     color_var = colour_var,
+                     custom_colors = manual_colors,
                      gene_name = input$selected_gene,
-                     ncol = 4,
-                     colour_variable = colour_var,
-                     manual_colors = manual_colors
+                     ncolumns = 4
                   )
-                  scatterplot +
-                     ggAnnotateCorr(corr_df_subset, correlation_method) +
-                     ggAddFit(fit_method)
-               }, width = plotWidth , height = plotHeight, bg = "transparent")
+                  
+                  scatterplot %>%
+                     vega_add_fitline(fit_method) %>%
+                     as_vegaspec()
+               })
             })
          }
       })

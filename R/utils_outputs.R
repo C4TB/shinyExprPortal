@@ -12,7 +12,7 @@ plotsTabPanels <- function(tab_config_list, ns) {
     }
     plotHeight <- ((length(output_vars) %/% 4) + 1) * 200
     tabPanel(tab_id,
-               plotOutput(ns(tab_id), 
+               vegawidgetOutput(ns(tab_id), 
                           width = "auto",
                           height = "auto"
               ),
