@@ -9,9 +9,12 @@ vega_layer_scatterplot <-
            color_var = NULL,
            custom_colors = NULL,
            gene_name = NULL,
-           ncolumns = 4) {
+           opts = list()) {
     
     scales <- match.arg(scales)
+    
+    default_opts <- list(ncolumns = 4, width = 220, height = 170)
+    opts <- modifyList(default_opts, opts)
     
     if (is.null(gene_name)) ctitle <- "Expression versus clinical measure"
     else ctitle <- paste("Expression level of", gene_name)
@@ -95,13 +98,14 @@ vega_layer_scatterplot <-
         resolve = list(axis = list(x = "shared"))
       ),
       facet = facet_spec,
-      columns = ncolumns,
+      columns = opts$ncolumns,
       resolve = list(scale = list(x = scales, y = "independent")),
       background = NULL,
       config = list(
         axis = list(grid = FALSE),
         style = list(cell = list(stroke = "transparent")),
-        view = list(continuousHeight = 170, continuousWidth = 220)
+        view = list(continuousHeight = opts$height,
+                    continuousWidth = opts$width)
       ),
       usermeta = list(
         x = x,
