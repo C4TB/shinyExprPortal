@@ -42,16 +42,12 @@ compareTrajGroups_tab <-
                  tags$hr(),
                  tags$b("Sample selection"),
                  sample_select,
-                 advanced_settings_inputs(advanced, id),
-                 radioButtons(ns("showtraj"),
-                              "Show trajectories?",
-                              choices = c("No", "Yes"),
-                              selected = c("No"))
+                 advanced_settings_inputs(advanced, id)
                )
              ),
              verticalLayout(
                #OUTPUTS
-               plotOutput(ns("trajplot"))
+               vegawidgetOutput(ns("trajplot"))
              ),
              cellWidths = c("20%", "80%"),
              cellArgs = list(style = "white-space: normal;")
@@ -101,7 +97,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
                        matching_col = subject_var)
     })
     
-    output$trajplot <- renderPlot({
+    output$trajplot <- renderVegawidget({
       
       req(input$selected_gene)
       
@@ -137,26 +133,17 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       df <-
         combined[, c(subject_var, trajectory_category, sidebyside_category,
                      input$selected_variable, "expression")]
-      
-      trajplot <- plotTrajGroups(
-        df = df[order(df[[subject_var]], df[[trajectory_category]]), ],
-        selected_variable = input$selected_variable,
-        selected_gene = input$selected_gene,
-        traj_var = trajectory_category,
+        
+      trajplot <- vega_traj_scatterplot(
+        data = df[order(df[[subject_var]], df[[trajectory_category]]), ],
+        x = input$selected_variable,
         facet_var = sidebyside_category,
-        pal = traj_palette
+        color_var = trajectory_category,
+        group_var = subject_var,
+        color_palette = traj_palette
       )
-      
-      if (input$showtraj == "Yes") {
-        trajplot <- trajplot + 
-          geom_path(aes(color = .data[[trajectory_category]],
-                        group = .data[[subject_var]]),
-                    alpha = 0.5,
-                    arrow = arrow(angle = 15, length = unit(0.1, "inches"),
-                                  type = "closed"))
-      }
-      trajplot + ggAddFit(fit_method)
-    }, bg = "transparent")
+      trajplot %>% vega_add_fitline(fit_method) %>% vegawidget::as_vegaspec()
+    })
     
   })
 }
