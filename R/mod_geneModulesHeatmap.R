@@ -61,7 +61,7 @@ geneModulesHeatmap_tab <- function(categories,
               actionButton(ns("show_genes"),label = "View genes"),
               uiOutput(ns("heatmap_ui")),
               h5("Association of clinical variables with module eigengene"),
-              plotOutput(ns("scatterplots"))
+              vegawidgetOutput(ns("scatterplots"))
             )
           ))
       ),
@@ -175,44 +175,52 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       )
     })
     
-    # Dynamic height
-    hm_height <-  reactive({ min(600, 450 + nrow(heatmap_data()) * 2) })
+    observeEvent(heatmap_data(), {
     
-    output$module_heatmap <- renderIheatmap({
-      req(nrow(heatmap_data()) > 0, cancelOutput = TRUE)
-      hm <- iheatmap(
-              heatmap_data(),
-              colors = rev(
-                RColorBrewer::brewer.pal(11, "RdBu")
-              ),
-              row_labels = if (nrow(heatmap_data()) > 80) F else T,
-              scale = "rows",
-              scale_method = "standardize",
-              name = "Expression z-scores",
-              layout = list(font = list(size = 9),
-                            plot_bgcolor = "transparent",
-                            paper_bgcolor = "transparent"))  %>%
-        add_row_clustering()
+      # Dynamic height  
+      hm_height <- min(600, 450 + nrow(heatmap_data()) * 2)
       
-      # Optional annotations
-      annots <- annotations()
-      if (not_null(annots)) {
-        hm <- hm %>% 
-          custom_add_col_annotations(annots,
-                             colors = annotation_colors,
-                             range = annotation_range)
+      output$heatmap_ui <- renderUI({
+        iheatmaprOutput(ns("module_heatmap"), height = hm_height)
+      })
+      
+      if (nrow(heatmap_data()) > 0) {
+        output$module_heatmap <- renderIheatmap({
+          hm <- iheatmap(
+            heatmap_data(),
+            colors = rev(
+              RColorBrewer::brewer.pal(11, "RdBu")
+            ),
+            row_labels = if (nrow(heatmap_data()) > 80) F else T,
+            scale = "rows",
+            scale_method = "standardize",
+            name = "Expression z-scores",
+            layout = list(font = list(size = 9),
+                          plot_bgcolor = "transparent",
+                          paper_bgcolor = "transparent"))  %>%
+            add_row_clustering()
+          
+          # Optional annotations
+          annots <- annotations()
+          if (not_null(annots)) {
+            hm <- hm %>% 
+              custom_add_col_annotations(annots,
+                                         colors = annotation_colors,
+                                         range = annotation_range)
+          }
+          hm %>% add_col_clustering()
+        })
       }
-      hm %>% add_col_clustering()
     })
     
-    output$heatmap_ui <- renderUI({
-      iheatmaprOutput(ns("module_heatmap"), height = hm_height())
-    })
-    
-    output$scatterplots <- renderPlot({
+    output$scatterplots <- renderVegawidget({
       req(heatmap_data())
-      selected_lookup <- 
+      
+      isolate({
+        selected_lookup <- 
         selectMatchingValues(sample_lookup, user_selection())
+      })
+      
       subset_clinical <- selectFromLookup(clinical, selected_lookup,
                                           matching_col = subject_var)
       selected_clinical <- subset_clinical[, scatterplot_vars]
@@ -238,18 +246,30 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       combined_df[["ClinicalVariable"]] <-
         factor(combined_df[["ClinicalVariable"]], levels = scatterplot_vars)
       
-        plotClinExpScatterplot(combined_df,
+      corr_lookup <-
+        paste0("{",paste(apply(corr_df,1,function(x) {
+          name <- x[["ClinicalVariable"]]
+          corr <- round(as.numeric(x[["var_estimate"]]), digits =  2)
+          pvalue <- round(as.numeric(x[["var_pvalue"]]), digits =  2)
+          #glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
+          paste0("'",name, "': ['", name, 
+                 "', 'r: ",
+                 corr,", P: ",pvalue,"']")
+        }), collapse = ","),"}")
+      
+      vega_layer_scatterplot(combined_df,
                              x = "Value",
                              y = "Eigengene",
                              facet_var = "ClinicalVariable",
-                             scales = "free",
-                             gene_name = "eigengene", ncol = 4) +
-        ggAnnotateCorr(corr_df,
-                       "pearson",
-                       c("var_estimate", "var_pvalue")) +
-        ggAddFit("linear")
+                             facet_sort = scatterplot_vars,
+                             label_lookup = corr_lookup,
+                             scales = "independent",
+                             gene_name = "eigengene",
+                             opts = list(width = 150, height = 120)) %>%
+        vega_add_fitline("linear") %>% 
+        as_vegaspec()
       
-    },height = ceiling(length(scatterplot_vars)/4) * 200, bg = "transparent")
+    })
     
     
     

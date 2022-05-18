@@ -342,7 +342,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                      color_var = colour_var,
                      custom_colors = manual_colors,
                      gene_name = input$selected_gene,
-                     ncolumns = 4
+                     opts = list(ncolumns = 4)
                   )
                   
                   scatterplot %>%
