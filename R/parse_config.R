@@ -13,7 +13,7 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
   
   available_modules <- get_golem_config("available_modules")
   config <- list()
-  golem::add_resource_path(prefix = "local",
+  add_resource_path(prefix = "local",
                            directoryPath = file_path(data_folder, "www"))
   config$data_folder <- data_folder
   config$bootstrap <- 

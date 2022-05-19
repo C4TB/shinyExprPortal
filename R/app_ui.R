@@ -4,7 +4,7 @@
 #'     DO NOT REMOVE.
 #' @noRd
 app_ui <- function(request) {
-  config <- golem::get_golem_options("config")
+  config <- get_opts("config")
   modules_to_include <- Filter(Negate(is.null), config$modules)
   
   about_tab <- 
@@ -48,7 +48,6 @@ app_ui <- function(request) {
 #' This function is internally used to add external 
 #' resources inside the Shiny application. 
 #' 
-#' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function(name){
   # importFrom shinyjs useShinyjs
@@ -69,8 +68,8 @@ golem_add_external_resources <- function(name){
 }
 
 dev_module_ui <- function(request) {
-  module_name <- golem::get_golem_options("module_name")
-  config <- golem::get_golem_options("config")
+  module_name <- get_opts("module_name")
+  config <- get_opts("config")
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(paste(config$name, "analysis portal")),

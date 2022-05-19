@@ -18,13 +18,15 @@ run_app <- function(
   data_folder = "",
   ...
 ) {
-  golem::with_golem_options(
-    app = shinyApp(
+    app <- shinyApp(
       ui = app_ui, 
       server = app_server
-    ), 
-    golem_opts = list(config = parseConfig(config_file, data_folder), ...)
-  )
+    )
+    
+    app$appOptions$loaded_opts <-
+      list(config = parseConfig(config_file, data_folder), ...)
+    
+    app
 }
 
 #' Run the app loading only a specified module configuration
@@ -49,18 +51,14 @@ run_module <- function(
   data_folder = "",
   ...
 ) {
-  app <- golem::with_golem_options(
-    app = shiny::shinyApp(
+    app <- shiny::shinyApp(
       ui = dev_module_ui,
       server = dev_module_server,
-    ), 
-    golem_opts = list(module_name = module_name,
-                      config = parseConfig(config_file,
-                                            data_folder,
-                                            module_name),
-                      ...),
-    print = TRUE
-  )
+    )
+    app$appOptions$loaded_opts <-
+      list(module_name = module_name,
+           config = parseConfig(config_file, data_folder, module_name), ...)
+    print(app)
 }
 
 #' Print list of currently supported modules
