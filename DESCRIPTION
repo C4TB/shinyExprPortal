@@ -7,8 +7,6 @@ Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
     config,
-    rlang,
-    golem,
     shiny,
     htmltools,
     dplyr,
@@ -35,7 +33,6 @@ Suggests:
     matrixStats,
     plotly,
     r2d3,
-    splines,
     kableExtra,
     RColorBrewer,
     stringr,

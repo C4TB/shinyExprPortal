@@ -5,7 +5,7 @@
 #' @noRd
 app_server <- function(input, output, session) {
   # List the first level callModules here
-  config <- golem::get_golem_options("config")
+  config <- get_opts("config")
   modules_to_include <- Filter(Negate(is.null), config$modules)
 
   observe({
@@ -73,8 +73,8 @@ app_server <- function(input, output, session) {
 }
 
 dev_module_server <- function(input, output, session) {
-  module_name <- golem::get_golem_options("module_name")
-  config <- golem::get_golem_options("config")
+  module_name <- get_opts("module_name")
+  config <- get_opts("config")
   modules_to_include <- Filter(Negate(is.null), config$modules)
   call_module(module_name,
               "server",
