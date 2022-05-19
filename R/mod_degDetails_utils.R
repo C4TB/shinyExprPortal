@@ -45,11 +45,12 @@ plotly_volcano_plot <- function(table,
                        ticklen = 5, showline = TRUE, zeroline = F, 
                        range = c(-xaxis_max, xaxis_max))
   
+  label_col <- which(startsWith(colnames(table), "Gene"))[[1]]
   plotly::plot_ly(table, x = ~logFC, y = to_form(pcol), color = ~color, 
            colors = signif_labels_colors, type = "scattergl", mode = "markers",
            marker=list(size = 8, opacity = 0.6),
-           text = table[[1]], hoverinfo = "text",
-           key = table[[1]], source = "volcano_plot") %>%
+           text = table[[label_col]], hoverinfo = "text",
+           key = table[[label_col]], source = "volcano_plot") %>%
     plotly::layout(xaxis = xlayout_axis,
                    yaxis = ylayout_axis,
                    shapes = lines,
