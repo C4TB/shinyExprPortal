@@ -120,6 +120,15 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
     )
 }
 
+correlationResultsToLong <- function(data,
+                                     first_col_name = "Gene",
+                                     name_to = "ClinicalVariable") {
+  pivot_longer(data,
+               cols = c(-.data[[first_col_name]],-.data[["pvaluesrank"]]),
+               names_to = c(name_to, ".value"),
+               names_pattern = "(.*_*.*)_(estimate|pvalue|padj)")
+}
+
 corrResultsToTable <- function(df, max_pvalue = 0.05, use_padj = F) {
   selected_df <- df %>% dplyr::select(ends_with("estimate"))
   colnames(selected_df) <- gsub("(.*_)*(_estimate)", "\\1", 

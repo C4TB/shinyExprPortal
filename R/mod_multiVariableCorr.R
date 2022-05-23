@@ -80,14 +80,14 @@ multiVariableCorr_tab <-
       
         bsplus::bs_accordion("multiVariableCorr_acc") %>% 
           bsplus::bs_append(title = "Heatmap Top 50 significant genes",
-            plotly::plotlyOutput(ns("heatmap"), height = 800)
+            vegawidgetOutput(ns("heatmap"), width = 800, height = 800)
           ) %>%
           bsplus::bs_append(title = "Table",
           verticalLayout(
             DTOutput(ns("table")),
             conditionalPanel(
               paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
-              downloadButton(ns("fulltable_download"), "Download Table CSV")
+              downloadButton(ns("fulltable_download"), "Download as CSV with p-values")
             )
           )
       ),
@@ -151,7 +151,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       
       clinical_outliers <- input$clinical_outliers %||% "No"
       expression_outliers <- input$expression_outliers %||% "No"
-      correlation_method <- input$correlation_method %||% "spearman"
+      correlation_method <- input$correlation_method %||% "pearson"
       
       validate(need(nrow(selected_lookup()) > 0,
                     "No data for selected parameters."))
@@ -188,19 +188,18 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       
     })
     
-    output$heatmap <- plotly::renderPlotly({ 
-      hm <- heatmap_data()[1:50, ]
-      plotly::ggplotly(
-        plotCorrelationHeatmap(hm,
-                               input$max_pvalue,
-                               input$min_corr,
-                                if (input$use_padj) "padj" else "pvalue"),
-        tooltip = "text"
-      ) %>%
-        plotly::layout(xaxis = list(automargin = TRUE,
-                                    tickfont = list(size = 9),
-                                    side = "top"),
-                       font = list(size = 5))
+    output$heatmap <- renderVegawidget({ 
+      hm <- heatmap_data()[1:50, ] %>%
+        correlationResultsToLong("Gene", "Clinical")
+      vega_heatmap(hm,
+                   "Clinical",
+                   "Gene",
+                   "estimate",
+                   input$max_pvalue,
+                   input$min_corr,
+                   input$use_padj) %>%
+        as_vegaspec() %>%
+        vw_autosize(800,800)
     })
     
     output$table <- DT::renderDataTable({
