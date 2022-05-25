@@ -4,7 +4,7 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(config_file, data_folder = "", ...)
+run_app(config_file, data_folder = "", custom_modules = NULL, ...)
 }
 \arguments{
 \item{config_file}{The name of the yaml configuration file}
@@ -12,8 +12,21 @@ run_app(config_file, data_folder = "", ...)
 \item{data_folder}{Optional directory prefix for data files.
 Enables using the same configuration file for different versions of data files.}
 
+\item{custom_modules}{Optional list of available custom modules. See the 'Details' section.}
+
 \item{...}{Further optional arguments.}
 }
 \description{
 Run the Shiny Application
+}
+\details{
+\code{custom_modules} should contain a list of names for user-defined
+modules that are loaded in the environment before calling run_app. Each
+module should be accompanied by the corresponding mod_moduleName_ui,
+mod_moduleName_server moduleName_config functions. These functions could be
+placed in a custom_modules.R file, for example, and loaded using \code{source}.
+The package will then parse the configuration file, and if it contains one of
+the custom module names, it will call the module configuration parsing
+function and add it to the interface. See \code{vignette("custom_modules")} for a
+complete example.
 }
