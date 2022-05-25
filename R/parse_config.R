@@ -19,6 +19,8 @@ parseConfig <-
   add_resource_path(prefix = "local",
                            directoryPath = file_path(data_folder, "www"))
   config$data_folder <- data_folder
+  
+  # Read app metadata ----
   config$bootstrap <- 
     raw_config$bootstrap %||% list(version = 4)
   config$name <- raw_config$name %||% "clinvisx"
@@ -46,7 +48,7 @@ parseConfig <-
     }
   }
   
-  # Global default advanced
+  # Global default advanced settings ----
   config$default_clinical_outliers <-
     match.arg(raw_config$clinical_outliers,
               c("No", "5/95 percentiles", "IQR"))
@@ -60,40 +62,59 @@ parseConfig <-
     match.arg(raw_config$fit_method,
               c("none", "linear", "quadratic", "cubic"))
   
-  # Global other settings
+  # Global other settings ----
   config$max_p <- raw_config$max_p %||% 0.05
   config$padj_col <- raw_config$padj_col %||% "q.value"
   config$adjust_method <- raw_config$adjust_method %||% "q.value"
   
-  # Validate data section
+  # Validate config data section ----
   if (is.null(raw_config$data)) {
     stop_nice("'data' section missing in configuration file")
   }
   if (is.null(raw_config$data$clinical) ||
-      is.null(raw_config$data$sample_lookup) ||
               is.null(raw_config$data$expression_matrix)) {
     stop_nice(
-      paste("Data section in configuration file must include:",
-      "clinical, sample_lookup and expression_matrix files.")
+      paste("Data section in configuration file must include ",
+      "clinical and expression_matrix files.")
     )
   }
 
-  # Load data section
+  # Load data section ----
   loaded_data <- lapply(names(raw_config$data), function(file_type) {
     message("Loading file: ", file_type, "\n", appendLF = FALSE)
     if (file_type == "models") {
-      loadModels(raw_config$data[[file_type]], data_folder,config$max_p, config$padj_col)
+      loadModels(raw_config$data[[file_type]], 
+                 data_folder,
+                 config$max_p,
+                 config$padj_col)
     } else {
       readFile(raw_config$data[[file_type]], file_type, data_folder)  
     }
   })
-  # Set global settings for sample and subject column
+  names(loaded_data) <- names(raw_config$data)
+  
+  # Set global settings for sample and subject column ----
   config$sample_categories <- raw_config$sample_categories
   config$sample_variable <-
     raw_config$sample_variable %||% "Sample_ID"
   config$subject_variable <-
     raw_config$subject_variable %||% "Subject_ID" 
   
+  if (is.null(raw_config$data$sample_lookup)) {
+    sample_categories_names <- 
+      sapply(config$sample_categories, function(x) x$name) 
+    loaded_data$sample_lookup <- create_lookup(loaded_data$clinical,
+                                               sample_categories_names,
+                                               config$sample_variable,
+                                               config$subject_variable)
+    loaded_data$clinical <- 
+      remove_duplicate_subjects(clinical,
+                                sample_categories_names,
+                                config$sample_variable)
+  }
+
+  
+  # Validate samples and subjects ----
   # Check if number of samples and subjects match across clinical data
   # And matrices
   # There should be no samples without a subject and no subjects without samples
@@ -101,9 +122,10 @@ parseConfig <-
                sample_variable = config$sample_variable,
                subject_variable = config$subject_variable
                )
-  names(loaded_data) <- names(raw_config$data)
+  
   config$data <- loaded_data
   
+  # Load modules ----
   if (not_null(test_module)) {
     # Check single module configuration
     message("Module test mode")
@@ -268,6 +290,21 @@ readFile <- function(filename, filetype = "", data_folder = "") {
   
 }
 
+#' Load differential expression models
+#'
+#' This function takes a tabular file name as input, loads it and then load
+#' each model. The tabular file must have a File column. Other columns will be 
+#' used to organise tables and populate the radio buttons in the DEG modules.
+#'
+#' @param models_file file that categories and locate each model
+#' @param data_folder optional data folder to find file
+#' @param max_p optional maximum p value for significance. Default is 0.05
+#' @param padj_col optional column for adjusted p-value. Default is q.value
+#'
+#' @return a data frame with columns from the model table and a Data column
+#' containing data frames
+#'
+#' @noRd
 loadModels <- 
   function(models_file, data_folder = "", max_p = 0.05, padj_col = "q.value") {
   fext <- file_ext(models_file)
@@ -307,6 +344,12 @@ loadModels <-
   models_table
 }
 
+#' Validate list of advanced settings
+#'
+#' @param config list of advanced settings from configuration file
+#' @param module_title optional module title for nice error message
+#'
+#' @noRd
 validateAdvancedSettings <- function(config, module_title = "") { 
   valid_settings <-
     c("clinical_outliers",
@@ -326,3 +369,48 @@ file_ext <- function(x) {
   pos <- regexpr("\\.([[:alnum:]]+)$", x)
   ifelse(pos > -1L, substring(x, pos + 1L), "")
 }
+
+#' Create a lookup table from measures and columns
+#'
+#' @param measures table with duplicate rows for a subject
+#' @param sample_categories metadata for samples that will be used to populate 
+#' lookup table
+#' @param sample_variable variable that identifies a sample
+#' @param subject_variable variable that identifies a subject
+#'
+#' @return a data frame
+#' 
+#' @noRd
+create_lookup <- 
+  function(measures, sample_categories, sample_variable, subject_variable) {
+    
+    samples <- measures[[sample_variable]]
+    subjects <- measures[[subject_variable]]
+    lookup <- data.frame(samples, subjects)
+    colnames(lookup) <- c(sample_variable, subject_variable)
+    categories_data <- lapply(sample_categories, function(x) measures[[x]])
+    names(categories_data) <- sample_categories
+    lookup <- cbind(lookup, categories_data)
+    lookup
+  }
+
+#' Removes duplicate rows for subjects
+#'
+#' This function requires that only variables in sample_cat_names and the 
+#' sample_variable have unique values for a subject. If there are additional
+#' columns with unique value per sample, the rows will be kept and the portal
+#' may not work as expected 
+#'
+#' @param measures data frame with observations for subjects and duplicated rows
+#' @param sample_cat_names names of variables used in lookup
+#' @param sample_variable variable that identifies samples
+#'
+#' @return a data frame with single row per subject
+#' 
+#' @noRd
+remove_duplicate_subjects <- 
+  function(measures, sample_cat_names, sample_variable) {
+  
+    measures[, c(sample_cat_names,sample_variable)] <- list(NULL)
+    unique(measures)
+  }
