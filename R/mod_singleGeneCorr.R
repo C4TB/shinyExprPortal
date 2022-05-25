@@ -112,6 +112,11 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       sample_var <- config$sample_variable
       sample_categories <- config$sample_categories
       
+      default_clin_outliers <- config$default_clinical_outliers
+      default_expr_outliers <- config$default_expression_outliers
+      default_corr_method <- config$default_correlation_method
+      default_fit_method <- config$default_fit_method
+      
       colour_palettes <- module_config$colour_palettes
       
       # Load genes server side
@@ -148,8 +153,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
          c(
             "5/95 percentiles" = valuesInsideQuantileRange,
             "IQR" = valuesInsideTukeyFences,
-            "No" = function(x)
-               TRUE
+            "No" = function(x) TRUE
          )
       
       selected_lookup <- reactive({
@@ -171,9 +175,12 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       # Compute correlation matrix and use cacheing
       correlation_df <- reactive({
          
-         clinical_outliers <- input$clinical_outliers %||% "No"
-         expression_outliers <- input$expression_outliers %||% "No"
-         correlation_method <- input$correlation_method %||% "pearson"
+         clinical_outliers <- 
+            input$clinical_outliers %||% default_clin_outliers %||% "No"
+         expression_outliers <- 
+            input$expression_outliers %||% default_expr_outliers %||% "No"
+         correlation_method <-
+            input$correlation_method %||%  default_corr_method %||% "pearson"
          
          selected_expression <- expression_from_lookup()
          subset_clinical <- clinical_from_lookup()
@@ -215,10 +222,14 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
             colour_var <- NULL
          }
          selected_gene <- input$selected_gene
-         clinical_outliers <- input$clinical_outliers %||% "No"
-         expression_outliers <- input$expression_outliers %||% "No"
-         correlation_method <- input$correlation_method %||% "pearson"
-         fit_method <- input$fit_method %||% "linear"
+         clinical_outliers <- 
+            input$clinical_outliers %||% default_clin_outliers %||% "No"
+         expression_outliers <- 
+            input$expression_outliers %||% default_expr_outliers %||% "No"
+         correlation_method <-
+            input$correlation_method %||% default_corr_method %||% "pearson"
+         fit_method <- 
+            input$fit_method %||% default_fit_method %||% "linear"
          
          selected_expression <- expression_from_lookup()
          subset_clinical <- clinical_from_lookup()
@@ -267,20 +278,16 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                output_scale <- tab_output$scale
                output_vars <- unique(tab_output$variables)
                
-               # If a colour variable was provided AND it's not in subset yet,
-               # add it
+               # Add colour_var to list of variables to subset
+               # If NULL nothing is added
+               # unique makes it so that it's not repeated
+               subset_vars <- unique(c(output_vars, colour_var))
+               
+               # Check if an optional palette was provided
                if (not_null(colour_var)) {
-                  # Check if an optional palette was provided
                   if (colour_var %in% names(colour_palettes))
                      manual_colors <- colour_palettes[[colour_var]]
                   else manual_colors <- NULL
-                  if (!colour_var %in% output_vars) {
-                     subset_vars <- c(output_vars, colour_var)
-                  } else {
-                     subset_vars <- output_vars
-                  }
-               } else {
-                  subset_vars <- output_vars
                }
                
                # Get only the variables for this tab
@@ -318,6 +325,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                                 "spearman" = "\u03c1",
                                 "kendall" = "\u03C4")
                
+               # TODO: refactor this with padj being optional
                corr_lookup <-
                   paste0("{",paste(apply(corr_df_subset,1,function(x) {
                      name <- x[["ClinicalVariable"]]

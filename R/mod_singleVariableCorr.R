@@ -75,12 +75,15 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
     clinical <- config$data$clinical
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
-    
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
     
     adjust_method <- config$adjust_method
+    
+    default_clin_outliers <- config$default_clinical_outliers
+    default_expr_outliers <- config$default_expression_outliers
+    default_corr_method <- config$default_correlation_method
     
     link_to <- module_config$link_to
     
@@ -116,9 +119,12 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       # 1) Apply outlier filters
       # 2) Compute correlation matrix
       
-      clinical_outliers <- input$clinical_outliers %||% "No"
-      expression_outliers <- input$expression_outliers %||% "No"
-      correlation_method <- input$correlation_method %||% "pearson"
+      clinical_outliers <- 
+        input$clinical_outliers %||% default_clin_outliers %||% "No"
+      expression_outliers <- 
+        input$expression_outliers %||% default_expr_outliers %||% "No"
+      correlation_method <-
+        input$correlation_method %||% default_corr_method %||% "pearson"
       
       list_of_values <- user_selection()
       selected_clinical <- clinical_from_lookup()

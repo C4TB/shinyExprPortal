@@ -43,6 +43,20 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
     }
   }
   
+  # Global default advanced
+  config$default_clinical_outliers <-
+    match.arg(raw_config$clinical_outliers,
+              c("No", "5/95 percentiles", "IQR"))
+  config$default_expression_outliers <-
+    match.arg(raw_config$expression_outliers,
+              c("No", "5/95 percentiles", "IQR"))
+  config$default_correlation_method <-
+    match.arg(raw_config$correlation_method,
+              c("pearson", "spearman", "kendall"))
+  config$default_fit_method <- 
+    match.arg(raw_config$fit_method,
+              c("none", "linear", "quadratic", "cubic"))
+  
   # Global other settings
   config$max_p <- raw_config$max_p %||% 0.05
   config$padj_col <- raw_config$padj_col %||% "q.value"

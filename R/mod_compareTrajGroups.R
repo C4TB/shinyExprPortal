@@ -65,6 +65,11 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
     
+    default_clin_outliers <- config$default_clinical_outliers
+    default_expr_outliers <- config$default_expression_outliers
+    default_corr_method <- config$default_correlation_method
+    default_fit_method <- config$default_fit_method
+    
     subset_categories <- module_config$subset_categories
     trajectory_category <- module_config$trajectory_category
     sidebyside_category <- module_config$sidebyside_category
@@ -104,7 +109,8 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       sel_lookup <- selected_lookup()
       subset_expression <- expression_from_lookup()
       selected_clinical <- clinical_from_lookup()
-      fit_method <- input$fit_method %||% "linear"
+      fit_method <- 
+        input$fit_method %||% default_fit_method %||% "linear"
       
       # Return matching selected_variable
       compare_col_id <-
