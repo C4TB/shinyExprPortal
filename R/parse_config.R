@@ -4,10 +4,13 @@
 #' @param data_folder Optional directory prefix for data files.
 #' Enables using the same configuration file under different file structures.
 #' @param test_module A module_name to parse configuration and ignore all others
+#' @param custom_modules List of custom modules name to load
 #'
 #' @return config named list
 #' @noRd
-parseConfig <- function(fname, data_folder = "", test_module = NULL) {
+parseConfig <- 
+  function(fname, data_folder = "", test_module = NULL, custom_modules = NULL) {
+    
   message(paste("Reading configuration file", fname))
   raw_config <- yaml::read_yaml(fname)
   
@@ -126,9 +129,40 @@ parseConfig <- function(fname, data_folder = "", test_module = NULL) {
                        data_folder = data_folder))
       })
     names(loaded_modules) <- available_modules
+    
+    if (not_null(custom_modules)) {
+      extra_loaded_modules <- 
+        lapply(custom_modules, function(module_name) {
+          if (!is.null(raw_config[[module_name]])) {
+            checkModuleExists(module_name)
+            do.call(paste0(module_name, "_config"),
+                    list(config = raw_config[[module_name]],
+                         data_folder = data_folder))
+          }
+        })
+      names(extra_loaded_modules) <- custom_modules
+      loaded_modules <- c(loaded_modules, extra_loaded_modules)
+    }
   }
   config$modules <- loaded_modules
   config
+}
+
+checkModuleExists <- function(module_name) {
+  config_name <- paste0(module_name, "_config")
+  ui_name <- paste("mod",module_name,"ui", sep = "_")
+  server_name <- paste("mod",module_name,"server", sep = "_")
+  function_names <- c(config_name, ui_name, server_name)
+  for (name in function_names) {
+    if (!exists(name, mode = "function"))
+      stop_nice(
+        paste0(
+          "Problem when loading modules: ",
+          name, 
+          " function is not defined. ",
+          "Please ensure custom module functions are defined before run_app.")
+        )
+  }
 }
 
 validateData <-
