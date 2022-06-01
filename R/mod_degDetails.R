@@ -66,22 +66,18 @@ degDetails_tab <- function(categories,
           checkboxInput(ns("use_padj"), "Use adjusted p-value?")
         )
       ),
-      bsplus::bs_accordion("deg_results") %>%
-        bsplus::bs_append(
-          title = "Plot",
-          content = splitLayout(
+      verticalLayout(
+        splitLayout(
             style = "font-size: 75%;",
             plotly::plotlyOutput(ns("results_plot"),
                                  width = "700px",
                                  height = "500px"),
             cellWidths = c(700, 200)
-          )
-        ) %>%
-        bsplus::bs_append(
-          title = "Table",
-          content = verticalLayout(uiOutput(ns(
+          ),
+        hr(),
+        verticalLayout(uiOutput(ns(
             "ui_table_checkbox"
-          )),
+        )),
           DT::DTOutput(ns("deg_table")))
         ),
       cellWidths = c("20%", "80%"),
@@ -215,7 +211,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
         }
         # Optional link
         if (not_null(link_to)) {
-          model_table[[1]] <- urlVector(model_table[[1]],
+          gene_col_id <- which(colnames(model_table) == gene_column)
+          model_table[[gene_col_id]] <- urlVector(model_table[[gene_col_id]],
                                                   "gene",
                                                   isolate({ current_URL() }))
         }
