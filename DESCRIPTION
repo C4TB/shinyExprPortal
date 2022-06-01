@@ -28,7 +28,6 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    processx,
     htmlwidgets,
     matrixStats,
     plotly,
@@ -37,7 +36,6 @@ Suggests:
     RColorBrewer,
     stringr,
     WGCNA,
-    bsplus,
     visNetwork,
     igraph,
     fst

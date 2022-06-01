@@ -77,19 +77,23 @@ multiVariableCorr_tab <-
           advanced_settings_inputs(advanced, id)
         )
       ),
-      
-        bsplus::bs_accordion("multiVariableCorr_acc") %>% 
-          bsplus::bs_append(title = "Heatmap Top 50 significant genes",
-            vegawidgetOutput(ns("heatmap"), width = 800, height = 800)
-          ) %>%
-          bsplus::bs_append(title = "Table",
-          verticalLayout(
-            DTOutput(ns("table")),
-            conditionalPanel(
-              paste0('input[\'', ns('heatmap_variables'), "\'] != ''"),
-              downloadButton(ns("fulltable_download"), "Download as CSV with p-values")
-            )
-          )
+      verticalLayout(
+        conditionalPanel(
+          "input[\'heatmap_variables\'] == ''",
+          ns = ns,
+          tags$span(
+            "Select a set of clinical variables to view heatmap and table",
+            style = "color: gray")
+        ),
+        conditionalPanel(
+          "input[\'heatmap_variables\'] != ''",
+          ns = ns,
+          vegawidgetOutput(ns("heatmap"), width = 800, height = 800),
+          hr(),
+          DTOutput(ns("table")),
+          downloadButton(ns("fulltable_download"),
+                         "Download as CSV with p-values")
+        )
       ),
       cellWidths = c("20%", "80%"),
       cellArgs = list(style = "white-space: normal;")
