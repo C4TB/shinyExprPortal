@@ -155,7 +155,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     
     heatmap_data <- reactive({
       req(input$heatmap_variables)
-      
+        
       clinical_outliers <- 
         input$clinical_outliers %||% default_clin_outliers %||% "No"
       expression_outliers <- 
@@ -196,7 +196,11 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       combined_df <- combined_df[order(combined_df$pvaluesrank),]
       combined_df
       
-    })
+    }) %>% bindCache(input$heatmap_variables,
+                     input$clinical_outliers,
+                     input$expression_outliers,
+                     input$correlation_method,
+                     selected_lookup())
     
     output$heatmap <- renderVegawidget({ 
       hm <- heatmap_data()[1:50, ] %>%

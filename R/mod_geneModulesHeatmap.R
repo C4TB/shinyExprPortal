@@ -156,14 +156,16 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     })
     
     # Find module genes and subset expression matrix
-    heatmap_data <-reactive({
+    heatmap_data <- reactive({
       req(input$modules_list_row_last_clicked)
       row_id <- input$modules_list_row_last_clicked
       module_info <- as.list(selected_modules_table()[row_id, ])
       list_of_genes <- unlist(strsplit(module_info[[genes_variable]], ","))
       expression_matrix[rownames(expression_matrix) %in% list_of_genes,
                         selected_lookup()[[sample_var]]]
-    })
+    }) %>% bindCache(input$modules_list_row_last_clicked,
+                     selected_modules_table(),
+                     selected_lookup())
     
     # Modal dialog to show genes
     observeEvent(input$show_genes, {

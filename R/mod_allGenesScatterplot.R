@@ -104,7 +104,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
       subset_mean <- rowMeans(subset_mat, na.rm = T)
       fc <- subset_mean - all_mean
       list("subset", fc)
-    })
+    }) %>% bindCache(selected_lookup())
    
     scatterplot_data <- reactive({
       fc_list <- fc_from_lookup()

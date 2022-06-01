@@ -151,11 +151,11 @@ mod_degDetails_server <- function(module_name, config, module_config) {
         function(x,y) inner_join(x, y, by = colnames(x)), model_res)
       req(nrow(selected_model) > 0)
       selected_model$Data[[1]]
-    })
+    }) %>% bindCache(input$selected_model, input$model_category)
     
     signif_labels <- list("not significant", "log FC",
                           "%s", "log FC and %s")
-    # Volcano plo table
+    # Volcano plot table
     vp_table <- reactive({
       table <- model_results()
       pcol <- if (input$use_padj) padj_col else "P.value"
