@@ -50,12 +50,14 @@ singleVariableCorr_tab <- function(sample_select,
       ),
       verticalLayout(
         conditionalPanel(
-          paste0('input[\'', ns('selected_variable'), "\'] == ''"),
+          "input[\'selected_variable\'] == ''",
+          ns = ns,
           tags$span("No clinical variable selected", style = "color: gray")
         ),
         DTOutput(ns("fulltable")),
         conditionalPanel(
-          paste0('input[\'', ns('selected_variable'), "\'] != ''"),
+          "input[\'selected_variable\'] != ''",
+          ns = ns,
           downloadButton(ns("fulltable_download"), "Download Table CSV")
         )
       ),
@@ -152,7 +154,11 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
         correlation_df$Gene <- urlVector(correlation_df$Gene, "gene", baseURL)
       }
       correlation_df
-    })
+    }) %>% bindCache(input$selected_variable,
+                     input$clinical_outliers,
+                     input$expression_outliers,
+                     input$correlation_method,
+                     selected_lookup())
     
     output$fulltable <- renderDT({
         correlation_table()

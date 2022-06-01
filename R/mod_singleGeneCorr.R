@@ -73,22 +73,21 @@ singleGeneCorr_tab <-
        ),
        verticalLayout(
           conditionalPanel(
-             paste0("output[\'", ns('error_message'), "\'] == true"),
+             "output[\'error_message\'] == true",
+             ns = ns,
              tags$span("Transcript not found in subset or
                        subset combination does not exist.",
                        style = "color: gray")
           ),
           conditionalPanel(
-             paste0("input[\'", ns('selected_gene'), "\'] == ''"),
+             "input[\'selected_gene\'] == ''",
+             ns = ns,
              tags$span("No gene selected", style = "color: gray")
           ),
           conditionalPanel(
-             paste0("input[\'",
-                    ns('selected_gene'),
-                    "\'] != ''",
-                    "&& output[\'",
-                    ns('error_message'),
-                    "\'] == false"),
+             "(input[\'selected_gene\'] != '') &&
+             (output[\'error_message\'] == false)",
+             ns = ns,
              do.call(tabsetPanel, plotsTabPanels(outputs, ns))
           )
        ),
@@ -212,6 +211,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                        input$expression_outliers,
                        input$correlation_method,
                        selected_lookup())
+      
       # To create the plot for each tab we need to use observe
       # and iterate through each tab
       observe({
