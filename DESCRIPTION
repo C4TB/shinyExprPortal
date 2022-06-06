@@ -13,7 +13,6 @@ Imports:
     tidyr,
     ggplot2,
     yaml,
-    vroom,
     data.table,
     bslib,
     iheatmapr,
@@ -38,5 +37,6 @@ Suggests:
     WGCNA,
     visNetwork,
     igraph,
-    fst
+    fst,
+    qs
 VignetteBuilder: knitr

@@ -246,7 +246,7 @@ validateData <-
 #'
 #' @return parsed file
 #' @noRd
-readFile <- function(filename, filetype = "", data_folder = "") { 
+readFile <- function(filename, filetype = "", data_folder = "", nthreads = 1L) { 
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename) 
   if (!file.exists(filename)) { 
@@ -254,7 +254,10 @@ readFile <- function(filename, filetype = "", data_folder = "") {
   }
   tryCatch({
     if (fext == "rds") {
-      readRDS(filename)
+      df <- readRDS(filename)
+      if (filetype == "expression_matrix" & !is.matrix(df))
+        stop_nice("For expression_matrix file, object must be store as matrix")
+      df
     } else if (fext == "fst") {
       if (!requireNamespace("fst", quietly = TRUE)) {
         stop_nice("Package fst is required for reading .fst files")
@@ -268,18 +271,37 @@ readFile <- function(filename, filetype = "", data_folder = "") {
         df
       }
       else df
+    } else if (fext == "qs") {
+      if (!requireNamespace("qs", quietly = TRUE)) {
+        stop_nice("Package qs is required for reading .qs files")
+      }
+      df <- qs::qread(filename, nthreads = nthreads)
+      if (filetype == "expression_matrix" &!is.matrix(df))
+        stop_nice("For expression_matrix file, object must be stored as matrix")
+      df
     } else {
+      # Non-serialized data
       if (filetype == "expression_matrix") {
-        as.matrix(data.table::fread(filename))
-      } 
-      if (filetype == "edge_list") {
+        df <- 
+          data.table::fread(filename, data.table = FALSE, nThread = nthreads)
+        rownames(df) <- df[,1]
+        df <- df[,-1]
+        as.matrix(df)
+      }
+      else if (filetype == "edge_list") {
         col_names <- c("source", "target", "weight")
         delim <- ifelse(fext == "csv", ",", "\t")
-        as.data.frame(vroom::vroom(filename, delim, col_names = col_names))
+        data.table::fread(filename, 
+                          sep = delim, 
+                          data.table = FALSE,
+                          col.names = col_names,
+                          nThread = nthreads)
       } else {
         delim <- ifelse(fext == "csv", ",", "\t")
-          as.data.frame(
-            vroom::vroom(filename, delim = delim, col_types = vroom::cols()))
+        data.table::fread(filename, 
+                          sep = delim, 
+                          data.table = FALSE,
+                          nThread = nthreads)
       }
     }
   },
@@ -314,9 +336,9 @@ loadModels <-
     models_table <- readRDS(file_path(data_folder, models_file))
   } else {
     delim <- ifelse(fext == "csv", ",", "\t")
-    models_table <- vroom::vroom(file_path(data_folder, models_file),
-                                 delim = delim,
-                                 col_types = vroom::cols())
+    models_table <- data.table::fread(file_path(data_folder, models_file),
+                                 sep = delim,
+                                 data.table = F)
   }
   if (ncol(models_table) < 2)
   {
@@ -336,7 +358,7 @@ loadModels <-
     }
     fext <- file_ext(file_name)
     delim <- ifelse(fext == "csv", ",", "\t")
-    model <- vroom::vroom(file_name, delim = delim, col_types = vroom::cols())
+    model <- data.table::fread(file_name, sep = delim, data.table = F)
   })
   
   models_table$P <- sapply(models_table$Data,
