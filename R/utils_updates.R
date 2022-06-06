@@ -15,9 +15,10 @@ getSelectedSampleCategories <- function(sample_categories, inputs) {
   for (sc_item in sample_categories) {
     sc_name <- sc_item[["name"]]
     input_names <- c(input_names, sc_name)
-    if (is.null(inputs[[sc_name]]))
+    if (is.null(inputs[[sc_name]])) {
       stop("Sample class not found in input list.
            Check if UI has been created correctly")
+    }
     values_list <- c(values_list, inputs[[sc_name]])
   }
   names(values_list) <- input_names
@@ -32,15 +33,18 @@ getSelectedSampleCategories <- function(sample_categories, inputs) {
 #'
 #' @return list of key-value pairs
 #' @noRd
-getSubsetSampleCategories <- 
+getSubsetSampleCategories <-
   function(subset_categories, sample_categories, inputs) {
-  sc_logic <- as.logical(unlist(
-    lapply(sample_categories,
-           function(sc)
-             sc$name %in% subset_categories)
-  ))
-  sample_categories <- sample_categories[which(sc_logic)]
-  subset_values <- sapply(sample_categories, function(x) inputs[[x$name]])
-  names(subset_values) <- subset_categories
-  subset_values
-}
+    sc_logic <- as.logical(unlist(
+      lapply(
+        sample_categories,
+        function(sc) {
+          sc$name %in% subset_categories
+        }
+      )
+    ))
+    sample_categories <- sample_categories[which(sc_logic)]
+    subset_values <- sapply(sample_categories, function(x) inputs[[x$name]])
+    names(subset_values) <- subset_categories
+    subset_values
+  }

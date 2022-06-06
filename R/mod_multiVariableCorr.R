@@ -13,7 +13,7 @@ mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
 #' Whole data correlation tab UI
 #'
 #' @param sample_select radio inputs for sample classes
-#' @param clinical_variables 
+#' @param clinical_variables
 #' @param advanced advanced options
 #' @param title optional module title
 #' @param description optional module description
@@ -29,218 +29,238 @@ multiVariableCorr_tab <-
            title = NULL,
            description = NULL,
            id = NULL) {
-    
-  ns <- NS(id)
-  tabPanel(
-    title = title %||% "Multiple variables",
-    value = "multiVariableCorr",
-    tags$h5(
-      description %||% "Correlation between all genes and clinical variables"),
-    splitLayout(
-      verticalLayout(
-        wellPanel(
-          selectizeInput(
-            ns("heatmap_variables"),
-            label = with_red_star("Select set of clinical variables:"),
-            choices = clinical_variables,
-            options = list(
-              dropdownParent = "body",
-              onInitialize = I('function(){this.setValue("");}')
+    ns <- NS(id)
+    tabPanel(
+      title = title %||% "Multiple variables",
+      value = "multiVariableCorr",
+      tags$h5(
+        description %||% "Correlation between all genes and clinical variables"
+      ),
+      splitLayout(
+        verticalLayout(
+          wellPanel(
+            selectizeInput(
+              ns("heatmap_variables"),
+              label = with_red_star("Select set of clinical variables:"),
+              choices = clinical_variables,
+              options = list(
+                dropdownParent = "body",
+                onInitialize = I('function(){this.setValue("");}')
+              )
+            ),
+            tags$hr(),
+            tags$b("Sample selection"),
+            sample_select,
+            tags$hr(),
+            tags$b("Plot options"),
+            numericInput(
+              ns("max_pvalue"),
+              label = "Maximum p-value for label: ",
+              min = 0.0,
+              max = 0.2,
+              value = 0.05,
+              step = 0.01,
+              # dragRange = FALSE,
+              width = "150px"
+            ),
+            checkboxInput(ns("use_padj"), "Use adjusted p-value?"),
+            numericInput(
+              ns("min_corr"),
+              label = "Minimum correlation for label:",
+              min = 0,
+              max = 1,
+              value = 0.25,
+              step = 0.05,
+              # dragRange = FALSE,
+              width = "150px"
+            ),
+            advanced_settings_inputs(advanced, id)
+          )
+        ),
+        verticalLayout(
+          conditionalPanel(
+            "input[\'heatmap_variables\'] == ''",
+            ns = ns,
+            tags$span(
+              "Select a set of clinical variables to view heatmap and table",
+              style = "color: gray"
             )
           ),
-          tags$hr(),
-          tags$b("Sample selection"),
-          sample_select,
-          tags$hr(),
-          tags$b("Plot options"),
-          numericInput(
-            ns("max_pvalue"),
-            label = "Maximum p-value for label: ",
-            min = 0.0,
-            max = 0.2,
-            value = 0.05,
-            step = 0.01,
-            #dragRange = FALSE,
-            width = "150px"
-          ),
-          checkboxInput(ns("use_padj"), "Use adjusted p-value?"),
-          numericInput(
-            ns("min_corr"),
-            label = "Minimum correlation for label:",
-            min = 0,
-            max = 1,
-            value = 0.25,
-            step = 0.05,
-            #dragRange = FALSE,
-            width = "150px"
-          ),
-          advanced_settings_inputs(advanced, id)
-        )
-      ),
-      verticalLayout(
-        conditionalPanel(
-          "input[\'heatmap_variables\'] == ''",
-          ns = ns,
-          tags$span(
-            "Select a set of clinical variables to view heatmap and table",
-            style = "color: gray")
+          conditionalPanel(
+            "input[\'heatmap_variables\'] != ''",
+            ns = ns,
+            vegawidgetOutput(ns("heatmap"), width = 800, height = 800),
+            hr(),
+            DTOutput(ns("table")),
+            downloadButton(
+              ns("fulltable_download"),
+              "Download as CSV with p-values"
+            )
+          )
         ),
-        conditionalPanel(
-          "input[\'heatmap_variables\'] != ''",
-          ns = ns,
-          vegawidgetOutput(ns("heatmap"), width = 800, height = 800),
-          hr(),
-          DTOutput(ns("table")),
-          downloadButton(ns("fulltable_download"),
-                         "Download as CSV with p-values")
-        )
-      ),
-      cellWidths = c("20%", "80%"),
-      cellArgs = list(style = "white-space: normal;")
+        cellWidths = c("20%", "80%"),
+        cellArgs = list(style = "white-space: normal;")
+      )
     )
-  )
-}
+  }
 #' multiVariableCorr Server Function
 #'
-#' @noRd 
+#' @noRd
 mod_multiVariableCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
-    
+
     clinical <- config$data$clinical
     expression_matrix <- config$data$expression
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
-    
+
     adjust_method <- config$adjust_method
-    
+
     default_clin_outliers <- config$default_clinical_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
-    
+
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
-    
-    outlier_functions <- c("5/95 percentiles" = valuesInsideQuantileRange,
-                           "IQR" = valuesInsideTukeyFences,
-                           "No" = function(x) TRUE)
+
+    outlier_functions <- c(
+      "5/95 percentiles" = valuesInsideQuantileRange,
+      "IQR" = valuesInsideTukeyFences,
+      "No" = function(x) TRUE
+    )
 
     user_selection <- reactive({
       getSelectedSampleCategories(sample_categories, input)
     })
-    
+
     selected_lookup <- reactive({
       sel_lookup <- selectMatchingValues(sample_lookup, user_selection())
-      validate(need(nrow(sel_lookup) > 0,
-                    "No data for selected parameters."))
+      validate(need(
+        nrow(sel_lookup) > 0,
+        "No data for selected parameters."
+      ))
       sel_lookup
     })
-    
+
     expression_from_lookup <- reactive({
       expression_matrix[, selected_lookup()[[sample_var]]]
     })
-    
+
     clinical_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       selectFromLookup(clinical, sel_lookup,
-                       matching_col = subject_var)
+        matching_col = subject_var
+      )
     })
-    
+
     rank_suffix <- reactive({
       browser()
       if (input$use_padj) "padj" else "pvalue"
     })
-    
+
     heatmap_data <- reactive({
       req(input$heatmap_variables)
-        
-      clinical_outliers <- 
+
+      clinical_outliers <-
         input$clinical_outliers %||% default_clin_outliers %||% "No"
-      expression_outliers <- 
+      expression_outliers <-
         input$expression_outliers %||% default_expr_outliers %||% "No"
       correlation_method <-
         input$correlation_method %||% default_corr_method %||% "pearson"
-      
-      validate(need(nrow(selected_lookup()) > 0,
-                    "No data for selected parameters."))
+
+      validate(need(
+        nrow(selected_lookup()) > 0,
+        "No data for selected parameters."
+      ))
       selected_clinical <- clinical_from_lookup()
       selected_expression <- expression_from_lookup()
-      
+
       # Get subset of variables selected by user
       selected_clinical_vars <- heatmap_variables[[input$heatmap_variables]]
       cols_lv <- colnames(selected_clinical) %in% selected_clinical_vars
       subset_clinical <- selected_clinical[, cols_lv]
-      
-      #Apply outlier functions to clinical
-      subset_clinical  <- 
-        replaceFalseWithNA(subset_clinical,
-                           outlier_functions[[clinical_outliers]])
-      #Apply outlier functions to expression
+
+      # Apply outlier functions to clinical
+      subset_clinical <-
+        replaceFalseWithNA(
+          subset_clinical,
+          outlier_functions[[clinical_outliers]]
+        )
+      # Apply outlier functions to expression
       selected_expression <-
-        replaceFalseWithNA(t(selected_expression),
-                           outlier_functions[[expression_outliers]])
-      
+        replaceFalseWithNA(
+          t(selected_expression),
+          outlier_functions[[expression_outliers]]
+        )
+
       corr_df <- correlateMatrices(selected_expression,
-                                   subset_clinical,
-                                   adjust_method = adjust_method,
-                                   method = correlation_method,
-                                   rowname_var = "Gene")
+        subset_clinical,
+        adjust_method = adjust_method,
+        method = correlation_method,
+        rowname_var = "Gene"
+      )
       rank_suffix <- if (input$use_padj) "padj" else "pvalue"
       pvaluesrank <-
         do.call(pmin, c(corr_df[, endsWith(colnames(corr_df), rank_suffix)],
-                                   na.rm = TRUE)
-                              )
+          na.rm = TRUE
+        ))
       combined_df <- cbind(corr_df, pvaluesrank)
-      combined_df <- combined_df[order(combined_df$pvaluesrank),]
+      combined_df <- combined_df[order(combined_df$pvaluesrank), ]
       combined_df
-      
-    }) %>% bindCache(input$heatmap_variables,
-                     input$clinical_outliers,
-                     input$expression_outliers,
-                     input$correlation_method,
-                     selected_lookup())
-    
-    output$heatmap <- renderVegawidget({ 
+    }) %>% bindCache(
+      input$heatmap_variables,
+      input$clinical_outliers,
+      input$expression_outliers,
+      input$correlation_method,
+      selected_lookup()
+    )
+
+    output$heatmap <- renderVegawidget({
       hm <- heatmap_data()[1:50, ] %>%
         correlationResultsToLong("Gene", "Clinical")
-      vega_heatmap(hm,
-                   "Clinical",
-                   "Gene",
-                   "estimate",
-                   input$max_pvalue,
-                   input$min_corr,
-                   input$use_padj) %>%
+      vega_heatmap(
+        hm,
+        "Clinical",
+        "Gene",
+        "estimate",
+        input$max_pvalue,
+        input$min_corr,
+        input$use_padj
+      ) %>%
         as_vegaspec() %>%
-        vw_autosize(800,800)
+        vw_autosize(800, 800)
     })
-    
+
     output$table <- DT::renderDataTable({
-      df <- corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
-      if (not_null(link_to)) {
-        isolate({
-          list_of_values <- user_selection()
-          baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
-          df$Gene <- urlVector(df$Gene, "gene", baseURL)
-        })
-      }
-      df
-    },
-    options = list(scrollX = TRUE),
-    caption = "Significant correlations highlighted in bold",
-    escape = F,
-    rownames = FALSE)
-    
+        df <- 
+          corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
+        if (not_null(link_to)) {
+          isolate({
+            list_of_values <- user_selection()
+            baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
+            df$Gene <- urlVector(df$Gene, "gene", baseURL)
+          })
+        }
+        df
+      },
+      options = list(scrollX = TRUE),
+      caption = "Significant correlations highlighted in bold",
+      escape = F,
+      rownames = FALSE
+    )
+
     output$fulltable_download <- downloadHandler(
       filename = function() {
         list_of_values <-
           getSelectedSampleCategories(sample_categories, input)
-        paste(c(list_of_values, "heatmap_data"), collapse = "_") 
+        paste(c(list_of_values, "heatmap_data"), collapse = "_")
       },
       content = function(file) {
-        utils::write.csv(heatmap_data(), file, row.names = FALSE) 
-      }, contentType = "text/csv")
-    
+        utils::write.csv(heatmap_data(), file, row.names = FALSE)
+      }, contentType = "text/csv"
+    )
   })
 }

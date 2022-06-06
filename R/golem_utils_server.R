@@ -1,7 +1,7 @@
 #' Inverted versions of in, is.null and is.na
-#' 
+#'
 #' @noRd
-#' 
+#'
 #' @examples
 #' 1 %not_in% 1:10
 #' not_null(NULL)
@@ -12,24 +12,24 @@ not_null <- Negate(is.null)
 not_na <- Negate(is.na)
 
 #' Removes the null from a vector
-#' 
+#'
 #' @noRd
-#' 
-#' @example 
+#'
+#' @example
 #' drop_nulls(list(1, NULL, 2))
-drop_nulls <- function(x){
+drop_nulls <- function(x) {
   x[!sapply(x, is.null)]
 }
 
 #' If x is `NULL`, return y, otherwise return x
-#' 
+#'
 #' @param x,y Two elements to test, one potentially `NULL`
-#' 
+#'
 #' @noRd
-#' 
+#'
 #' @examples
 #' NULL %||% 1
-"%||%" <- function(x, y){
+"%||%" <- function(x, y) {
   if (is.null(x)) {
     y
   } else {
@@ -38,14 +38,14 @@ drop_nulls <- function(x){
 }
 
 #' If x is `NA`, return y, otherwise return x
-#' 
+#'
 #' @param x,y Two elements to test, one potentially `NA`
-#' 
+#'
 #' @noRd
-#' 
+#'
 #' @examples
 #' NA %||% 1
-"%|NA|%" <- function(x, y){
+"%|NA|%" <- function(x, y) {
   if (is.na(x)) {
     y
   } else {
@@ -54,10 +54,10 @@ drop_nulls <- function(x){
 }
 
 #' Typing reactiveValues is too long
-#' 
+#'
 #' @inheritParams reactiveValues
 #' @inheritParams reactiveValuesToList
-#' 
+#'
 #' @noRd
 rv <- shiny::reactiveValues
 rvtl <- shiny::reactiveValuesToList
@@ -66,18 +66,17 @@ rvtl <- shiny::reactiveValuesToList
 file_path <- function(path = "", ...) {
   if (path != "") {
     file.path(path, ...)
-  }
-  else {
+  } else {
     file.path(...)
   }
 }
 
-flattenlist <- function(x){  
-  morelists <- sapply(x, function(xprime) class(xprime)[1]=="list")
-  out <- c(x[!morelists], unlist(x[morelists], recursive=FALSE))
-  if(sum(morelists)){ 
+flattenlist <- function(x) {
+  morelists <- sapply(x, function(xprime) class(xprime)[1] == "list")
+  out <- c(x[!morelists], unlist(x[morelists], recursive = FALSE))
+  if (sum(morelists)) {
     Recall(out)
-  }else{
+  } else {
     return(out)
   }
 }
@@ -87,7 +86,7 @@ buildURL <- function(key_values, prefix = NULL) {
   keys <- names(key_values)
   values <- key_values
   params <- paste0(keys, "=", values)
-  url_params <- paste(params, collapse = "&") 
+  url_params <- paste(params, collapse = "&")
   if (!is.null(prefix)) {
     utils::URLencode(paste0(prefix, "&", url_params))
   } else {
@@ -106,12 +105,17 @@ appendToURL <- function(url, key, value) {
 }
 
 urlVector <- function(values, name, baseURL) {
-   vapply(values,
-              FUN = function(x) paste0('<a href="',
-                                 appendToURL(baseURL, name, x),
-                                 '">', x ,'</a>'),
-              FUN.VALUE = character(1))
- }
+  vapply(values,
+    FUN = function(x) {
+      paste0(
+        '<a href="',
+        appendToURL(baseURL, name, x),
+        '">', x, "</a>"
+      )
+    },
+    FUN.VALUE = character(1)
+  )
+}
 
 urlAsTag <- function(values) {
   curlv <- Vectorize(characterURLsub, SIMPLIFY = FALSE)
@@ -124,15 +128,19 @@ valuesToURL <- function(url, key, values) {
 }
 
 stopIfNotInstalled <- function(packages, mod_name) {
-  lv <- vapply(packages,
-               function(pkg) !requireNamespace(pkg, quietly = TRUE),
-               logical(1)
-               )
+  lv <- vapply(
+    packages,
+    function(pkg) !requireNamespace(pkg, quietly = TRUE),
+    logical(1)
+  )
   not_inst <- packages[lv]
-  if (length(not_inst) > 0)
-    stop_nice(paste("Package(s) ",
-         paste(not_inst, collapse = ", "), " required for ", mod_name,
-         " not found."))
+  if (length(not_inst) > 0) {
+    stop_nice(paste(
+      "Package(s) ",
+      paste(not_inst, collapse = ", "), " required for ", mod_name,
+      " not found."
+    ))
+  }
 }
 
 stop_nice <- function(msg) {
@@ -144,17 +152,17 @@ stop_nice <- function(msg) {
 theme_bg <- function() {
   theme(
     strip.background = element_blank(),
-    panel.background= element_blank(),
+    panel.background = element_blank(),
     plot.background = element_blank(),
-    legend.background = element_rect(fill="transparent")
+    legend.background = element_rect(fill = "transparent")
   )
 }
 
 theme_transp_border <- function() {
   theme(
     strip.background = element_blank(),
-    panel.background= element_rect(colour = "black", fill = NA, size = 1),
+    panel.background = element_rect(colour = "black", fill = NA, size = 1),
     plot.background = element_blank(),
-    legend.background = element_rect(fill="transparent")
+    legend.background = element_rect(fill = "transparent")
   )
 }

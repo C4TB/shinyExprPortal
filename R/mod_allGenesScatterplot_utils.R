@@ -25,8 +25,10 @@ encoding_list <- function(x, y, color_field, field_type, tooltip_vars) {
     )
   }
   list(
-    tooltip = lapply(tooltip_vars,
-                     function(x) list(field = x, type = "nominal")),
+    tooltip = lapply(
+      tooltip_vars,
+      function(x) list(field = x, type = "nominal")
+    ),
     x = list(field = x, type = "quantitative"),
     y = list(field = y, type = "quantitative"),
     color = color_list
@@ -42,57 +44,73 @@ vega_scatterplot_overlay <-
            tooltip_vars,
            title = NULL,
            width = 800) {
-    
-  side <- width/2
-  chart <- list(
-    `$schema` = "https://vega.github.io/schema/vega-lite/v5.json",
-    params = list(
-      list(name = "cluster_sel",
-           select = list(type = "point",
-                         fields = list(color_var),
-                         on = "click",
-                         clear = "dblclick",
-                         toggle = FALSE),
-           bind = "legend"),
-      { if (is.null(title)) list(name = "second_title",
-           value = "Mean expression") }
-    ),
-    data = {if (!is.null(data)) list(values = data) else list(name = "values")},
-    hconcat = list(
-      list(
-        title = "Projected data with cluster membership",
-        width = side,
-        height = side,
-        mark = list(type = "point", filled = TRUE, opacity = 0.75),
-        encoding = encoding_list(x, y, color_var, "nominal", tooltip_vars)
+    side <- width / 2
+
+    data_value <-
+      if (!is.null(data)) list(values = data) else list(name = "values")
+
+    chart <- list(
+      `$schema` = "https://vega.github.io/schema/vega-lite/v5.json",
+      params = list(
+        list(
+          name = "cluster_sel",
+          select = list(
+            type = "point",
+            fields = list(color_var),
+            on = "click",
+            clear = "dblclick",
+            toggle = FALSE
+          ),
+          bind = "legend"
+        ),
+        if (is.null(title)) {
+          list(
+            name = "second_title",
+            value = "Mean expression"
+          )
+        }
       ),
-      list(
-        title = title %||% list(text = list(signal = "second_title")),
-        width = side,
-        height = side,
-        mark = list(type = "point", filled = TRUE),
-        encoding = encoding_list(x, y, overlay_var, "quantitative", tooltip_vars)
+      data = data_value,
+      hconcat = list(
+        list(
+          title = "Projected data with cluster membership",
+          width = side,
+          height = side,
+          mark = list(type = "point", filled = TRUE, opacity = 0.75),
+          encoding = encoding_list(x, y, color_var, "nominal", tooltip_vars)
+        ),
+        list(
+          title = title %||% list(text = list(signal = "second_title")),
+          width = side,
+          height = side,
+          mark = list(type = "point", filled = TRUE),
+          encoding =
+            encoding_list(x, y, overlay_var, "quantitative", tooltip_vars)
+        )
       )
     )
-  )
-  vegawidget::as_vegaspec(chart)
-}
+    vegawidget::as_vegaspec(chart)
+  }
 
-custom_vw_shiny_get_signal <- function (outputId, name, body_value = "value", id = NULL) 
-{
-  session <- shiny::getDefaultReactiveDomain()
-  ns <- shiny::NS(id)
-  inputId <- glue::glue("{outputId}_signal_{name}")
-  shiny::observe({
-    shiny::isolate({
-      handler_body <- vegawidget:::vw_handler_signal(body_value) %>% 
-        vegawidget:::vw_handler_add_effect("shiny_input", inputId = ns(inputId)) %>% 
-        vegawidget:::vw_handler_body_compose(n_indent = 0L)
-      vegawidget:::vw_shiny_msg_addSignalListener(ns(outputId), name = name, 
-                                     handlerBody = handler_body)
+custom_vw_shiny_get_signal <-
+  function(outputId, name, body_value = "value", id = NULL) {
+    session <- shiny::getDefaultReactiveDomain()
+    ns <- shiny::NS(id)
+    inputId <- glue::glue("{outputId}_signal_{name}")
+    shiny::observe({
+      shiny::isolate({
+        handler_body <- vegawidget:::vw_handler_signal(body_value) %>%
+          vegawidget:::vw_handler_add_effect("shiny_input",
+            inputId = ns(inputId)
+          ) %>%
+          vegawidget:::vw_handler_body_compose(n_indent = 0L)
+        vegawidget:::vw_shiny_msg_addSignalListener(ns(outputId),
+          name = name,
+          handlerBody = handler_body
+        )
+      })
     })
-  })
-  shiny::reactive({
-    session$input[[inputId]]
-  })
-}
+    shiny::reactive({
+      session$input[[inputId]]
+    })
+  }

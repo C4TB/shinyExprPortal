@@ -12,8 +12,7 @@ replaceFalseWithNA <- function(x, fun) {
     for (col in names(x)) {
       x[!do.call(fun, list(x[[col]])), col] <- NA
     }
-  }
-  else {
+  } else {
     x[!do.call(fun, list(x))] <- NA
   }
   x
@@ -34,9 +33,8 @@ valuesInsideTukeyFences <- function(x, onesided = FALSE) {
   lower_fence <- qt[1] - 1.5 * iqr
   if (onesided) {
     x <= upper_fence & !is.na(x)
-  }
-  else {
-    x >= lower_fence & x <= upper_fence  & !is.na(x)
+  } else {
+    x >= lower_fence & x <= upper_fence & !is.na(x)
   }
 }
 

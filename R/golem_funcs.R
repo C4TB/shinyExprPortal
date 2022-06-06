@@ -42,7 +42,7 @@ bundle_resources <-
           as.character(tags$title(app_title)),
           as.character(
             includeScript(system.file("utils/golem-js.js", package = "golem"))
-            ),
+          ),
           head
         ),
         attachment = attachment,
@@ -63,9 +63,9 @@ bundle_resources <-
     }
   }
 
-favicon <- function (ico = "favicon", rel = "shortcut icon", resources_path = "www", 
-                    ext = "ico") 
-{
+favicon <-
+  function(ico = "favicon", rel = "shortcut icon", resources_path = "www",
+           ext = "ico") {
   ico <- file.path(resources_path, paste(ico, ext, sep = "."))
   tags$head(tags$link(rel = rel, href = ico))
 }

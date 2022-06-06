@@ -1,8 +1,10 @@
 # module UI Function
 mod_degSummary_ui <- function(module_name, config, module_config) {
-  degSummary_tab(module_config$title,
-                 module_config$description,
-                 module_name)
+  degSummary_tab(
+    module_config$title,
+    module_config$description,
+    module_name
+  )
 }
 
 degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
@@ -17,57 +19,64 @@ degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
 
 mod_degSummary_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
-    
     if ("models" %in% names(config$data)) {
       models <- config$data$models
     } else {
       models <- module_config$models
     }
-    partition <-  module_config$partition_variable
+    partition <- module_config$partition_variable
     partition_values <- unique(models[[partition]])
-    
+
     output$summary_table <- renderText({
 
       # Prepare table headers
       # Spec defines how many columns are shared across partition values
-      header_spec <- stats::setNames(rep(2, length(partition_values)),
-                              partition_values)
+      header_spec <- stats::setNames(
+        rep(2, length(partition_values)),
+        partition_values
+      )
       # Cols is required because we need to sort after pivoting
       header_cols <- sort(as.vector(outer(partition_values,
-                           c("P", "P_adj"), paste, sep = "#")))
+        c("P", "P_adj"), paste,
+        sep = "#"
+      )))
       # Get only the columns that define models (e.g. Response, Tissue, Time)
       model_cols <- colnames(models[, !colnames(models) %in%
-                        c("P", "P_adj", "File", "Data", partition)])
+        c("P", "P_adj", "File", "Data", partition)])
       # We don't need the actual data or file names here
-      models_only <- models %>% 
+      models_only <- models %>%
         dplyr::select(-.data[["Data"]], -.data[["File"]])
-      
+
       # By default pivot_wider will order by the values_from
       # We use relocate to rearrange only the pivoted columns
-      model_wide <- 
+      model_wide <-
         models_only %>%
-          pivot_wider(names_from = all_of(partition),
-                      values_from = c("P", "P_adj"),
-                      names_glue = paste0("{", partition, "}#{.value}")) %>%
-          relocate(any_of(header_cols), .after = last_col())
+        pivot_wider(
+          names_from = all_of(partition),
+          values_from = c("P", "P_adj"),
+          names_glue = paste0("{", partition, "}#{.value}")
+        ) %>%
+        relocate(any_of(header_cols), .after = last_col())
 
-      model_wide %>% 
+      model_wide %>%
         knitr::kable(
           align = "r",
-          format ="html",
+          format = "html",
           escape = "F",
-          col.names = c(model_cols, gsub(".*#(.*)", "\\1", header_cols))) %>%
+          col.names = c(model_cols, gsub(".*#(.*)", "\\1", header_cols))
+        ) %>%
         kableExtra::kable_styling(
           full_width = F,
           position = "left",
-          font_size = 12) %>%
+          font_size = 12
+        ) %>%
         kableExtra::collapse_rows(
           valign = "top",
-          columns = seq_along(model_cols[-length(model_cols)])) %>%
+          columns = seq_along(model_cols[-length(model_cols)])
+        ) %>%
         kableExtra::add_header_above(
-          header = c(" " = length(model_cols), header_spec))
-
+          header = c(" " = length(model_cols), header_spec)
+        )
     })
-    
   })
 }
