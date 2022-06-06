@@ -11,8 +11,10 @@ plotNetwork <- function(edgelist, nodes_table, node_name = NULL) {
   if (not_null(node_name)) {
     net <- net %>%
       visNetwork::visOptions(
-        nodesIdSelection = list(selected = node_name,
-                                main = "Select node to highlight:"),
+        nodesIdSelection = list(
+          selected = node_name,
+          main = "Select node to highlight:"
+        ),
         highlightNearest = list(
           enabled = T,
           degree = 1,

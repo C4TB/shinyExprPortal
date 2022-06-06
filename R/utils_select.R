@@ -1,9 +1,9 @@
 # All functions here should return actual values (data frames, vectors)
 
 #' Filter a lookup table based on a list of key-value pairs. Optionally,
-#' if there is a * the lookup table, that row will be returned for that 
+#' if there is a * the lookup table, that row will be returned for that
 #' condition.
-#' 
+#'
 #'
 #' @param lookup a data frame with the keys from `values_list` and `return_col`
 #'  (if supplied)
@@ -25,18 +25,18 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
     }
   }
   for (key in names(values_list)) {
-    lookup <- lookup[lookup[, key] == values_list[key] | 
-                       lookup[, key] == "*", ]
+    lookup <- lookup[lookup[, key] == values_list[key] |
+      lookup[, key] == "*", ]
   }
   if (!is.null(return_col)) {
-    lookup[,return_col]
-  }
-  else {
+    lookup[, return_col]
+  } else {
     lookup
   }
 }
 
-selectMatchingMultipleValues <- function(lookup, values_list, return_col = NULL) {
+selectMatchingMultipleValues <-
+  function(lookup, values_list, return_col = NULL) {
   if (!is.data.frame(lookup)) {
     lookup <- as.data.frame(lookup)
   }
@@ -52,18 +52,16 @@ selectMatchingMultipleValues <- function(lookup, values_list, return_col = NULL)
   # Create a list of conditional expressions
   cond <- vapply(seq_along(values_list), function(x) {
     key <- names(values_list)[[x]]
-    value <- paste0('"',values_list[[x]],'"')
+    value <- paste0('"', values_list[[x]], '"')
     op <- " == "
-    paste0("(", paste(key, value, sep = op,collapse = " | "), ")")
-    
+    paste0("(", paste(key, value, sep = op, collapse = " | "), ")")
   }, character(1))
   # Parse list of expression and apply filter
   parsed_cond <- parse(text = paste(cond, collapse = " & "))
   subset <- lookup %>% dplyr::filter(eval(parsed_cond))
   if (!is.null(return_col)) {
-    subset[,return_col]
-  }
-  else {
+    subset[, return_col]
+  } else {
     subset
   }
 }
@@ -71,12 +69,12 @@ selectMatchingMultipleValues <- function(lookup, values_list, return_col = NULL)
 #' Extract a vector matching a lookup vector
 #'
 #' This functions matches the rows of an input data frame with the rows of
-#' a lookup data frame based on a shared column and returns a vector from 
+#' a lookup data frame based on a shared column and returns a vector from
 #' the input data frame.
 #'
 #' @param input_df a data frame containing `matching_col` and `return_col`
 #' @param lookup_df a lookup data frame to find `matching_col`
-#' @param matching_col a character or factor column that exists in both data 
+#' @param matching_col a character or factor column that exists in both data
 #'  frames
 #' @param return_col a column to return from `input_df`
 #'
@@ -90,10 +88,11 @@ selectFromLookup <- function(input_df, lookup_df, matching_col,
   if (!matching_col %in% colnames(lookup_df)) {
     stop(paste("Column", matching_col, "does not exist in lookup data frame"))
   }
-  if (!is.null(return_col))
+  if (!is.null(return_col)) {
     if (!return_col %in% colnames(input_df)) {
       stop(paste("Column", return_col, "does not exist in data frame"))
     }
+  }
   return_df <-
     input_df[input_df[[matching_col]] %in% lookup_df[[matching_col]], ]
   if (!is.null(return_col)) {

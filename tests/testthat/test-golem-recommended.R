@@ -2,12 +2,12 @@ context("golem tests")
 
 library(golem)
 
-#skip("no tests for now")
+# skip("no tests for now")
 # test_that("app ui", {
 #   ui <- app_ui()
 #   expect_shinytaglist(ui)
 # })
-# 
+#
 # test_that("app server", {
 #   server <- app_server
 #   expect_is(server, "function")
@@ -15,14 +15,15 @@ library(golem)
 
 # Configure this test to fit your need
 test_that(
-  "app launches",{
+  "app launches",
+  {
     skip_on_cran()
     skip_on_travis()
     skip_on_appveyor()
     x <- processx::process$new(
-      "R", 
+      "R",
       c(
-        "-e", 
+        "-e",
         "pkgload::load_all(here::here());run_app('test.yaml')"
       )
     )
@@ -31,11 +32,3 @@ test_that(
     x$kill()
   }
 )
-
-
-
-
-
-
-
-
