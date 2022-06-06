@@ -129,19 +129,25 @@ correlationResultsToLong <- function(data,
                names_pattern = "(.*_*.*)_(estimate|pvalue|padj)")
 }
 
-corrResultsToTable <- function(df, max_pvalue = 0.05, use_padj = F) {
+corrResultsToTable <- 
+  function(df, max_pvalue = 0.05, use_padj = F, rowname_col = "Gene") {
+  # Get only correlation estimates
   selected_df <- df %>% dplyr::select(ends_with("estimate"))
+  # Remove estimate suffix
   colnames(selected_df) <- gsub("(.*_)*(_estimate)", "\\1", 
                                 colnames(selected_df))
-  rownames(selected_df) <- df$Gene
+  # Assign rowname and convert to matrix
+  rownames(selected_df) <- df[[rowname_col]]
   cormat <- as.matrix(selected_df)
   
   # Get pvalues and match colnames with cormat
   suffix <- if (use_padj) "padj" else "pvalue"
   pval_df <- df %>% dplyr::select(ends_with(suffix))
+  # Remove padj or pvalue suffix
   gsub_expr <- paste0("(.*_)*(_", suffix, "$)")
   colnames(pval_df) <- gsub(gsub_expr, "\\1", colnames(pval_df))
-  rownames(pval_df) <- df$Gene
+  # Assign rowname and convert to matrix
+  rownames(pval_df) <- df[[rowname_col]]
   pmat <- as.matrix(pval_df)
   
   labels <- cormat
@@ -151,7 +157,8 @@ corrResultsToTable <- function(df, max_pvalue = 0.05, use_padj = F) {
   labels[lv] <-
     vapply(labels[lv], function(x) paste0("<b>",x,"</b>"), character(1))
   labels <- as.data.frame(labels)
-  labels <- cbind(Gene = rownames(labels), labels)
+  labels <- cbind(rownames(labels), labels)
+  colnames(labels)[[1]] <- rowname_col
   rownames(labels) <- NULL
   labels
 }
