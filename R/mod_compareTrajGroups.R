@@ -64,6 +64,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
+    timesep <- config$timesep
     
     default_clin_outliers <- config$default_clinical_outliers
     default_expr_outliers <- config$default_expression_outliers
@@ -114,7 +115,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       
       # Return matching selected_variable
       compare_col_id <-
-        grep(paste0("(", input$selected_variable, ")\\_.*"),
+        grep(paste0("(", input$selected_variable, ")\\", timesep ,".*"),
              colnames(selected_clinical))
       compare_col_vars <- 
         colnames(selected_clinical)[compare_col_id]
@@ -124,7 +125,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       subset_long <- pivot_longer(subset_clinical,
                                   -.data[[subject_var]],
                                   names_to = c(".value", trajectory_category),
-                                  names_sep= "_")
+                                  names_sep= timesep)
       combined <- left_join(sel_lookup,
                             subset_long,
                             by = c(subject_var, trajectory_category))

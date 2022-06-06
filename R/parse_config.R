@@ -98,7 +98,9 @@ parseConfig <-
   config$sample_variable <-
     raw_config$sample_variable %||% "Sample_ID"
   config$subject_variable <-
-    raw_config$subject_variable %||% "Subject_ID" 
+    raw_config$subject_variable %||% "Subject_ID"
+  config$timesep <-
+    raw_config$timesep %||% "_"
   
   if (is.null(raw_config$data$sample_lookup)) {
     sample_categories_names <- 
