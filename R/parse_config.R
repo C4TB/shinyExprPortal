@@ -5,17 +5,23 @@
 #' Enables using the same configuration file under different file structures.
 #' @param test_module A module_name to parse configuration and ignore all others
 #' @param custom_modules List of custom modules name to load
+#' @param nthreads Optional number of threads for qs and data.table
 #'
 #' @return config named list
 #' @noRd
 parseConfig <- 
-  function(fname, data_folder = "", test_module = NULL, custom_modules = NULL) {
+  function(fname,
+           data_folder = "",
+           test_module = NULL,
+           custom_modules = NULL,
+           nthreads = 1L) {
     
   message(paste("Reading configuration file", fname))
   raw_config <- yaml::read_yaml(fname)
   
   available_modules <- get_golem_config("available_modules")
   config <- list()
+  config$nthreads <- nthreads
   add_resource_path(prefix = "local",
                            directoryPath = file_path(data_folder, "www"))
   config$data_folder <- data_folder
@@ -88,7 +94,7 @@ parseConfig <-
                  config$max_p,
                  config$padj_col)
     } else {
-      readFile(raw_config$data[[file_type]], file_type, data_folder)  
+      readFile(raw_config$data[[file_type]], file_type, data_folder, nthreads)  
     }
   })
   names(loaded_data) <- names(raw_config$data)
@@ -329,8 +335,11 @@ readFile <- function(filename, filetype = "", data_folder = "", nthreads = 1L) {
 #' containing data frames
 #'
 #' @noRd
-loadModels <- 
-  function(models_file, data_folder = "", max_p = 0.05, padj_col = "q.value") {
+loadModels <- function(models_file,
+                       data_folder = "",
+                       max_p = 0.05,
+                       padj_col = "q.value",
+                       nthreads = nthreads) {
   fext <- file_ext(models_file)
   if (fext == "rds") {
     models_table <- readRDS(file_path(data_folder, models_file))
@@ -358,7 +367,10 @@ loadModels <-
     }
     fext <- file_ext(file_name)
     delim <- ifelse(fext == "csv", ",", "\t")
-    model <- data.table::fread(file_name, sep = delim, data.table = F)
+    model <- data.table::fread(file_name,
+                               sep = delim,
+                               data.table = F,
+                               nThread = nthreads)
   })
   
   models_table$P <- sapply(models_table$Data,

@@ -28,6 +28,7 @@ run_app <- function(
   config_file,
   data_folder = "",
   custom_modules = NULL,
+  nthreads = 1L,
   ...
 ) {
     app <- shinyApp(
@@ -38,7 +39,9 @@ run_app <- function(
     app$appOptions$loaded_opts <-
       list(config = parseConfig(config_file,
                                 data_folder,
-                                custom_modules = custom_modules),
+                                custom_modules = custom_modules,
+                                nthreads = nthreads),
+           nthreads = nthreads,
            ...)
     
     app

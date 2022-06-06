@@ -4,7 +4,13 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(config_file, data_folder = "", custom_modules = NULL, ...)
+run_app(
+  config_file,
+  data_folder = "",
+  custom_modules = NULL,
+  nthreads = 1L,
+  ...
+)
 }
 \arguments{
 \item{config_file}{The name of the yaml configuration file}
