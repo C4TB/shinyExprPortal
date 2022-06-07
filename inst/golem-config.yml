@@ -15,7 +15,7 @@ default:
   - multiVariableCorr
   - compareTrajGroups
   - networkViewer
-  - allGenesScatterplot
+  - geneProjectionOverlay
   degModules:
   - degSummary
   - degDetails

@@ -1,7 +1,7 @@
 multiVariableCorr_config <- function(config, data_folder = "") {
   message("Checking multiVariableCorr configuration")
 
-  required_packages <- c("RColorBrewer", "plotly", "DT")
+  required_packages <- c("DT")
   stopIfNotInstalled(required_packages, "degDetails")
 
   if (!is.null(config$advanced)) {

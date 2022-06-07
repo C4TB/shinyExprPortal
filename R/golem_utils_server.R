@@ -143,10 +143,10 @@ stopIfNotInstalled <- function(packages, mod_name) {
   }
 }
 
-stop_nice <- function(msg) {
+stop_nice <- function(...) {
   opt <- options(error = NULL)
   on.exit(options(opt))
-  stop(msg, call. = FALSE)
+  stop(..., call. = FALSE)
 }
 
 theme_bg <- function() {

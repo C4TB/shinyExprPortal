@@ -1,8 +1,8 @@
-mod_allGenesScatterplot_ui <- function(module_name, config, module_config) {
+mod_geneProjectionOverlay_ui <- function(module_name, config, module_config) {
   coordinates_data <- module_config$coordinates_data
   fill <- module_config$label_column
 
-  allGenesScatterplot_tab(
+  geneProjectionOverlay_tab(
     as.factor(sort(unique(coordinates_data[[fill]]))),
     sample_select = sampleCategoryInputs(config$sample_categories, module_name),
     module_config$annotation_variables,
@@ -12,7 +12,7 @@ mod_allGenesScatterplot_ui <- function(module_name, config, module_config) {
   )
 }
 
-allGenesScatterplot_tab <- function(list_of_clusters,
+geneProjectionOverlay_tab <- function(list_of_clusters,
                                     sample_select,
                                     annotation_variables = NULL,
                                     title = NULL,
@@ -20,11 +20,11 @@ allGenesScatterplot_tab <- function(list_of_clusters,
                                     id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = title %||% "2D Plot",
-    value = "allGenesScatterplot",
+    title = title %||% "2D Overlay",
+    value = "geneProjectionOverlay",
     tags$h5(description %||%
       "Select a subset of samples for fold change overlay.
-            Click on a point or cluster in legend to view heatmap;
+            Click on a point or cluster in legend to highlight;
             click in empty space to reset."),
     splitLayout(
       verticalLayout(
@@ -57,9 +57,9 @@ allGenesScatterplot_tab <- function(list_of_clusters,
         conditionalPanel(
           condition = "output.show_heatmap == true",
           ns = ns,
-          verticalLayout(
+          fluidRow(
             actionButton(ns("show_genes"), label = "View genes in cluster"),
-            uiOutput(ns("heatmap_ui"))
+            actionButton(ns("show_heatmap"), label = "View expression heatmap")
           )
         )
       ),
@@ -70,7 +70,7 @@ allGenesScatterplot_tab <- function(list_of_clusters,
 }
 
 #' @import vegawidget
-mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
+mod_geneProjectionOverlay_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
@@ -86,6 +86,7 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     annotation_colors <- module_config$annotation_colours %||% NULL
     annotation_range <- module_config$annotation_range %||% NULL
     coordinates_data <- module_config$coordinates_data
+    cluster_colors <- module_config$cluster_colors %||% NULL
     fill <- module_config$label_column
     coordinates_data[[fill]] <- as.numeric(coordinates_data[[fill]])
     cols_df <- colnames(coordinates_data)
@@ -137,7 +138,9 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
         y = y,
         color_var = fill,
         overlay_var = "Fold_Change",
-        tooltip_vars = c(name_col, fill)
+        tooltip_vars = c(name_col, fill),
+        cluster_colors = cluster_colors,
+        sort(unique(coordinates_data[[fill]]))
       )
     })
 
@@ -201,10 +204,17 @@ mod_allGenesScatterplot_server <- function(module_name, config, module_config) {
     heatmap_height <- function(n) {
       if (n > 200) 50 + (5 * n) else 50 + (10 * n)
     }
-
-    output$heatmap_ui <- renderUI({
-      iheatmaprOutput(ns("cluster_heatmap"),
-        height = heatmap_height(length(subset_genes()))
+  
+    # Modal dialog to show heatmap
+    observeEvent(input$show_heatmap, {
+      showModal(
+        modalDialog(
+          title = "Expression for genes in cluster",
+          easyClose = TRUE,
+          iheatmaprOutput(ns("cluster_heatmap"),
+                          height = heatmap_height(length(subset_genes()))
+          )
+        )
       )
     })
 

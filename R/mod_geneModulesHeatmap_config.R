@@ -6,7 +6,7 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
 
   if (!is.null(config$modules_table)) {
     message("Loading file: modules_table")
-    config$modules_table <- readFile(config$modules_table, "table", data_folder)
+    config$modules_table <- read_file(config$modules_table, "table", data_folder)
   } else {
     stop_nice(paste(
       "geneModulesHeatmap:",

@@ -108,7 +108,7 @@ parseConfig <-
           config$padj_col
         )
       } else {
-        readFile(raw_config$data[[file_type]], file_type, data_folder, nthreads)
+        read_file(raw_config$data[[file_type]], file_type, data_folder, nthreads)
       }
     })
     names(loaded_data) <- names(raw_config$data)
@@ -236,11 +236,16 @@ validateData <-
     clinical <- datafiles[["clinical"]]
     sample_lookup <- datafiles[["sample_lookup"]]
 
-    clinical_subjects <- clinical[, subject_variable]
-    lookup_subjects <- unique(sample_lookup[, subject_variable])
-    lookup_samples <- sample_lookup[, sample_variable]
+    clinical_subjects <- clinical[[subject_variable]]
+    lookup_subjects <- unique(sample_lookup[[subject_variable]])
+    lookup_samples <- sample_lookup[[sample_variable]]
     expression_samples <- colnames(expression_matrix)
 
+    if (mode(clinical[[subject_variable]]) !=
+        mode(sample_lookup[[subject_variable]]))
+      stop_nice("Subject column types in clinical and lookup",
+        " table are different")
+    
     error <- FALSE
     if (!isTRUE(all.equal(sort(clinical_subjects), sort(lookup_subjects)))) {
       message("ERROR: Subjects in clinical and lookup tables do not match.")
@@ -280,7 +285,7 @@ validateData <-
     }
   }
 
-#' User-friendly readfile
+#' User-friendly read_file
 #'
 #' @param filename filename
 #' @param filetype "expression_matrix" for matrix type
@@ -288,7 +293,7 @@ validateData <-
 #'
 #' @return parsed file
 #' @noRd
-readFile <- function(filename, filetype = "", data_folder = "", nthreads = 1L) {
+read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) {
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename)
   if (!file.exists(filename)) {
@@ -378,7 +383,7 @@ loadModels <- function(models_file,
                        data_folder = "",
                        max_p = 0.05,
                        padj_col = "q.value",
-                       nthreads = nthreads) {
+                       nthreads = 1L) {
   fext <- file_ext(models_file)
   if (fext == "rds") {
     models_table <- readRDS(file_path(data_folder, models_file))
@@ -386,7 +391,7 @@ loadModels <- function(models_file,
     delim <- ifelse(fext == "csv", ",", "\t")
     models_table <- data.table::fread(file_path(data_folder, models_file),
       sep = delim,
-      data.table = F
+      data.table = FALSE
     )
   }
   if (ncol(models_table) < 2) {
@@ -412,7 +417,7 @@ loadModels <- function(models_file,
     delim <- ifelse(fext == "csv", ",", "\t")
     model <- data.table::fread(file_name,
       sep = delim,
-      data.table = F,
+      data.table = FALSE,
       nThread = nthreads
     )
   })
