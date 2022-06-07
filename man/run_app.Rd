@@ -16,9 +16,11 @@ run_app(
 \item{config_file}{The name of the yaml configuration file}
 
 \item{data_folder}{Optional directory prefix for data files.
-Enables using the same configuration file for different versions of data files.}
+Enables using the same configuration file for different versions of data
+files.}
 
-\item{custom_modules}{Optional list of available custom modules. See the 'Details' section.}
+\item{custom_modules}{Optional list of available custom modules. See the
+'Details' section.}
 
 \item{...}{Further optional arguments.}
 }

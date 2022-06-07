@@ -13,7 +13,7 @@ mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
 #' Whole data correlation tab UI
 #'
 #' @param sample_select radio inputs for sample classes
-#' @param clinical_variables
+#' @param clinical_variables subsets of clinical variables for heatmap
 #' @param advanced advanced options
 #' @param title optional module title
 #' @param description optional module description

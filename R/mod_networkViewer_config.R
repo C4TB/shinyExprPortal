@@ -13,7 +13,7 @@ networkViewer_config <- function(config, data_folder = "") {
   }
 
   file_type <- config$network_file_type %||% "edge_list"
-  read_nf <- function(x) readFile(x$file, file_type, data_folder)
+  read_nf <- function(x) read_file(x$file, file_type, data_folder)
   network_dfs <- lapply(config$network_files, read_nf)
   sep <- config$name_separator %||% "_"
 

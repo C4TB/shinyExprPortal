@@ -7,9 +7,11 @@
 create_example(path = NULL, full = FALSE)
 }
 \arguments{
-\item{path}{(optional) a directory where to create the files, otherwise uses the output of getwd()}
+\item{path}{(optional) a directory where to create the files, otherwise uses
+the output of getwd()}
 
-\item{full}{(optional) TRUE or FALSE (default); if TRUE, creates models and modules example files}
+\item{full}{(optional) TRUE or FALSE (default); if TRUE, creates models and
+modules example files}
 }
 \description{
 Create example files
