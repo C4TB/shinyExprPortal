@@ -47,7 +47,7 @@ compareTrajGroups_tab <-
         ),
         verticalLayout(
           # OUTPUTS
-          vegawidgetOutput(ns("trajplot"))
+          vegawidget::vegawidgetOutput(ns("trajplot"))
         ),
         cellWidths = c("20%", "80%"),
         cellArgs = list(style = "white-space: normal;")
@@ -104,7 +104,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       )
     })
 
-    output$trajplot <- renderVegawidget({
+    output$trajplot <- vegawidget::renderVegawidget({
       req(input$selected_gene)
 
       sel_lookup <- selected_lookup()

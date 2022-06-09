@@ -144,12 +144,12 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       selected_expression <-
         replaceFalseWithNA(
           na.omit(selected_expression),
-          outlier_functions[[expression_outliers]]
+          outlier_functions(expression_outliers)
         )
       selected_clinical <-
         replaceFalseWithNA(
           selected_clinical,
-          outlier_functions[[clinical_outliers]]
+          outlier_functions(clinical_outliers)
         )
 
       # Use the transposed expression to multiple columns vs vector

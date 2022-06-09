@@ -130,7 +130,7 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
       all_vars <- union(profile_variable_list, c(profile_colour))
       selected_clinical <- clinical[, all_vars]
 
-      for (i in seq_len(selected_clinical)) {
+      for (i in seq_len(ncol(selected_clinical))) {
         selected_clinical[[i]][is.na(selected_clinical[[i]])] <- 0
       }
 

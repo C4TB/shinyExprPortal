@@ -89,7 +89,11 @@ multiVariableCorr_tab <-
           conditionalPanel(
             "input[\'heatmap_variables\'] != ''",
             ns = ns,
-            vegawidgetOutput(ns("heatmap"), width = 800, height = 800),
+            vegawidget::vegawidgetOutput(
+              ns("heatmap"),
+              width = 800,
+              height = 800
+            ),
             hr(),
             DTOutput(ns("table")),
             downloadButton(
@@ -125,12 +129,6 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
 
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
-
-    outlier_functions <- c(
-      "5/95 percentiles" = valuesInsideQuantileRange,
-      "IQR" = valuesInsideTukeyFences,
-      "No" = function(x) TRUE
-    )
 
     user_selection <- reactive({
       getSelectedSampleCategories(sample_categories, input)
@@ -187,13 +185,13 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       subset_clinical <-
         replaceFalseWithNA(
           subset_clinical,
-          outlier_functions[[clinical_outliers]]
+          outlier_functions(clinical_outliers)
         )
       # Apply outlier functions to expression
       selected_expression <-
         replaceFalseWithNA(
           t(selected_expression),
-          outlier_functions[[expression_outliers]]
+          outlier_functions(expression_outliers)
         )
 
       corr_df <- correlateMatrices(selected_expression,
@@ -218,7 +216,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       selected_lookup()
     )
 
-    output$heatmap <- renderVegawidget({
+    output$heatmap <- vegawidget::renderVegawidget({
       hm <- heatmap_data()[1:50, ] %>%
         correlationResultsToLong("Gene", "Clinical")
       vega_heatmap(
@@ -230,7 +228,6 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
         input$min_corr,
         input$use_padj
       ) %>%
-        as_vegaspec() %>%
         vw_autosize(800, 800)
     })
 
