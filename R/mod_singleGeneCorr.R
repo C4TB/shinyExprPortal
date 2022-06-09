@@ -200,13 +200,13 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       selected_clinical <-
         replaceFalseWithNA(
           subset_clinical[, clin_vars],
-          outlier_functions[[clinical_outliers]]
+          outlier_functions(clinical_outliers)
         )
 
       selected_expression <-
         replaceFalseWithNA(
           t(na.omit(selected_expression)),
-          outlier_functions[[expression_outliers]]
+          outlier_functions(expression_outliers)
         )
 
       corr_df <- longCorrelationMatrix(
@@ -275,13 +275,13 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       subset_clinical[, clin_vars] <-
         replaceFalseWithNA(
           subset_clinical[, clin_vars],
-          outlier_functions[[clinical_outliers]]
+          outlier_functions(clinical_outliers)
         )
 
       selected_expression <-
         replaceFalseWithNA(
           t(na.omit(selected_expression)),
-          outlier_functions[[expression_outliers]]
+          outlier_functions(expression_outliers)
         )
 
       corr_df <- correlation_df()
@@ -371,7 +371,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               )
             }), collapse = ","), "}")
 
-          output[[output_name]] <- renderVegawidget({
+          output[[output_name]] <- vegawidget::renderVegawidget({
             scatterplot <- vega_layer_scatterplot(
               combined_df,
               x = "Value",
@@ -388,7 +388,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
             scatterplot %>%
               vega_add_fitline(fit_method) %>%
-              as_vegaspec()
+              vegawidget::as_vegaspec()
           })
         })
       }

@@ -67,7 +67,7 @@ geneModulesHeatmap_tab <- function(categories,
               actionButton(ns("show_genes"), label = "View genes"),
               uiOutput(ns("heatmap_ui")),
               h5("Association of clinical variables with module eigengene"),
-              vegawidgetOutput(ns("scatterplots"))
+              vegawidget::vegawidgetOutput(ns("scatterplots"))
             )
           )
         )
@@ -235,7 +235,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       }
     })
 
-    output$scatterplots <- renderVegawidget({
+    output$scatterplots <- vegawidget::renderVegawidget({
       req(heatmap_data())
 
       isolate({
@@ -300,7 +300,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         opts = list(width = 150, height = 120)
       ) %>%
         vega_add_fitline("linear") %>%
-        as_vegaspec()
+        vegawidget::as_vegaspec()
     })
   })
 }

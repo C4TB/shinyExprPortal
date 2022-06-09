@@ -1,3 +1,11 @@
+outlier_functions <- function(key) {
+  switch(key,
+  "5/95 percentiles" = valuesInsideQuantileRange,
+  "IQR" = valuesInsideTukeyFences,
+  "No" = function(x) TRUE
+  )
+}
+
 #' Replace values with NA conditionally
 #'
 #' This function sweeps across columns, replacing the values of rows

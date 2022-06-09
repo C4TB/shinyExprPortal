@@ -245,7 +245,7 @@ prepareModelResultsTable <-
       table$signif <- 2 * table$pvalue_signif
     }
     # Match significance value with label
-    table$color <-
+    table$signif_label <-
       sprintf(as.character(signif_labels[table$signif + 1]), pvalue_label)
     # Apply log transformation to p and q value
     table

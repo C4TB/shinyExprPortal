@@ -69,7 +69,6 @@ geneProjectionOverlay_tab <- function(list_of_clusters,
   )
 }
 
-#' @import vegawidget
 mod_geneProjectionOverlay_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
@@ -131,7 +130,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     )
 
     # Use data = NULL because we use a signal to set the data
-    output$scatterplot <- renderVegawidget({
+    output$scatterplot <- vegawidget::renderVegawidget({
       vega_scatterplot_overlay(
         data = NULL,
         x = x,

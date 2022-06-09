@@ -71,9 +71,8 @@ degDetails_tab <- function(categories,
       verticalLayout(
         splitLayout(
           style = "font-size: 75%;",
-          plotly::plotlyOutput(ns("results_plot"),
-            width = "700px",
-            height = "500px"
+          vegawidget::vegawidgetOutput(ns("results_plot"),
+            width = "700px"
           ),
           cellWidths = c(700, 200)
         ),
@@ -178,32 +177,30 @@ mod_degDetails_server <- function(module_name, config, module_config) {
         input$pvalue_threshold,
         pcol
       )
-    })
+    }) %>%
+      bindCache(model_results(),
+                input$fc_threshold,
+                input$pvalue_threshold,
+                input$use_padj)
 
-    output$results_plot <- plotly::renderPlotly({
+    output$results_plot <- vegawidget::renderVegawidget({
       table <- vp_table()
-
+      validate(need(
+        "logFC" %in% colnames(table),
+        "Volcano plot can't be displayed for model results"
+      ))
       gene_column <- {
         if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"
       }
       pcol <- if (input$use_padj) padj_col else "P.value"
-      table[[pcol]] <- -log10(table[[pcol]])
-      if ("logFC" %in% colnames(table)) {
-        plotly_volcano_plot(
-          table,
-          input$fc_threshold,
-          -log10(input$pvalue_threshold),
-          pcol,
-          gene_column
-        )
-      } else {
-        plotly_avgexpr_plot(
-          table,
-          -log10(input$pvalue_threshold),
-          pcol,
-          gene_column
-        )
-      }
+      vega_volcanoplot(
+        table,
+        input$fc_threshold,
+        input$pvalue_threshold,
+        pcol,
+        gene_column
+        ) %>%
+        vegawidget::as_vegaspec()
     })
 
     current_URL <- reactive({
@@ -218,8 +215,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
       req(vp_table())
       checkboxGroupInput(ns("deg_table_checkbox"),
         label = "Filter genes:",
-        choices = levels(as.factor(vp_table()[["color"]])),
-        selected = levels(as.factor(vp_table()[["color"]]))
+        choices = levels(as.factor(vp_table()[["signif_label"]])),
+        selected = levels(as.factor(vp_table()[["signif_label"]]))
       )
     })
 
@@ -245,7 +242,8 @@ mod_degDetails_server <- function(module_name, config, module_config) {
             "EnsemblID", "Gene", "GeneSymbol", "Protein",
             "logFC", "AveExpr", "P.value", padj_col
           )
-        model_table[model_table$color %in% input$deg_table_checkbox, ] %>%
+        model_table[model_table$signif_label %in% input$deg_table_checkbox,
+                    ] %>%
           dplyr::select(any_of(view_cols))
       },
       filter = "top",
