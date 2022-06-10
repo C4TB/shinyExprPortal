@@ -15,19 +15,21 @@ networkViewer_config <- function(config, data_folder = "") {
   file_type <- config$network_file_type %||% "edge_list"
   read_nf <- function(x) read_file(x$file, file_type, data_folder)
   network_dfs <- lapply(config$network_files, read_nf)
+  # Custom name separator for node types and names
   sep <- config$name_separator %||% "_"
 
   config$network_names <- lapply(config$network_files, function(x) x$name)
   config$overlap <- TRUE
 
   if (file_type == "edge_list") {
+    # Return a pair of table of nodes and full network for each file loaded
     networks <- lapply(network_dfs, function(network_df) {
       edge_graph <- igraph::graph_from_data_frame(network_df)
       nodes_table <- igraph::as_data_frame(edge_graph, "vertices")
+      # Set node type as group for color 
       nodes_table$group <- sub(paste0(sep, ".*"), "", nodes_table$name)
       nodes_table$symbol <- sub(paste0(".*", sep), "", nodes_table$name)
-      subnetworks <- igraph::decompose(edge_graph)
-      list(nodes_table, subnetworks)
+      list(nodes_table, edge_graph)
     })
     config$nodes_table <- lapply(networks, function(x) x[[1]])
     names(config$nodes_table) <- config$network_names
@@ -35,13 +37,10 @@ networkViewer_config <- function(config, data_folder = "") {
     names(config$network_list) <- config$network_names
     config$overlap <- FALSE
   }
-
-  if (is.null(config$node_types)) {
-    stop_nice(paste(
-      "networkViewer:",
-      "''node_types' list is missing"
-    ))
+  
+  if (not_null(config$colors) & !is.list(config$colors)) {
+    stop_nice("networkViewer: 'colors' must be a list of node types and colors")
   }
-
+  
   config
 }
