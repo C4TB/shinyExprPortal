@@ -1,7 +1,6 @@
 mod_networkViewer_ui <- function(module_name, config, module_config) {
   networkViewer_tab(
     module_config$network_names,
-    module_config$node_types,
     module_config$title,
     module_config$description,
     module_name
@@ -11,7 +10,6 @@ mod_networkViewer_ui <- function(module_name, config, module_config) {
 #' Network viewer tab
 #'
 #' @param network_names names of networks for selection
-#' @param node_types optional node types for filtering
 #' @param title optional module title
 #' @param description optional module description
 #' @param id module id
@@ -20,7 +18,6 @@ mod_networkViewer_ui <- function(module_name, config, module_config) {
 #' @noRd
 #'
 networkViewer_tab <- function(network_names,
-                              node_types,
                               title = NULL,
                               description = NULL,
                               id = NULL) {
@@ -122,8 +119,8 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     network_files <- module_config$network_files
     nodes_table <- module_config$nodes_table
     network_list <- module_config$network_list
-
-    # updateSelectizeInput(session, "node_name", choices = nodes_table$name, selected = "", server = TRUE)
+    custom_palette <- module_config$custom_colors
+    
     observeEvent(input$network1, {
       nodes <- nodes_table[[input$network1]]
       updateSelectizeInput(
@@ -146,30 +143,27 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       req(input$node_name)
       Filter(
         function(x) input$node_name %in% names(igraph::V(x)),
-        selected_network_list()
+        igraph::decompose(selected_network_list())
       )
     })
 
     results_list2 <- reactive({
       req(input$node_name)
-      Filter(
-        function(x) input$node_name %in% names(igraph::V(x)),
-        selected_network_list2()
-      )
+      # Remove vertices that are NOT in the first network
+      igraph::delete_vertices(selected_network_list2(),
+            !names(igraph::V(selected_network_list2())) %in%
+              names(igraph::V(results_list()[[1]])))
     })
 
     # There will only be 1 result if the subnetworks are connected components
     selected_network1 <- reactive({
-      result_number <- 1
-      search_results <- results_list()
-      search_results[[result_number]]
+      results_list()[[1]]
     })
 
     selected_network2 <- reactive({
-      result_number <- 1
       search_results <- results_list2()
-      validate(need(length(search_results) > 0, "Node not found"))
-      search_results[[result_number]]
+      validate(need(igraph::vcount(search_results) > 0, "No nodes found"))
+      search_results
     })
 
     subset_network1 <- reactive({
@@ -256,8 +250,9 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       nt <- nodes_table[[input$network2]]
       nt <- filter(nt, nt$name %in% vnd$nodes[["id"]])
 
-      # Identify the types that are valid for the samples
-      # E.g Cell types prefixes
+      # Identify the node types (prefix) that correspond to valid
+      # samples in the expression matrix
+      # E.g. clinical or micro RNA nodes are not part of the expression matrix
       sample_cat_values <- Filter(
         function(x) x$name == sample_category,
         sample_categories
@@ -327,6 +322,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network1(),
         nodes_table[[input$network1]],
+        colors = custom_palette,
         input$node_name
       )
     })
@@ -335,7 +331,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network2(),
         nodes_table[[input$network2]],
-        input$node_name
+        colors = custom_palette
       )
     })
   })
