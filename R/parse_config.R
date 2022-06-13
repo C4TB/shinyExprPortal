@@ -339,12 +339,14 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
         } else if (filetype == "edge_list") {
           col_names <- c("source", "target", "weight")
           delim <- ifelse(fext == "csv", ",", "\t")
-          data.table::fread(filename,
+          data <- data.table::fread(filename,
             sep = delim,
             data.table = FALSE,
             col.names = col_names,
             nThread = nthreads
           )
+          data$title <- paste(data$weight)
+          data
         } else {
           delim <- ifelse(fext == "csv", ",", "\t")
           data.table::fread(filename,

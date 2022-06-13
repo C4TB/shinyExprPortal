@@ -11,20 +11,21 @@ plotNetwork <- function(edgelist,
   }
   vnd$nodes$font.size <- 14
   net <- visNetwork::visNetwork(vnd$nodes, vnd$edges) %>%
+    visNetwork::visEdges(color = list(color = "gray", opacity = 0.5)) %>%
+    visNetwork::visNodes(shape = "box") %>%
     visNetwork::visIgraphLayout()
-  if (not_null(node_name)) {
-    net <- net %>%
-      visNetwork::visOptions(
-        nodesIdSelection = list(
-          selected = node_name,
-          main = "Select node to highlight:"
-        ),
-        highlightNearest = list(
-          enabled = T,
-          degree = 1,
-          hover = T
-        )
+  
+  net <- net %>%
+    visNetwork::visOptions(
+        nodesIdSelection = if (not_null(node_name)) list(
+        selected = node_name,
+        main = "Select node to highlight:"
+      ) else FALSE,
+      highlightNearest = list(
+        enabled = T,
+        degree = 1,
+        hover = T
       )
-  }
+    )
   net
 }
