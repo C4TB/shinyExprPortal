@@ -113,6 +113,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
+    cores <- config$nthreads
+    
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
@@ -212,9 +214,10 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       corr_df <- longCorrelationMatrix(
         first_col_name = "Gene",
         name_to = "ClinicalVariable",
-        x = selected_expression,
-        y = selected_clinical,
-        method = correlation_method
+        y = selected_expression,
+        x = selected_clinical,
+        method = correlation_method,
+        cores = cores
       )
       # Change to factor
       corr_df[["ClinicalVariable"]] <-

@@ -254,7 +254,7 @@ vega_traj_scatterplot <-
     }
 
     list(
-      `$schema` = vega_schema(),
+      `$schema` = vegawidget::vega_schema(),
       data = list(values = data),
       spec = list(
         layer = list(point_layer),
@@ -307,7 +307,7 @@ vega_heatmap <-
 
     chart <- list(
       width <- "container",
-      `$schema` = vega_schema(),
+      `$schema` = vegawidget::vega_schema(),
       data = list(values = data),
       encoding = list(
         x = list(
@@ -315,8 +315,8 @@ vega_heatmap <-
           type = "nominal",
           title = FALSE,
           axis = list(
-            labelAngle = 0,
-            labelBaseline = "middle",
+            labelAngle = -15,
+            labelAlign = "left",
             labelFontSize = 11,
             labelFontWeight = "bold",
             orient = "top"

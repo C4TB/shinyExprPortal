@@ -43,13 +43,65 @@ compute_pval <- function(x, n) {
   2 * pt(t, dof, lower.tail = FALSE)
 }
 
+#' Parallel computation of correlation of data frame vs matrix
+#' 
+#' Uses mclapply so it won't run in parallel on Windows 
+#'
+#' @param x numeric data frame
+#' @param y matrix
+#' @param method correlation method to use
+#' @param cores number of cores to use with the [parallel::mclapply()] function
+#'
+#' @return numeric matrix
+fast_cor <- function(x,
+                     y,
+                     method = c("pearson", "spearman", "kendall"),
+                     cores = 1) {
+  method <- match.arg(method)
+  
+  spearman_func <- function(vector, matrix) {
+    lv <- !is.na(vector)
+    new_v <- vector[lv]
+    as.vector(stats::cor(Rfast::Rank(new_v),
+                         Rfast::colRanks(matrix[lv,],
+                                         parallel = TRUE)))
+  } 
+  pearson_func <- function(vector, matrix) {
+    lv <- !is.na(vector)
+    new_v <- vector[lv]
+    as.vector(stats::cor(new_v,
+                         matrix[lv,]))
+  } 
+  kendall_func <- function(vector, matrix) {
+    lv <- !is.na(vector)
+    new_v <- vector[lv]
+    as.vector(stats::cor(new_v,
+                         matrix[lv,],
+                         method = "kendall"))
+  }
+  selected_fun <- switch(method,
+                         pearson = pearson_func,
+                         spearman = spearman_func,
+                         kendall = kendall_func)
+  cor_mat <- do.call(cbind, parallel::mclapply(x, 
+                                               FUN = selected_fun,
+                                               matrix = y,
+                                               mc.cores = cores))
+  colnames(cor_mat) <- colnames(x)
+  rownames(cor_mat) <- colnames(y)
+  cor_mat
+}
+
 #' Compute correlations and p-values between matrices
 #'
 #' @param x a matrix or vector
 #' @param y a matrix or vector
 #' @param adjust_method Adjustmend method. If "q.value", calls method
 #' [qvalue::qvalue()]. If not, calls [stats::p.adjust()]. Default is "q.value".
-#' @param ... Additional arguments passed to [stats::cor()].
+#' @param method Correlation method. Can be "pearson", "spearman" or "kendall".
+#' @param rowname_var Optional variable name for first column
+#' @param colname_var Optional column name for result
+#' @param cores Optional number of cores for faster correlation.
 #'
 #' @return a data frame with row names as values, estimate, pvalue and padjust
 #'  columns.
@@ -60,20 +112,22 @@ correlateMatrices <-
   function(x,
            y,
            adjust_method = "q.value",
-           method = "pearson",
+           method = c("pearson", "spearman", "kendall"),
            rowname_var = NULL,
            colname_var = "var",
-           ...) {
+           cores = 1) {
+    method <- match.arg(method)
+    
+    if (is.vector(x)) {
+      x <- as.data.frame(x)
+    }
+    
     if (is.vector(y)) {
       y <- matrix(y, ncol = 1, dimnames = list(NULL, colname_var))
     }
 
     # Compute correlations
-    if (!requireNamespace("WGCNA", quietly = TRUE)) {
-      cor_mat <- cor(x, y, method, use = "pairwise.complete.obs")
-    } else {
-      cor_mat <- WGCNA::cor(x, y, method, use = "pairwise.complete.obs")
-    }
+    cor_mat <- fast_cor(x, y, method, cores)
     colnames(cor_mat) <- paste0(colnames(cor_mat), "_estimate")
 
     # Compute p-values and append to correlation matrix
@@ -112,6 +166,13 @@ correlateMatrices <-
     combined_mat
   }
 
+#' Compute correlation data frame in long format
+#'
+#' @param first_col_name name to set the first column (colnames of matrix)
+#' @param name_to name of column for long format
+#' @param ... arguments to [correlateMatrices()]
+#'
+#' @return long format data frame
 longCorrelationMatrix <- function(first_col_name = "Gene",
                                   name_to = "ClinicalVariable",
                                   ...) {
@@ -126,6 +187,13 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
     )
 }
 
+#' Transform correlation data frame to long format
+#'
+#' @param data correlation data frame from [correlateMatrices()]
+#' @param first_col_name name to set the first column (colnames of matrix)
+#' @param name_to name of column for long format
+#'
+#' @return long format data frame
 correlationResultsToLong <- function(data,
                                      first_col_name = "Gene",
                                      name_to = "ClinicalVariable") {
@@ -136,6 +204,15 @@ correlationResultsToLong <- function(data,
   )
 }
 
+#' Collapse data frame into table with highlights
+#'
+#'
+#' @param df wide correlation data frame
+#' @param max_pvalue p-value filter for highlight
+#' @param use_padj flag for normal or adjusted p-value
+#' @param rowname_col column that contains rownames
+#'
+#' @return data frame with HTML b tags
 corrResultsToTable <-
   function(df, max_pvalue = 0.05, use_padj = F, rowname_col = "Gene") {
     # Get only correlation estimates

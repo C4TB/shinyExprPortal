@@ -80,6 +80,8 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
 
+    cores <- config$nthreads
+    
     adjust_method <- config$adjust_method
 
     default_clin_outliers <- config$default_clinical_outliers
@@ -143,7 +145,7 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       # Apply outlier filters
       selected_expression <-
         replaceFalseWithNA(
-          na.omit(selected_expression),
+          t(selected_expression),
           outlier_functions(expression_outliers)
         )
       selected_clinical <-
@@ -153,10 +155,12 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
         )
 
       # Use the transposed expression to multiple columns vs vector
-      correlation_df <- correlateMatrices(t(selected_expression),
-        selected_clinical,
+      correlation_df <- correlateMatrices(
+        y = selected_expression,
+        x = selected_clinical,
         adjust_method = adjust_method,
-        method = correlation_method
+        method = correlation_method,
+        cores = cores
       )
       names(correlation_df) <- c("Gene", "Estimate", "P", "P_adj")
 
