@@ -121,6 +121,8 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
 
+    cores <- config$nthreads
+    
     adjust_method <- config$adjust_method
 
     default_clin_outliers <- config$default_clinical_outliers
@@ -194,11 +196,12 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
           outlier_functions(expression_outliers)
         )
 
-      corr_df <- correlateMatrices(selected_expression,
-        subset_clinical,
+      corr_df <- correlateMatrices(y= selected_expression,
+        x= subset_clinical,
         adjust_method = adjust_method,
         method = correlation_method,
-        rowname_var = "Gene"
+        rowname_var = "Gene",
+        cores = cores
       )
       rank_suffix <- if (input$use_padj) "padj" else "pvalue"
       pvaluesrank <-
@@ -228,7 +231,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
         input$min_corr,
         input$use_padj
       ) %>%
-        vw_autosize(800, 800)
+        vegawidget::vw_autosize(800, 800)
     })
 
     output$table <- DT::renderDataTable({

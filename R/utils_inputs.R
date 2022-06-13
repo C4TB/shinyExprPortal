@@ -24,7 +24,7 @@ advanced_settings_inputs <- function(config, id = NULL) {
         label = "Correlation method:",
         choices = c(
           "Pearson" = "pearson",
-          "Spearman (slow)" = "spearman",
+          "Spearman" = "spearman",
           "Kendall" = "kendall"
         ),
         selected = "pearson"
