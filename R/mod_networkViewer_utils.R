@@ -1,6 +1,7 @@
 plotNetwork <- function(edgelist,
                         nodes_table,
                         colors = NULL,
+                        font_colors = NULL,
                         node_name = NULL) {
   vnd <- visNetwork::toVisNetworkData(edgelist)
   # Get additional info from nodes_table
@@ -8,6 +9,9 @@ plotNetwork <- function(edgelist,
     merge(vnd$nodes, nodes_table, by.x = "id", by.y = "name")
   if (not_null(colors)) {
     vnd$nodes$color <- colors[vnd$nodes$group]
+  }
+  if (not_null(font_colors)) {
+    vnd$nodes$font.color <- font_colors[vnd$nodes$group]
   }
   vnd$nodes$font.size <- 14
   net <- visNetwork::visNetwork(vnd$nodes, vnd$edges) %>%
