@@ -4,7 +4,7 @@ mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
     sample_select =
       sampleCategoryInputs(config$sample_categories, module_name),
     gene_select = geneSelectInput(NULL, module_name),
-    colours = module_config$colour_variables,
+    colors = module_config$color_variables,
     outputs = module_config$tabs,
     advanced = module_config$advanced,
     title = module_config$title,
@@ -16,7 +16,7 @@ mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
 #'
 #' @param sample_select radio inputs for sample classes
 #' @param gene_select select input with gene symbols
-#' @param colours list of variables for colour selection
+#' @param colors list of variables for color selection
 #' @param outputs configuration of tabs with plots
 #' @param advanced boolean flag to show or hide advanced options
 #'    such as outlier removal
@@ -40,7 +40,7 @@ mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
 singleGeneCorr_tab <-
   function(sample_select,
            gene_select,
-           colours,
+           colors,
            outputs,
            advanced = NULL,
            title = NULL,
@@ -59,14 +59,14 @@ singleGeneCorr_tab <-
             tags$hr(),
             tags$b("Sample selection"),
             sample_select,
-            if (!is.null(colours)) {
+            if (!is.null(colors)) {
               tagList(
                 tags$hr(),
                 tags$b("Plot options"),
                 selectizeInput(
-                  ns("colour_variable"),
-                  label = "Select colour:",
-                  choices = c("None" = "", colours),
+                  ns("color_variable"),
+                  label = "Select color:",
+                  choices = c("None" = "", colors),
                   options = list(allowEmptyOption = TRUE)
                 )
               )
@@ -124,7 +124,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     default_corr_method <- config$default_correlation_method
     default_fit_method <- config$default_fit_method
 
-    colour_palettes <- module_config$colour_palettes
+    custom_point_colors <- module_config$custom_point_colors
 
     # Load genes server side
     updateSelectizeInput(
@@ -234,10 +234,10 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     # and iterate through each tab
     observe({
       req(input$selected_gene)
-      if (isTruthy(input$colour_variable)) {
-        colour_var <- input$colour_variable
+      if (isTruthy(input$color_variable)) {
+        color_var <- input$color_variable
       } else {
-        colour_var <- NULL
+        color_var <- NULL
       }
       selected_gene <- input$selected_gene
       clinical_outliers <-
@@ -302,15 +302,15 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           output_scale <- tab_output$scale
           output_vars <- unique(tab_output$variables)
 
-          # Add colour_var to list of variables to subset
+          # Add color_var to list of variables to subset
           # If NULL nothing is added
           # unique makes it so that it's not repeated
-          subset_vars <- unique(c(output_vars, colour_var))
+          subset_vars <- unique(c(output_vars, color_var))
 
           # Check if an optional palette was provided
-          if (not_null(colour_var)) {
-            if (colour_var %in% names(colour_palettes)) {
-              manual_colors <- colour_palettes[[colour_var]]
+          if (not_null(color_var)) {
+            if (color_var %in% names(custom_point_colors)) {
+              manual_colors <- custom_point_colors[[color_var]]
             } else {
               manual_colors <- NULL
             }
@@ -383,7 +383,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               facet_sort = output_vars,
               label_lookup = corr_lookup,
               scales = output_scale,
-              color_var = colour_var,
+              color_var = color_var,
               custom_colors = manual_colors,
               gene_name = input$selected_gene,
               opts = list(ncolumns = 4)

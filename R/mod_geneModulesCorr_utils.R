@@ -152,12 +152,12 @@ plotModuleProfile <- function(module_profile, expression_col, sample_col,
       plot.title = element_text(
         lineheight = 0.8,
         face = "bold",
-        colour = "black",
+        color = "black",
         size = 15
       ),
       axis.title = element_text(
         face = "bold",
-        colour = "black",
+        color = "black",
         size = 15
       ),
       axis.text = element_blank(),

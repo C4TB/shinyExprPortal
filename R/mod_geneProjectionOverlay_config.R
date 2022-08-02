@@ -14,10 +14,10 @@ geneProjectionOverlay_config <- function(config, data_folder = "") {
     ))
   }
 
-  if (is.null(config$label_column)) {
+  if (is.null(config$group_variable)) {
     stop_nice(paste(
       "geneProjectionOverlay:",
-      "'label_column' is missing"
+      "'group_variable' is missing"
     ))
   }
 
@@ -39,21 +39,24 @@ geneProjectionOverlay_config <- function(config, data_folder = "") {
     ))
   }
 
-  if (!config$label_column %in% colnames(config$coordinates_data)) {
+  if (!config$group_variable %in% colnames(config$coordinates_data)) {
     stop_nice(paste(
       "geneProjectionOverlay",
-      "`label_column` not found in coordinates file"
+      "`group_variable` not found in coordinates file"
     ))
   }
 
   # Unlist because YAML will produce lists instead of named vectors
-  if (!is.null(config$annotation_colours)) {
-    config$annotation_colours <- lapply(config$annotation_colours, unlist)
+  if (!is.null(config$custom_annotation_colors)) {
+    config$custom_annotation_colors <-
+      lapply(config$custom_annotation_colors, unlist)
   }
   
   # Create numeric-based names for cluster colors
-  if (!is.null(config$cluster_colors) & is.null(names(config$cluster_colors))) {
-    names(config$cluster_colors) <- seq_along(config$cluster_colors)
+  if (!is.null(config$custom_group_colors) 
+      & is.null(names(config$custom_group_colors))) {
+    names(config$custom_group_colors) <-
+      seq_along(config$custom_group_colors)
   }
 
   config

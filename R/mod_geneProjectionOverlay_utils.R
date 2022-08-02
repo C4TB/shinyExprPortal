@@ -4,7 +4,7 @@ encoding_list <-
            color_field,
            field_type,
            tooltip_vars,
-           custom_colors = NULL,
+           custom_group_colors = NULL,
            colors_domain = NULL) {
     
   if (field_type == "quantitative") {
@@ -34,7 +34,7 @@ encoding_list <-
     if (!is.null(custom_colors)) {
       color_list$condition$scale <- list(
         domain = colors_domain,
-        range = custom_colors
+        range = custom_group_colors
       )
     }
   }
@@ -56,7 +56,7 @@ vega_scatterplot_overlay <-
            color_var,
            overlay_var,
            tooltip_vars,
-           cluster_colors = NULL,
+           custom_group_colors = NULL,
            colors_domain = NULL,
            title = NULL,
            width = 800) {
@@ -98,8 +98,8 @@ vega_scatterplot_overlay <-
                                    color_field = color_var,
                                    field_type = "nominal",
                                    tooltip_vars = tooltip_vars,
-                                   custom_colors = cluster_colors,
-                                   colors_domain)
+                                   custom_group_colors = custom_group_colors,
+                                   colors_domain = colors_domain)
         ),
         list(
           title = title %||% list(text = list(signal = "second_title")),

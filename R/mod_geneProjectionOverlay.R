@@ -1,9 +1,9 @@
 mod_geneProjectionOverlay_ui <- function(module_name, config, module_config) {
   coordinates_data <- module_config$coordinates_data
-  fill <- module_config$label_column
+  group_variable <- module_config$group_variable
 
   geneProjectionOverlay_tab(
-    as.factor(sort(unique(coordinates_data[[fill]]))),
+    as.factor(sort(unique(coordinates_data[[group_variable]]))),
     sample_select = sampleCategoryInputs(config$sample_categories, module_name),
     module_config$annotation_variables,
     module_config$title,
@@ -12,7 +12,7 @@ mod_geneProjectionOverlay_ui <- function(module_name, config, module_config) {
   )
 }
 
-geneProjectionOverlay_tab <- function(list_of_clusters,
+geneProjectionOverlay_tab <- function(list_of_groups,
                                     sample_select,
                                     annotation_variables = NULL,
                                     title = NULL,
@@ -24,7 +24,7 @@ geneProjectionOverlay_tab <- function(list_of_clusters,
     value = "geneProjectionOverlay",
     tags$h5(description %||%
       "Select a subset of samples for fold change overlay.
-            Click on a point or cluster in legend to highlight;
+            Click on a point or group in legend to highlight;
             click in empty space to reset."),
     splitLayout(
       verticalLayout(
@@ -34,10 +34,10 @@ geneProjectionOverlay_tab <- function(list_of_clusters,
           tags$hr(),
           tags$b("Plot options"),
           checkboxGroupInput(
-            inputId = ns("list_of_clusters"),
-            label = "Select cluster to display:",
-            choices = list_of_clusters,
-            selected = list_of_clusters
+            inputId = ns("list_of_groups"),
+            label = "Select groups to display:",
+            choices = list_of_groups,
+            selected = list_of_groups
           ),
           if (not_null(annotation_variables)) {
             selectizeInput(ns("selected_annotations"),
@@ -82,12 +82,13 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     subject_var <- config$subject_variable
     sample_classes <- config$sample_categories
 
-    annotation_colors <- module_config$annotation_colours %||% NULL
+    custom_annotation_colors <- module_config$custom_annotation_colors %||% NULL
     annotation_range <- module_config$annotation_range %||% NULL
     coordinates_data <- module_config$coordinates_data
-    cluster_colors <- module_config$cluster_colors %||% NULL
-    fill <- module_config$label_column
-    coordinates_data[[fill]] <- as.numeric(coordinates_data[[fill]])
+    custom_group_colors <- module_config$custom_group_colors %||% NULL
+    group_variable <- module_config$group_variable
+    coordinates_data[[group_variable]] <-
+      as.numeric(coordinates_data[[group_variable]])
     cols_df <- colnames(coordinates_data)
     name_col <- cols_df[[1]]
     x <- cols_df[[2]]
@@ -118,7 +119,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       # fc_list[[1]] can be "all_samples" or "subset"
       coordinates_data$mean_type <- fc_list[[1]]
       coordinates_data %>%
-        filter(.data[[fill]] %in% input$list_of_clusters)
+        filter(.data[[group_variable]] %in% input$list_of_groups)
     })
 
     # Using custom function for now until vegawidget is updated
@@ -135,11 +136,11 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
         data = NULL,
         x = x,
         y = y,
-        color_var = fill,
+        color_var = group_variable,
         overlay_var = "Fold_Change",
-        tooltip_vars = c(name_col, fill),
-        cluster_colors = cluster_colors,
-        sort(unique(coordinates_data[[fill]]))
+        tooltip_vars = c(name_col, group_variable),
+        custom_group_colors = custom_group_colors,
+        colors_domain = sort(unique(coordinates_data[[group_variable]]))
       )
     })
 
@@ -170,7 +171,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     output$show_heatmap <-
       eventReactive(getSelectedCluster(), {
           selected_cluster <- getSelectedCluster()
-          selected_cluster <- selected_cluster[[fill]][[1]]
+          selected_cluster <- selected_cluster[[group_variable]][[1]]
           if (!is.null(selected_cluster)) TRUE else FALSE
         },
         ignoreInit = TRUE
@@ -181,8 +182,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     subset_genes <- eventReactive(getSelectedCluster(), {
       df <- scatterplot_data()
       selected_cluster <- getSelectedCluster()
-      selected_cluster <- selected_cluster[[fill]][[1]]
-      df[df[[fill]] == as.numeric(selected_cluster), 1, drop = TRUE]
+      selected_cluster <- selected_cluster[[group_variable]][[1]]
+      df[df[[group_variable]] == as.numeric(selected_cluster), 1, drop = TRUE]
     })
 
     observeEvent(input$show_genes, {
@@ -260,7 +261,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
             hm <- hm %>%
               custom_add_col_annotations(annots,
                 size = 0.025,
-                colors = annotation_colors,
+                colors = custom_annotation_colors,
                 range = annotation_range
               )
           }
