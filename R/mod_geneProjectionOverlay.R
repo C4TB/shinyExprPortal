@@ -58,7 +58,7 @@ geneProjectionOverlay_tab <- function(list_of_groups,
           condition = "output.show_heatmap == true",
           ns = ns,
           fluidRow(
-            actionButton(ns("show_genes"), label = "View genes in cluster"),
+            actionButton(ns("show_genes"), label = "View genes in group"),
             actionButton(ns("show_heatmap"), label = "View expression heatmap")
           )
         )
@@ -123,9 +123,9 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     })
 
     # Using custom function for now until vegawidget is updated
-    getSelectedCluster <- custom_vw_shiny_get_signal(
+    getSelectedGroup <- custom_vw_shiny_get_signal(
       "scatterplot",
-      "cluster_sel",
+      "group_sel",
       "value",
       module_name
     )
@@ -167,30 +167,30 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       plot_title()
     )
 
-    # Outputs after selecting a cluster
+    # Outputs after selecting a group
     output$show_heatmap <-
-      eventReactive(getSelectedCluster(), {
-          selected_cluster <- getSelectedCluster()
-          selected_cluster <- selected_cluster[[group_variable]][[1]]
-          if (!is.null(selected_cluster)) TRUE else FALSE
+      eventReactive(getSelectedGroup(), {
+          selected_group <- getSelectedGroup()
+          selected_group <- selected_group[[group_variable]][[1]]
+          if (!is.null(selected_group)) TRUE else FALSE
         },
         ignoreInit = TRUE
       )
     outputOptions(output, "show_heatmap", suspendWhenHidden = FALSE)
 
     # Modal dialog to show genes
-    subset_genes <- eventReactive(getSelectedCluster(), {
+    subset_genes <- eventReactive(getSelectedGroup(), {
       df <- scatterplot_data()
-      selected_cluster <- getSelectedCluster()
-      selected_cluster <- selected_cluster[[group_variable]][[1]]
-      df[df[[group_variable]] == as.numeric(selected_cluster), 1, drop = TRUE]
+      selected_group <- getSelectedGroup()
+      selected_group <- selected_group[[group_variable]][[1]]
+      df[df[[group_variable]] == as.numeric(selected_group), 1, drop = TRUE]
     })
 
     observeEvent(input$show_genes, {
       list_of_genes <- paste(subset_genes(), collapse = ", ")
       showModal(
         modalDialog(
-          title = "Genes in selected cluster",
+          title = "Genes in selected group",
           easyClose = TRUE,
           span("Click to select all to copy"),
           pre(list_of_genes,
@@ -209,9 +209,9 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     observeEvent(input$show_heatmap, {
       showModal(
         modalDialog(
-          title = "Expression for genes in cluster",
+          title = "Expression for genes in group",
           easyClose = TRUE,
-          iheatmaprOutput(ns("cluster_heatmap"),
+          iheatmaprOutput(ns("group_heatmap"),
                           height = heatmap_height(length(subset_genes()))
           )
         )
@@ -237,7 +237,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       sel_lookup <- selected_lookup()
       list_of_genes <- rev(subset_genes())
       if (length(list_of_genes) > 0) {
-        output$cluster_heatmap <- renderIheatmap({
+        output$group_heatmap <- renderIheatmap({
           subset_mat <-
             expression_matrix[list_of_genes, sel_lookup[[sample_var]]]
           hm <- iheatmap(
@@ -265,8 +265,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
                 range = annotation_range
               )
           }
-          if (length(list_of_genes) < 200) hm <- hm %>% add_row_clustering()
-          hm %>% add_col_clustering()
+          if (length(list_of_genes) < 200) hm <- hm %>% add_row_grouping()
+          hm %>% add_col_grouping()
         })
       }
     })
