@@ -98,7 +98,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     rank_variable <- module_config$rank_variable
     scatterplot_vars <- module_config$scatterplot_variables
     annotation_vars <- module_config$annotation_variables
-    annotation_colors <- module_config$annotation_colours %||% NULL
+    custom_annotation_colors <- module_config$custom_annotation_colors %||% NULL
     annotation_range <- module_config$annotation_range %||% NULL
 
 
@@ -226,7 +226,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
           if (not_null(annots)) {
             hm <- hm %>%
               custom_add_col_annotations(annots,
-                colors = annotation_colors,
+                colors = custom_annotation_colors,
                 range = annotation_range
               )
           }

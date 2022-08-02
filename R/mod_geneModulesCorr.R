@@ -298,7 +298,7 @@ mod_geneModulesCorr_server <- function(module_name, config, module_config) {
             y = "Expression",
             scales = "free_x",
             facet_var = c("Clinical", across_category),
-            colour_variable = across_category,
+            color_variable = across_category,
             ncol = 5
           )
         },

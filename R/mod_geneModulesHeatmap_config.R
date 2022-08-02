@@ -36,8 +36,9 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
   }
 
   # Unlist because YAML will produce lists instead of named vectors
-  if (!is.null(config$annotation_colours)) {
-    config$annotation_colours <- lapply(config$annotation_colours, unlist)
+  if (!is.null(config$custom_annotation_colors)) {
+    config$custom_annotation_colors <-
+      lapply(config$custom_annotation_colors, unlist)
   }
 
   config

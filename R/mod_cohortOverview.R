@@ -8,7 +8,7 @@ mod_cohortOverview_ui <-
         sampleCategoryInputs(config$sample_categories, module_name),
       gene_select = geneSelectInput(NULL, module_name),
       profile_variables = names(module_config$profile_variables),
-      colour_variables = module_config$colour_variables,
+      color_variables = module_config$color_variables,
       title = module_config$title,
       description = module_config$description,
       id = module_name
@@ -19,7 +19,7 @@ mod_cohortOverview_ui <-
 #' @param sample_select radio inputs for sample classes
 #' @param gene_select select input with gene symbols
 #' @param profile_variables list of group variables for trajectory profile
-#' @param colour_variables list of unique variables for trajectory color
+#' @param color_variables list of unique variables for trajectory color
 #' @param title optional title
 #' @param description optional description
 #' @param id optional module ID
@@ -41,7 +41,7 @@ cohortOverview_tab <-
   function(sample_select,
            gene_select,
            profile_variables,
-           colour_variables,
+           color_variables,
            title = NULL,
            description = NULL,
            id = NULL) {
@@ -60,13 +60,13 @@ cohortOverview_tab <-
               choices = profile_variables,
               options = list(dropdownParent = "body")
             ),
-            selectizeInput(ns("profile_colour"),
-              label = "Select variable for trajectory colour:",
-              choices = colour_variables,
+            selectizeInput(ns("profile_color"),
+              label = "Select variable for trajectory color:",
+              choices = color_variables,
               options = list(dropdownParent = "body")
             ),
-            checkboxInput(ns("order_by_colour"),
-              label = "order by colour variable?"
+            checkboxInput(ns("order_by_color"),
+              label = "order by color variable?"
             )
           )
           # wellPanel(
@@ -114,28 +114,28 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
 
     output$cohort_overview <- r2d3::renderD3({
       req(input$profile_variable)
-      req(input$profile_colour)
+      req(input$profile_color)
 
       profile_variable <- input$profile_variable
-      profile_colour <- input$profile_colour
+      profile_color <- input$profile_color
 
       profile_variable_list <-
         module_config$profile_variables[[profile_variable]][["values"]]
 
-      profile_colour_type <-
-        ifelse(is.factor(clinical[[profile_colour]]),
+      profile_color_type <-
+        ifelse(is.factor(clinical[[profile_color]]),
           "character",
-          mode(clinical[[profile_colour]])
+          mode(clinical[[profile_color]])
         )
-      all_vars <- union(profile_variable_list, c(profile_colour))
+      all_vars <- union(profile_variable_list, c(profile_color))
       selected_clinical <- clinical[, all_vars]
 
       for (i in seq_len(ncol(selected_clinical))) {
         selected_clinical[[i]][is.na(selected_clinical[[i]])] <- 0
       }
 
-      profile_order <- ifelse(input$order_by_colour,
-        profile_colour,
+      profile_order <- ifelse(input$order_by_color,
+        profile_color,
         "estimate"
       )
       first_profile_var <- profile_variable_list[1]
@@ -153,8 +153,8 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
         dependencies = app_sys("app/build/d3-legend.js"),
         options = list(
           id = module_name,
-          color = profile_colour,
-          color_type = profile_colour_type,
+          color = profile_color,
+          color_type = profile_color_type,
           columns = profile_variable_list
         )
       )

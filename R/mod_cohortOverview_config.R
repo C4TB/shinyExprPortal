@@ -10,10 +10,10 @@ cohortOverview_config <- function(config, ...) {
       "list of 'profile_variables' is missing"
     ))
   }
-  if (is.null(config$colour_variables)) {
+  if (is.null(config$color_variables)) {
     stop_nice(paste(
       "cohortOverview:",
-      "list of 'colour_variables' is missing"
+      "list of 'color_variables' is missing"
     ))
   }
   config

@@ -29,13 +29,14 @@ compareTrajGroups_config <- function(config, ...) {
     ))
   }
 
-  if (!is.null(config$palette)) {
-    if (length(config$palette) == 1) {
+  if (!is.null(config$custom_traj_palette)) {
+    if (length(config$custom_traj_palette) == 1) {
       stopIfNotInstalled(c("RColorBrewer"), "compareTrajGroups")
-      if (!config$palette %in% rownames(RColorBrewer::brewer.pal.info)) {
+      if (!config$custom_traj_palette
+          %in% rownames(RColorBrewer::brewer.pal.info)) {
         stop_nice(paste(
           "compareTrajGroups:",
-          "palette provided is not a valid RColorBrewer palette"
+          "'custom_traj_palette' provided is not a valid RColorBrewer palette"
         ))
       }
     }

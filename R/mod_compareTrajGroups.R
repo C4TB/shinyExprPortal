@@ -71,7 +71,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
     subset_categories <- module_config$subset_categories
     trajectory_category <- module_config$trajectory_category
     sidebyside_category <- module_config$sidebyside_category
-    traj_palette <- module_config$palette %||% NULL
+    traj_palette <- module_config$custom_traj_palette %||% NULL
 
     # Load genes server side
     updateSelectizeInput(session,

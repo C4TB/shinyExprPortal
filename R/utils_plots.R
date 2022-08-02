@@ -7,7 +7,7 @@
 #' @param gene_name gene name for labels
 #' @param scales scales parameter. 'shared' for same scale in X axes and 'free'
 #' for independent X axes.
-#' @param colour_variable categorical variable for color
+#' @param color_variable categorical variable for color
 #' @param manual_colors custom palette
 #' @param ncol number of columns for facet_wrap
 #' @param nrow number of rows for facet_wrap
@@ -23,14 +23,14 @@ plotClinExpScatterplot <-
            facet_var = NULL,
            gene_name = NULL,
            scales = "free",
-           colour_variable = NULL,
+           color_variable = NULL,
            manual_colors = NULL,
            ncol = NULL,
            nrow = NULL) {
     p <-
       ggplot(na.omit(df), aes(x = .data[[x]], y = .data[[y]])) +
       coord_cartesian(clip = "off") +
-      guides(colour = guide_legend(override.aes = list(size = 5))) +
+      guides(color = guide_legend(override.aes = list(size = 5))) +
       theme_classic() +
       theme(
         axis.title.x = element_blank(),
@@ -43,9 +43,9 @@ plotClinExpScatterplot <-
       ) +
       theme_bg()
 
-    if (!is.null(colour_variable)) {
+    if (!is.null(color_variable)) {
       p <- p +
-        geom_point(aes(fill = .data[[colour_variable]]),
+        geom_point(aes(fill = .data[[color_variable]]),
           color = "black",
           shape = 21,
           size = 2

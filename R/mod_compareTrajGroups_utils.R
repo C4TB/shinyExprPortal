@@ -9,7 +9,7 @@ plotTrajGroups <- function(df,
   ) +
     geom_point(aes(color = .data[[traj_var]]),
       size = 2
-    ) + # pch=21,colour="black",
+    ) + # pch=21,color="black",
     {
       if (!is.null(pal)) {
         if (length(pal) > 1) {
