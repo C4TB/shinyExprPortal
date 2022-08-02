@@ -31,7 +31,7 @@ encoding_list <-
       ),
       value = "#bbbbbb"
     )
-    if (!is.null(custom_colors)) {
+    if (!is.null(custom_group_colors)) {
       color_list$condition$scale <- list(
         domain = colors_domain,
         range = custom_group_colors
@@ -89,7 +89,7 @@ vega_scatterplot_overlay <-
       data = data_value,
       hconcat = list(
         list(
-          title = "Projected data with cluster membership",
+          title = "Projected data with group membership",
           width = side,
           height = side,
           mark = list(type = "point", filled = TRUE, opacity = 0.75),
