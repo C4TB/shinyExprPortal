@@ -1,220 +1,217 @@
-plotly_volcano_plot <- function(table,
-                                fc_threshold,
-                                pvalue_threshold,
-                                pcol = "P.value",
-                                gene_column = "Gene") {
-  to_form <- function(x) stats::as.formula(paste0("~", x))
-
-  signif_labels_colors <-
-    c(
-      "not significant" = "gray",
-      "log FC" = "darkgreen",
-      "p-value" = "blue",
-      "adj. p-value" = "blue",
-      "log FC and p-value" = "red",
-      "log FC and adj. p-value" = "red"
-    )
-
-  if (pcol != "P.value") {
-    ylab_text <- "-log10 p_adj"
-  } else {
-    ylab_text <- "-log10 p"
-  }
-
-  lines <- list(
-    list(
-      type = "line",
-      line = list(width = 1, color = "#AAAAAA", dash = "dash"),
-      x0 = 0, x1 = 1, y0 = pvalue_threshold, y1 = pvalue_threshold,
-      yref = "y", xref = "paper"
+#' Vega-lite volcanoplot
+#'
+#' The table must be enriched with a column called signif_label which is used
+#' to color the points 
+#'
+#' @param data DE table enriched with color column
+#' @param fc_min fold change significance line. Default is 1 (and -1)
+#' @param pvalue_min p-value significance line. Default is 0.05
+#' @param pvalue_col column to use for p-value position. Default is P.value
+#' @param gene_col column to use for gene name
+#' @param colors optional list of custom colors for not significant, logFC,
+#'  p-value and logFC and p-value significant. Defaults are black, green, blue
+#'  and red
+#' @param strokeDash vector with strokeDash configuration. Default is 4,4
+#' @param opacity float value for points opacity. Default is 0.5
+#'
+#' @return a vega spec to be passed to [vegawidget::as_vegaspec()]
+#' @noRd
+vega_volcanoplot <- function(data,
+                             fc_min = 1,
+                             pvalue_min = 0.05,
+                             pvalue_col = "P.value",
+                             gene_col = "Gene",
+                             colors = c("black", "green", "blue", "red"),
+                             strokeDash = c(4, 4),
+                             opacity = 0.5) {
+  
+  data$log10 <- -log10(data[[pvalue_col]])
+  
+  data$displayGene <- ifelse(data$signif == 3, data[[gene_col]], "")
+  
+  logfc_limit <- max(max(abs(data$logFC)) * 1.5, 1.2, fc_min)
+  
+  logfc_line <- data.frame(logFC = c(-fc_min, fc_min))
+  signif_line <- data.frame(log10 = c(-log10(pvalue_min)))
+  
+  
+  signif_labels <- list(
+    "not significant", "log FC",
+    "%s", "log FC and %s"
+  )
+  pvalue_labels <- list(
+    "P.value" = "p-value",
+    "q.value" = "adj. p-value"
+  )
+  pvalue_label <-
+    pvalue_labels[pvalue_col]
+  color_domain <-
+    lapply(signif_labels, sprintf, pvalue_label)
+  
+  chart <- list(
+    `$schema` = vegawidget::vega_schema("vega"),
+    data = list(
+      list(name = "source_0", values = data),
+      list(name = "source_1", values = logfc_line),
+      list(name = "source_2", values = signif_line),
+      list(name = "data_0",
+           source = "source_0",
+           transform = list(
+             list(
+               type = "filter",
+               expr = "isValid(datum[\"logFC\"]) && isFinite(+datum[\"logFC\"]) 
+               && isValid(datum[\"log10\"]) && isFinite(+datum[\"log10\"])"
+             )
+           )),
+      list(name = "data_1",
+           source = "source_1",
+           transform = list(
+             list(
+               type = "filter",
+               expr = "isValid(datum[\"logFC\"]) && isFinite(+datum[\"logFC\"])"
+             )
+           )),
+      list(name = "data_2",
+           source = "source_2",
+           transform = list(
+             list(
+               type = "filter",
+               expr = "isValid(datum[\"log10\"]) && isFinite(+datum[\"log10\"])"
+             )
+           ))
     ),
-    list(
-      type = "line",
-      line = list(width = 1, color = "#AAAAAA", dash = "dash"),
-      y0 = 0, y1 = 1, x0 = fc_threshold, x1 = fc_threshold,
-      xref = "x", yref = "paper"
+    background = NULL,
+    padding = 5,
+    width = 400,
+    height = 400,
+    style = "cell",
+    config = list(
+      axis = list(grid = FALSE)
     ),
-    list(
-      type = "line",
-      line = list(width = 1, color = "#AAAAAA", dash = "dash"),
-      y0 = 0, y1 = 1, x0 = -fc_threshold, x1 = -fc_threshold,
-      xref = "x", yref = "paper"
-    )
-  )
-
-  logfc_max <- max(abs(table[["logFC"]]))
-  xaxis_max <- max(logfc_max, fc_threshold + 0.25)
-
-  ylayout_axis <- list(
-    title = ylab_text, showgrid = FALSE, color = "black",
-    ticklen = 5, showline = TRUE, zeroline = F
-  )
-  xlayout_axis <- list(
-    title = "logFC", showgrid = FALSE, color = "black",
-    ticklen = 5, showline = TRUE, zeroline = F,
-    range = c(-xaxis_max, xaxis_max)
-  )
-
-  label_col <- which(startsWith(colnames(table), "Gene"))[[1]]
-  plotly::plot_ly(table,
-    x = ~logFC, y = to_form(pcol), color = ~color,
-    colors = signif_labels_colors, type = "scattergl", mode = "markers",
-    marker = list(size = 8, opacity = 0.6),
-    text = table[[label_col]], hoverinfo = "text",
-    key = table[[label_col]], source = "volcano_plot"
-  ) %>%
-    plotly::layout(
-      xaxis = xlayout_axis,
-      yaxis = ylayout_axis,
-      shapes = lines,
-      plot_bgcolor = "transparent",
-      paper_bgcolor = "transparent"
-    ) %>%
-    plotly::config(toImageButtonOptions = list(format = "svg"))
-}
-
-gg_volcano_plot <- function(table,
-                            fc_threshold,
-                            pvalue_threshold,
-                            adjusted = "q.value",
-                            gene_column = "Gene") {
-  max_x_data <- max(abs(min(table$logFC)), max(table$logFC))
-  data_fc_lim <- max(max_x_data, fc_threshold)
-  signif_labels_colors <-
-    c(
-      "not significant" = "gray",
-      "log FC" = "darkgreen",
-      "p-value" = "blue",
-      "q-value" = "blue",
-      "log FC and p-value" = "red",
-      "log FC and q-value" = "red"
-    )
-
-  if (adjusted == "q.value") {
-    ylab_text <- "-log10 q"
-  } else {
-    ylab_text <- "-log10 p"
-  }
-  p <-
-    ggplot(
-      table,
-      aes(
-        .data$logFC,
-        .data[[adjusted]],
-        color = .data$color,
+    marks = list(
+      list(
+        name = "points",
+        type = "symbol",
+        style = list("point"),
+        from = list(data = "data_0"),
+        encode = list(
+          update = list(
+            opacity = list(value = opacity),
+            fill = list(scale = "color", field = "signif_label"),
+            tooltip = list(
+              signal = paste0("{\"",gene_col,"\": isValid(datum[\"",gene_col,
+                              "\"]) ? datum[\"",gene_col,"\"] : \"\"+datum[\"",gene_col,
+                              "\"], \"logFC\": isValid(datum[\"logFC\"]) ?
+              datum[\"logFC\"] : \"\"+datum[\"logFC\"], 
+              \"-log10 p\": isValid(datum[\"log10\"]) ? datum[\"log10\"] :
+              \"\"+datum[\"log10\"]}")
+            ),
+            x = list(scale = "x", field = "logFC"),
+            y = list(scale = "y", field = "log10")
+          )
+        )
+      ),
+      list(
+        type = "text",
+        from = list(data = "points"),
+        encode = list(
+          enter = list(
+            text = list(field = "datum.displayGene"),
+            fontSize = list(value = 8)
+          )
+        ),
+        transform = list(
+          list(type = "label",
+               anchor = list("top", "bottom", "right", "left"),
+               offset = list(1),
+               size = list(signal = "[width+60,height]"))
+        )
+      ),
+      list(
+        name = "vrule",
+        type = "rule",
+        style = list("rule"),
+        from = list(data = "data_1"),
+        encode = list(
+          update = list(
+            strokeDash = list(value = strokeDash),
+            stroke = list(value = "black"),
+            x = list(scale = "x", field = "logFC"),
+            y = list(value = 0),
+            y2 = list(field = list(group = "height"))
+          )
+        )
+      ),
+      list(
+        name = "hrule",
+        type = "rule",
+        style = list("rule"),
+        from = list(data = "data_2"),
+        encode = list(
+          update = list(
+            strokeDash = list(value = strokeDash),
+            stroke = list(value = "black"),
+            y = list(scale = "y", field = "log10"),
+            x2 = list(value = 0),
+            x = list(field = list(group = "width"))
+          )
+        )
       )
-    ) +
-    geom_point() +
-    ylab(ylab_text) +
-    xlab("Log fold change") +
-    geom_text(aes(label = .data[[1]]),
-      data = table[table$signif == 3, ],
-      vjust = "top",
-      hjust = "right"
-    ) +
-    scale_y_continuous(limits = c(0, NA)) +
-    xlim(-data_fc_lim, data_fc_lim) +
-    scale_color_manual(values = signif_labels_colors) +
-    geom_vline(xintercept = -fc_threshold) +
-    geom_vline(xintercept = fc_threshold) +
-    geom_hline(yintercept = pvalue_threshold) +
-    theme_classic() +
-    theme(legend.title = element_blank())
-  p
-}
-
-plotly_avgexpr_plot <- function(table,
-                                pvalue_threshold,
-                                pcol = "P.value",
-                                gene_column = "Gene") {
-  to_form <- function(x) stats::as.formula(paste0("~", x))
-  max_x_data <- max(abs(min(table$AveExpr)), max(table$AveExpr))
-  signif_labels_colors <-
-    c(
-      "not significant" = "gray",
-      "log FC" = "darkgreen",
-      "p-value" = "blue",
-      "adj. p-value" = "blue",
-      "log FC and p-value" = "red",
-      "log FC and adj. p-value" = "red"
-    )
-  if (pcol != "P.value") {
-    ylab_text <- "-log10 p_adj"
-  } else {
-    ylab_text <- "-log10 p"
-  }
-  lines <- list(
-    list(
-      type = "line",
-      line = list(width = 1, color = "#AAAAAA", dash = "dash"),
-      x0 = 0, x1 = 1, y0 = pvalue_threshold, y1 = pvalue_threshold,
-      yref = "y", xref = "paper"
+    ),
+    scales = list(
+      list(name = "x",
+           type = "linear",
+           domain = list(-logfc_limit, logfc_limit),
+           range = list(0, list(signal = "width")),
+           nice = TRUE,
+           zero = TRUE),
+      list(name = "y",
+           type = "linear",
+           domain = list(
+             fields = list(
+               list(data = "data_0", "field" = "log10"),
+               list(data = "data_2", "field" = "log10")
+             )
+           ),
+           range = list(list(signal = "height"), 0),
+           nice = TRUE,
+           zero = TRUE),
+      list(name = "color",
+           type = "ordinal",
+           domain = color_domain,
+           range = colors)
+    ),
+    axes = list(
+      list(scale = "x",
+           orient = "bottom",
+           grid = FALSE,
+           title = "logFC",
+           labelFlush = TRUE,
+           labelOverlap = TRUE,
+           tickCount = list(signal = "ceil(width/40)"),
+           zindex = 0),
+      list(scale = "y",
+           orient = "left",
+           grid = FALSE,
+           title = "-log10 p",
+           labelOverlap = TRUE,
+           tickCount = list(signal = "ceil(height/40)"),
+           zindex = 0)
+    ),
+    legends = list(
+      list(title = "Significance",
+           fill = "color",
+           symbolType = "circle",
+           encode = list(
+             symbols = list(
+               update = list(
+                 opacity = list(value = opacity)
+               )
+             )
+           ))
     )
   )
-  ylayout_axis <- list(
-    title = ylab_text, showgrid = FALSE, color = "black",
-    ticklen = 5, showline = TRUE, zeroline = F
-  )
-  xlayout_axis <- list(
-    showgrid = FALSE, color = "black",
-    ticklen = 5, showline = TRUE, zeroline = F,
-    range = c(-max_x_data, max_x_data)
-  )
-  plotly::plot_ly(table,
-    x = ~AveExpr, y = to_form(pcol), color = ~color,
-    colors = signif_labels_colors, type = "scattergl",
-    mode = "markers",
-    marker = list(size = 8, opacity = 0.6),
-    text = table[[1]], hoverinfo = "text",
-    key = table[[1]], source = "avgexpr_plot"
-  ) %>%
-    plotly::layout(
-      xaxis = xlayout_axis,
-      yaxis = ylayout_axis,
-      shapes = lines,
-      plot_bgcolor = "transparent",
-      paper_bgcolor = "transparent"
-    ) %>%
-    plotly::config(toImageButtonOptions = list(format = "svg"))
-}
-
-gg_avgexpr_plot <- function(table,
-                            pvalue_threshold,
-                            adjusted = "q.value",
-                            gene_column = "Gene") {
-  max_x_data <- max(abs(min(table$AveExpr)), max(table$AveExpr))
-  signif_labels_colors <-
-    c(
-      "not significant" = "gray",
-      "log FC" = "darkgreen",
-      "p-value" = "blue",
-      "q-value" = "blue",
-      "log FC and p-value" = "red",
-      "log FC and q-value" = "red"
-    )
-  if (adjusted == "q.value") {
-    ylab_text <- "-log10 P_adj"
-  } else {
-    ylab_text <- "-log10 P"
-  }
-  ggplot(table, aes(
-    y = .data[[adjusted]],
-    x = .data$AveExpr,
-    color = stringr::str_wrap(.data$color, width = 20)
-  )) +
-    geom_point() +
-    geom_text(aes(label = .data[[1]]),
-      data = table[table$signif == 3, ],
-      vjust = "top",
-      hjust = "right"
-    ) +
-    scale_y_continuous(limits = c(0, NA)) +
-    scale_color_manual(values = signif_labels_colors) +
-    ylab(ylab_text) +
-    geom_hline(yintercept = pvalue_threshold) +
-    xlim(-max_x_data, max_x_data) +
-    theme_classic() +
-    theme(legend.title = element_blank())
+  chart
 }
 
 prepareModelResultsTable <-
