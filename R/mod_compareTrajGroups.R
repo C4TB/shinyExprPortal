@@ -156,7 +156,6 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
         x = input$selected_variable,
         facet_var = sidebyside_category,
         color_var = trajectory_category,
-        group_var = subject_var,
         color_palette = traj_palette
       )
       trajplot %>%
