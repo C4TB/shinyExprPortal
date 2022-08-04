@@ -64,19 +64,22 @@ fast_cor <- function(x,
     new_v <- vector[lv]
     as.vector(stats::cor(Rfast::Rank(new_v),
                          Rfast::colRanks(matrix[lv,],
-                                         parallel = TRUE)))
+                                         parallel = TRUE),
+                         use = "pairwise.complete.obs"))
   } 
   pearson_func <- function(vector, matrix) {
     lv <- !is.na(vector)
     new_v <- vector[lv]
     as.vector(stats::cor(new_v,
-                         matrix[lv,]))
+                         matrix[lv,],
+                         use = "pairwise.complete.obs"))
   } 
   kendall_func <- function(vector, matrix) {
     lv <- !is.na(vector)
     new_v <- vector[lv]
     as.vector(stats::cor(new_v,
                          matrix[lv,],
+                         use = "pairwise.complete.obs",
                          method = "kendall"))
   }
   selected_fun <- switch(method,
@@ -141,7 +144,7 @@ correlateMatrices <-
     # Adjust p-values and append to correlation matrix
     # Use apply to through each column
     # P values are adjusted based on number of genes, not number of genes x cols
-    if (not_null(adjust_method)) {
+    if (!is.null(adjust_method)) {
       if (adjust_method == "q.value") {
         padjust_matrix <-
           apply(pvalues_mat, 2, function(x) qvalue::qvalue(x)[["qvalues"]])

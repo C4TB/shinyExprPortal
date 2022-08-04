@@ -70,7 +70,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
 
     subset_categories <- module_config$subset_categories
     trajectory_category <- module_config$trajectory_category
-    sidebyside_category <- module_config$sidebyside_category
+    sidebyside_category <- module_config$sidebyside_category %||% NULL
     traj_palette <- module_config$custom_traj_palette %||% NULL
 
     # Load genes server side
@@ -145,11 +145,11 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
         )
       )
       combined$expression <- selected_expression
-      df <-
-        combined[, c(
-          subject_var, trajectory_category, sidebyside_category,
-          input$selected_variable, "expression"
-        )]
+      traj_vars <- c(
+        subject_var, trajectory_category, sidebyside_category,
+        input$selected_variable, "expression"
+      )
+      df <- combined[, traj_vars]
 
       trajplot <- vega_traj_scatterplot(
         data = df[order(df[[subject_var]], df[[trajectory_category]]), ],

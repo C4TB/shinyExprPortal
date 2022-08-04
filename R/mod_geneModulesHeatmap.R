@@ -87,6 +87,8 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
+    cores <- config$nthreads
+    
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
@@ -260,13 +262,15 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       )
 
       corr_df <- correlateMatrices(
-        x = combined_df[, scatterplot_vars],
-        y = combined_df$Eigengene,
+        x = combined_df[["Eigengene"]],
+        y = combined_df[, scatterplot_vars],
         adjust_method = NULL,
-        rowname_var = "ClinicalVariable"
+        rowname_var = "ClinicalVariable",
+        cores = cores
       )
+      
       # Reassign clinical variable names to preserver order from configuration
-      corr_df[["ClinicalVariable"]] <- factor(corr_df[["ClinicalVariable"]],
+      corr_df$ClinicalVariable <- factor(corr_df$ClinicalVariable,
         levels = scatterplot_vars
       )
       combined_df <- combined_df %>%
@@ -275,12 +279,12 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         )
       combined_df[["ClinicalVariable"]] <-
         factor(combined_df[["ClinicalVariable"]], levels = scatterplot_vars)
-
+      
       corr_lookup <-
         paste0("{", paste(apply(corr_df, 1, function(x) {
           name <- x[["ClinicalVariable"]]
-          corr <- round(as.numeric(x[["var_estimate"]]), digits = 2)
-          pvalue <- round(as.numeric(x[["var_pvalue"]]), digits = 2)
+          corr <- round(as.numeric(x[["x_estimate"]]), digits = 2)
+          pvalue <- round(as.numeric(x[["x_pvalue"]]), digits = 2)
           # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
           paste0(
             "'", name, "': ['", name,
@@ -288,7 +292,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
             corr, ", P: ", pvalue, "']"
           )
         }), collapse = ","), "}")
-
+      
       vega_layer_scatterplot(combined_df,
         x = "Value",
         y = "Eigengene",
