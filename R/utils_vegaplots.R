@@ -209,9 +209,12 @@ vega_add_fitline <-
         y = list(field = "fit", type = "quantitative")
       )
     )
-
+    if (!is.null(facet_var))
     chartspec$spec$layer <-
-      list(errorband_layer, line_layer, chartspec$spec$layer[[1]])
+      list(errorband_layer, line_layer, unlist(chartspec$spec$layer, FALSE))
+    else
+      chartspec$layer <-
+      list(errorband_layer, line_layer, unlist(chartspec$layer, FALSE))
 
     chartspec
   }

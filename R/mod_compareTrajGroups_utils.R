@@ -49,24 +49,9 @@ vega_traj_scatterplot <-
       }
     }
     
-    list(
+    spec <- list(
       `$schema` = vegawidget::vega_schema(),
       data = list(values = data),
-      spec = list(
-        layer = list(point_layer),
-        resolve = list(axis = list(x = "shared"))
-      ),
-      facet = list(
-        field = facet_var,
-        header = list(
-          title = x,
-          titleAlign = "center",
-          titleAnchor = "middle",
-          titleOrient = "bottom",
-          labelFontWeight = 600,
-          labelFontSize = 12
-        )
-      ),
       title = list(
         text = "Expression",
         orient = "left",
@@ -84,4 +69,27 @@ vega_traj_scatterplot <-
         facet_var = facet_var
       )
     )
+    
+    if (!is.null(facet_var)) {
+      spec$spec <- list(
+        layer = list(point_layer),
+        resolve = list(axis = list(x = "shared"))
+      )
+      spec$facet <- list(
+        field = facet_var,
+        header = list(
+          title = x,
+          titleAlign = "center",
+          titleAnchor = "middle",
+          titleOrient = "bottom",
+          labelFontWeight = 600,
+          labelFontSize = 12
+        )
+      )
+    } else {
+      spec$layer <- list(point_layer)
+    }
+    
+    spec
+    
   }

@@ -8,12 +8,12 @@ compareTrajGroups_config <- function(config, ...) {
     ))
   }
 
-  if (is.null(config$sidebyside_category)) {
-    stop_nice(paste(
-      "compareTrajGroups:",
-      "a 'sidebyside_category' to split subjects is missing"
-    ))
-  }
+  # if (is.null(config$sidebyside_category)) {
+  #   stop_nice(paste(
+  #     "compareTrajGroups:",
+  #     "a 'sidebyside_category' to split subjects is missing"
+  #   ))
+  # }
 
   if (is.null(config$trajectory_category)) {
     stop_nice(paste(
