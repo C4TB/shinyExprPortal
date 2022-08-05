@@ -260,12 +260,12 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         Eigengene = eigengene,
         selected_clinical
       )
-
-      corr_df <- correlateMatrices(
-        x = combined_df[["Eigengene"]],
-        y = combined_df[, scatterplot_vars],
+      
+      corr_df <- longCorrelationMatrix(
+        x = combined_df[, scatterplot_vars],
+        y = combined_df[["Eigengene"]],
         adjust_method = NULL,
-        rowname_var = "ClinicalVariable",
+        name_to = "ClinicalVariable",
         cores = cores
       )
       
@@ -283,8 +283,8 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       corr_lookup <-
         paste0("{", paste(apply(corr_df, 1, function(x) {
           name <- x[["ClinicalVariable"]]
-          corr <- round(as.numeric(x[["x_estimate"]]), digits = 2)
-          pvalue <- round(as.numeric(x[["x_pvalue"]]), digits = 2)
+          corr <- round(as.numeric(x[["estimate"]]), digits = 2)
+          pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
           # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
           paste0(
             "'", name, "': ['", name,
