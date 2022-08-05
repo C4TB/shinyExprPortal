@@ -157,7 +157,6 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     })
 
     rank_suffix <- reactive({
-      browser()
       if (input$use_padj) "padj" else "pvalue"
     })
 
