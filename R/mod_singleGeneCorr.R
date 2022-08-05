@@ -114,6 +114,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     sample_lookup <- config$data$sample_lookup
 
     cores <- config$nthreads
+    adjust_method <- config$adjust_method
     
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
@@ -217,6 +218,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         y = selected_expression,
         x = selected_clinical,
         method = correlation_method,
+        adjust_method = adjust_method,
         cores = cores
       )
       # Change to factor
