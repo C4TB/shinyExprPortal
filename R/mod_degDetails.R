@@ -109,7 +109,7 @@ mod_degDetails_server <- function(module_name, config, module_config) {
 
     exc_columns <- c(
       category_variable,
-      c("P", "P_adj", "File", "Data")
+      c("P", "P_adj", "File", "Data", "ModelFileType")
     )
     table_subset <- dplyr::select(models, -exc_columns)
     model_update <- reactiveVal(FALSE)
