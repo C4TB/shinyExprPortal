@@ -42,10 +42,12 @@ mod_degSummary_server <- function(module_name, config, module_config) {
       )))
       # Get only the columns that define models (e.g. Response, Tissue, Time)
       model_cols <- colnames(models[, !colnames(models) %in%
-        c("P", "P_adj", "File", "Data", partition)])
+        c("P", "P_adj", "File", "Data", "ModelFileType", partition)])
       # We don't need the actual data or file names here
       models_only <- models %>%
-        dplyr::select(-.data[["Data"]], -.data[["File"]])
+        dplyr::select(-.data[["Data"]],
+                      -.data[["File"]],
+                      -.data[["ModelFileType"]])
 
       # By default pivot_wider will order by the values_from
       # We use relocate to rearrange only the pivoted columns

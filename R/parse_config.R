@@ -405,6 +405,7 @@ loadModels <- function(models_file,
   if (!"File" %in% colnames(models_table)) {
     stop_nice("'File' column missing from models_table.")
   }
+  
   # Go through list of files and load them
   models_table$Data <- lapply(models_table$File, function(file_name) {
     file_name <- file_path(data_folder, "models", file_name)
@@ -422,16 +423,41 @@ loadModels <- function(models_file,
       data.table = FALSE,
       nThread = nthreads
     )
+    model
   })
 
-  models_table$P <- sapply(
-    models_table$Data,
-    function(x) nrow(x[x[["P.value"]] < max_p, ])
-  )
-  models_table$P_adj <- sapply(
-    models_table$Data,
-    function(x) nrow(x[x[[padj_col]] < max_p, ])
-  )
+  models_table$ModelFileType <- lapply(models_table$Data, function(x) {
+    if ("P.Value" %in% colnames(x)) {
+      "limma"
+    } else if ("log2FoldChange" %in% colnames(x)) {
+      "deseq"
+    } else if ("PValue" %in% colnames(x)) {
+      "edger"
+    } else "limma"
+  })
+  
+  file_pvalue_col <- c(limma = "P.value", edger = "PValue", deseq = "pvalue")
+  file_padj_col <- c(limma = padj_col, edger = "FDR", deseq = "padj")
+  
+  compute_signif <- function(model_row, max_p, lookup) {
+    data <- model_row[["Data"]]
+    mft <- model_row[["ModelFileType"]]
+    pval_col <- lookup[mft]
+    lv <- data[[pval_col]] <= max_p
+    nrow(data[lv, ])
+  }
+  
+  models_table$P <- apply(models_table,
+                          1,
+                          compute_signif,
+                          max_p = max_p,
+                          lookup = file_pvalue_col)
+  models_table$P_adj <- apply(models_table,
+                              1,
+                              compute_signif,
+                              max_p = max_p,
+                              lookup = file_padj_col)
+  
   models_table
 }
 
