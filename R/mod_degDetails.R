@@ -99,7 +99,7 @@ mod_degDetails_server <-
     
     pvalue_col <- module_config$pvalue_col
     padj_col <- module_config$padj_col
-
+    custom_point_colors <- module_config$custom_point_colors
     models <- parent_config$models %||% module_config$models
 
     category_variable <- module_config$category_variable
@@ -212,7 +212,8 @@ mod_degDetails_server <-
         fc_threshold_d(),
         pvalue_threshold_d(),
         pcol,
-        gene_column
+        gene_column,
+        custom_point_colors
         ) %>%
         vegawidget::as_vegaspec()
     })
