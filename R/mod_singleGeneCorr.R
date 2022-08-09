@@ -109,6 +109,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
+    
+    # App level config/defaults
     clinical <- config$data$clinical
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
@@ -125,6 +127,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     default_corr_method <- config$default_correlation_method
     default_fit_method <- config$default_fit_method
 
+    
+    # Module defaults
     custom_point_colors <- module_config$custom_point_colors
 
     # Load genes server side
