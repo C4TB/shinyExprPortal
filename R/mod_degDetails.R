@@ -1,18 +1,15 @@
 # degDetails UI Function
-mod_degDetails_ui <- function(module_name, config, module_config) {
-  if ("models" %in% names(config$data)) {
-    models <- config$data$models
-  } else {
-    models <- module_config$models
-  }
-  category_variable <- module_config$category_variable
-  categories <- unique(unlist(models[, category_variable]))
-  degDetails_tab(
-    categories,
-    module_config$title,
-    module_config$description,
-    module_name
-  )
+mod_degDetails_ui <-
+  function(module_name, config, module_config, parent_config = NULL) {
+    models <- parent_config$models %||% module_config$models
+    category_variable <- module_config$category_variable
+    categories <- unique(unlist(models[, category_variable]))
+    degDetails_tab(
+      categories,
+      module_config$title,
+      module_config$description,
+      module_name
+    )
 }
 #' Differentially expressed genes tab UI
 #'
@@ -92,17 +89,18 @@ degDetails_tab <- function(categories,
 #' degDetails Server Function
 #'
 #' @noRd
-mod_degDetails_server <- function(module_name, config, module_config) {
+mod_degDetails_server <-
+  function(module_name, config, module_config, parent_config = NULL) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    padj_col <- config$padj_col
+    valid_symbol_cols <-
+      c("Gene", "GeneSymbol", "Symbol", "symbol", "Gene_ID", "Protein")
+    
+    pvalue_col <- module_config$pvalue_col
+    padj_col <- module_config$padj_col
 
-    if ("models" %in% names(config$data)) {
-      models <- config$data$models
-    } else {
-      models <- module_config$models
-    }
+    models <- parent_config$models %||% module_config$models
 
     category_variable <- module_config$category_variable
     link_to <- module_config$link_to
@@ -148,7 +146,7 @@ mod_degDetails_server <- function(module_name, config, module_config) {
     })
 
     # Retrieve results by matching the columns from the table
-    model_results <- reactive({
+    selected_model_r <- reactive({
       condition <- condition_list()
       model_res <- list()
       # Iterate through multiple conditions to match rows
@@ -160,43 +158,59 @@ mod_degDetails_server <- function(module_name, config, module_config) {
         function(x, y) inner_join(x, y, by = colnames(x)), model_res
       )
       req(nrow(selected_model) > 0)
-      selected_model$Data[[1]]
+      selected_model
     }) %>% bindCache(input$selected_model, input$model_category)
 
+    model_file_type <- reactive({
+      selected_model <- selected_model_r()
+      selected_model$ModelFileType[[1]]
+    })
+    
+    model_results <- reactive({
+      selected_model <- selected_model_r()
+      selected_model$Data[[1]]
+    })
+    
     signif_labels <- list(
       "not significant", "log FC",
       "%s", "log FC and %s"
     )
+    
+    fc_threshold_d <- debounce(reactive({ input$fc_threshold }), 500)
+    pvalue_threshold_d <- debounce(reactive({ input$pvalue_threshold }), 500)
+    
     # Volcano plot table
     vp_table <- reactive({
       table <- model_results()
-      pcol <- if (input$use_padj) padj_col else "P.value"
+      pcol <- if (input$use_padj) padj_col else pvalue_col
       prepareModelResultsTable(
         table,
-        input$fc_threshold,
-        input$pvalue_threshold,
+        fc_threshold_d(),
+        pvalue_threshold_d(),
         pcol
       )
     }) %>%
       bindCache(model_results(),
-                input$fc_threshold,
-                input$pvalue_threshold,
+                fc_threshold_d(),
+                pvalue_threshold_d(),
                 input$use_padj)
 
     output$results_plot <- vegawidget::renderVegawidget({
       table <- vp_table()
+      
+      valid_log_cols <- c("logFC", "log2FoldChange")
+      
       validate(need(
-        "logFC" %in% colnames(table),
+        intersect(valid_log_cols, colnames(table)) > 0,
         "Volcano plot can't be displayed for model results"
       ))
-      gene_column <- {
-        if ("Gene" %in% colnames(table)) "Gene" else "GeneSymbol"
-      }
-      pcol <- if (input$use_padj) padj_col else "P.value"
+      
+      gene_column <- intersect(colnames(table), valid_symbol_cols)[[1]]
+      pcol <- if (input$use_padj) padj_col else pvalue_col
       vega_volcanoplot(
         table,
-        input$fc_threshold,
-        input$pvalue_threshold,
+        fc_threshold_d(),
+        pvalue_threshold_d(),
         pcol,
         gene_column
         ) %>%
@@ -223,9 +237,7 @@ mod_degDetails_server <- function(module_name, config, module_config) {
     output$deg_table <- renderDT({
         req(input$deg_table_checkbox)
         model_table <- vp_table()
-        gene_column <- {
-          if ("Gene" %in% colnames(model_table)) "Gene" else "GeneSymbol"
-        }
+        gene_column <- intersect(colnames(model_table), valid_symbol_cols)[[1]]
         # Optional link
         if (not_null(link_to)) {
           gene_col_id <- which(colnames(model_table) == gene_column)
@@ -237,14 +249,11 @@ mod_degDetails_server <- function(module_name, config, module_config) {
             })
           )
         }
-        view_cols <-
-          c(
-            "EnsemblID", "Gene", "GeneSymbol", "Protein",
-            "logFC", "AveExpr", "P.value", padj_col
-          )
+        # Print only the columns from the results file
+        view_cols <- setdiff(colnames(model_table),
+                c("pvalue_signif", "fc_signif", "signif", "signif_label"))
         model_table[model_table$signif_label %in% input$deg_table_checkbox,
-                    ] %>%
-          dplyr::select(any_of(view_cols))
+                    view_cols]
       },
       filter = "top",
       escape = FALSE,

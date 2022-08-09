@@ -1,10 +1,11 @@
 # module UI Function
-mod_degSummary_ui <- function(module_name, config, module_config) {
-  degSummary_tab(
-    module_config$title,
-    module_config$description,
-    module_name
-  )
+mod_degSummary_ui <-
+  function(module_name, config, module_config, parent_config = NULL) {
+    degSummary_tab(
+      module_config$title,
+      module_config$description,
+      module_name
+    )
 }
 
 degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
@@ -12,18 +13,17 @@ degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
   tabPanel(
     title = "Summary table",
     value = "degSummary",
-    tags$h5(description %||% "Summary of differential expression models"),
+    tags$h5(description %||% "Summary of differential expression models hits"),
     htmlOutput(ns("summary_table"))
   )
 }
 
-mod_degSummary_server <- function(module_name, config, module_config) {
+mod_degSummary_server <-
+  function(module_name, config, module_config, parent_config = NULL) {
+    
   moduleServer(module_name, function(input, output, session) {
-    if ("models" %in% names(config$data)) {
-      models <- config$data$models
-    } else {
-      models <- module_config$models
-    }
+    
+    models <- parent_config$models %||% module_config$models
     partition <- module_config$partition_variable
     partition_values <- unique(models[[partition]])
 

@@ -79,8 +79,6 @@ parseConfig <-
       )
 
     # Global other settings ----
-    config$max_p <- raw_config$max_p %||% 0.05
-    config$padj_col <- raw_config$padj_col %||% "q.value"
     config$adjust_method <- raw_config$adjust_method %||% "q.value"
 
     # Validate config data section ----
@@ -100,16 +98,7 @@ parseConfig <-
     # Load data section ----
     loaded_data <- lapply(names(raw_config$data), function(file_type) {
       message("Loading file: ", file_type, "\n", appendLF = FALSE)
-      if (file_type == "models") {
-        loadModels(
-          raw_config$data[[file_type]],
-          data_folder,
-          config$max_p,
-          config$padj_col
-        )
-      } else {
-        read_file(raw_config$data[[file_type]], file_type, data_folder, nthreads)
-      }
+      read_file(raw_config$data[[file_type]], file_type, data_folder, nthreads)
     })
     names(loaded_data) <- names(raw_config$data)
 
@@ -374,8 +363,12 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
 #'
 #' @param models_file file that categories and locate each model
 #' @param data_folder optional data folder to find file
-#' @param max_p optional maximum p value for significance. Default is 0.05
+#' @param pvalue_max optional maximum p value for significance. Default is 0.05
+#' @param padj_max optional maximum adjusted p value for significance. 
+#' Default is 0.05
+#' @param pvalue_col optional column for p-value. Default is P.value
 #' @param padj_col optional column for adjusted p-value. Default is q.value
+#' @param nthreads optional number of threads to speed up reading files
 #'
 #' @return a data frame with columns from the model table and a Data column
 #' containing data frames
@@ -383,7 +376,9 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
 #' @noRd
 loadModels <- function(models_file,
                        data_folder = "",
-                       max_p = 0.05,
+                       pvalue_max = 0.05,
+                       padj_max = 0.05,
+                       pvalue_col = "P.value",
                        padj_col = "q.value",
                        nthreads = 1L) {
   fext <- file_ext(models_file)
@@ -399,7 +394,7 @@ loadModels <- function(models_file,
   if (ncol(models_table) < 2) {
     stop_nice(paste(
       "models_table loaded incorrectly.",
-      "Use comma separator in .csv files and tab with any other file extension"
+      "Use comma separator in .csv files or tab with any other file extension"
     ))
   }
   if (!"File" %in% colnames(models_table)) {
@@ -423,6 +418,15 @@ loadModels <- function(models_file,
       data.table = FALSE,
       nThread = nthreads
     )
+    valid_symbol_cols <- 
+      c("Protein", "Gene", "GeneSymbol", "Symbol", "symbol", "Gene_ID")
+    if (length(intersect(valid_symbol_cols, colnames(model))) == 0) {
+      stop_nice(
+        "Model file",
+        file_name,
+        "does not have a valid column for gene symbols. Valid columns include",
+        valid_symbol_cols)
+    }
     model
   })
 
@@ -436,28 +440,14 @@ loadModels <- function(models_file,
     } else "limma"
   })
   
-  file_pvalue_col <- c(limma = "P.value", edger = "PValue", deseq = "pvalue")
-  file_padj_col <- c(limma = padj_col, edger = "FDR", deseq = "padj")
+  models_table$P <-
+    sapply(models_table$Data,
+           function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]))
   
-  compute_signif <- function(model_row, max_p, lookup) {
-    data <- model_row[["Data"]]
-    mft <- model_row[["ModelFileType"]]
-    pval_col <- lookup[mft]
-    lv <- data[[pval_col]] <= max_p
-    nrow(data[lv, ])
-  }
-  
-  models_table$P <- apply(models_table,
-                          1,
-                          compute_signif,
-                          max_p = max_p,
-                          lookup = file_pvalue_col)
-  models_table$P_adj <- apply(models_table,
-                              1,
-                              compute_signif,
-                              max_p = max_p,
-                              lookup = file_padj_col)
-  
+  models_table$P_adj <-
+    sapply(models_table$Data,
+           function(x) nrow(x[x[[padj_col]] <= padj_max, ]))
+
   models_table
 }
 
