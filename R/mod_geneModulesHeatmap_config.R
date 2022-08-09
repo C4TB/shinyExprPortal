@@ -8,31 +8,31 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
     message("Loading file: modules_table")
     config$modules_table <- read_file(config$modules_table, "table", data_folder)
   } else {
-    stop_nice(paste(
+    stop_nice(
       "geneModulesHeatmap:",
       "a 'modules_table' file is required for this module"
-    ))
+    )
   }
 
   if (is.null(config$category_variable)) {
-    stop(paste(
+    stop_nice(
       "geneModulesHeatmap:",
       "'category_variable' to identify models is missing"
-    ))
+    )
   }
 
   if (is.null(config$modules_variable)) {
-    stop(paste(
+    stop_nice(
       "geneModulesHeatmap:",
       "'modules_variable' to identify modules is missing"
-    ))
+    )
   }
 
   if (is.null(config$genes_variable)) {
-    stop(paste(
+    stop_nice(
       "geneModulesHeatmap:",
       "'genes_variable' to identify genes is missing"
-    ))
+    )
   }
 
   # Unlist because YAML will produce lists instead of named vectors

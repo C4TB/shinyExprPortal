@@ -3,10 +3,10 @@ degDetails_config <- function(config, data_folder = "", parent_config = NULL) {
   message("Checking degDetails configuration")
 
   if (is.null(config$category_variable)) {
-    stop_nice(paste(
+    stop_nice(
       "degDetails:",
       "'category_variable' to identify model results is missing"
-    ))
+    )
   }
 
   config$pvalue_max <- 

@@ -2,31 +2,24 @@ compareTrajGroups_config <- function(config, ...) {
   message("Checking compareTrajGroups configuration")
 
   if (is.null(config$subset_categories)) {
-    stop_nice(paste(
+    stop_nice(
       "compareTrajGroups:",
       "a list of 'subset_categories' to filter expression is missing"
-    ))
+    )
   }
-
-  # if (is.null(config$sidebyside_category)) {
-  #   stop_nice(paste(
-  #     "compareTrajGroups:",
-  #     "a 'sidebyside_category' to split subjects is missing"
-  #   ))
-  # }
-
+  
   if (is.null(config$trajectory_category)) {
-    stop_nice(paste(
+    stop_nice(
       "compareTrajGroups:",
       "a 'trajectory_category' to match clinical suffix is missing"
-    ))
+    )
   }
 
   if (is.null(config$compare_variables)) {
-    stop_nice(paste(
+    stop_nice(
       "compareTrajGroups:",
       "a list of 'compare_variables' for clinical trajectories is missing"
-    ))
+    )
   }
 
   if (!is.null(config$custom_traj_palette)) {
@@ -34,10 +27,10 @@ compareTrajGroups_config <- function(config, ...) {
       stopIfNotInstalled(c("RColorBrewer"), "compareTrajGroups")
       if (!config$custom_traj_palette
           %in% rownames(RColorBrewer::brewer.pal.info)) {
-        stop_nice(paste(
+        stop_nice(
           "compareTrajGroups:",
           "'custom_traj_palette' provided is not a valid RColorBrewer palette"
-        ))
+        )
       }
     }
   }

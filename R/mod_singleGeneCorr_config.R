@@ -6,10 +6,7 @@ singleGeneCorr_config <- function(config, ...) {
   }
 
   if (is.null(config$tabs)) {
-    stop_nice(paste(
-      "singleGeneCorr:",
-      "'tabs' definitions are missing"
-    ))
+    stop_nice("singleGeneCorr: 'tabs' definitions are missing")
   }
 
   config

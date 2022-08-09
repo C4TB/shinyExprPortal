@@ -6,23 +6,20 @@ geneModulesCorr_config <- function(config, data_folder = "") {
   stopIfNotInstalled(required_packages, "geneModulesCorr")
 
   if (is.null(config$subset_categories)) {
-    stop_nice(paste(
+    stop_nice(
       "geneModulesCorr:",
       "'subset_categories' list missing in configuration file."
-    ))
+    )
   }
 
   if (is.null(config$sources)) {
-    stop_nice(paste(
-      "geneModulesCorr:",
-      "'sources' list missing in configuration file."
-    ))
+    stop_nice("geneModulesCorr: 'sources' list missing in configuration file.")
   }
   if (is.null(config$scatterplot_variables)) {
-    stop_nice(paste(
+    stop_nice(
       "geneModulesCorr:",
       "'scatterplot_variables' list missing in configuration file."
-    ))
+    )
   }
 
   modules_data <- lapply(config$sources, function(source_config) {
@@ -33,10 +30,7 @@ geneModulesCorr_config <- function(config, data_folder = "") {
     }
 
     if (file_ext(source_file) != "rds") {
-      stop_nice(paste(
-        "geneModulesCorr:",
-        "module data must be in rds format"
-      ))
+      stop_nice("geneModulesCorr: module data must be in rds format")
     }
 
     module_data <- readRDS(source_file)
@@ -45,10 +39,10 @@ geneModulesCorr_config <- function(config, data_folder = "") {
       c("modules", "descriptions")
     )
     if (length(validate_modules) != 2) {
-      stop_nice(paste(
+      stop_nice(
         "geneModulesCorr:",
       "module data must contain two data frames named modules and descriptions"
-      ))
+      )
     }
 
     list(name = source_config$name, data = module_data)
