@@ -100,8 +100,8 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     rank_variable <- module_config$rank_variable
     scatterplot_vars <- module_config$scatterplot_variables
     annotation_vars <- module_config$annotation_variables
-    custom_annotation_colors <- module_config$custom_annotation_colors %||% NULL
-    annotation_range <- module_config$annotation_range %||% NULL
+    custom_annotation_colors <- module_config$custom_annotation_colors
+    annotation_range <- module_config$annotation_range
 
 
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)

@@ -82,10 +82,10 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     subject_var <- config$subject_variable
     sample_classes <- config$sample_categories
 
-    custom_annotation_colors <- module_config$custom_annotation_colors %||% NULL
-    annotation_range <- module_config$annotation_range %||% NULL
+    custom_annotation_colors <- module_config$custom_annotation_colors
+    annotation_range <- module_config$annotation_range
     coordinates_data <- module_config$coordinates_data
-    custom_group_colors <- module_config$custom_group_colors %||% NULL
+    custom_group_colors <- module_config$custom_group_colors
     group_variable <- module_config$group_variable
     coordinates_data[[group_variable]] <-
       as.numeric(coordinates_data[[group_variable]])
