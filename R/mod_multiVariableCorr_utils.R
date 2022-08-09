@@ -5,7 +5,8 @@ vega_heatmap <-
            fill,
            max_pvalue = 0.05,
            min_corr = 0.25,
-           padj = FALSE) {
+           padj = FALSE,
+           custom_heatmap_scheme = "redblue") {
     p_cond <- if (padj) "datum.padj" else "datum.pvalue"
     
     text_filter <-
@@ -44,7 +45,7 @@ vega_heatmap <-
               type = "quantitative",
               title = "Correlation",
               scale = list(
-                scheme = "redblue",
+                scheme = custom_heatmap_scheme,
                 reverse = TRUE,
                 domain = c(-1, 1)
               )
