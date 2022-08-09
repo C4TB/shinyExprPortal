@@ -40,7 +40,7 @@ parseConfig <-
             title = config$name
           )
       } else {
-        stop_nice(paste("Logo image file", raw_config$logo, "not found"))
+        stop_nice("Logo image file", raw_config$logo, "not found")
       }
     }
     config$iconMenu <- raw_config$iconMenu %||% NULL
@@ -52,7 +52,7 @@ parseConfig <-
       if (file.exists(about_file)) {
         config$about <- about_file
       } else {
-        stop_nice(paste("'About' file", about_file, "not found."))
+        stop_nice("'About' file", about_file, "not found.")
       }
     }
 
@@ -88,11 +88,9 @@ parseConfig <-
     if (is.null(raw_config$data$clinical) ||
       is.null(raw_config$data$expression_matrix)) {
       stop_nice(
-        paste(
           "Data section in configuration file must include ",
           "clinical and expression_matrix files."
-        )
-      )
+          )
     }
 
     # Load data section ----
@@ -206,13 +204,11 @@ checkModuleExists <- function(module_name) {
   for (name in function_names) {
     if (!exists(name, mode = "function")) {
       stop_nice(
-        paste0(
           "Problem when loading modules: ",
           name,
           " function is not defined. ",
           "Please ensure custom module functions are defined before run_app."
         )
-      )
     }
   }
 }
@@ -267,10 +263,8 @@ validateData <-
       error <- TRUE
     }
     if (error) {
-      stop_nice(paste(
-        "Problem(s) found in data files.",
-        "See printed message(s) for details"
-      ))
+      stop_nice("Problem(s) found in data files.",
+        "See printed message(s) for details")
     }
   }
 
@@ -286,7 +280,7 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename)
   if (!file.exists(filename)) {
-    stop_nice(paste("File ", filename, " in yaml configuration not found."))
+    stop_nice("File ", filename, " in yaml configuration not found.")
   }
   tryCatch({
       if (fext == "rds") {
@@ -392,10 +386,10 @@ loadModels <- function(models_file,
     )
   }
   if (ncol(models_table) < 2) {
-    stop_nice(paste(
+    stop_nice(
       "models_table loaded incorrectly.",
       "Use comma separator in .csv files or tab with any other file extension"
-    ))
+    )
   }
   if (!"File" %in% colnames(models_table)) {
     stop_nice("'File' column missing from models_table.")
@@ -405,11 +399,11 @@ loadModels <- function(models_file,
   models_table$Data <- lapply(models_table$File, function(file_name) {
     file_name <- file_path(data_folder, "models", file_name)
     if (!file.exists(file_name)) {
-      stop_nice(paste(
+      stop_nice(
         "Model file ",
         file_name,
         " from degModules configuration not found."
-      ))
+      )
     }
     fext <- file_ext(file_name)
     delim <- ifelse(fext == "csv", ",", "\t")
@@ -466,11 +460,11 @@ validateAdvancedSettings <- function(config, module_title = "") {
     )
   diff_advanced <- setdiff(names(config), valid_settings)
   if (length(diff_advanced) > 0) {
-    stop_nice(paste(
+    stop_nice(
       module_title, ": invalid advanced setting: \n\t",
       diff_advanced,
       "\nMust be one of\n\t", paste0(valid_settings, collapse = "\n\t")
-    ))
+    )
   }
 }
 

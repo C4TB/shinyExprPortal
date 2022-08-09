@@ -6,10 +6,10 @@ networkViewer_config <- function(config, data_folder = "") {
   stopIfNotInstalled(required_packages, "networkViewer")
 
   if (is.null(config$network_files)) {
-    stop_nice(paste(
+    stop_nice(
       "networkViewer:",
       "'network_files' property is missing"
-    ))
+    )
   }
 
   file_type <- config$network_file_type %||% "edge_list"

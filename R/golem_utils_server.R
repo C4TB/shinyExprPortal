@@ -135,11 +135,11 @@ stopIfNotInstalled <- function(packages, mod_name) {
   )
   not_inst <- packages[lv]
   if (length(not_inst) > 0) {
-    stop_nice(paste(
+    stop_nice(
       "Package(s) ",
       paste(not_inst, collapse = ", "), " required for ", mod_name,
       " not found."
-    ))
+    )
   }
 }
 
