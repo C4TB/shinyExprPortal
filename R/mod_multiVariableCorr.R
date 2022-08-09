@@ -131,7 +131,8 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
 
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
-
+    custom_heatmap_scheme <- module_config$custom_heatmap_scheme
+    
     user_selection <- reactive({
       getSelectedSampleCategories(sample_categories, input)
     })
@@ -228,7 +229,8 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
         "estimate",
         input$max_pvalue,
         input$min_corr,
-        input$use_padj
+        input$use_padj,
+        custom_heatmap_scheme
       ) %>%
         vegawidget::vw_autosize(800, 800)
     })
