@@ -34,17 +34,21 @@ vega_volcanoplot <- function(data,
   logfc_line <- data.frame(logFC = c(-fc_min, fc_min))
   signif_line <- data.frame(log10 = c(-log10(pvalue_min)))
   
-  
   signif_labels <- list(
     "not significant", "log FC",
     "%s", "log FC and %s"
   )
-  pvalue_labels <- list(
-    "P.value" = "p-value",
-    "q.value" = "adj. p-value"
-  )
-  pvalue_label <-
-    pvalue_labels[pvalue_col]
+  
+  pvalue_label <- switch(pvalue_col,
+                         "P.value" = "p-value",
+                         "PValue" = "p-value",
+                         "pvalue" = "p-value",
+                         "FDR" = "adj. p-value",
+                         "padj" = "adj. p-value",
+                         "adj.P.Val" = "adj. p-value",
+                         "q.value" = "adj. p-value",
+                         "adj. p-value")
+  
   color_domain <-
     lapply(signif_labels, sprintf, pvalue_label)
   
@@ -225,12 +229,17 @@ prepareModelResultsTable <-
     )
     pvalue_labels <- list(
       "P.value" = "p-value",
+      "PValue" = "p-value",
+      "pvalue" = "p-value",
+      "FDR" = "adj. p-value",
+      "padj" = "adj. p-value",
+      "adj.P.Val" = "adj. p-value",
       "q.value" = "adj. p-value"
     )
     pvalue_label <- pvalue_labels[pvalue_col]
     table$pvalue_signif <-
       as.numeric(
-        table[[pvalue_col]] < pvalue_threshold
+        table[[pvalue_col]] <= pvalue_threshold
       )
     # Create numeric significance level
     # 0 = not, 1 = FC only, 2 pvalue only, 3 both

@@ -15,7 +15,8 @@ mod_degModules_ui <- function(module_name, config, module_config) {
       list(
         module_name = submodule_name,
         config = config,
-        module_config = loaded_submodules[[submodule_name]]
+        module_config = loaded_submodules[[submodule_name]],
+        parent_config = module_config
       )
     )
   })
@@ -36,7 +37,8 @@ mod_degModules_server <- function(module_name, config, module_config) {
       list(
         module_name = submodule_name,
         config = config,
-        module_config = loaded_submodules[[submodule_name]]
+        module_config = loaded_submodules[[submodule_name]],
+        parent_config = module_config
       )
     )
   }
