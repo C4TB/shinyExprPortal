@@ -18,6 +18,12 @@ degDetails_config <- function(config, data_folder = "", parent_config = NULL) {
   config$padj_col <-
     config$padj_col %||% parent_config$padj_col %||% "q.value"
 
+  if (!is.null(config$custom_point_colors) & 
+      (!is.list(config$custom_point_colors))) {
+      stop_nice("degDetails: 'custom_points_colors' must be a list")
+  }
+  config$custom_point_colors <-
+    config$custom_point_colors %||% c("black", "green", "blue", "red")
   
   if (is.null(parent_config$models) & is.null(config$models)) {
     stop_nice("degDetails: 'models' tablle not found in configuration")
