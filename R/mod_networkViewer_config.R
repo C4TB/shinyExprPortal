@@ -38,7 +38,7 @@ networkViewer_config <- function(config, data_folder = "") {
     config$overlap <- FALSE
   }
   
-  if (not_null(config$colors) & !is.list(config$colors)) {
+  if (!is.null(config$colors) & !is.list(config$colors)) {
     stop_nice("networkViewer: 'colors' must be a list of node types and colors")
   }
   

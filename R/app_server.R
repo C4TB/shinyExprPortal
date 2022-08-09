@@ -10,7 +10,7 @@ app_server <- function(input, output, session) {
 
   observe({
     query <- parseQueryString(session$clientData$url_search)
-    if (not_null(query[["tab"]])) {
+    if (!is.null(query[["tab"]])) {
       tab <- query[["tab"]]
       updateNavbarPage(session, inputId = "tabSelect", selected = tab)
       session$userData[[tab]] <- query

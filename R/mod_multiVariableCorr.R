@@ -238,7 +238,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     output$table <- DT::renderDataTable({
         df <- 
           corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
-        if (not_null(link_to)) {
+        if (!is.null(link_to)) {
           isolate({
             list_of_values <- user_selection()
             baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))

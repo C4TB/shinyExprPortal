@@ -34,7 +34,7 @@ app_ui <- function(request) {
   args <- append(list(about_tab), modules_ui_list)
   args$title <- list(config$logo %||% config$name)
   args$windowTitle <- paste(config$name, "analysis portal")
-  if (not_null(config$bootstrap)) {
+  if (!is.null(config$bootstrap)) {
     args$theme <- do.call(bslib::bs_theme, config$bootstrap)
   }
   args$id <- "tabSelect"

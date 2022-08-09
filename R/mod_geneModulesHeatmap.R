@@ -41,7 +41,7 @@ geneModulesHeatmap_tab <- function(categories,
           tags$b("Sample selection"),
           sample_select,
           {
-            if (not_null(annotation_variables)) {
+            if (!is.null(annotation_variables)) {
               selectizeInput(ns("selected_annotations"),
                 label = "Select heatmap annotations:",
                 choices = annotation_variables,
@@ -124,7 +124,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     # Find list of modules
     selected_modules_table <- reactive({
       table <- selectMatchingValues(modules_table, modules_table_selection())
-      if (not_null(rank_variable)) {
+      if (!is.null(rank_variable)) {
         table <- table[order(table[[rank_variable]]), ]
       }
       table
@@ -225,7 +225,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
 
           # Optional annotations
           annots <- annotations()
-          if (not_null(annots)) {
+          if (!is.null(annots)) {
             hm <- hm %>%
               custom_add_col_annotations(annots,
                 colors = custom_annotation_colors,
