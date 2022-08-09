@@ -39,7 +39,7 @@ geneProjectionOverlay_tab <- function(list_of_groups,
             choices = list_of_groups,
             selected = list_of_groups
           ),
-          if (not_null(annotation_variables)) {
+          if (!is.null(annotation_variables)) {
             selectizeInput(ns("selected_annotations"),
               label = "Select heatmap annotations:",
               choices = annotation_variables,
@@ -257,7 +257,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
           )
           # Optional annotations
           annots <- annotations()
-          if (not_null(annots)) {
+          if (!is.null(annots)) {
             hm <- hm %>%
               custom_add_col_annotations(annots,
                 size = 0.025,

@@ -164,7 +164,7 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       )
       names(correlation_df) <- c("Gene", "Estimate", "P", "P_adj")
 
-      if (not_null(link_to)) {
+      if (!is.null(link_to)) {
         baseURL <- buildURL(list_of_values, paste0("?tab=", link_to))
         correlation_df$Gene <- urlVector(correlation_df$Gene, "gene", baseURL)
       }

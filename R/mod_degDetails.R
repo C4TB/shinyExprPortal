@@ -240,7 +240,7 @@ mod_degDetails_server <-
         model_table <- vp_table()
         gene_column <- intersect(colnames(model_table), valid_symbol_cols)[[1]]
         # Optional link
-        if (not_null(link_to)) {
+        if (!is.null(link_to)) {
           gene_col_id <- which(colnames(model_table) == gene_column)
           model_table[[gene_col_id]] <- urlVector(
             model_table[[gene_col_id]],

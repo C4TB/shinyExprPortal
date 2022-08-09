@@ -7,10 +7,10 @@ plotNetwork <- function(edgelist,
   # Get additional info from nodes_table
   vnd$nodes <-
     merge(vnd$nodes, nodes_table, by.x = "id", by.y = "name")
-  if (not_null(colors)) {
+  if (!is.null(colors)) {
     vnd$nodes$color <- colors[vnd$nodes$group]
   }
-  if (not_null(font_colors)) {
+  if (!is.null(font_colors)) {
     vnd$nodes$font.color <- font_colors[vnd$nodes$group]
   }
   vnd$nodes$font.size <- 14
@@ -21,7 +21,7 @@ plotNetwork <- function(edgelist,
   
   net <- net %>%
     visNetwork::visOptions(
-        nodesIdSelection = if (not_null(node_name)) list(
+        nodesIdSelection = if (!is.null(node_name)) list(
         selected = node_name,
         main = "Select node to highlight:"
       ) else FALSE,

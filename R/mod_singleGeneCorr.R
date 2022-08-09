@@ -140,14 +140,14 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       params <- session$userData$singleGeneCorr
       for (sample_category in sample_categories) {
         sc_name <- sample_category$name
-        if (not_null(params[[sc_name]])) {
+        if (!is.null(params[[sc_name]])) {
           updateSelectizeInput(session,
             sc_name,
             selected = params[[sc_name]]
           )
         }
       }
-      if (not_null(params$gene)) {
+      if (!is.null(params$gene)) {
         updateSelectizeInput(
           session,
           "selected_gene",
@@ -310,7 +310,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           subset_vars <- unique(c(output_vars, color_var))
 
           # Check if an optional palette was provided
-          if (not_null(color_var)) {
+          if (!is.null(color_var)) {
             if (color_var %in% names(custom_point_colors)) {
               manual_colors <- custom_point_colors[[color_var]]
             } else {
@@ -351,7 +351,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
             if (length(output_vars) < 4) {
               length(output_vars) * facet_width
             } else {
-              ifelse(not_null(out_width), out_width, 800)
+              ifelse(!is.null(out_width), out_width, 800)
             }
           }
 

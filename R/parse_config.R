@@ -31,7 +31,7 @@ parseConfig <-
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
     config$name <- raw_config$name %||% "clinvisx"
-    if (not_null(raw_config$logo)) {
+    if (!is.null(raw_config$logo)) {
       if (file.exists(file_path(data_folder, "www", raw_config$logo))) {
         config$logo <-
           img(
@@ -139,7 +139,7 @@ parseConfig <-
     config$data <- loaded_data
 
     # Load modules ----
-    if (not_null(test_module)) {
+    if (!is.null(test_module)) {
       # Check single module configuration
       message("Module test mode")
       if (test_module %in% available_modules) {
@@ -174,7 +174,7 @@ parseConfig <-
         })
       names(loaded_modules) <- available_modules
 
-      if (not_null(custom_modules)) {
+      if (!is.null(custom_modules)) {
         extra_loaded_modules <-
           lapply(custom_modules, function(module_name) {
             if (!is.null(raw_config[[module_name]])) {
