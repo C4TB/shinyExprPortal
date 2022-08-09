@@ -443,7 +443,6 @@ loadModels <- function(models_file,
   models_table$P <-
     sapply(models_table$Data,
            function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]))
-  
   models_table$P_adj <-
     sapply(models_table$Data,
            function(x) nrow(x[x[[padj_col]] <= padj_max, ]))
