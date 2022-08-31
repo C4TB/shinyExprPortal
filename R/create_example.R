@@ -12,13 +12,13 @@ create_example <- function(path = NULL, full = FALSE) {
 
   dir <- path %||% getwd()
 
-  app_r <- file(file_path(dir, "app.R"))
-  app_lines <- c(
-    "library(clinvisx)",
-    "run_app(config = \"config.yaml\")"
-  )
-  writeLines(app_lines, app_r)
-  close(app_r)
+  # app_r <- file(file_path(dir, "app.R"))
+  # app_lines <- c(
+  #   "library(clinvisx)",
+  #   "run_app(config = \"config.yaml\")"
+  # )
+  # writeLines(app_lines, app_r)
+  # close(app_r)
 
   n <- 100
 
