@@ -204,11 +204,17 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         tab_output_list,
         function(x) x$variables
       )))
+      
       selected_clinical <-
         replaceFalseWithNA(
           subset_clinical[, clin_vars],
           outlier_functions(clinical_outliers)
         )
+      all_na_lv <-
+        sapply(colnames(selected_clinical),
+               function(x) all(is.na(selected_clinical[[x]])))
+      selected_clinical <- selected_clinical[ , !all_na_lv]
+      clin_vars <- clin_vars[!all_na_lv]
 
       selected_expression <-
         replaceFalseWithNA(
@@ -272,7 +278,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         })
         outputOptions(output, "error_message", suspendWhenHidden = FALSE)
       }
-      req(all(not_na(selected_expression[selected_gene, ])) &
+      req(all(!is.na(selected_expression[selected_gene, ])) &
         (length(selected_expression) > 0))
       tab_output_list <- module_config$tabs
 
@@ -286,6 +292,11 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           subset_clinical[, clin_vars],
           outlier_functions(clinical_outliers)
         )
+      
+      all_na_lv <-
+        sapply(colnames(subset_clinical),
+               function(x) all(is.na(subset_clinical[[x]])))
+      clin_vars <- clin_vars[!all_na_lv]
 
       selected_expression <-
         replaceFalseWithNA(
@@ -312,6 +323,11 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           # If NULL nothing is added
           # unique makes it so that it's not repeated
           subset_vars <- unique(c(output_vars, color_var))
+          
+          not_na_lv <-
+            sapply(subset_vars,
+                   function(x) all(is.na(subset_clinical[[x]])))
+          subset_vars <- subset_vars[!not_na_lv]
 
           # Check if an optional palette was provided
           if (!is.null(color_var)) {
@@ -321,7 +337,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               manual_colors <- NULL
             }
           }
-
+          
           # Get only the variables for this tab
           tab_clinical <- subset_clinical[, subset_vars]
 
@@ -329,58 +345,67 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
             filter(.data[["ClinicalVariable"]] %in% subset_vars)
 
           # Filter to selected gene
-          combined_df <-
-            cbind(
-              Expression = selected_expression[, selected_gene],
-              tab_clinical
-            ) %>%
-            pivot_longer(output_vars,
-              names_to = "ClinicalVariable",
-              values_to = "Value"
-            )
-
-          # Use output_vars as levels to preserve order defined in config
-          combined_df[["ClinicalVariable"]] <-
-            factor(combined_df[["ClinicalVariable"]],
-              levels = output_vars
-            )
-          # Retrieve element width and use that to resize plot
-          # It's reactive and seems to be drawing twice when first run
-          output_id <- paste("output", ns(output_name), "width", sep = "_")
-          out_width <-
-            session$clientData[[output_id]]
-          facet_width <- (out_width / 4) %||% 200
-          plotHeight <- ceiling(length(output_vars) / 4) * facet_width
-          plotWidth <- {
-            if (length(output_vars) < 4) {
-              length(output_vars) * facet_width
-            } else {
-              ifelse(!is.null(out_width), out_width, 800)
-            }
-          }
-
-          corr_labels <- c(
-            "pearson" = "r",
-            "spearman" = "\u03c1",
-            "kendall" = "\u03C4"
-          )
-
-          # TODO: refactor this with padj being optional
-          corr_lookup <-
-            paste0("{", paste(apply(corr_df_subset, 1, function(x) {
-              name <- x[["ClinicalVariable"]]
-              corr <- round(as.numeric(x[["estimate"]]), digits = 2)
-              pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
-              padj <- round(as.numeric(x[["padj"]]), digits = 2)
-              # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
-              paste0(
-                "'", name, "': ['", name,
-                "', '", corr_labels[correlation_method], ": ",
-                corr, ", P: ", pvalue, ", P_adj: ", padj, "']"
+          if (ncol(tab_clinical) > 0) {
+            combined_df <-
+              cbind(
+                Expression = selected_expression[, selected_gene],
+                tab_clinical
+              ) %>%
+              pivot_longer(output_vars,
+                names_to = "ClinicalVariable",
+                values_to = "Value"
               )
-            }), collapse = ","), "}")
+  
+            # Use output_vars as levels to preserve order defined in config
+            combined_df[["ClinicalVariable"]] <-
+              factor(combined_df[["ClinicalVariable"]],
+                levels = output_vars
+              )
+            # Retrieve element width and use that to resize plot
+            # It's reactive and seems to be drawing twice when first run
+            output_id <- paste("output", ns(output_name), "width", sep = "_")
+            out_width <-
+              session$clientData[[output_id]]
+            facet_width <- (out_width / 4) %||% 200
+            plotHeight <- ceiling(length(output_vars) / 4) * facet_width
+            plotWidth <- {
+              if (length(output_vars) < 4) {
+                length(output_vars) * facet_width
+              } else {
+                ifelse(!is.null(out_width), out_width, 800)
+              }
+            }
+  
+            corr_labels <- c(
+              "pearson" = "r",
+              "spearman" = "\u03c1",
+              "kendall" = "\u03C4"
+            )
+  
+            # TODO: refactor this with padj being optional
+            corr_lookup <-
+              paste0("{", paste(apply(corr_df_subset, 1, function(x) {
+                name <- x[["ClinicalVariable"]]
+                corr <- round(as.numeric(x[["estimate"]]), digits = 2)
+                pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
+                padj <- round(as.numeric(x[["padj"]]), digits = 2)
+                # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
+                paste0(
+                  "'", name, "': ['", name,
+                  "', '", corr_labels[correlation_method], ": ",
+                  corr, ", P: ", pvalue, ", P_adj: ", padj, "']"
+                )
+              }), collapse = ","), "}")
 
-          output[[output_name]] <- vegawidget::renderVegawidget({
+          plotName <- paste0(output_name,"_vw")
+          output[[output_name]] <- renderUI({
+            
+            vegawidget::vegawidgetOutput(ns(plotName),
+                                         width = "auto",
+                                         height = "auto")
+          })
+
+          output[[plotName]] <- vegawidget::renderVegawidget({
             scatterplot <- vega_layer_scatterplot(
               combined_df,
               x = "Value",
@@ -399,6 +424,16 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               vega_add_fitline(fit_method) %>%
               vegawidget::as_vegaspec()
           })
+          #if ncol
+          } else {
+            output[[output_name]] <- renderUI({
+                htmlOutput(ns(paste0(output_name,"_text")))
+            })
+            output[[paste0(output_name,"_text")]] <- renderPrint({
+              div("Selected subset has no data for plots",
+                   class="shiny-output-error-validation")
+            })
+          }
         })
       }
     })

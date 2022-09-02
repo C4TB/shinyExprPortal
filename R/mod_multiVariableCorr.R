@@ -183,6 +183,10 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       cols_lv <- colnames(selected_clinical) %in% selected_clinical_vars
       subset_clinical <- selected_clinical[, cols_lv]
 
+      all_na_lv <-
+        sapply(colnames(subset_clinical),
+               function(x) all(is.na(subset_clinical[[x]])))
+      subset_clinical <- subset_clinical[, !all_na_lv]
       # Apply outlier functions to clinical
       subset_clinical <-
         replaceFalseWithNA(
@@ -196,8 +200,9 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
           outlier_functions(expression_outliers)
         )
 
-      corr_df <- correlateMatrices(y= selected_expression,
-        x= subset_clinical,
+      corr_df <- correlateMatrices(
+        y = selected_expression,
+        x = subset_clinical,
         adjust_method = adjust_method,
         method = correlation_method,
         rowname_var = "Gene",
