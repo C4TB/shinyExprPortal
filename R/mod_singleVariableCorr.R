@@ -153,6 +153,8 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
           selected_clinical,
           outlier_functions(clinical_outliers)
         )
+      validate(need(!all(is.na(selected_clinical)),
+                    "Selected subset has no data for chosen variable"))
 
       # Use the transposed expression to multiple columns vs vector
       correlation_df <- correlateMatrices(
