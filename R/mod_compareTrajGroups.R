@@ -139,7 +139,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       ]
       validate(
         need(
-          all(not_na(selected_expression)) &
+          all(!is.na(selected_expression)) &
             (length(selected_expression) > 0),
           "Transcript not found in subset or subset combination does not exist."
         )
