@@ -9,6 +9,7 @@ Imports:
     config,
     shiny,
     htmltools,
+    markdown,
     dplyr,
     tidyr,
     ggplot2,
