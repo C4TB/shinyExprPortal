@@ -50,7 +50,7 @@ vega_volcanoplot <- function(data,
                          "adj. p-value")
   
   color_domain <-
-    lapply(signif_labels, sprintf, pvalue_label)
+    suppressWarnings(lapply(signif_labels, sprintf, pvalue_label))
   
   chart <- list(
     `$schema` = vegawidget::vega_schema("vega"),
@@ -252,7 +252,9 @@ prepareModelResultsTable <-
     }
     # Match significance value with label
     table$signif_label <-
-      sprintf(as.character(signif_labels[table$signif + 1]), pvalue_label)
+      suppressWarnings(
+        sprintf(as.character(signif_labels[table$signif + 1]), pvalue_label)
+      )
     # Apply log transformation to p and q value
     table
   }

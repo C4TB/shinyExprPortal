@@ -143,7 +143,7 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
       selected_clinical$estimate <- selected_clinical[[last_profile_var]] /
         selected_clinical[[first_profile_var]]
       selected_clinical <-
-        selected_clinical[order(selected_clinical[profile_order],
+        selected_clinical[order(selected_clinical[[profile_order]],
           decreasing = TRUE
         ), ]
       r2d3::r2d3(
