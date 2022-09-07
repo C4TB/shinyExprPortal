@@ -30,7 +30,7 @@ parseConfig <-
     # Read app metadata ----
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
-    config$name <- raw_config$name %||% "clinvisx"
+    config$name <- raw_config$name
     if (!is.null(raw_config$logo)) {
       if (file.exists(file_path(data_folder, "www", raw_config$logo))) {
         config$logo <-

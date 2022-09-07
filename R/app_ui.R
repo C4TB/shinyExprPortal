@@ -33,14 +33,14 @@ app_ui <- function(request) {
   })
   args <- append(list(about_tab), modules_ui_list)
   args$title <- list(config$logo %||% config$name)
-  args$windowTitle <- paste(config$name, "analysis portal")
+  args$windowTitle <- config$windowtitle %||% "Expression analysis portal"
   if (!is.null(config$bootstrap)) {
     args$theme <- do.call(bslib::bs_theme, config$bootstrap)
   }
   args$id <- "tabSelect"
   tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(paste(config$name, "analysis portal")),
+    golem_add_external_resources(args$windowTitle),
     # List the first level UI elements here
     # Need to use do.call to pass list of tabPanels to navbarPage
     do.call(navbarPage, args)
