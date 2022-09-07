@@ -265,8 +265,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
                 range = annotation_range
               )
           }
-          if (length(list_of_genes) < 200) hm <- hm %>% add_row_grouping()
-          hm %>% add_col_grouping()
+          if (length(list_of_genes) < 200) hm <- hm %>% add_row_clustering()
+          hm %>% add_col_clustering()
         })
       }
     })

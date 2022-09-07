@@ -10,7 +10,7 @@ encoding_list <-
   if (field_type == "quantitative") {
     color_list <- list(
       condition = list(
-        param = "cluster_sel",
+        param = "group_sel",
         field = color_field,
         type = field_type,
         scale = list(
@@ -25,7 +25,7 @@ encoding_list <-
   } else {
     color_list <- list(
       condition = list(
-        param = "cluster_sel",
+        param = "group_sel",
         field = color_field,
         type = field_type
       ),
@@ -69,7 +69,7 @@ vega_scatterplot_overlay <-
       `$schema` = "https://vega.github.io/schema/vega-lite/v5.json",
       params = list(
         list(
-          name = "cluster_sel",
+          name = "group_sel",
           select = list(
             type = "point",
             fields = list(color_var),
