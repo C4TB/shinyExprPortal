@@ -102,12 +102,15 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     annotation_vars <- module_config$annotation_variables
     custom_annotation_colors <- module_config$custom_annotation_colors
     annotation_range <- module_config$annotation_range
+    subset_categories <- module_config$subset_categories
 
 
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
 
     user_selection <- reactive({
-      getSelectedSampleCategories(sample_categories, input)
+      getSelectedSampleCategories(sample_categories,
+                                  input,
+                                  subset_categories)
     })
 
     # Reset table selection if modules subset changes
@@ -164,7 +167,12 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         return(NULL)
       }
       selected_clinical <- clinical_from_lookup()
-      selected_clinical[rev(input$selected_annotations)]
+      selected_annot_df <- 
+        selected_clinical[, c(rev(input$selected_annotations)), drop=FALSE] %>%
+        select(where(function(x) !all(is.na(x))))
+      if (ncol(selected_annot_df) == 0) return(NULL)
+      
+      return(selected_annot_df)
     })
 
     # Find module genes and subset expression matrix
@@ -173,10 +181,12 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       row_id <- input$modules_list_row_last_clicked
       module_info <- as.list(selected_modules_table()[row_id, ])
       list_of_genes <- unlist(strsplit(module_info[[genes_variable]], ","))
-      expression_matrix[
+      m <- expression_matrix[
         rownames(expression_matrix) %in% list_of_genes,
         selected_lookup()[[sample_var]]
       ]
+      m <- m[rowSums(is.na(m)) != ncol(m), ]
+      m
     }) %>% bindCache(
       input$modules_list_row_last_clicked,
       selected_modules_table(),
@@ -197,21 +207,23 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
 
     observeEvent(heatmap_data(), {
 
+      m <- heatmap_data()
       # Dynamic height
-      hm_height <- min(600, 450 + nrow(heatmap_data()) * 2)
+      hm_height <- min(600, 450 + nrow(m) * 2)
 
       output$heatmap_ui <- renderUI({
         iheatmaprOutput(ns("module_heatmap"), height = hm_height)
       })
 
-      if (nrow(heatmap_data()) > 0) {
+      if (nrow(m) > 0) {
         output$module_heatmap <- renderIheatmap({
+          row_labels <- ifelse(nrow(m) > 80, FALSE, TRUE)
           hm <- iheatmap(
-            heatmap_data(),
+            m,
             colors = rev(
               RColorBrewer::brewer.pal(11, "RdBu")
             ),
-            row_labels = if (nrow(heatmap_data()) > 80) F else T,
+            row_labels = row_labels,
             scale = "rows",
             scale_method = "standardize",
             name = "Expression z-scores",
@@ -220,8 +232,8 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
               plot_bgcolor = "transparent",
               paper_bgcolor = "transparent"
             )
-          ) %>%
-            add_row_clustering()
+          ) 
+          hm <- hm %>% add_row_clustering()
 
           # Optional annotations
           annots <- annotations()
@@ -249,7 +261,6 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         matching_col = subject_var
       )
       selected_clinical <- subset_clinical[, scatterplot_vars]
-
       # Compute eigengene
       eigengene <- stats::prcomp(t(heatmap_data()),
         center = TRUE,
