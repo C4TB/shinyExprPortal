@@ -15,7 +15,11 @@ parseConfig <-
            test_module = NULL,
            custom_modules = NULL,
            nthreads = 1L) {
-    message(paste("Reading configuration file", fname))
+    message(paste("Reading configuration file:", fname))
+
+    if (!file.exists(fname)) {
+      stop_nice("File ", fname, " not found")
+    }
     raw_config <- yaml::read_yaml(fname)
 
     available_modules <- get_golem_config("available_modules")
@@ -30,25 +34,16 @@ parseConfig <-
     # Read app metadata ----
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
-<<<<<<< HEAD
-<<<<<<< HEAD
-    config$name <- raw_config$name
-=======
     config$name <- raw_config$name %||% ""
->>>>>>> bc8c7de (Write YAML)
-=======
-    config$name <- raw_config$name %||% ""
->>>>>>> cf5261d8b2cf9cc38594fb9872bd1af4195c872b
     if (!is.null(raw_config$logo)) {
       if (file.exists(file_path(data_folder, "www", raw_config$logo))) {
         config$logo <-
           img(
             src = file_path("local", raw_config$logo),
-            # height = "45px",
             title = config$name
           )
       } else {
-        stop_nice("Logo image file", raw_config$logo, "not found")
+        stop_nice("Logo image file ", raw_config$logo, " not found")
       }
     }
     config$iconMenu <- raw_config$iconMenu %||% NULL
@@ -60,7 +55,7 @@ parseConfig <-
       if (file.exists(about_file)) {
         config$about <- about_file
       } else {
-        stop_nice("'About' file", about_file, "not found.")
+        stop_nice("About file ", about_file, " not found.")
       }
     }
 
@@ -128,12 +123,11 @@ parseConfig <-
       )
       loaded_data$clinical <-
         remove_duplicate_subjects(
-          clinical,
+          loaded_data$clinical,
           sample_categories_names,
           config$sample_variable
         )
     }
-
 
     # Validate samples and subjects ----
     # Check if number of samples and subjects match across clinical data
@@ -238,7 +232,7 @@ validateData <-
         mode(sample_lookup[[subject_variable]]))
       stop_nice("Subject column types in clinical and lookup",
         " table are different")
-    
+
     error <- FALSE
     if (!isTRUE(all.equal(sort(clinical_subjects), sort(lookup_subjects)))) {
       message("ERROR: Subjects in clinical and lookup tables do not match.")
@@ -284,17 +278,20 @@ validateData <-
 #'
 #' @return parsed file
 #' @noRd
-read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) {
+read_file <-
+  function(filename, filetype = "", data_folder = "", nthreads = 1L) {
   fext <- file_ext(filename)
   filename <- file_path(data_folder, filename)
   if (!file.exists(filename)) {
-    stop_nice("File ", filename, " in yaml configuration not found.")
+    stop_nice("File ", filename, " not found.")
   }
   tryCatch({
       if (fext == "rds") {
         df <- readRDS(filename)
         if (filetype == "expression_matrix" & !is.matrix(df)) {
-        stop_nice("For expression_matrix file, object must be stored as matrix")
+          stop_nice(
+            "For expression_matrix file, object must be stored as matrix"
+          )
         }
         df
       } else if (fext == "fst") {
@@ -316,7 +313,9 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
         }
         df <- qs::qread(filename, nthreads = nthreads)
         if (filetype == "expression_matrix" & !is.matrix(df)) {
-        stop_nice("For expression_matrix file, object must be stored as matrix")
+          stop_nice(
+            "For expression_matrix file, object must be stored as matrix"
+          )
         }
         df
       } else {
@@ -366,7 +365,7 @@ read_file <- function(filename, filetype = "", data_folder = "", nthreads = 1L) 
 #' @param models_file file that categories and locate each model
 #' @param data_folder optional data folder to find file
 #' @param pvalue_max optional maximum p value for significance. Default is 0.05
-#' @param padj_max optional maximum adjusted p value for significance. 
+#' @param padj_max optional maximum adjusted p value for significance.
 #' Default is 0.05
 #' @param pvalue_col optional column for p-value. Default is P.value
 #' @param padj_col optional column for adjusted p-value. Default is q.value
@@ -402,7 +401,7 @@ loadModels <- function(models_file,
   if (!"File" %in% colnames(models_table)) {
     stop_nice("'File' column missing from models_table.")
   }
-  
+
   # Go through list of files and load them
   models_table$Data <- lapply(models_table$File, function(file_name) {
     file_name <- file_path(data_folder, "models", file_name)
@@ -420,7 +419,7 @@ loadModels <- function(models_file,
       data.table = FALSE,
       nThread = nthreads
     )
-    valid_symbol_cols <- 
+    valid_symbol_cols <-
       c("Protein", "Gene", "GeneSymbol", "Symbol", "symbol", "Gene_ID")
     if (length(intersect(valid_symbol_cols, colnames(model))) == 0) {
       stop_nice(
@@ -439,9 +438,11 @@ loadModels <- function(models_file,
       "deseq"
     } else if ("PValue" %in% colnames(x)) {
       "edger"
-    } else "limma"
+    } else {
+      "limma"
+    }
   })
-  
+
   models_table$P <-
     sapply(models_table$Data,
            function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]))
