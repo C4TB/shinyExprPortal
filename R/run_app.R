@@ -7,12 +7,19 @@ NULL
 
 #' Run the Shiny Application
 #'
+#' This function should be run only after you have created the configuration
+#' file and placed all required files in the app folder. See
+#' `vignette("quickstart", package = "clinvisx")` for help with setup or
+#' `vignette("fullguide", package = "clinvisx")` for a complete configuration
+#' guide.
+#'
 #' @param config_file The name of the yaml configuration file
-#' @param data_folder Optional directory prefix for data files.
-#'  Enables using the same configuration file for different versions of data 
-#'  files.
+#' @param data_folder Optional directory prefix for data files. Use this
+#' argument if you want to version your files across different folders
 #' @param custom_modules Optional list of available custom modules. See the 
 #' 'Details' section.
+#' @param nthreads Optional number of threads/cores to speed up loading files
+#' and computing correlations on UNIX-based systems. Default is 1
 #' @param ... Further optional arguments.
 #'
 #' @details `custom_modules` should contain a list of names for user-defined
@@ -24,6 +31,9 @@ NULL
 #' the custom module names, it will call the module configuration parsing
 #' function and add it to the interface. See `vignette("custom_modules")` for a
 #' complete example.
+#' 
+#' @seealso [create_config_wizard()] to create a configuration using a wizard,
+#' [create_config_template()] to create a configuration file template.
 #'
 #' @export
 run_app <- function(config_file,

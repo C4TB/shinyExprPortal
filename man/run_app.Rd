@@ -15,17 +15,23 @@ run_app(
 \arguments{
 \item{config_file}{The name of the yaml configuration file}
 
-\item{data_folder}{Optional directory prefix for data files.
-Enables using the same configuration file for different versions of data
-files.}
+\item{data_folder}{Optional directory prefix for data files. Use this
+argument if you want to version your files across different folders}
 
 \item{custom_modules}{Optional list of available custom modules. See the
 'Details' section.}
 
+\item{nthreads}{Optional number of threads/cores to speed up loading files
+and computing correlations on UNIX-based systems. Default is 1}
+
 \item{...}{Further optional arguments.}
 }
 \description{
-Run the Shiny Application
+This function should be run only after you have created the configuration
+file and placed all required files in the app folder. See
+\code{vignette("quickstart", package = "clinvisx")} for help with setup or
+\code{vignette("fullguide", package = "clinvisx")} for a complete configuration
+guide.
 }
 \details{
 \code{custom_modules} should contain a list of names for user-defined
@@ -37,4 +43,8 @@ The package will then parse the configuration file, and if it contains one of
 the custom module names, it will call the module configuration parsing
 function and add it to the interface. See \code{vignette("custom_modules")} for a
 complete example.
+}
+\seealso{
+\code{\link[=create_config_wizard]{create_config_wizard()}} to create a configuration using a wizard,
+\code{\link[=create_config_template]{create_config_template()}} to create a configuration file template.
 }
