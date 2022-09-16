@@ -56,7 +56,9 @@ create_example <- function(path = NULL, full = FALSE) {
     DrugNaive = ifelse(sample(stats::rpois(n, 3), n, FALSE) > 3, "Yes", "No")
   )
 
-  utils::write.csv(clinical, file_path(dir, "clinical_data.csv"))
+  utils::write.csv(clinical,
+                   file_path(dir, "clinical_data.csv"),
+                   row.names = FALSE)
 
   # Create fake gene symbols
   m <- 5000
@@ -72,7 +74,9 @@ create_example <- function(path = NULL, full = FALSE) {
       dimnames = list(gene_names, sids)
     )
 
-  utils::write.csv(expression, file_path(dir, "expression_matrix.csv"))
+  utils::write.csv(expression,
+                   file_path(dir, "expression_matrix.csv"),
+                   row.names = FALSE)
 
   lookup <- data.frame(
     Subject_ID = rep(ids, each = 6),
@@ -82,5 +86,7 @@ create_example <- function(path = NULL, full = FALSE) {
     Drug = rep(clinical$Drug, each = 6)
   )
 
-  utils::write.csv(lookup, file_path(dir, "lookup_table.csv"))
+  utils::write.csv(lookup,
+                   file_path(dir, "lookup_table.csv"),
+                   row.names = FALSE)
 }
