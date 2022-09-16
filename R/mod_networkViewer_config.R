@@ -7,7 +7,7 @@ networkViewer_config <- function(config, data_folder = "") {
 
   if (is.null(config$network_files)) {
     stop_nice(
-      "networkViewer:",
+      "networkViewer: ",
       "'network_files' property is missing"
     )
   }
@@ -40,6 +40,24 @@ networkViewer_config <- function(config, data_folder = "") {
   
   if (!is.null(config$colors) & !is.list(config$colors)) {
     stop_nice("networkViewer: 'colors' must be a list of node types and colors")
+  }
+  
+  if (!is.null(config$custom_heatmap_palette)) {
+    if (length(config$custom_heatmap_palette) == 1) {
+      stopIfNotInstalled(c("RColorBrewer"), "networkViewer")
+      if (!config$custom_heatmap_palette
+          %in% rownames(RColorBrewer::brewer.pal.info)) {
+        stop_nice(
+          "networkViewer: 'custom_heatmap_palette' provided is not a valid ",
+          "RColorBrewer palette"
+        )
+      }
+    } else {
+      stop_nice("networkViewer: ",
+        "'custom_heatmap_palette' must be a valid RColorBrewer palette name")
+    } 
+  } else {
+    config$custom_heatmap_palette <- "RdBu"
   }
   
   config
