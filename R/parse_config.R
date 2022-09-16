@@ -30,7 +30,15 @@ parseConfig <-
     # Read app metadata ----
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
+<<<<<<< HEAD
+<<<<<<< HEAD
     config$name <- raw_config$name
+=======
+    config$name <- raw_config$name %||% ""
+>>>>>>> bc8c7de (Write YAML)
+=======
+    config$name <- raw_config$name %||% ""
+>>>>>>> cf5261d8b2cf9cc38594fb9872bd1af4195c872b
     if (!is.null(raw_config$logo)) {
       if (file.exists(file_path(data_folder, "www", raw_config$logo))) {
         config$logo <-
