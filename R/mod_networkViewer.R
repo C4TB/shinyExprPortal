@@ -119,8 +119,9 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     network_files <- module_config$network_files
     nodes_table <- module_config$nodes_table
     network_list <- module_config$network_list
-    custom_palette <- module_config$custom_node_colors
+    custom_node_palette <- module_config$custom_node_colors
     custom_font_colors <- module_config$custom_font_colors
+    heatmap_palette <- module_config$custom_heatmap_palette
     
     observeEvent(input$network1, {
       nodes <- nodes_table[[input$network1]]
@@ -223,7 +224,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       hm <- iheatmap(
         samples_network1$expression,
         colors = rev(
-          RColorBrewer::brewer.pal(11, "RdBu")
+          RColorBrewer::brewer.pal(11, heatmap_palette)
         ),
         row_labels = T,
         col_labels = F,
@@ -298,7 +299,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       hm <- iheatmap(
         samples_network2$expression,
         colors = rev(
-          RColorBrewer::brewer.pal(11, "RdBu")
+          RColorBrewer::brewer.pal(11, heatmap_palette)
         ),
         row_labels = T,
         col_labels = F,
@@ -323,7 +324,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network1(),
         nodes_table[[input$network1]],
-        colors = custom_palette,
+        colors = custom_node_palette,
         font_colors = custom_font_colors,
         input$node_name
       )
@@ -333,7 +334,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network2(),
         nodes_table[[input$network2]],
-        colors = custom_palette,
+        colors = custom_node_palette,
         font_colors = custom_font_colors
       )
     })

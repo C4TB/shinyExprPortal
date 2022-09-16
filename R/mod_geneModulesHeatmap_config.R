@@ -9,14 +9,14 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
     config$modules_table <- read_file(config$modules_table, "table", data_folder)
   } else {
     stop_nice(
-      "geneModulesHeatmap:",
+      "geneModulesHeatmap: ",
       "a 'modules_table' file is required for this module"
     )
   }
 
   if (is.null(config$category_variable)) {
     stop_nice(
-      "geneModulesHeatmap:",
+      "geneModulesHeatmap: ",
       "'category_variable' to identify models is missing"
     )
   }
@@ -39,6 +39,23 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
   if (!is.null(config$custom_annotation_colors)) {
     config$custom_annotation_colors <-
       lapply(config$custom_annotation_colors, unlist)
+  }
+  
+  if (!is.null(config$custom_heatmap_palette)) {
+    if (length(config$custom_heatmap_palette) == 1) {
+      if (!config$custom_heatmap_palette
+          %in% rownames(RColorBrewer::brewer.pal.info)) {
+        stop_nice(
+          "geneModulesHeatmap: 'custom_heatmap_palette' provided is not a valid ",
+          "RColorBrewer palette"
+        )
+      }
+    } else {
+      stop_nice("geneModulesHeatmap: ",
+          "'custom_heatmap_palette' must be a valid RColorBrewer palette name")
+    } 
+  } else {
+    config$custom_heatmap_palette <- "RdBu"
   }
 
   config

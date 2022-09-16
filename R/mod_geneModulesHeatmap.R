@@ -98,12 +98,16 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     modules_variable <- module_config$modules_variable
     genes_variable <- module_config$genes_variable
     rank_variable <- module_config$rank_variable
+
     scatterplot_vars <- module_config$scatterplot_variables
+
     annotation_vars <- module_config$annotation_variables
     custom_annotation_colors <- module_config$custom_annotation_colors
     annotation_range <- module_config$annotation_range
+
     subset_categories <- module_config$subset_categories
 
+    heatmap_palette <- module_config$custom_heatmap_palette
 
     modules_list_proxy <- DT::dataTableProxy("modules_list", session)
 
@@ -221,7 +225,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
           hm <- iheatmap(
             m,
             colors = rev(
-              RColorBrewer::brewer.pal(11, "RdBu")
+              RColorBrewer::brewer.pal(11, heatmap_palette)
             ),
             row_labels = row_labels,
             scale = "rows",
