@@ -1,33 +1,3 @@
-#' Calculate the median for each column in subset of rows in matrix
-#'
-#' @param x a numeric \link[base]{matrix}.
-#' @param rownames_list a subset of rows to operate over
-#'  (may contain missing rows).
-#'
-#' @return a matrix with columnwise medians or an empty matrix
-#'   (if no entries in rownames_list match)
-#' @noRd
-colMediansSubset <- function(x, rownames_list = NULL) {
-  if (is.null(rownames_list)) {
-    res <- matrixStats::colMedians(x)
-    names(res) <- colnames(x)
-  } else {
-    rownames_list <- intersect(rownames(x), rownames_list)
-    if (length(rownames_list) == 1) {
-      res <- x[unlist(rownames_list), ]
-      names(res) <- colnames(x)
-    } else if (length(rownames_list) == 0) {
-      # If none of the names are found, returns an empty matrix
-      res <- x[0, ]
-    } else {
-      x <- x[rownames_list, ]
-      res <- matrixStats::colMedians(x)
-      names(res) <- colnames(x)
-    }
-  }
-  res
-}
-
 #' Compute p-values
 #'
 #' @param x vector x with correlation estimates
