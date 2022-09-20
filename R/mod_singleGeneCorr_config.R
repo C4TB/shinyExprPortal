@@ -8,6 +8,16 @@ singleGeneCorr_config <- function(config, ...) {
   if (is.null(config$tabs)) {
     stop_nice("singleGeneCorr: 'tabs' definitions are missing")
   }
+  
+  if (!is.null(config$custom_point_colors)) {
+    lv <- which(sapply(config$custom_point_colors, is.list) == FALSE)
+    if (length(lv) >= 1) {
+      invalid_colors <-
+        paste(names(config$custom_point_colors)[lv], collapse=",")
+      stop_nice("singleGeneCorr: colors for ", invalid_colors, " should be in ",
+                "list format")
+    }
+  }
 
   config
 }
