@@ -119,7 +119,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     network_files <- module_config$network_files
     nodes_table <- module_config$nodes_table
     network_list <- module_config$network_list
-    custom_node_palette <- module_config$custom_node_colors
+    custom_node_colors <- module_config$custom_node_colors
     custom_font_colors <- module_config$custom_font_colors
     heatmap_palette <- module_config$custom_heatmap_palette
     
@@ -324,7 +324,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network1(),
         nodes_table[[input$network1]],
-        colors = custom_node_palette,
+        colors = custom_node_colors,
         font_colors = custom_font_colors,
         input$node_name
       )
@@ -334,7 +334,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       plotNetwork(
         selected_network2(),
         nodes_table[[input$network2]],
-        colors = custom_node_palette,
+        colors = custom_node_colors,
         font_colors = custom_font_colors
       )
     })
