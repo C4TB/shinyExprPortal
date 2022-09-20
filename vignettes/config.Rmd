@@ -1,5 +1,5 @@
 ---
-title: "Configuration guide"
+title: "Full Configuration Guide"
 output:
   rmarkdown::html_vignette:
     toc: true

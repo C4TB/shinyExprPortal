@@ -1,0 +1,117 @@
+---
+title: "Portal interface and Code Customization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interface and Code Customization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This article describes how to customize certain visual aspects using the configuration file and how to extend the portal with custom modules.
+
+## Customizing the portal UI
+
+There are two ways to customize the interface of a deployed portal: global settings and module-specific settings. Existing module-specific settings should be stable, but new ones may be added over time.
+
+### Global customizations
+
+In the current version, in the global settings you can add an acronym or logo, change the title of the tab in the browser, add an icon-based shortcut menu to the landing page and modify the [Bootswatch](http://www.bootswatch.com) theme.
+
+The configuration file should look like this for each of the settings above:
+
+```yaml
+name: PROJ
+logo: logo.png
+windowtitle: MyProject analysis portal
+iconMenu:
+- moduleName
+- moduleName2
+bootswatch:
+ theme: theme_name
+ version: 3, 4 or 5
+```
+
+For the logo and the icon menu, you should create a folder named **www** in your project's folder and place the corresponding images inside, so the resulting file tree looks like this:
+
+```yaml
+project/
+|-about.md
+|-app.R
+|-config.yaml
+|...
+|-www/
+  |--logo.png
+  |...
+```
+
+The icon menu enables using a screenshot of a module to highlight results and provide a shortcut to it. A PNG file named for each module should be created and placed inside the www folder and the names of the modules should be listed under iconMenu in the configuration file, as shown above.
+
+Regarding the themes, the current version of the package will work well with most light-based themes. Not every theme was tested so it's recommended that you test different themes until you find one that works well.
+
+### Module customization
+
+Every module included in the package supports `title` and `description` fields. The title is the entry on the menu, whereas the description field is the text that appears between the menu and the content of the module. The description should be used to indicate to the user how to use the module and also describe some aspects of that module if needed. For example, it could include a link to an external resource or references.
+
+Besides these two fields, most modules include some degree of customization of colors:
+
+**compareTrajGroups**: a list of HTML-compatible colors for the points for each different value of trajectory_category (e.g. time points).
+
+```yaml
+compareTrajGroups:
+  custom_traj_colors: ["#ff0000", "#ff00ff", "#0000ff"]
+```
+**degDetails**: a list of HTML-compatible colors for non-significant, logFC-only significant, p-value-only significant and logFC and p-value significant genes in the volcano plot
+
+```yaml
+degDetails:
+  custom_point_colors: ["black", "yellow", "red", "blue"]
+```
+
+**geneModulesHeatmap**: colors (discrete or for interpolation) or RColorBrewer palettes for the variables that can be used in annotations for the heatmaps and a RColorBrewer palette for the heatmap colors.
+  
+```yaml
+geneModulesHeatmap:
+  custom_annotation_colors:
+    NumericVar1: ["red", "blue"]
+    NumericVar2: "RdBu"
+    DiscreteVar1: ["yellow", "green", "blue"]
+  custom_heatmap_palette: "BrBG"
+```
+
+**multiMeasureCorr**: RColorBrewer palete for heatmap colors.
+
+```yaml
+multiMeasureCorr:
+  custom_heatmap_palette: "BrBG"
+```
+
+**networkViewer**: list of colors for node categories and RColorBrewer palette for heatmap colors.
+
+```yaml
+networkViewer:
+  custom_node_colors:
+    CellType1: "red"
+    CellType2: "blue"
+    OtherDataSet: "green"
+```
+
+**singleGeneCorr**: list of colors for categorical variables in scatterplot.
+
+```yaml
+singleGeneCorr:
+  custom_point_colors:
+    SubjectVar1: ["red", "blue"]
+    SubjectVar2:
+      Value1: "red"
+      Value2: "blue"
+```
+
+## Using custom modules
+
