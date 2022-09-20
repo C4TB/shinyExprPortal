@@ -38,8 +38,16 @@ networkViewer_config <- function(config, data_folder = "") {
     config$overlap <- FALSE
   }
   
-  if (!is.null(config$colors) & !is.list(config$colors)) {
-    stop_nice("networkViewer: 'colors' must be a list of node types and colors")
+  if (!is.null(config$custom_node_colors) &
+      !is.list(config$custom_node_colors)) {
+    stop_nice("networkViewer: 'custom_node_colors' must be a ",
+      "list of node types and colors")
+  }
+  
+  if (!is.null(config$custom_font_colors) &
+      !is.list(config$custom_font_colors)) {
+    stop_nice("networkViewer: 'custom_font_colors' must be a ",
+              "list of node types and colors")
   }
   
   if (!is.null(config$custom_heatmap_palette)) {
