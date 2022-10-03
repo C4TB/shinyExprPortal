@@ -1,4 +1,6 @@
-mod_MODULENAME_ui <- function(module_name, appdata, global, module_config) {
+mod_MODULENAME_ui <- function(module_name,
+                              config,
+                              module_config) {
   MODULENAME_tab(ARGUMENTS,
                 module_name)
 }
@@ -8,9 +10,9 @@ MODULENAME_tab <- function(ARGUMENTS,
                            id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = "MODULE TITLE",
+    title = title %||% "MODULE TITLE",
     value = "MODULENAME",
-    tags$h5(title %||% "Module description"),
+    tags$h5(description %||% "Module description"),
     splitLayout(
       verticalLayout(
         wellPanel(
@@ -26,13 +28,15 @@ MODULENAME_tab <- function(ARGUMENTS,
   )
 }
 
-mod_MODULENAME_server <- function(module_name, appdata, global, module_config) {
+mod_MODULENAME_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- appdata$clinical
-    expression_matrix <- appdata$expression_matrix
-    sample_lookup <- appdata$sample_lookup
+    clinical <- config$data$clinical
+    expression_matrix <- config$data$expression_matrix
+    sample_lookup <- config$data$sample_lookup
+    subject_var <- config$subject_variable
+    sample_var <- config$sample_variable
 
     # REST OF CODE HERE
     
@@ -42,7 +46,7 @@ mod_MODULENAME_server <- function(module_name, appdata, global, module_config) {
 # Config template
 
 #' @noRd
-MODULENAME_config <- function(config, data_folder = "") { 
+MODULENAME_config <- function(config, ...) { 
   message("Checking MODULENAME configuration")
   
   requiredPackages <- c("")

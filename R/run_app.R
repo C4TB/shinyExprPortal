@@ -100,7 +100,8 @@ run_module <- function(module_name,
 
 #' Print list of currently supported modules
 #'
-#' See `vignette("config")` for details about how to configure each module.
+#' See \code{vignette("config", package = "clinvisx")} for details about how to
+#' configure each module.
 #'
 #' @return list of available modules
 #' @export

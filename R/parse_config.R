@@ -32,6 +32,13 @@ parseConfig <-
     config$data_folder <- data_folder
 
     # Read app metadata ----
+    # Settings:
+    # - bootstrap
+    # - name
+    # - logo
+    # - iconMenu
+    # - about
+    
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
     config$name <- raw_config$name %||% ""
