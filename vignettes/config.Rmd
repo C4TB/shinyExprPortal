@@ -5,7 +5,7 @@ output:
     toc: true
     toc_depth: 4
 vignette: >
-  %\VignetteIndexEntry{Configuration guide}
+  %\VignetteIndexEntry{Full Configuration Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,135 +22,36 @@ knitr::opts_chunk$set(
 library(clinvisx)
 ```
 
-This guide describes how to set up the configuration file for deploying a project with the package. It includes a minimal setup example, as well as optional advanced and customisation settings.
+This guide describes how to set up the configuration file for deploying a project with the package. It includes a minimal setup example, as well as optional advanced and customization settings. It assumes that that you have already created an initial configuration file and prepared the expression, measures and lookup table files.
 
-## Required files
+## Configuration file 
 
-A minimal project folder will have the following files:
-```{r}
-- app.R
-- expression_matrix.rds
-- sample_lookup.csv
-- clinical_data.csv
-- about.md
-- config.yaml
-```
-
-### app.R 
-
-The app.R file will almost always look like the following:
-
-```{r}
-library(clinvisx)
-run_app("config.yaml")
-```
-
-If needed, it is possible to place app.R in a different folder relative to the data files. In that case, the data_folder argument should also be passed to run_app:
-
-```{r}
-library(clinvisx)
-run_app("config.yaml", data_folder = "../files_version1")
-```
-
-### Data files
-
-The key data files are the expression matrix, the clinical data file and the sample lookup (or metadata) file. The expression matrix should contain gene symbols in rows and sample identifiers in columns. The following is a valid expression matrix:
-
-```{r, eval=TRUE, echo = FALSE}
-x <- t(sapply(1:10, function(x) rnorm(6)))
-rownames(x) <- lapply(1:10, function(x) { 
-  paste(LETTERS[x:(x+2)], collapse = "")
-})
-smp_ids <- expand.grid(c("S1", "S2", "S3"), 1:2)
-smp_ids <- sort(sprintf("%s_%02d", smp_ids[,1], smp_ids[,2]))
-colnames(x) <- smp_ids
-knitr::kable(as.data.frame(x))
-```
-
-Sample identifiers should also be in a column of the lookup file (e.g. named Sample_ID). The other columns in the lookup file should match multiple sample ids with a single patient id through the metadata. The following is a valid lookup file:
-
-```{r, eval=TRUE, echo = FALSE}
-knitr::kable(data.frame(Sample_ID = smp_ids,
-                 Time = c("m01", "m02", "m01", "m02", "m01", "m02"),
-                 Tissue = c("A", "A", "A", "A", "A", "A"),
-                 Drug = c("d1", "d1", "d1", "d1", "d2", "d2"),
-                 Patient_ID = c("p01", "p01", "p02", "p02", "p03", "p03"))
-)
-```
-
-A clinical data file contains all observed clinical data, as well as demographics and additional information (e.g. derived variables), for a patient. For data observed at multiple timepoints, it is expected that column names follow the pattern `{Variable}_{Time}`, with times formatted in the same way as the suffix and the time column in the lookup file. The following is a valid clinical data file for the lookup above:
-
-```{r, eval = TRUE, echo = FALSE}
-knitr::kable(
-  data.frame(Patient_ID = c("p01", "p02", "p03"),
-             Platelets_m01 = 150 + runif(3)*100,
-             Platelets_m02 = 150 + runif(3)*100,
-             Age = floor(runif(3, 30, 90)),
-             drugNaive = c("Yes", "Yes", "No"))
-)
-```
-
-When matching samples and subjects, the app will verify if every sample has a matching subject and every subject has at least one sample. If this does not hold, the app will not be launched.
-
-**Supported formats:** common formats such as CSV and TSV (also with .txt extension) are supported. The expression matrix is loaded using the `{data.table}` package. The clinical and lookup files are loaded using the `{vroom}` package. RDS files are also supported -- in this case, the expression matrix object should be saved as a matrix into the RDS file. For the lookup and clinical data, normal data frames or tibbles are supported.
-
-## Configuration file
-
-The configuration file is the key feature of the package, allowing managing project websites without requiring a single line of code to be written. However, as it is a YAML text file, it must be written in the correct format to work. A YAML file is essentially a text file containing pairs of fields and values, with indentations defining a tree-like structure.
-
-The configuration file has three main categories of settings: project details, data and modules. Project details settings cover title, logo, theme, icon shortcut menu and about section. Data settings include the data files mentioned above, as well as sample metadata definitions for the website. The remaining settings define which modules of the package should be displayed to a visitor of the portal.
-
-The following minimal configuration file sets up a website for the data defined above:
+**YAML syntax**: configuration fields are defined with a colon (:). Lists of values are defined using hyphens or square brackets (e.g. ["A", "B", "C"]. Besides text, lists can contain complex objects, with fields listed with a key-value pair. Values without spaces do not need double quotes, but it is not a problem to use them. Examples:
 
 ```yaml
-name: MyProject
-about: about.md
-data:
-  clinical: clinical.csv
-  sample_lookup: sample_lookup.csv
-  expression_matrix: matrix.csv
-global:
-  sample_variable: Sample_ID
-  subject_variable: Patient_ID
-  sample_classes:
-    - name: Time
-      label: Time
-      values:
-        Month 01: m01
-        Month 02: m02
-    - name: Tissue
-      label: Tissue
-      values:
-        - A
-        - B
-    - name: Drug
-      label: Treatment
-      values:
-        - D1
-        - D2
-singleGeneCorr:
-  colour_variables: [drugNaive]
-  tabs:
-    - name: Platelets
-      scale: fixed
-      variables: [Platelets_m01, Platelets_m02]
+# Hyphenated list example
+Name:
+  - Value1
+  - Value2
+  - Value3
+# Alternative with square brackets
+Name2: ["A", "B", "C"]
+# Key-value list example
+FieldName:
+  Key1: Value1
+  "Key2": "Value2"
+  Key3: Value3
+# Hyphen + Key-value
+FieldName:
+  - Key1: Value1
+    Key2: Value2
+  - Key1: Value3
+    Key2: Value4
 ```
-
-**YAML syntax**: most configuration fields are defined with a colon (:). Lists of values are defined using hyphens or square brackets. Hyphens can be use to defined complex settings such as the sample classes above. For simple definitions, either hyphens (see values of each sample class above) or square brackets (see variables in tabs above) work. In this app, pairs of key and values sometimes can replace common lists, such as in the custom labels used for the Time sample class above (see more below).
-
-The rest of this guide describes in detail each section of the configuration file, with the required and optional settings.
 
 ### Project details configuration
 
-#### Required settings
-
-**Name**
-
-A short name for a project (e.g. the acronym).
-
-```yaml
-name: PROJ
-```
+*Required settings*
 
 **About**
 
@@ -160,7 +61,23 @@ The name of a text, markdown or HTML file located in the same folder of the app.
 about: about.md
 ```
 
-#### Optional settings
+*Optional settings*
+
+**Name**
+
+A short name for a project (e.g. the acronym).
+
+```yaml
+name: PROJ
+```
+
+**Window title name**
+
+If no name is provided, you can still define a windowtitle that will appear in the browser.
+
+```yaml
+windowtitle: My Full Project Name Expression Analyiss Portal
+```
 
 **Logo**
 
@@ -172,7 +89,7 @@ logo: logo.png
 
 **Bootswatch theme**
 
-A custom [Bootswatch](http://www.bootswatch.com) theme can be used. At the moment, version 3 is strongly recommended. Version 4 can be used, but in certain modules, styling issues might appear in certain elements.
+A custom [Bootswatch](http://www.bootswatch.com) theme can be used instead of the default one. You can use versions 3, 4 or 5 but there is no guarantee of how the style will look across versions. Dark themes are not supported at the moment.
 
 ```yaml
 bootstrap:
@@ -180,7 +97,7 @@ bootstrap:
   bootswatch: cosmo
 ```
 
-Under bootstrap, any other additional setting will be passed to the `bslib::theme()` command, allowing further customisation. For further information, check the [bs_theme](https://rstudio.github.io/bslib/reference/bs_theme.html) documentation for the supported arguments or run `?bslib::theme` for the local help page.
+Under bootstrap, any other additional setting will be passed to the `bslib::theme()` command, allowing further customization. For further information, check the [bs_theme](https://rstudio.github.io/bslib/reference/bs_theme.html) documentation for the supported arguments or run `?bslib::theme` for the local help page.
 
 **Icon menu**
 
@@ -193,7 +110,7 @@ iconMenu:
 
 ### Data and global configurations
 
-For the data section, the **clinical**, **sample_lookup** and **expression_matrix** files must be defined. Additional files that are shared across multiple modules can also be defined in this section, e.g. a table mapping the files produced as results of a differential expression analysis (see [degModules](#degModules) further down for more details).
+In the data section, the **clinical**, **sample_lookup** and **expression_matrix** files must be defined. Additional files that are shared across multiple modules can also be defined in this section, e.g. the models table for the DE modules (see [degModules](#degModules) further down for more details).
 
 ```yaml
 data:
@@ -203,29 +120,49 @@ data:
   models: models.tsv
 ```
 
-A separate *global* section contains the customisation of the sample metadata under **sample_classes**. This section can also include optional definitions of **sample_variable** and **subject_variable**, containing the names of variables in the lookup and clinical files that identify samples and subjects (and allow mapping them across expression matrix, lookup and clinical data). If these variables are not provided, the package will look for *Sample_ID* and *Subject_ID* variables. The sample_classes sub-section should be defined as follows:
+**Sample and subject variables**
+
+The package does not make any assumptions about the location of the columns containing the subject or sample IDs in the measures and lookup table files, so the names of these columns must be provided. Alternatively, name them as Subject_ID and Sample_ID and the package will look for these names by default.
 
 ```yaml
-global:
-  sample_classes:
-    - name: variable_name
-      label: Variable Name
-      values:
-        Optional Label 1: value1
-        Optional Label 2: value2
-    - name: variable_name_2
-      label: Another Variable
-      values:
-        - anothervar_value1
-        - anothervar_value2
+subject_variable: Subject_ID
+sample_variable: Sample_ID
 ```
 
-Each sample class should be defined through its corresponding variable name in the sample lookup file, a label to be displayed in the web app and a list of valid values for subsetting samples. As seen above with variable_name, the valid values can also be assigned nice labels for display through the format `Nice Label: originalValue `. In this case, hyphens or square brackets should not be used. As this section of the configuration file is used by the package to build the interface, it is possible narrow down the subsets visible to user, such as specific time points.
+**Time separator**
+
+A custom separator can be used to identify a temporal suffix in measures names. While the default is `_`, a `timesep` can be used to define another separator. Currently, this is only used in the `compareTrajGroups` module.
+
+```yaml
+timesep: "."
+```
+
+**Sample categories**
+
+The property `sample_categories` define metadata variables that are used in the interface to select subsets of samples. Each sample class should be defined through its corresponding variable name in the sample lookup file, a nice label to be displayed and a list of valid values for subsetting samples. The valid values can also be assigned nice labels for display through the format `Nice Label: originalValue`. In this case, hyphens or square brackets should not be used, as in the example below.
+
+Example:
+
+```yaml
+sample_categories:
+  - name: variable_name
+    label: Variable Name
+    values:
+      Optional Label 1: value1
+      Optional Label 2: value2
+  - name: variable_name_2
+    label: Another Variable
+    values:
+      - anothervar_value1
+      - anothervar_value2
+```
 
 <details>
 <summary>**Advanced setting: All subsets**</summary>
 
-The package also supports an advanced option to enable selection of all samples for a particular class. To do that, a custom pair of label and value `All: NA` can be used. The example above would then look as follows:
+An advanced option allows selecting all samples for a particular category. To do that, a custom pair of label and value `All: NA` can be used. This is useful to explore subsets of samples that do not have a sample-based partition (e.g. a subset of samples from patients with a high disease burden). 
+
+Example:
 
 ```yaml
 global:
@@ -244,34 +181,64 @@ global:
 ```
 </details>
 
+**Default advanced settings**
+
+For some modules, the package includes default parameters for some computation methods, such as the correlation metric used. These can be overridden and displayed as options in the portal for users, but the defaults can also be defined in the configuration file and applied to all the modules that would look for them. The following properties can be defined:
+
+- default_measures_outliers: automatically remove measures outliers (for each measure) with `5/95 percentiles` method or Tukey's `IQR` method. Package default is `No`. Affects correlation modules.
+- default_expression_outliers: automatically remove expression outliers (for each gene) with `5/95 percentiles` method or Tukey's `IQR` method. Package default is `No`. Affects correlation modules.
+- default_correlation_method: `pearson`, `spearman` or `kendall` correlation measures. Default is `pearson`. Affects correlation modules.
+- default_fit_method: `none`, `linear`, `quadratic` and `cubic`. Affects scatterplots in singleGeneCorr and compareTrajGropus.
+- adjust_method: `r paste0("\x60\x60", p.adjust.methods, "\x60\x60", collapse = ", ")` or `q.value`. Default is `q.value` from `q.value` package. Affects correlation and degDetails modules.
+
+Example:
+
+```yaml
+default_measures_outliers: No
+default_expression_outliers: No
+default_correlation_method: spearman
+default_fit_method: linear
+adjust_method: fdr
+```
+
 ## Modules 
 
-The last part of the configuration file is the definition of the package modules that will be included in the web app. These should be listed sequentially and should be listed at the same hierarchical level, unless a grouped module is used (see more below). The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can be used as reference. The following modules and grouped modules are currently supported:
+The final part of the configuration file is the definition of the modules to be included in the portal.  These should be specified in the order that they should appear on the portal menu. The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can also be used as reference. The following modules and grouped modules are currently supported (grouped modules are pseudo-modules that define sub-menus on the portal):
 
-```{r list_modules, include=FALSE}
+```{r list_modules, echo=FALSE}
 clinvisx::show_avaiable_modules()
 ```
-To avoid installing too many packages, modules separate dependencies. The application will not run if there is a missing dependency for a module that is included in the configuration file.
+The package contains suggested dependencies when they are only needed by specific modules. This guide lists all the additional dependencies for each module. The other way to discover an additional dependency is to set up the configuration file and try to run the portal. If a package is missing, the portal will not run and you will be notified about which package dependency is missing.
+
+There are also optional settings supported by all modules, most of them for customization purposes.
 
 <details>
 <summary>**Optional settings supported by all modules**</summary>
 
 **title**  
-A custom title, displayed under the menu bar, can be set for all modules. Example:
+A custom name for the module can be defined for every module
+
+**description**
+A description paragraph can be defined to instruct users on usage of a module or to provide additional information, such as descriptions of the data being visualized or links to external references.
+
+Example:
 
 ```yaml
 moduleName:
+  title: New Title
+  description: New description for this module
   requiredSetting1: TRUE
   requiredSetting2: FALSE
-  title: This is my custom module title
 ```
 </details>
+
+**Modules**:
 
 ### cohortOverview {#cohortOverview}
 
 **Required packages:** `{r2d3}`
 
-This module displays a grid of small line plots for each subject in the clinical data file. The line plots are aimed at showing subjects' trajectories over time, with the option of a user-selected colour for each line. By clicking and dragging over the legend, the user can select a subset of patients and compare gene expression levels for a selected gene. The selection of sample classes is derived from the global settings.
+This module displays a grid of small line plots for each subject in the measures file. The line plots show each subjects' trajectory for various measures over time, with the line colors selected by the user from a set of variables.
 
 **Minimum configuration**
 
@@ -280,22 +247,22 @@ cohortOverview:
   profile_variables:
     Platelets:
       values: [Platelets_m01, Platelets_m02]
-  colour_variables: [drugNaive, Age, Platelets_m01, Platelets_m02]
+  colour_variables: [Age, Platelets_m01, Platelets_m02]
 ```
 
 ### compareTrajGroups {#compareTrajGroups}
 
 **Optional required packages:** `{RColorBrewer}`
 
-This module shows the trajectory of subjects over time. Subjects are split based on a supplied `sidebyside_class` in the configuration file (e.g. two treatment subsets). The trajectory is defined by the combination of variables included in a list of `compare_variables` and values from a `trajectory_class` suffix. Following the example used so far, Platelets should be included in `compare_variables` and Time defined as `trajectory_class`. In such case, a subject's trajectory contains pairs of expression at time m01 and m02 and observed measures Platelets_m01 and Platelets_m02. 
+This module shows the combined expression and measure trajectory of subjects over time, for a pair of a selected gene and one measure from a list of possible measures. The basic idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples for all time values defined by a `trajectory_category` are taken and filtered from a user selection based on the remaining `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`). The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the possible variables and times `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. In the interface, users will be able to select from any of the variables listed under `compare_variables`.
 
 **Minimum configuration**
 ```yaml
 compareTrajGroups:
-  subset_classes:
+  subset_categories:
     - Tissue
-  sidebyside_class: Drug
-  trajectory_class: Time
+  sidebyside_category: DrugGroup
+  trajectory_category: Time
   compare_variables:
     - Platelets
 ```
@@ -303,15 +270,17 @@ compareTrajGroups:
 <details>
 <summary>**Optional settings**</summary>
 
-**palette:** the name of a [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) palette or a list of valid colours (e.g. hex value) can be supplied using this keyword. This will be used to colour points based on the combination of compare_variables with trajectory_class.  
+**custom_traj_palette:** the name of a [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) palette or a list of valid colours (e.g. hex value) can be supplied using this keyword. The colors will be used in order of appearance to color the points for each value of `trajectory_category`.
 
-**advanced**: under advanced, a regression line can be displayed by setting `fit_method` to TRUE. Optionally, `fit_method` can be set to AllowHide, enabling the regression line to be hidden.
+**advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
+
+- **fit_method**: if `TRUE` or `AllowHide`, lets users choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
 
 ***Example of optional settings**
 ```yaml
 compareTrajGroups:
   ...
-  palette: ["purple", "yellow", "red", "blue"]
+  custom_traj_palette: ["purple", "yellow", "red", "blue"]
   advanced:
     fit_method: AllowHide
 ```
@@ -319,9 +288,16 @@ compareTrajGroups:
 
 ### degDetails {#degDetails}
 
-**Required packages:** `{bsplus}, {plotly}, {DT}, {shinycssloaders}`
+This module displays volcano plots and a table with the results of differential expression analysis exported by packages such as `limma`, `deseq2`, and `edgeR`. It depends on a separate table that categorizes the DE results files. This table should contain a high level category variable that identifies different types of models and a `File` column with the corresponding file names. Other columns in this table should partially match the sample classes defined in global, when meaningful. The following is a valid minimal model results table:
 
-This module displays volcano plots and a table with the results of differential expression analysis. It depends on a separate table mapping the files that have the DEA results. This table should contain a high level category variable that identifies different types of models and a `File` column with the corresponding file names. Other columns in this table should partially match the sample classes defined in global, when meaningful. The following is a valid model results table:
+```{r simple_models, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  Model = c("Linear", "Nonlinear"),
+  File = c("Model_1.txt", "Model_2.txt")
+))
+```
+
+The following is an example of a more layered model setup:
 
 ```{r models, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -332,7 +308,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-The configuration for this module requires specifying a `category_variable` to identify the models and a `models` file with the table; this file can be a TSV or CSV file. Individual model results should be placed in a `models` folder.
+The configuration for this module requires a `category_variable` to identify the models and a `models` file with the table; this file can be a tab-separated or comma-separated values file. Individual model results should be placed inside a `models` folder.
 
 **Minimum configuration:**
 ```yaml
@@ -340,19 +316,6 @@ degDetails:
   category_variable: Model
   models: model.tsv
 ```
-
-**Model results variables**  
-
-This and other DE-related modules also require the following names for variables in model results:
-
-```{r, eval = TRUE, echo = FALSE}
-knitr::kable(data.frame(
-  Type = c("Gene identifier", "Expression", "Fold change", "Significance", "FDR", "(Optional:) EnsemblID"),
-  Name =  c("Gene or GeneSymbol", "AvgExpr", "logFC", "p.value", "q.value", "EnsemblID")
-))
-```
-
-Fold change is optional and will be replaced by AvgExpr in the plots when not present.
 
 <details>
 <summary>**Optional settings**</summary>
@@ -364,7 +327,7 @@ Fold change is optional and will be replaced by AvgExpr in the plots when not pr
 
 **Required packages:** `{knitr}, {kableExtra}`
 
-This module displays a summary table of all models referenced in a models.tsv file. It aggregates the number of significant genes by p-value and q-value for each module. A `partition_variable`, matching a variable in the models table (e.g. Drug) is used to partition the results vertically. With two drugs d1 and 2, this means that the table will contain 4 columns: number of significant d1 p-value genes, d1 q-value genes, d2 p-value genes and d2 q-value genes. The other variables in the models file will be grouped row-wise.
+This module displays a summary table of all models included in the models table (see previous module). It aggregates the number of significant genes by p-value and adjusted p-values (with 0.05 threshold) for each model. A `partition_variable`, matching a variable in the models table (e.g. Drug) is used to partition the results vertically. With two drugs d1 and d2, this means that the table will contain 4 columns: number of significant d1 p-value genes, d1 adjusted p-value genes, d2 p-value genes and d2 adjusted p-value genes.
 
 **Minimum configuration**
 ```yaml
@@ -373,14 +336,11 @@ degSummary:
   models: models.tsv
 ```
 
-### geneModulesCorr {#geneModulesCorr}
-
-
 ### geneModulesHeatmap {#geneModulesHeatmap}
 
-**Required packages:** `{RColorBrewer}, {DT}`
+**Required packages:** `{RColorBrewer}`
 
-This modules enables visualising a subset of genes associated with a particular analysis (e.g. regulatory networks). It displays a heatmap with gene expression of the genes from a module, with the samples matching the subsets that are associated with the analysis. A table with a model/analysis category or source, sample classes, module name and a list of associated genes is required. As an example, the following is a valid modules table:
+This modules enables visualizing a subset of genes related to a downstream analysis method (e.g. regulatory networks). It displays a heatmap with expression of the genes from a selected module, and scatterplots with the association between the module eigengene and measures defined in the configuration file. Gene modules must be specified in a table with a model/analysis category or source, valid sample categories associated with that module, module name and a list of associated genes is required. It is also possible to include annotations in the heatmap by defining a list of valid measures or categorical variables that the user can select. The following is an example of a valid modules table:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -390,11 +350,26 @@ knitr::kable(data.frame(
   ModuleName = c("ABC (Activated)", "BCD (Inhibited)", "CDE (Activated)", "DEF (Activated)", "EFG (Activated)",
                  "FGH (Activated)"),
   targetGenes = c("PQR,QRS,RST", "QPP,PQQ,RST,TRR,WYX,WEX", "QQZ,ZZE,YYZ,YYE,PPA", "PP,APP,BBE", "HJK,JKL,MNJ",
-                  "MNO,NOP,PQR,QRS,RST,STU")
+                  "MNO,NOP,PQR,QRS,RST,STU"),
+  rank = c(1,2,3,4,1,2)
 ))
 ```
 
-The configuration requires a `modules_table` indicating the TSV or CSV with the table, a `category_variable`, which identifies the table column with the name of the source of the modules (e.g. a category of analysis), a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column containing a list of gene symbols separated by comma. In the interface, users select a Category and the values of the remaining classes on the table (e.g. Time and Drug above) to see a list of modules associated with that category and sample classes.
+This module also support generic lists of genes that can be made visible to any selection of subsets of samples. To define lists of genes for this purpose, you can use `*` as a wildcard in a sample category column. The following is an example of that in hypothetical co-expression modules (e.g. outputs from WGCNA or CEMiTool), which allows the user to explore the same modules for any subset of Time and Drug.
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  Category = c("Coexp", "Coexp", "Coexp", "Coexp", "Coexp", "Coexp"),
+  Time = c("*", "*", "*", "*", "*", "*"),
+  Drug = c("*", "*", "*", "*", "*", "*"),
+  ModuleName = c("gray", "red", "blue", "orange", "green", "black"),
+  targetGenes = c("PQR,QRS,RST", "QPP,PQQ,RST,TRR,WYX,WEX", "QQZ,ZZE,YYZ,YYE,PPA", "PP,APP,BBE", "HJK,JKL,MNJ",
+                  "MNO,NOP,PQR,QRS,RST,STU"),
+  rank = c(1,2,3,4,1,2)
+))
+```
+
+The configuration requires a `modules_table` pointing to the table file above, a `category_variable` that identifies the table column with highest-level category of modules, a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column that contains a list of gene symbols separated by comma. In the interface, users will select a Category and subsets from the remaining sample categories on the table (e.g. above, Time and Drug) to see a list of modules associated with that category and sample classes. An optional `rank` column can be included in the table, and set in the config file in `rank_variable`, to choose a custom appearance order for each modules, as in the example above.
 
 **Minimum configuration**
 ```yaml
@@ -408,9 +383,10 @@ geneModulesHeatmap:
 <details>
   <summary>**Optional settings**</summary>
 
-**annotation_variables**: a list of clinical variables can be supplied so that users can add annotations above the heatmap. The variables should be provided with a full name, so that variables at different time points can be included.  
-**annotation_colours:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colours for the annotations. Alternatively, an RColorBrewer palette or a list of colours (e.g. hex values) can be assigned to individual variables (not every variable needs to be assigned custom colours). For continuous variables, a list of colours will be interpolated. This method can be used to reverse RColorBrewer palettes.
-**annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the colour scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is when a maximum observed value changes over time.
+**annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should match the measures table, independent of their timepoint.  
+**custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
+**annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve.  
+**custom_heatmap_palette**: a custom RColorBrewer palette can be provided to override the default `RdBu` palette used in the heatmap.
 
 **Example of optional settings:**
 ```yaml
@@ -420,20 +396,106 @@ geneModulesHeatmap:
     - Age
     - Platelets_m01
     - Platelets_m02
-    - drugNaive
-  annotation_colours:
-    drugNaive: ["yellow", "green"]
+    - diseaseActivity_m01
+    - diseaseActivity_m02
+  custom_annotation_colors:
+    drugNaive:
+      Yes: yellow
+      No: green
     Age: Reds
   annotation_range:
-    Age: [0, 99]
+    diseaseActivity_m01: [0, 99]
+    diseaseActivity_m02: [0, 99]
+  custom_heatmap_palette: BrBG
 ```
+</details>
+
+### geneProjectionOverlay {#geneProjectionOverlay}
+
+This module allow users to explore expression variation in pre-computed clusters of genes across subsets of subjects, following a pre-computed 2D projection of the genes in the whole dataset. This module was developed considering a 1:1 subject-to-sample ratio rather than multiple samples per subject. It display the 2D projection in two scatterplots: one displays the points colored by the group membership and the other displays the mean expression of the gene relative to the mean expression of all genes (i.e. a fold change). Sample categories can be used to define subsets of samples based on a characteristic of the subjects, such as a disease activity measure. The scatterplot will then show the expression in variation for that subset only. The coordinates file must contain gene symbols, two columns for position and a column for group. The first three must appear in that exact order, as the following:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(data.frame(
+  gene = replicate(5, paste(sample(LETTERS, 5, replace = TRUE), collapse="")),
+  x = rnorm(10),
+  y = rnorm(10),
+  group = c(1,2,1,1,3)
+))
+```
+
+This table can be an .rds, .csv or .tsv file and must be defined in the `coordinates_file` setting The group column must be indicated using the `group_variable` setting.  
+
+<details>
+  <summary>**Optional settings**</summary>
+  
+The module also includes a heatmap to view the individual expression of samples for the genes that belong to a selected group, and it can display annotations based on the measures table. These should be defined through `annotation_variables`, and, as with the previous module, there is also the option of defining custom colors through `custom_annotation_colors` and fix variable ranges through `annotation_range`.
+
+**annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should fully match the measures table names, including the time point.
+**custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
+**annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve.
+
+**Example of optional settings:**
+
+```yaml
+geneProjectionOverlay:
+  ...
+  annotation_variables:
+    - Platelets_m01
+    - Platelets_m06
+  custom_annotation_colors:
+    Platelets_m01: BrBG
+  annotation_range:
+    Platelets_m01: 0-20
+    Plaetelts_m06: 0-20
+```
+
+</details>
+
+### networkViewer {#networkViewer}
+
+**Required packages**: [{visNetwork}](https://cran.r-project.org/web/packages/visNetwork/index.html), [{igraph}](https://cran.r-project.org/web/packages/igraph/index.html),
+
+This module allows exploring networks of genes as produced by methods such as ARACNe. It supports reading a list of edges that represent connected components of a whole network, that is, the list of edges should produce multiple separate subnetworks. The user selects a source for the edges and a node; the module then displays the component that contains that node. A second source is also selected and, if it exists, a second component is shown next to the first. This enables comparing the connections between that node and other nodes at two time points, for example. The edge list file should contain names of nodes with a prefix corresponding to a type of sample category and and the name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list table can be a comma- or tab-separated values fie without header and must contain, in order, source name, target name and node weight.
+
+The configuration section for this module requires the specification of the `network_files` corresponding to the edge lists and a `sample_category` corresponding to what the prefixes in the nodes mean.  The following is a valid configuration for this module:
+
+```yaml
+networkViewer:
+  network_files:
+    - name: "First Month Network"
+      file: first_month.edge
+    - name: "Second Month Network"
+      file: second_month.edge
+  sample_category: TissueType
+```
+
+<details>
+  <summary>**Optional settings**</summary>
+
+It is possible to customize the appearance of the network nodes through their background and text colors:
+
+**custom_node_colors**: a named list of prefixes with the desired HTML-compatible colors
+**custom_font_colors**: a named list of prefixes with the desired HTML-compatible colors
+
+**Example of optional settings:**
+```yaml
+networkViewer:
+  ...
+  custom_node_colors:
+    Tissue1: "#FF0000"
+    Tissue2: "#FFFF00"
+    Tissue3: "#00FF00"
+  custom_font_colors:
+    Tissue1: "#FFFFFF"
+    Tissue2: "#000000"
+    Tissue3: "#FFFFFF"
+```
+  
 </details>
 
 ### singleGeneCorr {#singleGeneCorr}
 
-**Required packages:** `{DT}`
-
-This module allows users to compare the expression of a single gene from a selected subset of samples with observed clinical variables through scatterplots. Groups of scatterplots are arranged in tabs, and there is an option to keep the same scale across all scatterplots in a single tab. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (scatterplots have unique horizontal axis) or `fixed`, and a list of variables for each scatterplot. By default, each scatterplot is annotated with Pearson correlation value, p-value and FDR. This module can be passed as a name to `link_to` in other modules.
+This module allows users to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. This module can be passed as a name to `link_to` in other modules.
 
 **Minimum configuration**
 ```yaml
@@ -449,14 +511,15 @@ singleGeneCorr:
 <details>
 <summary>**Optional settings**</summary>
 
-**colour_variables**: a list of clinical variables, either numeric or discrete, can be supplied so that users can assign a colour to subjects.
+**color_variables**: a list of variables, either numeric or discrete, can be supplied so that users can assign a color to subjects.
+**custom_point_colors**: optionally, for the color variables, it is possible to supply custom colors as: valid [Vega schemes](https://vega.github.io/vega/docs/schemes/), list of colors or named list of colors (see DrugNaive in the example below).
 
-**advanced**: under advanced, several additional options can be enabled:  
+**advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
-- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **fit_method**: if TRUE or AllowHide, lets users choose a regression method from the available ones (linear, quadratic or cubic).
+- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **fit_method**: if `TRUE` or `AllowHide`, lets users choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
 
 
 **Example of optional settings:**
@@ -464,58 +527,64 @@ singleGeneCorr:
 singleGeneCorr:
   tabs:
     ...
-  colour_variables: [DrugNaive, Age]
+  color_variables: [DrugNaive, Age]
+  custom_point_colors:
+    Age: purpleblue
+    DrugNaive
+      Yes: yellow
+      No: green
   advanced:
     correlation_method: TRUE
     expression_outliers: TRUE
-    clinical_outliers: TRUE
-    fit_method: TRUE
+    measures_outliers: TRUE
+    fit_method: AllowHide
 ```
 </details>
 
 
 ### singleVariableCorr {#singleVariableCorr}
 
-**Required packages:** `{DT}`
-
-This module allows users to view a table with the correlation betwen one single clinical variable and all genes from a selected subset. With default settings, this module does not require any configuration except being listed in the file with a value of TRUE. Without optional settings, the module will let users pick one from all numeric variables from the clinical table.
+This module allows users to view a table with the correlation between one single measure and all genes from a selected subset. The module can be set up with a list of measures from which users can select in the interface and the optional advanced settings of correlation method and outlier removal. As a default, the module can be defined simply as TRUE to include all numeric measures and no advanced settings:
 
 **Minimum configuration**
 ```yaml
 singleVariableCorr:
   TRUE
 ```
+
+A list of variables can be provided through `dropdown_variables`:
+```yaml
+singleVariableCorr:
+  dropdown_variables:
+    - Platelets_m01
+    - Platelets_m02
+    - Platelets_m03
+```
+
 <details>
   <summary>**Optional settings**</summary>
-  
-**clinical_variables**: a custom list of clinical variables can be supplied. If not, all numeric variables will be made available for users to select.
 
 **link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
 
-**advanced**: under advanced, several additional options can be enabled:  
+**advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
-- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
 
 **Example of optional settings:**
 ```yaml
 singleVariableCorr:
-  clinical_variables:
-    - Age
-    - Platelets_m01
   link_to: singleGeneCorr
   advanced:
     correlation_method: TRUE
-    clinical_outliers: TRUE
+    measures_outliers: TRUE
 ```
 </details>
 
 ### multiVariableCorr {#multiVariableCorr}
 
-**Required packages:** `{bsplus}`, `{RColorBrewer}`, `{plotly}`, `{DT}`, `{shinycssloaders}`
-
-This module allows users to view a heatmap and a table with the most significantly correlated genes across a predefined set of clinical variables. The genes are taken from a subset selected by user, based on the sample classes in the global configuration. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
+This module allows users to view a heatmap and a table with the most significantly correlated genes across a predefined set of measures. The genes are taken from a subset selected by user, based on the sample categories. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
 
 **Minimum configuration**
 ```yaml
@@ -527,13 +596,15 @@ multiVariableCorr:
 <details>
   <summary>**Optional settings**</summary>
   
+**custom_heatmap_scheme**: a valid [Vega schemes](https://vega.github.io/vega/docs/schemes/) can be provided to override the default `redblue` scheme.  
+  
 **link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
 
-**advanced**: under advanced, several additional options can be enabled:  
+**advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:  
 
-- **correlation_method**: if TRUE, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if TRUE, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **clinical_outliers**: if TRUE, allows users to exclude clinical outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
   
 **Example of optional settings:**
 ```yaml
@@ -542,18 +613,18 @@ multiVariableCorr:
   link_to: singleGeneCorr
   advanced:
     correlation_method: TRUE
-    clinical_outliers: TRUE
+    measures_outliers: TRUE
 ```
 
 </details>
 
 ## Grouped modules
 
-Each module defined above will appear as an independent choice in the menu. However, some modules share an underlying functionality or purpose, such as the differential expression modules or the correlation modules. Therefore, the package supports a few of these grouped modules that can be specified in the configuration file, and will be grouped in the menu of the website. The existence of these modules is defined internally in the package and is not customisable when deploying a project.
+Each module defined above will appear as an separate entry on the menu. However, some modules share an underlying functionality or purpose, such as the differential expression modules or the correlation modules. Therefore, the package supports a few of these grouped modules that can be specified in the configuration file, and will be grouped in the menu of the website. The existence of these modules is defined internally in the package and is not customisable when deploying a project.
 
 ### degModules {#degModules}
 
-This group of modules includes `degDetails` and `degSummary`. As both modules require a model table and files, when using degModules it is possible to specify the model file as part of the data section of the configuration. Please note below the indentation that is required when defining the sub-modules.
+This group of modules includes `degDetails` and `degSummary`. As both modules require a model table and files, when using degModules it is possible to specify the model file as part of the data section of the configuration and avoid reading all models twice. Please note below the indentation that is required when defining the sub-modules.
 
 **Configuration example**
 ```yaml

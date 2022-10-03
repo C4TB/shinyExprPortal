@@ -14,6 +14,114 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(clinvisx)
+Deploying a portal using the package relies on two data files -- a count expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [dataprep](dataprep.html) vignette describes how to prepare the data to use with the package.
+
+## Using the wizard
+
+Before starting the wizard, ensure you do the following
+
+1. **Create a folder where the app will be located**
+
+If using RStudio, create a new project to facilitate the rest of the setup.
+
+2. **Place an expression matrix file in the project folder**
+
+With HGNC or similar gene names in rows and samples in columns. The file can be a .csv, .tsv/txt, .fst, .qs or .rds file. If using an .rds file, save it as a `matrix` object, not a `data.frame`.
+
+Go to the next step if your expression matrix is structured in this way and you saved it in the project folder:
+
+```{r, eval=TRUE, echo = FALSE}
+x <- t(sapply(1:10, function(x) rnorm(6)))
+rownames(x) <- lapply(1:10, function(x) { 
+  paste(LETTERS[x:(x+2)], collapse = "")
+})
+smp_ids <- expand.grid(c("S1", "S2", "S3"), 1:2)
+smp_ids <- sort(sprintf("%s_%02d", smp_ids[,1], smp_ids[,2]))
+colnames(x) <- smp_ids
+knitr::kable(as.data.frame(x))
 ```
+
+3. **Place a measures table file in the project folder**
+
+With variables in columns and subjects in rows. The subjects must be in the same order as their samples in the expression matrix. Again most formats can be used, but if using a .rds file, the measures file must be saved as a `data.frame`.
+
+Go to the next step if your measures table is structured in this way and you saved it in the project folder:
+
+```{r, eval = TRUE, echo = FALSE}
+knitr::kable(
+  data.frame(Sample_ID = c("S1", "S2", "S3"),
+             Platelets_m01 = 150 + runif(3)*100,
+             Platelets_m02 = 150 + runif(3)*100,
+             Age = floor(runif(3, 30, 90)),
+             drugNaive = c("Yes", "Yes", "No"))
+)
+```
+
+4. *Optionally place a metadata table file in the folder*
+
+A table that contains sample information such as control group, age, etc. This will add radio buttons on the interface for selecting subsets based on these variables. It should also follow a one row per subject/sample format.
+
+Finally,
+
+5. **In R, load the package and run `create_config_wizard()`**
+
+If you are not using an RStudio project, ensure that the folder with the files is the current working directory (check with `getwd()`).
+
+*The wizard will inform you about each stage and ask questions to set up the configuration file*. It will also wait when you are required to do additional actions such as creating folders and moving files. Depending on your choices, at least two files will have been created: `app.R` and `config.yaml`.
+
+6. **Open and run the contents of app.R to test the portal**
+
+You can also copy the project folder to a Shiny server or use the [rsconnect](https://rstudio.github.io/rsconnect/) package to deploy it to shinyapps.io.
+
+## Creating a config template
+
+Alternatively, you can run `create_config_template()` to create a config.yaml file that will contain placeholders that you can edit. If you decide on this method, you will have to create a lookup table file, by default named `lookup_table.csv`, which matches samples with subjects in the measures table and looks like the following:
+
+```{r lookup_example, echo=FALSE}
+print(data.frame(
+  source = c("microarray", "microarray", "microarray") ,
+  sample_id = c("sample_1", "sample_2", "sample_3"),
+  subject_id = c("subject_1", "subject_2", "subject_3"),
+  group = c("control", "treatment", "treatment")))
+```
+As you can see above, the lookup table also includes sample metadata information (group). Any metadata that you want to use to create subsets in the interface (e.g. to compute correlations only for a control group) should be included in this table and then defined in the configuration file under sample_categories, as following:
+
+```yaml
+sample_categories:
+  - name: group
+    label: Group
+    values:
+      - treatment
+      - control
+```
+
+In the portal, this will appear as:
+
+![](samplecat-example.png){width=33%}
+
+### Adding modules
+
+Once the config.yaml file is created, you can edit it to modify the setup of modules that are already defined or add new ones. The modules included in the package vary between their requirements and aims: some of them are more exploratory and only require setting them up in the configuration file, while others were designed to help showcase and explore results of analysis. If you have computed sets of genes using a package such as WGCNA, you can create a table to load them into the geneModulesHeatmap module, for example. In the current version, the following modules are available:
+
+```{r show_av}
+clinvisx::show_available_modules()
+```
+
+Below is a summary of which modules work with the basic data files and which ones require additional files:
+
+**No additional files needed**
+
+- Single gene/multiple measures correlations
+- Single measure/all genes correlation
+- Multi-measure/all genes correlation
+- Expression/measures changes over time
+
+**Additional files needed**
+
+- Differential expression models summary page: table of models, DE packages outputs (e.g. limma, deseq2. edgeR)
+- Differential expression models visualization: table of models, DE packages outputs (e.g. limma, deseq2. edgeR)
+- Gene modules heatmap: data frame with gene lists (WGCNA, genes of interest, etc.)
+- Network viewer (i.e. correlated gene modules as networks): edge lists for networks (e.g. ARACNe)
+- 2D gene projection (e.g. MDS, UMAP): data frame with 2D coordinates for all genes
+
+Check [config](config.html) for details about how to specify each module and set up the additional files needed for them.

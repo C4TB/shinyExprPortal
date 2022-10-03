@@ -10,7 +10,7 @@ singleGeneCorr_config <- function(config, ...) {
   }
   
   if (!is.null(config$custom_point_colors)) {
-    lv <- which(sapply(config$custom_point_colors, is.list) == FALSE)
+    lv <- which(sapply(config$custom_point_colors, function(x) is.list(x) || is.vector(x)) == FALSE)
     if (length(lv) >= 1) {
       invalid_colors <-
         paste(names(config$custom_point_colors)[lv], collapse=",")
