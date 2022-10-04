@@ -18,22 +18,30 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-clinvisx is configurable Shiny app for visual exploration of clinica multi-omics studies, based on count data. It includes multiple modules to facilitate exploring associations in the results of such studies, as well as showcasing analysis results (i.e. volcano plots).
+*clinvisx* is a configurable Shiny portal for visual exploration and analysis showcase of expression count data and phenotype data, such as observed clinical measures. The package is designed for deploying portals through a text-based configuration file with minimal programming. The portal includes modules for exploring correlations between genes and measures, visualizing the results of differential expression analysis and showcasing results of other downstream analysis methods such as pathways and correlated networks.
 
-## Installation
+For initial exploration, the package is compatible with normalized count matrices and data frames containing phenotype data. For differential expression and other methods, the package is compatible with the outputs of commonly used packages such as limma and WCGNA. The correlation modules can be used early in the lifecycle of a bioinformatics project, while the other modules can be added as new downstream analysis results are produced. The use of the configuration file also means that the portal can be easily versioned.
 
-You can install the latest version of clinvisx with:
+## How to start
 
-``` r
-devtools::install_github("rhenkin/clinvisx")
-```
-
-Note that the command above will only install basic package dependencies -- the modules in the app have dependencies that need to be installed separately. To install all dependencies, you can install clinvsix with the following command:
+You can install the latest version of the package using:
 
 ``` r
 devtools::install_github("rhenkin/clinvisx", dependencies = TRUE)
 ```
 
-## Configuration and usage
+If you have samples for one set of subjects, you can check `vignette("clinvisx")` for a quick start guide to set up the configuration file.
 
-Running clinvisx, in addition to all data files, requires writing a .yaml configuration file. There is a vignette detailing how to configure the global aspects of the app and each currently supported module. You can check it on the github pages website or by running `vignette("clinvisx_setup")`. There is also an example file included in the dev folder in this repository.
+If your subjects have one more samples, e.g. collected over time or from different tissues, you should check the data preparation guide in `vignette("dataprep")` and the full configuration guide `vignette("config")`
+
+Once you have completed either of the steps above, you can open and run the resulting app.R file to test the portal.
+
+## Module documentation
+
+The full configuration guide vignette found through `vignette("config")` describes all the requirements and settings for each of the modules currently supported by the portal.
+
+## Customization and extending
+
+`vignette("customization")` describes how to customize the visual style of the portal and how to add new functionality through programming. The package supports customization through the configuration file at a global level using [bslib](https://cran.r-project.org/web/packages/bslib/index.html) and some modules enable customizing colors used in the visualizations.
+
+The package is also compatible with new modules that are added without modifying the source code of the portal or the package. New functionality can be developed and tested without having to clone the repository or recompile the package.
