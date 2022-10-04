@@ -3,6 +3,7 @@
 export(create_config_template)
 export(create_config_wizard)
 export(create_example)
+export(create_module_template)
 export(run_app)
 export(show_available_modules)
 import(dplyr)
