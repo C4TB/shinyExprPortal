@@ -1,8 +1,8 @@
 Package: clinvisx
-Title: A Configurable Shiny Portal for Exploring Clinical and Transcriptomics Data
-Version: 0.0.0.9000
+Title: A Configurable Shiny Portal for Expression Data
+Version: 1.0.0.0000
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut'))
-Description: A configurable Shiny app for visual exploration of clinical and transcriptomics studies.
+Description: A configurable Shiny app for interactive visualization of expression data analysis
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
