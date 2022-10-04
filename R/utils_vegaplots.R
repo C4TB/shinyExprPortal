@@ -55,15 +55,25 @@ vega_layer_scatterplot <-
     )
 
     if (!is.null(color_var)) {
-      point_layer$encoding$color <- list(field = color_var, type = "nominal")
+      if (is.numeric(data[[color_var]])) {
+        ctype <- "quantitative"
+      } else {
+        ctype <- "nominal"
+      }
+      point_layer$encoding$color <- list(field = color_var, type = ctype)
       point_layer$encoding$tooltip <-
         c(
           point_layer$encoding$tooltip,
-          list(list(field = color_var, type = "nominal"))
+          list(list(field = color_var, type = ctype))
         )
       if (!is.null(custom_colors)) {
-        point_layer$encoding$color$scale <-
-          list(range = unlist(custom_colors, use.names = F))
+        if (length(custom_colors) > 1)
+          point_layer$encoding$color$scale <-
+            list(range = unlist(custom_colors, use.names = F))
+        else {
+          point_layer$encoding$color$scale <-
+            list(scheme = custom_colors)
+        }
         if (!is.null(names(custom_colors))) {
           point_layer$encoding$color$scale$domain <- names(custom_colors)
         }
