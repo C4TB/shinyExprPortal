@@ -118,7 +118,8 @@ custom_vw_shiny_get_signal <-
   function(outputId, name, body_value = "value", id = NULL) {
     session <- shiny::getDefaultReactiveDomain()
     ns <- shiny::NS(id)
-    inputId <- glue::glue("{outputId}_signal_{name}")
+    #inputId <- glue::glue("{outputId}_signal_{name}")
+    inputId <- paste(outputId, "signal", name, sep = "_")
     shiny::observe({
       shiny::isolate({
         handler_body <- vegawidget:::vw_handler_signal(body_value) %>%

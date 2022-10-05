@@ -22,6 +22,7 @@ compute_pval <- function(x, n) {
 #' @param method correlation method to use
 #' @param cores number of cores to use with the [parallel::mclapply()] function
 #'
+#' @noRd
 #' @return numeric matrix
 fast_cor <- function(x,
                      y,
@@ -143,8 +144,9 @@ correlateMatrices <-
 #'
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
-#' @param ... arguments to [correlateMatrices()]
+#' @param ... arguments to [clinvisx::correlateMatrices()]
 #'
+#' @noRd
 #' @return long format data frame
 longCorrelationMatrix <- function(first_col_name = "Gene",
                                   name_to = "ClinicalVariable",
@@ -162,10 +164,11 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
 
 #' Transform correlation data frame to long format
 #'
-#' @param data correlation data frame from [correlateMatrices()]
+#' @param data correlation data frame from [clinvisx::correlateMatrices()]
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
 #'
+#' @noRd
 #' @return long format data frame
 correlationResultsToLong <- function(data,
                                      first_col_name = "Gene",
@@ -185,6 +188,7 @@ correlationResultsToLong <- function(data,
 #' @param use_padj flag for normal or adjusted p-value
 #' @param rowname_col column that contains rownames
 #'
+#' @noRd
 #' @return data frame with HTML b tags
 corrResultsToTable <-
   function(df, max_pvalue = 0.05, use_padj = F, rowname_col = "Gene") {

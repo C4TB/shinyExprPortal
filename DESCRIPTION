@@ -10,6 +10,7 @@ Imports:
     shiny,
     htmltools,
     markdown,
+    cli,
     dplyr,
     tidyr,
     ggplot2,
@@ -28,6 +29,7 @@ RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,
+    whisker,
     knitr,
     rmarkdown,
     r2d3,
