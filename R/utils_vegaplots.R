@@ -13,7 +13,7 @@ vega_layer_scatterplot <-
     scales <- match.arg(scales)
 
     default_opts <- list(ncolumns = 4, width = 220, height = 170)
-    opts <- modifyList(default_opts, opts)
+    opts <- utils::modifyList(default_opts, opts)
 
     if (is.null(gene_name)) {
       ctitle <- "Expression versus clinical measure"
@@ -157,10 +157,10 @@ vega_add_fitline <-
       model <-
         stats::lm(stats::as.formula(fit_formula),
           data = x,
-          na.action = na.exclude
+          na.action = stats::na.exclude
         )
       # Predict values and upper and lower CI
-      predictions <- stats::predict(model, se = T, na.action = na.exclude)
+      predictions <- stats::predict(model, se = T, na.action = stats::na.exclude)
       data.frame(
         fit = predictions$fit,
         upper_ci = predictions$fit + 2 * predictions$se.fit,
@@ -179,7 +179,7 @@ vega_add_fitline <-
       select(all_of(c(x, y, facet_var))) %>%
       tidyr::nest(data = c(x, y)) %>%
       mutate(fit_model = lapply(data, predict_m, lhs = y, rhs = x)) %>%
-      tidyr::unnest(c(data, fit_model))
+      tidyr::unnest(all_of(c("data", "fit_model")))
 
     # Combine with rest of the data
     data <-
