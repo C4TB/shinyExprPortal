@@ -4,7 +4,7 @@ singleVariableCorr_config <- function(config, data_folder = "") {
   required_packages <- c("DT")
   stopIfNotInstalled(required_packages, "singleVariableCorr")
 
-  if (class(config) == "logical") 
+  if (is.logical(config)) 
     if (config)
       config <- list()
   
