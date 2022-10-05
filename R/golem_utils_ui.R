@@ -291,6 +291,14 @@ bg_color <- function() {
   bslib::bs_get_variables(bslib::bs_current_theme(), c("bg"))
 }
 
+#' @importFrom markdown markdownToHTML
+.includeMarkdown <- function(path) 
+{
+  html <- markdown::markdownToHTML(path, fragment.only = TRUE)
+  Encoding(html) <- "UTF-8"
+  return(HTML(html))
+}
+
 # UNCOMMENT AND USE
 #
 # usethis::use_package("markdown")

@@ -3,6 +3,7 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
 #' @noRd
+#' @importFrom htmltools includeMarkdown
 app_server <- function(input, output, session) {
   # List the first level callModules here
   config <- get_opts("config")
@@ -60,7 +61,7 @@ app_server <- function(input, output, session) {
       switch(ext,
         txt = includeText(config$about),
         html = includeHTML(config$about),
-        md = includeMarkdown(config$about)
+        md = .includeMarkdown(config$about)
       )
     }
   })

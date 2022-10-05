@@ -16,7 +16,7 @@
 #' directory
 #'
 #' @export
-#'
+#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text cli_ol cli_alert_danger cli_alert cli_alert_success cli_alert_info cli_abort
 create_config_wizard <- function(target_dir = NULL) {
 
   if (!interactive())
@@ -137,7 +137,7 @@ the package website for a complete module configuration guide.")
     "Writing lookup table file named {.file lookup_table.csv}"
   )
 
-  readr::write_csv(lookup_table, file.path(dir, "lookup_table.csv"))
+  data.table::fwrite(lookup_table, file.path(dir, "lookup_table.csv"))
 
   cli::cli_alert_success("Done!")
 
@@ -304,7 +304,7 @@ the package website for a complete module configuration guide.")
         "Category" = rep("Models", length(file_list)),
         "Model" = file_list)
       cli::cli_alert("Creating {.file models.tsv} file in {.file {dir}}")
-      readr::write_tsv(models_table, file = "models.tsv")
+      data.table::fwrite(models_table, file = "models.tsv", sep = "\t")
       cli::cli_alert_success("Done!")
       degDetailsConfig <- list(
         models = "models.tsv",
