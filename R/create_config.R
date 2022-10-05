@@ -252,7 +252,7 @@ the package website for a complete module configuration guide.")
   numeric_var_groups <- chunk_cols(numeric_variables, 5)
   names(numeric_var_groups) <- paste("Group", names(numeric_var_groups))
 
-  sgcConfig <- singleGeneCorr = list(
+  sgcConfig <- list(
         tabs = list(
           list(name = "Measures",
                scale = "independent",
