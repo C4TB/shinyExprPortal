@@ -1,8 +1,8 @@
-# multiVariableCorr UI Function
-mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
+# multiMeasureCorr UI Function
+mod_multiMeasureCorr_ui <- function(module_name, config, module_config) {
   multiVariableCorr_tab(
     sample_select = sampleCategoryInputs(config$sample_categories, module_name),
-    clinical_variables = names(module_config$heatmap_variables),
+    measures_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
     title = module_config$title,
     description = module_config$description,
@@ -10,10 +10,10 @@ mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
   )
 }
 
-#' Whole data correlation tab UI
+#' Multiple measure corr tab UI
 #'
 #' @param sample_select radio inputs for sample classes
-#' @param clinical_variables subsets of clinical variables for heatmap
+#' @param measures_variables subsets of measures variables for heatmap
 #' @param advanced advanced options
 #' @param title optional module title
 #' @param description optional module description
@@ -22,27 +22,27 @@ mod_multiVariableCorr_ui <- function(module_name, config, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-multiVariableCorr_tab <-
+multiMeasureCorr <-
   function(sample_select,
-           clinical_variables,
+           measures_variables,
            advanced = NULL,
            title = NULL,
            description = NULL,
            id = NULL) {
     ns <- NS(id)
     tabPanel(
-      title = title %||% "Multiple variables",
-      value = "multiVariableCorr",
+      title = title %||% "Multiple measures",
+      value = "multiMeasureCorr",
       tags$h5(
-        description %||% "Correlation between all genes and clinical variables"
+        description %||% "Correlation between all genes and measures"
       ),
       splitLayout(
         verticalLayout(
           wellPanel(
             selectizeInput(
               ns("heatmap_variables"),
-              label = with_red_star("Select set of clinical variables:"),
-              choices = clinical_variables,
+              label = with_red_star("Select set of measures:"),
+              choices = measures_variables,
               options = list(
                 dropdownParent = "body",
                 onInitialize = I('function(){this.setValue("");}')
@@ -82,7 +82,7 @@ multiVariableCorr_tab <-
             "input[\'heatmap_variables\'] == ''",
             ns = ns,
             tags$span(
-              "Select a set of clinical variables to view heatmap and table",
+              "Select a set of measures to view heatmap and table",
               style = "color: gray"
             )
           ),
@@ -107,14 +107,14 @@ multiVariableCorr_tab <-
       )
     )
   }
-#' multiVariableCorr Server Function
+#' multiMeasureCorr Server Function
 #'
 #' @noRd
-mod_multiVariableCorr_server <- function(module_name, config, module_config) {
+mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
@@ -125,7 +125,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     
     adjust_method <- config$adjust_method
 
-    default_clin_outliers <- config$default_clinical_outliers
+    default_measures_outliers <- config$default_measures_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
 
@@ -150,9 +150,9 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       expression_matrix[, selected_lookup()[[sample_var]]]
     })
 
-    clinical_from_lookup <- reactive({
+    measures_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
-      selectFromLookup(clinical, sel_lookup,
+      selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
       )
     })
@@ -164,8 +164,8 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
     heatmap_data <- reactive({
       req(input$heatmap_variables)
 
-      clinical_outliers <-
-        input$clinical_outliers %||% default_clin_outliers %||% "No"
+      measures_outliers <-
+        input$measures_outliers %||% default_measures_outliers %||% "No"
       expression_outliers <-
         input$expression_outliers %||% default_expr_outliers %||% "No"
       correlation_method <-
@@ -175,23 +175,23 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
         nrow(selected_lookup()) > 0,
         "No data for selected parameters."
       ))
-      selected_clinical <- clinical_from_lookup()
+      selected_measures <- measures_from_lookup()
       selected_expression <- expression_from_lookup()
 
       # Get subset of variables selected by user
-      selected_clinical_vars <- heatmap_variables[[input$heatmap_variables]]
-      cols_lv <- colnames(selected_clinical) %in% selected_clinical_vars
-      subset_clinical <- selected_clinical[, cols_lv]
+      selected_measures_vars <- heatmap_variables[[input$heatmap_variables]]
+      cols_lv <- colnames(selected_measures) %in% selected_measures_vars
+      subset_measures <- selected_measures[, cols_lv]
 
       all_na_lv <-
-        sapply(colnames(subset_clinical),
-               function(x) all(is.na(subset_clinical[[x]])))
-      subset_clinical <- subset_clinical[, !all_na_lv]
-      # Apply outlier functions to clinical
-      subset_clinical <-
+        sapply(colnames(subset_measures),
+               function(x) all(is.na(subset_measures[[x]])))
+      subset_measures <- subset_measures[, !all_na_lv]
+      # Apply outlier functions to measures
+      subset_measures <-
         replaceFalseWithNA(
-          subset_clinical,
-          outlier_functions(clinical_outliers)
+          subset_measures,
+          outlier_functions(measures_outliers)
         )
       # Apply outlier functions to expression
       selected_expression <-
@@ -202,7 +202,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
 
       corr_df <- correlateMatrices(
         y = selected_expression,
-        x = subset_clinical,
+        x = subset_measures,
         adjust_method = adjust_method,
         method = correlation_method,
         rowname_var = "Gene",
@@ -218,7 +218,7 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
       combined_df
     }) %>% bindCache(
       input$heatmap_variables,
-      input$clinical_outliers,
+      input$measures_outliers,
       input$expression_outliers,
       input$correlation_method,
       selected_lookup()
@@ -226,10 +226,10 @@ mod_multiVariableCorr_server <- function(module_name, config, module_config) {
 
     output$heatmap <- vegawidget::renderVegawidget({
       hm <- heatmap_data()[1:50, ] %>%
-        correlationResultsToLong("Gene", "Clinical")
+        correlationResultsToLong("Gene", "Measures")
       vega_heatmap(
         hm,
-        "Clinical",
+        "Measures",
         "Gene",
         "estimate",
         input$max_pvalue,

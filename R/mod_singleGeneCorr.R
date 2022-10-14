@@ -51,7 +51,7 @@ singleGeneCorr_tab <-
       title = title %||% "Single gene",
       value = "singleGeneCorr",
       tags$h5(description %||%
-        "Correlation between a selected gene and clinical variables"),
+        "Correlation between a selected gene and measures"),
       splitLayout(
         verticalLayout(
           wellPanel(
@@ -111,7 +111,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
     
     # App level config/defaults
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
@@ -122,7 +122,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
 
-    default_clin_outliers <- config$default_clinical_outliers
+    default_measures_outliers <- config$default_measures_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
     default_fit_method <- config$default_fit_method
@@ -179,42 +179,42 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       expression_matrix[, sel_lookup[[sample_var]]]
     })
 
-    clinical_from_lookup <- reactive({
+    measures_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
-      selectFromLookup(clinical, sel_lookup,
+      selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
       )
     })
 
     # Compute correlation matrix and use cacheing
     correlation_df <- reactive({
-      clinical_outliers <-
-        input$clinical_outliers %||% default_clin_outliers %||% "No"
+      measures_outliers <-
+        input$measures_outliers %||% default_measures_outliers %||% "No"
       expression_outliers <-
         input$expression_outliers %||% default_expr_outliers %||% "No"
       correlation_method <-
         input$correlation_method %||% default_corr_method %||% "pearson"
 
       selected_expression <- expression_from_lookup()
-      subset_clinical <- clinical_from_lookup()
+      subset_measures <- measures_from_lookup()
 
       tab_output_list <- module_config$tabs
 
-      clin_vars <- unique(unlist(lapply(
+      measures_vars <- unique(unlist(lapply(
         tab_output_list,
         function(x) x$variables
       )))
       
-      selected_clinical <-
+      selected_measures <-
         replaceFalseWithNA(
-          subset_clinical[, clin_vars],
-          outlier_functions(clinical_outliers)
+          subset_measures[, measures_vars],
+          outlier_functions(measures_utliers)
         )
       all_na_lv <-
-        sapply(colnames(selected_clinical),
-               function(x) all(is.na(selected_clinical[[x]])))
-      selected_clinical <- selected_clinical[ , !all_na_lv]
-      clin_vars <- clin_vars[!all_na_lv]
+        sapply(colnames(selected_measures),
+               function(x) all(is.na(selected_measures[[x]])))
+      selected_measures <- selected_measures[ , !all_na_lv]
+      measures_vars <- measures_vars[!all_na_lv]
 
       selected_expression <-
         replaceFalseWithNA(
@@ -224,19 +224,19 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
       corr_df <- longCorrelationMatrix(
         first_col_name = "Gene",
-        name_to = "ClinicalVariable",
+        name_to = "Measure",
         y = selected_expression,
-        x = selected_clinical,
+        x = selected_measures,
         method = correlation_method,
         adjust_method = adjust_method,
         cores = cores
       )
       # Change to factor
-      corr_df[["ClinicalVariable"]] <-
-        factor(corr_df[["ClinicalVariable"]], levels = clin_vars)
+      corr_df[["Measure"]] <-
+        factor(corr_df[["Measure"]], levels = measures_vars)
       corr_df
     }) %>% bindCache(
-      input$clinical_outliers,
+      input$measures_outliers,
       input$expression_outliers,
       input$correlation_method,
       selected_lookup()
@@ -252,8 +252,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         color_var <- NULL
       }
       selected_gene <- input$selected_gene
-      clinical_outliers <-
-        input$clinical_outliers %||% default_clin_outliers %||% "No"
+      measures_outliers <-
+        input$measures_outliers %||% default_measures_outliers %||% "No"
       expression_outliers <-
         input$expression_outliers %||% default_expr_outliers %||% "No"
       correlation_method <-
@@ -262,7 +262,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         input$fit_method %||% default_fit_method %||% "linear"
 
       selected_expression <- expression_from_lookup()
-      subset_clinical <- clinical_from_lookup()
+      subset_measures <- measures_from_lookup()
 
       # As we are in observe, we use a special output to show error
       # If there are no genes for this subset, display message
@@ -282,21 +282,21 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         (length(selected_expression) > 0))
       tab_output_list <- module_config$tabs
 
-      clin_vars <- unique(unlist(lapply(
+      measures_vars <- unique(unlist(lapply(
         tab_output_list,
         function(x) x$variables
       )))
 
-      subset_clinical[, clin_vars] <-
+      subset_measures[, measures_vars] <-
         replaceFalseWithNA(
-          subset_clinical[, clin_vars],
-          outlier_functions(clinical_outliers)
+          subset_measures[, measures_vars],
+          outlier_functions(measures_outliers)
         )
       
       all_na_lv <-
-        sapply(colnames(subset_clinical),
-               function(x) all(is.na(subset_clinical[[x]])))
-      clin_vars <- clin_vars[!all_na_lv]
+        sapply(colnames(subset_measures),
+               function(x) all(is.na(subset_measures[[x]])))
+      measures_vars <- measures_vars[!all_na_lv]
 
       selected_expression <-
         replaceFalseWithNA(
@@ -326,7 +326,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           
           not_na_lv <-
             sapply(subset_vars,
-                   function(x) all(is.na(subset_clinical[[x]])))
+                   function(x) all(is.na(subset_measures[[x]])))
           subset_vars <- subset_vars[!not_na_lv]
 
           # Check if an optional palette was provided
@@ -339,26 +339,26 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           }
           
           # Get only the variables for this tab
-          tab_clinical <- subset_clinical[, subset_vars]
+          tab_measures <- subset_measures[, subset_vars]
 
           corr_df_subset <- corr_df %>%
-            filter(.data[["ClinicalVariable"]] %in% subset_vars)
+            filter(.data[["Measure"]] %in% subset_vars)
 
           # Filter to selected gene
-          if (ncol(tab_clinical) > 0) {
+          if (ncol(tab_measures) > 0) {
             combined_df <-
               cbind(
                 Expression = selected_expression[, selected_gene],
-                tab_clinical
+                tab_measures
               ) %>%
               pivot_longer(output_vars,
-                names_to = "ClinicalVariable",
+                names_to = "Measure",
                 values_to = "Value"
               )
   
             # Use output_vars as levels to preserve order defined in config
-            combined_df[["ClinicalVariable"]] <-
-              factor(combined_df[["ClinicalVariable"]],
+            combined_df[["Measure"]] <-
+              factor(combined_df[["Measure"]],
                 levels = output_vars
               )
             # Retrieve element width and use that to resize plot
@@ -385,7 +385,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
             # TODO: refactor this with padj being optional
             corr_lookup <-
               paste0("{", paste(apply(corr_df_subset, 1, function(x) {
-                name <- x[["ClinicalVariable"]]
+                name <- x[["Measure"]]
                 corr <- round(as.numeric(x[["estimate"]]), digits = 2)
                 pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
                 padj <- round(as.numeric(x[["padj"]]), digits = 2)
@@ -410,7 +410,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               combined_df,
               x = "Value",
               y = "Expression",
-              facet_var = "ClinicalVariable",
+              facet_var = "Measure",
               facet_sort = output_vars,
               label_lookup = corr_lookup,
               scales = output_scale,

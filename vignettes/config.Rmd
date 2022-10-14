@@ -110,11 +110,11 @@ iconMenu:
 
 ### Data and global configurations
 
-In the data section, the **clinical**, **sample_lookup** and **expression_matrix** files must be defined. Additional files that are shared across multiple modules can also be defined in this section, e.g. the models table for the DE modules (see [degModules](#degModules) further down for more details).
+In the data section, the **measures**, **sample_lookup** and **expression_matrix** files must be defined. Additional files that are shared across multiple modules can also be defined in this section, e.g. the models table for the DE modules (see [degModules](#degModules) further down for more details).
 
 ```yaml
 data:
-  clinical: clinical.csv
+  measures: measures.csv
   sample_lookup: sample_lookup.csv
   expression_matrix: matrix.csv
   models: models.tsv
@@ -122,7 +122,7 @@ data:
 
 **Sample and subject variables**
 
-The package does not make any assumptions about the location of the columns containing the subject or sample IDs in the measures and lookup table files, so the names of these columns must be provided. Alternatively, name them as Subject_ID and Sample_ID and the package will look for these names by default.
+The package does not make any assumptions about the order of the columns containing the subject or sample IDs in the measures and lookup table files, so the names of these columns must be provided. Alternatively, name them as Subject_ID and Sample_ID and the package will look for these names by default.
 
 ```yaml
 subject_variable: Subject_ID
@@ -542,19 +542,19 @@ singleGeneCorr:
 </details>
 
 
-### singleVariableCorr {#singleVariableCorr}
+### singleMeasureCorr {#singleMeasureCorr}
 
 This module allows users to view a table with the correlation between one single measure and all genes from a selected subset. The module can be set up with a list of measures from which users can select in the interface and the optional advanced settings of correlation method and outlier removal. As a default, the module can be defined simply as TRUE to include all numeric measures and no advanced settings:
 
 **Minimum configuration**
 ```yaml
-singleVariableCorr:
+singleMeasureCorr:
   TRUE
 ```
 
 A list of variables can be provided through `dropdown_variables`:
 ```yaml
-singleVariableCorr:
+singleMeasureCorr:
   dropdown_variables:
     - Platelets_m01
     - Platelets_m02
@@ -574,7 +574,7 @@ singleVariableCorr:
 
 **Example of optional settings:**
 ```yaml
-singleVariableCorr:
+singleMeasureCorr:
   link_to: singleGeneCorr
   advanced:
     correlation_method: TRUE
@@ -582,13 +582,13 @@ singleVariableCorr:
 ```
 </details>
 
-### multiVariableCorr {#multiVariableCorr}
+### multiMeasureCorr {#multiMeasureCorr}
 
 This module allows users to view a heatmap and a table with the most significantly correlated genes across a predefined set of measures. The genes are taken from a subset selected by user, based on the sample categories. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
 
 **Minimum configuration**
 ```yaml
-multiVariableCorr:
+multiMeasureCorr:
   heatmap_variables:
     Platelets: [Platelets_m01, Platelets_m02]
 ```
@@ -608,7 +608,7 @@ multiVariableCorr:
   
 **Example of optional settings:**
 ```yaml
-multiVariableCorr:
+multiMeasureCorr:
   ..
   link_to: singleGeneCorr
   advanced:
@@ -640,15 +640,15 @@ degModules:
 
 ### corrModules {#corrModules}
 
-This group of modules include `singleGeneCorr`, `singleVariableCorr` and `multiVariableCorr`. To use it, only a correct indentation is needed:
+This group of modules include `singleGeneCorr`, `singleMeasureCorr` and `multiMeasureCorr`. To use it, only a correct indentation is needed:
 
 **Configuration example**
 ```yaml
 corrModules:
   singleGeneCorr:
     ...
-  singleVariableCorr:
+  singleMeasureCorr:
     ...
-  multiVariableCorr:
+  multiMeasureCorr:
     ...
 ```

@@ -58,7 +58,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
@@ -97,9 +97,9 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       expression_matrix[, sel_lookup[[sample_var]]]
     })
 
-    clinical_from_lookup <- reactive({
+    measures_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
-      selectFromLookup(clinical, sel_lookup,
+      selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
       )
     })
@@ -109,7 +109,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
 
       sel_lookup <- selected_lookup()
       subset_expression <- expression_from_lookup()
-      selected_clinical <- clinical_from_lookup()
+      selected_measures <- measures_from_lookup()
       fit_method <-
         input$fit_method %||% default_fit_method %||% "linear"
 
@@ -117,14 +117,14 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
       compare_col_id <-
         grep(
           paste0("(", input$selected_variable, ")\\", timesep, ".*"),
-          colnames(selected_clinical)
+          colnames(selected_measures)
         )
       compare_col_vars <-
-        colnames(selected_clinical)[compare_col_id]
-      subset_clinical <-
-        selected_clinical[, c(subject_var, compare_col_vars)]
+        colnames(selected_measures)[compare_col_id]
+      subset_measures <-
+        selected_measures[, c(subject_var, compare_col_vars)]
       # Convert to long and separate unique variable from suffix
-      subset_long <- pivot_longer(subset_clinical,
+      subset_long <- pivot_longer(subset_measures,
         -.data[[subject_var]],
         names_to = c(".value", trajectory_category),
         names_sep = timesep

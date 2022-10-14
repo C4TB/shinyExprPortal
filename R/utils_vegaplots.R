@@ -16,7 +16,7 @@ vega_layer_scatterplot <-
     opts <- utils::modifyList(default_opts, opts)
 
     if (is.null(gene_name)) {
-      ctitle <- "Expression versus clinical measure"
+      ctitle <- "Expression versusmeasure"
     } else {
       ctitle <- paste("Expression level of", gene_name)
     }

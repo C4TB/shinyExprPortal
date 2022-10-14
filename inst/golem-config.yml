@@ -9,9 +9,9 @@ default:
   - degDetails
   - corrModules
   - singleGeneCorr
-  - singleVariableCorr
+  - singleMeasureCorr
   - geneModulesHeatmap
-  - multiVariableCorr
+  - multiMeasureCorr
   - compareTrajGroups
   - networkViewer
   - geneProjectionOverlay
@@ -20,8 +20,8 @@ default:
   - degDetails
   corrModules:
   - singleGeneCorr
-  - singleVariableCorr
-  - multiVariableCorr
+  - singleMeasureCorr
+  - multiMeasureCorr
 production:
   app_prod: yes
 dev:

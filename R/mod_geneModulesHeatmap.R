@@ -66,7 +66,7 @@ geneModulesHeatmap_tab <- function(categories,
             verticalLayout(
               actionButton(ns("show_genes"), label = "View genes"),
               uiOutput(ns("heatmap_ui")),
-              h5("Association of clinical variables with module eigengene"),
+              h5("Association of measures with module eigengene"),
               vegawidget::vegawidgetOutput(ns("scatterplots"))
             )
           )
@@ -83,7 +83,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
@@ -159,9 +159,9 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       selectMatchingValues(sample_lookup, user_selection())
     })
 
-    clinical_from_lookup <- eventReactive(selected_lookup(), {
+    measures_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
-      selectFromLookup(clinical, sel_lookup,
+      selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
       )
     })
@@ -170,9 +170,9 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       if (!isTruthy(input$selected_annotations)) {
         return(NULL)
       }
-      selected_clinical <- clinical_from_lookup()
+      selected_measures <- measures_from_lookup()
       selected_annot_df <- 
-        selected_clinical[, c(rev(input$selected_annotations)), drop=FALSE] %>%
+        selected_measures[, c(rev(input$selected_annotations)), drop=FALSE] %>%
         select(where(function(x) !all(is.na(x))))
       if (ncol(selected_annot_df) == 0) return(NULL)
       
@@ -261,10 +261,10 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
           selectMatchingValues(sample_lookup, user_selection())
       })
 
-      subset_clinical <- selectFromLookup(clinical, selected_lookup,
+      subset_measures <- selectFromLookup(measures_data, selected_lookup,
         matching_col = subject_var
       )
-      selected_clinical <- subset_clinical[, scatterplot_vars]
+      selected_measures <- subset_measures[, scatterplot_vars]
       # Compute eigengene
       eigengene <- stats::prcomp(t(heatmap_data()),
         center = TRUE,
@@ -273,31 +273,31 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
 
       combined_df <- cbind(
         Eigengene = eigengene,
-        selected_clinical
+        selected_measures
       )
       
       corr_df <- longCorrelationMatrix(
         x = combined_df[, scatterplot_vars],
         y = combined_df[["Eigengene"]],
         adjust_method = NULL,
-        name_to = "ClinicalVariable",
+        name_to = "Measure",
         cores = cores
       )
       
-      # Reassign clinical variable names to preserver order from configuration
-      corr_df$ClinicalVariable <- factor(corr_df$ClinicalVariable,
+      # Reassign measure names to preserver order from configuration
+      corr_df$Measure <- factor(corr_df$Measure,
         levels = scatterplot_vars
       )
       combined_df <- combined_df %>%
         pivot_longer(c(-.data$Eigengene),
-          names_to = "ClinicalVariable", values_to = "Value"
+          names_to = "Measure", values_to = "Value"
         )
-      combined_df[["ClinicalVariable"]] <-
-        factor(combined_df[["ClinicalVariable"]], levels = scatterplot_vars)
+      combined_df[["Measure"]] <-
+        factor(combined_df[["Measure"]], levels = scatterplot_vars)
       
       corr_lookup <-
         paste0("{", paste(apply(corr_df, 1, function(x) {
-          name <- x[["ClinicalVariable"]]
+          name <- x[["Measure"]]
           corr <- round(as.numeric(x[["estimate"]]), digits = 2)
           pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
           # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
@@ -311,7 +311,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       vega_layer_scatterplot(combined_df,
         x = "Value",
         y = "Eigengene",
-        facet_var = "ClinicalVariable",
+        facet_var = "Measure",
         facet_sort = scatterplot_vars,
         label_lookup = corr_lookup,
         scales = "independent",

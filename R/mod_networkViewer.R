@@ -108,7 +108,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
@@ -254,7 +254,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
 
       # Identify the node types (prefix) that correspond to valid
       # samples in the expression matrix
-      # E.g. clinical or micro RNA nodes are not part of the expression matrix
+      # E.g. measures or micro RNA nodes are not part of the expression matrix
       sample_cat_values <- Filter(
         function(x) x$name == sample_category,
         sample_categories

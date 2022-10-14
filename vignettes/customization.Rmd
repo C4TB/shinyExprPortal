@@ -166,7 +166,7 @@ mod_moduleName_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- config$data$clinical
+    measures <- config$data$measures
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable

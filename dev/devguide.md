@@ -1,7 +1,7 @@
 # Development Guidelines and Roadmap for clinvisx
 
 Created: 01/03/2021  
-Latest update: 01/03/2021
+Latest update: 14/10/2022
 
 ## Design principles
 
@@ -33,7 +33,8 @@ The priority when writing a module is to separate reactive selections from the c
     
 ### 3 On functions
 
-**Split and combine functions as needed:** If a plot or function result is similar to another, it is good to combine them in a single function with varying parameters. At the same time, it's also a good idea to reduce a function to a bare minimum across modules, and have additional functions to complement it. Example: a basic scatterplot with a bit of customisation as the minimum function, with faceting and geom_smooth in separate functions. 
+**Split and combine functions as needed:** If a plot or function result is similar to another, it is good to combine them in a single function with varying parameters. At the same time, it's also a good idea to reduce a function to a bare minimum across modules, and have additional functions to complement it. Example: a basic scatterplot with a bit of customisation as the minimum function, with faceting and geom_smooth in separate functions.  
+
 **Placement:** It is also better to leave module-specific functions in a module-specific file. In the future they can be moved to generic files if used across modules.
 
 **Naming:** Most of the internal functions will not be exported, so it's preferable to give longer but descriptive names such as selectGenesIfTrue, instead of a generic name such as "filter".
@@ -47,8 +48,6 @@ The app enables visual exploration of data as well as results of the analysis, b
 The first version of clinvisx is addressing the needs of PSORT and RAMAP. The longer term vision is to make it configurable for any study along the lines of these (transcriptome & clinical analysis)
 
 #### Version 2.0 goals
-
-- [ ] **Interactive visualisation support through vega-lite:** ggplot can be made interactive with ggplotly, but plotly itself has some quirks that can (maybe) be addressed with vega-lite. Converting the plots to vega-lite requires individually generating them and testing for the various cases. It also requires deciding which package to use, e.g. if plots will be defined using list notation (very verbose) or through an Altair-like package (currently there are no versions always up-to-date).
 
 - [ ] **API support to reduce data loading:** the current version of clinvisx requires loading all the data into the app, and the files must be in a location accessible by Shiny Server. There are two potential API-based models: retrieve data from a remote location and do selections and computations locally (in the Shiny server), or delegate almost every server-side computation to the API server.
 
