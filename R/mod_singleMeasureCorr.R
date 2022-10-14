@@ -1,10 +1,10 @@
 utils::globalVariables("where")
-# singleVariableCorr UI Function
-mod_singleVariableCorr_ui <- function(module_name, config, module_config) {
-  var_list <- module_config$clinical_variables %||%
-    names(config$data$clinical %>% dplyr::select(where(is.numeric)))
+# singleMeasureCorr UI Function
+mod_singleMeasureCorr_ui <- function(module_name, config, module_config) {
+  var_list <- module_config$measures_variables %||%
+    names(config$data$measures %>% dplyr::select(where(is.numeric)))
 
-  singleVariableCorr_tab(
+  singleMeasureCorr_tab(
     sampleCategoryInputs(config$sample_categories, module_name),
     varsSelectInput(var_list, module_name),
     module_config$advanced,
@@ -16,7 +16,7 @@ mod_singleVariableCorr_ui <- function(module_name, config, module_config) {
 #' All genes correlation tab UI
 #'
 #' @param sample_select radio inputs for sample classes
-#' @param vars_select select input for clinical variables
+#' @param vars_select select input for measures
 #' @param advanced  boolean flag to show or hide advanced options
 #' @param title optional module title
 #' @param description optional module description
@@ -25,7 +25,7 @@ mod_singleVariableCorr_ui <- function(module_name, config, module_config) {
 #' @return tab panel with inputs
 #' @noRd
 #'
-singleVariableCorr_tab <- function(sample_select,
+singleMeasureCorr_tab <- function(sample_select,
                                    vars_select,
                                    advanced = NULL,
                                    title = NULL,
@@ -33,10 +33,10 @@ singleVariableCorr_tab <- function(sample_select,
                                    id = NULL) {
   ns <- NS(id)
   tabPanel(
-    title = title %||% "Single variable",
-    value = "singleVariableCorr",
+    title = title %||% "Single measure",
+    value = "singleMeasureCorr",
     tags$h5(description %||%
-      "Correlation between all genes and a selected clinical variable"),
+      "Correlation between all genes and a selected measure"),
     splitLayout(
       verticalLayout(
         wellPanel(
@@ -51,7 +51,7 @@ singleVariableCorr_tab <- function(sample_select,
         conditionalPanel(
           "input[\'selected_variable\'] == ''",
           ns = ns,
-          tags$span("No clinical variable selected", style = "color: gray")
+          tags$span("No measure selected", style = "color: gray")
         ),
         DTOutput(ns("fulltable")),
         conditionalPanel(
@@ -65,15 +65,15 @@ singleVariableCorr_tab <- function(sample_select,
     )
   )
 }
-#' singleVariableCorr Server Function
+#' singleMeasureCorr Server Function
 #'
 #' @importFrom stats na.omit
 #' @noRd
-mod_singleVariableCorr_server <- function(module_name, config, module_config) {
+mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures <- config$data$measures
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
@@ -84,17 +84,11 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
     
     adjust_method <- config$adjust_method
 
-    default_clin_outliers <- config$default_clinical_outliers
+    default_measures_outliers <- config$default_measures_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
 
     link_to <- module_config$link_to
-
-    outlier_functions <- c(
-      "5/95 percentiles" = valuesInsideQuantileRange,
-      "IQR" = valuesInsideTukeyFences,
-      "No" = function(x) TRUE
-    )
 
     user_selection <- reactive({
       getSelectedSampleCategories(sample_categories, input)
@@ -113,9 +107,9 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       expression_matrix[, selected_lookup()[[sample_var]]]
     })
 
-    clinical_from_lookup <- reactive({
+    measures_from_lookup <- reactive({
       req(input$selected_variable)
-      selectFromLookup(clinical,
+      selectFromLookup(measures,
         selected_lookup(),
         matching_col = subject_var,
         return_col = input$selected_variable
@@ -127,18 +121,18 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       # 1) Apply outlier filters
       # 2) Compute correlation matrix
 
-      clinical_outliers <-
-        input$clinical_outliers %||% default_clin_outliers %||% "No"
+      measures_outliers <-
+        input$measures_outliers %||% default_measures_outliers %||% "No"
       expression_outliers <-
         input$expression_outliers %||% default_expr_outliers %||% "No"
       correlation_method <-
         input$correlation_method %||% default_corr_method %||% "pearson"
 
       list_of_values <- user_selection()
-      selected_clinical <- clinical_from_lookup()
+      selected_measures <- measures_from_lookup()
       selected_expression <- expression_from_lookup()
       validate(need(
-        is.numeric(selected_clinical),
+        is.numeric(selected_measures),
         "Selected variable is not numeric"
       ))
 
@@ -148,18 +142,18 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
           t(selected_expression),
           outlier_functions(expression_outliers)
         )
-      selected_clinical <-
+      selected_measures <-
         replaceFalseWithNA(
-          selected_clinical,
-          outlier_functions(clinical_outliers)
+          selected_measures,
+          outlier_functions(measures_outliers)
         )
-      validate(need(!all(is.na(selected_clinical)),
+      validate(need(!all(is.na(selected_measures)),
                     "Selected subset has no data for chosen variable"))
 
       # Use the transposed expression to multiple columns vs vector
       correlation_df <- correlateMatrices(
         y = selected_expression,
-        x = selected_clinical,
+        x = selected_measuresl,
         adjust_method = adjust_method,
         method = correlation_method,
         cores = cores
@@ -173,7 +167,7 @@ mod_singleVariableCorr_server <- function(module_name, config, module_config) {
       correlation_df
     }) %>% bindCache(
       input$selected_variable,
-      input$clinical_outliers,
+      input$measures_outliers,
       input$expression_outliers,
       input$correlation_method,
       selected_lookup()

@@ -149,7 +149,7 @@ correlateMatrices <-
 #' @noRd
 #' @return long format data frame
 longCorrelationMatrix <- function(first_col_name = "Gene",
-                                  name_to = "ClinicalVariable",
+                                  name_to = "Measure",
                                   ...) {
   correlateMatrices(
     rowname_var = first_col_name,
@@ -172,7 +172,7 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
 #' @return long format data frame
 correlationResultsToLong <- function(data,
                                      first_col_name = "Gene",
-                                     name_to = "ClinicalVariable") {
+                                     name_to = "Measure") {
   pivot_longer(data,
     cols = c(-.data[[first_col_name]], -.data[["pvaluesrank"]]),
     names_to = c(name_to, ".value"),

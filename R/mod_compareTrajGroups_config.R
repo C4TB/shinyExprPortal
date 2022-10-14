@@ -11,14 +11,14 @@ compareTrajGroups_config <- function(config, ...) {
   if (is.null(config$trajectory_category)) {
     stop_nice(
       "compareTrajGroups:",
-      "a 'trajectory_category' to match clinical suffix is missing"
+      "a 'trajectory_category' to match measures suffix is missing"
     )
   }
 
   if (is.null(config$compare_variables)) {
     stop_nice(
       "compareTrajGroups:",
-      "a list of 'compare_variables' for clinical trajectories is missing"
+      "a list of 'compare_variables' for measures trajectories is missing"
     )
   }
 

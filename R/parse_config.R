@@ -67,9 +67,9 @@ parseConfig <-
     }
 
     # Global default advanced settings ----
-    config$default_clinical_outliers <-
+    config$default_measures_outliers <-
       match.arg(
-        raw_config$clinical_outliers,
+        raw_config$measures_outliers,
         c("No", "5/95 percentiles", "IQR")
       )
     config$default_expression_outliers <-
@@ -95,11 +95,11 @@ parseConfig <-
     if (is.null(raw_config$data)) {
       stop_nice("'data' section missing in configuration file")
     }
-    if (is.null(raw_config$data$clinical) ||
+    if (is.null(raw_config$data$measures) ||
       is.null(raw_config$data$expression_matrix)) {
       stop_nice(
           "Data section in configuration file must include ",
-          "clinical and expression_matrix files."
+          "measures and expression_matrix files."
           )
     }
 
@@ -123,21 +123,21 @@ parseConfig <-
       sample_categories_names <-
         sapply(config$sample_categories, function(x) x$name)
       loaded_data$sample_lookup <- create_lookup(
-        loaded_data$clinical,
+        loaded_data$measures,
         sample_categories_names,
         config$sample_variable,
         config$subject_variable
       )
-      loaded_data$clinical <-
+      loaded_data$measures <-
         remove_duplicate_subjects(
-          loaded_data$clinical,
+          loaded_data$measures,
           sample_categories_names,
           config$sample_variable
         )
     }
 
     # Validate samples and subjects ----
-    # Check if number of samples and subjects match across clinical data
+    # Check if number of samples and subjects match across measures
     # And matrices
     # There should be no samples w/o a subject and no subjects without samples
     validateData(loaded_data,
@@ -227,30 +227,30 @@ validateData <-
            sample_variable = "Sample_ID",
            subject_variable = "Subject_ID") {
     expression_matrix <- datafiles[["expression_matrix"]]
-    clinical <- datafiles[["clinical"]]
+    measures <- datafiles[["measures"]]
     sample_lookup <- datafiles[["sample_lookup"]]
 
-    clinical_subjects <- clinical[[subject_variable]]
+    measures_subjects <- measures[[subject_variable]]
     lookup_subjects <- unique(sample_lookup[[subject_variable]])
     lookup_samples <- sample_lookup[[sample_variable]]
     expression_samples <- colnames(expression_matrix)
 
-    if (mode(clinical[[subject_variable]]) !=
+    if (mode(measures[[subject_variable]]) !=
         mode(sample_lookup[[subject_variable]]))
-      stop_nice("Subject column types in clinical and lookup",
+      stop_nice("Subject column types in measures and lookup",
         " table are different")
 
     error <- FALSE
-    if (!isTRUE(all.equal(sort(clinical_subjects), sort(lookup_subjects)))) {
-      message("ERROR: Subjects in clinical and lookup tables do not match.")
-      nclin <- setdiff(clinical_subjects, lookup_subjects)
+    if (!isTRUE(all.equal(sort(measures_subjects), sort(lookup_subjects)))) {
+      message("ERROR: Subjects in measures and lookup tables do not match.")
+      nclin <- setdiff(measures_subjects, lookup_subjects)
       if (length(nclin) > 0) {
-        message("Subjects in clinical table not found in lookup:")
+        message("Subjects in measures table not found in lookup:")
         print(nclin)
       }
-      nlookup <- setdiff(lookup_subjects, clinical_subjects)
+      nlookup <- setdiff(lookup_subjects, measures_subjects)
       if (length(nlookup) > 0) {
-        message("Subjects in lookup table not found in clinical:")
+        message("Subjects in lookup table not found in measures:")
         print(nlookup)
       }
       error <- TRUE
@@ -261,7 +261,7 @@ validateData <-
       )
       nexp <- setdiff(expression_samples, lookup_samples)
       if (length(nexp) > 0) {
-        message("Samples from matrix not found in lookup table:")
+        message("Samples in expression matrix not found in lookup table:")
         print(nexp)
       }
       nlookup <- setdiff(lookup_samples, expression_samples)
@@ -469,7 +469,7 @@ loadModels <- function(models_file,
 validateAdvancedSettings <- function(config, module_title = "") {
   valid_settings <-
     c(
-      "clinical_outliers",
+      "measures_outliers",
       "expression_outliers",
       "correlation_method",
       "fit_method"

@@ -1,9 +1,9 @@
 advanced_settings_inputs <- function(config, id = NULL) {
   ns <- NS(id)
   to_include <- list(
-    if (isTruthy(config$clinical_outliers)) {
-      radioButtons(ns("clinical_outliers"),
-        label = "Remove clinical outliers?",
+    if (isTruthy(config$measures_outliers)) {
+      radioButtons(ns("measures_outliers"),
+        label = "Remove measures outliers?",
         choices = c("5/95 percentiles", "IQR", "No"),
         selected = "No"
       )
@@ -56,8 +56,8 @@ advanced_settings_inputs <- function(config, id = NULL) {
 outlier_inputs <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("clinical_outliers"),
-      label = "Remove clinical outliers?",
+    radioButtons(ns("measures_outliers"),
+      label = "Remove measures outliers?",
       choices = c("5/95 percentiles", "IQR", "No"),
       selected = "No"
     ),
@@ -113,7 +113,7 @@ varsSelectInput <- function(clinical_vars, id = NULL, initEmpty = TRUE) {
 
   selectizeInput(
     ns("selected_variable"),
-    label = with_red_star("Select a clinical variable:"),
+    label = with_red_star("Select a measure:"),
     choices = clinical_vars,
     options = list(
       dropdownParent = "body",

@@ -39,7 +39,7 @@ create_example <- function(path = NULL, full = FALSE) {
   hb_m3 <- hb_cor * base_hb + sqrt(1 - hb_cor * hb_cor) * stats::rnorm(n)
   hb_m6 <- hb_cor * base_hb + sqrt(1 - hb_cor * hb_cor) * stats::rnorm(n)
 
-  clinical <- data.frame(
+  measures_data <- data.frame(
     Subject_ID = ids,
     Haemoglobin_m0 = base_hb,
     Haemoglobin_m3 = hb_m3,
@@ -56,8 +56,8 @@ create_example <- function(path = NULL, full = FALSE) {
     DrugNaive = ifelse(sample(stats::rpois(n, 3), n, FALSE) > 3, "Yes", "No")
   )
 
-  utils::write.csv(clinical,
-                   file_path(dir, "clinical_data.csv"),
+  utils::write.csv(measures_data,
+                   file_path(dir, "measures_data.csv"),
                    row.names = FALSE)
 
   # Create fake gene symbols
@@ -83,7 +83,7 @@ create_example <- function(path = NULL, full = FALSE) {
     Sample_ID = sids,
     Time = rep(rep(times, times = 2), times = length(sids) / 6),
     Tissue = rep(rep(tissues, each = 3), times = length(sids) / 6),
-    Drug = rep(clinical$Drug, each = 6)
+    Drug = rep(measures_data$Drug, each = 6)
   )
 
   utils::write.csv(lookup,

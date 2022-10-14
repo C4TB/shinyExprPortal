@@ -40,7 +40,7 @@ mod_{{MODULENAME}}_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
     
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     subject_var <- config$subject_variable
@@ -58,7 +58,7 @@ mod_{{MODULENAME}}_server <- function(module_name, config, module_config) {
   
   if (is.null(config$required_variable)) {
     stop("{{MODULENAME}}: 
-         \'required_variable\' to ******* is missing")
+         \'required_variable\' is missing")
   }
   
   config

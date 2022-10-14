@@ -142,7 +142,7 @@ the package website for a complete module configuration guide.")
   cli::cli_alert_success("Done!")
 
   data_list <- list(
-    clinical = measures_file,
+    measures_data = measures_file,
     sample_lookup = "lookup_table.csv",
     expression_matrix = expression_file
   )
@@ -264,7 +264,7 @@ the package website for a complete module configuration guide.")
   
   if (advanced_yn == "y") {
     advanced_config <- list(
-      clinical_outliers =  TRUE,
+      measures_data =  TRUE,
       correlation_method = TRUE,
       fit_method = TRUE
     )
@@ -274,8 +274,8 @@ the package website for a complete module configuration guide.")
   }
   
   config$singleGeneCorr <- sgcConfig
-  config$singleVariableCorr <- svcConfig
-  config$multiVarialbeCorr <- mvcConfig
+  config$singleMeasureCorr <- svcConfig
+  config$multiMeasureCorr <- mvcConfig
 
   Sys.sleep(1)
   cli::cli_alert_success("Done!")
@@ -367,7 +367,7 @@ create_config_template <-
     logo = "PROJECT_LOGO.png",
     about = "about.md",
     data = list(
-      clinical = "CLINICAL_TABLE_FILENAME",
+      measures_data = "MEASURES_TABLE_FILENAME",
       lookup_table = "LOOKUP_TABLE_FILENAME",
       expression_matrix = "EXPRESSION_MATRIX_FILENAME"
     ),
@@ -390,22 +390,22 @@ create_config_template <-
         list(
           name = "TAB NAME",
           scale = "independent",
-          variables = c("CLINICAL_VAR_1", "CLINICAL_VAR_2")
+          variables = c("MEASURES_VAR_1", "MEASURES_VAR_2")
         )
       ),
       advanced = list(
         correlation_method = TRUE
       )
     ),
-    singleVariableCorr = list(
+    singleMeasureCorr = list(
       advanced = list(
         correlation_method = TRUE
       )
     ),
-    multiVariableCorr = list(
+    multiMeasureCorr = list(
       heatmap_variables = list(
         list(
-          GROUP_NAME = c("CLINICAL_VAR_1", "CLINICAL_VAR_2")
+          GROUP_NAME = c("MEASURESL_VAR_1", "MEASURES_VAR_2")
         )
       ),
       advanced = list(

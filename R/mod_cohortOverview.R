@@ -56,7 +56,7 @@ cohortOverview_tab <-
             h5("Profile settings"),
             selectizeInput(
               ns("profile_variable"),
-              label = "Select clinical variable for trajectory:",
+              label = "Select measures variable for trajectory:",
               choices = profile_variables,
               options = list(dropdownParent = "body")
             ),
@@ -100,7 +100,7 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
 
@@ -123,15 +123,15 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
         module_config$profile_variables[[profile_variable]][["values"]]
 
       profile_color_type <-
-        ifelse(is.factor(clinical[[profile_color]]),
+        ifelse(is.factor(measures_data[[profile_color]]),
           "character",
-          mode(clinical[[profile_color]])
+          mode(measures_data[[profile_color]])
         )
       all_vars <- union(profile_variable_list, c(profile_color))
-      selected_clinical <- clinical[, all_vars]
+      selected_measures <- measures_data[, all_vars]
 
-      for (i in seq_len(ncol(selected_clinical))) {
-        selected_clinical[[i]][is.na(selected_clinical[[i]])] <- 0
+      for (i in seq_len(ncol(selected_measures))) {
+        selected_measures[[i]][is.na(selected_measures[[i]])] <- 0
       }
 
       profile_order <- ifelse(input$order_by_color,
@@ -140,14 +140,14 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
       )
       first_profile_var <- profile_variable_list[1]
       last_profile_var <- profile_variable_list[length(profile_variable_list)]
-      selected_clinical$estimate <- selected_clinical[[last_profile_var]] /
-        selected_clinical[[first_profile_var]]
-      selected_clinical <-
-        selected_clinical[order(selected_clinical[[profile_order]],
+      selected_measures$estimate <- selected_measures[[last_profile_var]] /
+        selected_measures[[first_profile_var]]
+      selected_measures <-
+        selected_measures[order(selected_measures[[profile_order]],
           decreasing = TRUE
         ), ]
       r2d3::r2d3(
-        data = selected_clinical,
+        data = selected_measures,
         script = app_sys("app/build/cohort_overview.js"),
         d3_version = 5,
         dependencies = app_sys("app/build/d3-legend.js"),

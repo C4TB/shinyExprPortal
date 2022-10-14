@@ -73,7 +73,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    clinical <- config$data$clinical
+    measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
     all_mean <- rowMeans(expression_matrix, na.rm = T)
@@ -218,9 +218,9 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       )
     })
 
-    clinical_from_lookup <- eventReactive(selected_lookup(), {
+    measures_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
-      selectFromLookup(clinical, sel_lookup,
+      selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
       )
     })
@@ -229,8 +229,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       if (!isTruthy(input$selected_annotations)) {
         return(NULL)
       }
-      selected_clinical <- clinical_from_lookup()
-      selected_clinical[rev(input$selected_annotations)]
+      selected_measures <- measures_from_lookup()
+      selected_measures[rev(input$selected_annotations)]
     })
 
     observeEvent(subset_genes(), {

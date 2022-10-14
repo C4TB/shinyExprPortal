@@ -1,4 +1,4 @@
-#' Create a scatterplot with x = clinical and y = expression
+#' Create a scatterplot with x = measure and y = expression
 #'
 #' @param df data frame
 #' @param x horizontal axis variable
