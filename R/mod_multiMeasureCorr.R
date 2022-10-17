@@ -1,6 +1,6 @@
 # multiMeasureCorr UI Function
 mod_multiMeasureCorr_ui <- function(module_name, config, module_config) {
-  multiVariableCorr_tab(
+  multiMeasureCorr_tab(
     sample_select = sampleCategoryInputs(config$sample_categories, module_name),
     measures_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
@@ -22,7 +22,7 @@ mod_multiMeasureCorr_ui <- function(module_name, config, module_config) {
 #' @return a tab panel
 #' @noRd
 #'
-multiMeasureCorr <-
+multiMeasureCorr_tab <-
   function(sample_select,
            measures_variables,
            advanced = NULL,

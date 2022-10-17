@@ -2,7 +2,7 @@ utils::globalVariables("where")
 # singleMeasureCorr UI Function
 mod_singleMeasureCorr_ui <- function(module_name, config, module_config) {
   var_list <- module_config$measures_variables %||%
-    names(config$data$measures %>% dplyr::select(where(is.numeric)))
+    names(config$data$measures_data %>% dplyr::select(where(is.numeric)))
 
   singleMeasureCorr_tab(
     sampleCategoryInputs(config$sample_categories, module_name),
@@ -153,7 +153,7 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
       # Use the transposed expression to multiple columns vs vector
       correlation_df <- correlateMatrices(
         y = selected_expression,
-        x = selected_measuresl,
+        x = selected_measures,
         adjust_method = adjust_method,
         method = correlation_method,
         cores = cores
