@@ -208,7 +208,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       selected_measures <-
         replaceFalseWithNA(
           subset_measures[, measures_vars],
-          outlier_functions(measures_utliers)
+          outlier_functions(measures_outliers)
         )
       all_na_lv <-
         sapply(colnames(selected_measures),

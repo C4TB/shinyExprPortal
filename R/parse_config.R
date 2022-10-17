@@ -95,11 +95,11 @@ parseConfig <-
     if (is.null(raw_config$data)) {
       stop_nice("'data' section missing in configuration file")
     }
-    if (is.null(raw_config$data$measures) ||
+    if (is.null(raw_config$data$measures_data) ||
       is.null(raw_config$data$expression_matrix)) {
       stop_nice(
           "Data section in configuration file must include ",
-          "measures and expression_matrix files."
+          "measures_data and expression_matrix files."
           )
     }
 
@@ -123,21 +123,21 @@ parseConfig <-
       sample_categories_names <-
         sapply(config$sample_categories, function(x) x$name)
       loaded_data$sample_lookup <- create_lookup(
-        loaded_data$measures,
+        loaded_data$measures_data,
         sample_categories_names,
         config$sample_variable,
         config$subject_variable
       )
-      loaded_data$measures <-
+      loaded_data$measures_data <-
         remove_duplicate_subjects(
-          loaded_data$measures,
+          loaded_data$measures_data,
           sample_categories_names,
           config$sample_variable
         )
     }
 
     # Validate samples and subjects ----
-    # Check if number of samples and subjects match across measures
+    # Check if number of samples and subjects match across measures_data
     # And matrices
     # There should be no samples w/o a subject and no subjects without samples
     validateData(loaded_data,
@@ -227,30 +227,30 @@ validateData <-
            sample_variable = "Sample_ID",
            subject_variable = "Subject_ID") {
     expression_matrix <- datafiles[["expression_matrix"]]
-    measures <- datafiles[["measures"]]
+    measures_data <- datafiles[["measures_data"]]
     sample_lookup <- datafiles[["sample_lookup"]]
 
-    measures_subjects <- measures[[subject_variable]]
+    measures_subjects <- measures_data[[subject_variable]]
     lookup_subjects <- unique(sample_lookup[[subject_variable]])
     lookup_samples <- sample_lookup[[sample_variable]]
     expression_samples <- colnames(expression_matrix)
 
-    if (mode(measures[[subject_variable]]) !=
+    if (mode(measures_data[[subject_variable]]) !=
         mode(sample_lookup[[subject_variable]]))
-      stop_nice("Subject column types in measures and lookup",
+      stop_nice("Subject column types in measures_data and lookup",
         " table are different")
 
     error <- FALSE
     if (!isTRUE(all.equal(sort(measures_subjects), sort(lookup_subjects)))) {
-      message("ERROR: Subjects in measures and lookup tables do not match.")
+      message("ERROR: Subjects in measures_data and lookup tables do not match.")
       nclin <- setdiff(measures_subjects, lookup_subjects)
       if (length(nclin) > 0) {
-        message("Subjects in measures table not found in lookup:")
+        message("Subjects in measures_data table not found in lookup:")
         print(nclin)
       }
       nlookup <- setdiff(lookup_subjects, measures_subjects)
       if (length(nlookup) > 0) {
-        message("Subjects in lookup table not found in measures:")
+        message("Subjects in lookup table not found in measures_data:")
         print(nlookup)
       }
       error <- TRUE
@@ -490,9 +490,9 @@ file_ext <- function(x) {
   ifelse(pos > -1L, substring(x, pos + 1L), "")
 }
 
-#' Create a lookup table from measures and columns
+#' Create a lookup table from measures_data and columns
 #'
-#' @param measures table with duplicate rows for a subject
+#' @param measures_data table with duplicate rows for a subject
 #' @param sample_categories metadata for samples that will be used to populate
 #' lookup table
 #' @param sample_variable variable that identifies a sample
@@ -502,12 +502,12 @@ file_ext <- function(x) {
 #'
 #' @noRd
 create_lookup <-
-  function(measures, sample_categories, sample_variable, subject_variable) {
-    samples <- measures[[sample_variable]]
-    subjects <- measures[[subject_variable]]
+  function(measures_data, sample_categories, sample_variable, subject_variable) {
+    samples <- measures_data[[sample_variable]]
+    subjects <- measures_data[[subject_variable]]
     lookup <- data.frame(samples, subjects)
     colnames(lookup) <- c(sample_variable, subject_variable)
-    categories_data <- lapply(sample_categories, function(x) measures[[x]])
+    categories_data <- lapply(sample_categories, function(x) measures_data[[x]])
     names(categories_data) <- sample_categories
     lookup <- cbind(lookup, categories_data)
     lookup
@@ -520,7 +520,7 @@ create_lookup <-
 #' columns with unique value per sample, the rows will be kept and the portal
 #' may not work as expected
 #'
-#' @param measures data frame with observations for subjects and duplicated rows
+#' @param measures_data data frame with observations for subjects and duplicated rows
 #' @param sample_cat_names names of variables used in lookup
 #' @param sample_variable variable that identifies samples
 #'
@@ -528,7 +528,7 @@ create_lookup <-
 #'
 #' @noRd
 remove_duplicate_subjects <-
-  function(measures, sample_cat_names, sample_variable) {
-    measures[, c(sample_cat_names, sample_variable)] <- list(NULL)
-    unique(measures)
+  function(measures_data, sample_cat_names, sample_variable) {
+    measures_data[, c(sample_cat_names, sample_variable)] <- list(NULL)
+    unique(measures_data)
   }

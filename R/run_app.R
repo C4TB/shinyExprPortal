@@ -29,8 +29,11 @@ NULL
 #' placed in a custom_modules.R file, for example, and loaded using `source`.
 #' The package will then parse the configuration file, and if it contains one of
 #' the custom module names, it will call the module configuration parsing
-#' function and add it to the interface. See `vignette("custom_modules")` for a
+#' function and add it to the interface. See `vignette("customization")` for a
 #' complete example.
+#' 
+#' Please note that if running on Windows, nthreads will be always set to 1
+#' due to limitations on the current implementation. 
 #' 
 #' @seealso [create_config_wizard()] to create a configuration using a wizard,
 #' [create_config_template()] to create a configuration file template.
@@ -41,6 +44,13 @@ run_app <- function(config_file,
                     custom_modules = NULL,
                     nthreads = 1L,
                     ...) {
+  
+  if ((nthreads > 1) && (.Platform$OS.type == "windows")) {
+    nthreads <- 1
+    message("Multiple threads are not currently supported on Windows. Running ", 
+            "portal in single-threaded mode.")
+  }
+  
   app <- shinyApp(
     ui = app_ui,
     server = app_server
