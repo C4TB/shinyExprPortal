@@ -12,6 +12,6 @@ devtools::load_all()
 
 # Run the application
 #run_app(config_file = "../ramap_test/test.yaml", data_folder = "../ramap_test/")
-run_app(config_file = "../ramap_test/config.yaml", data_folder = "../ramap_test/")
-#run_app(config_file = "../psort_test/psort_alt.yaml", data_folder = "../psort_test")
-#run_app(config_file = "../traumaProt/prot_config.yaml", data_folder = "../traumaProt")
+#run_app(config_file = "../ramap_test/config.yaml", data_folder = "../ramap_test/", cores = 4)
+#run_app(config_file = "../psort_test/psort_alt.yaml", data_folder = "../psort_test", nthreads = 4)
+run_app(config_file = "../traumaProt/prot_config.yaml", data_folder = "../traumaProt", nthreads = 4)
