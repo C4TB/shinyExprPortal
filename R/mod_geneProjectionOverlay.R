@@ -123,11 +123,10 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     })
 
     # Using custom function for now until vegawidget is updated
-    getSelectedGroup <- custom_vw_shiny_get_signal(
-      "scatterplot",
+    getSelectedGroup <- vegawidget::vw_shiny_get_signal(
+      ns("scatterplot"),
       "group_sel",
-      "value",
-      module_name
+      "value"
     )
 
     # Use data = NULL because we use a signal to set the data

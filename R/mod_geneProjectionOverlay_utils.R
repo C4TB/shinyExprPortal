@@ -113,27 +113,3 @@ vega_scatterplot_overlay <-
     )
     vegawidget::as_vegaspec(chart)
   }
-
-custom_vw_shiny_get_signal <-
-  function(outputId, name, body_value = "value", id = NULL) {
-    session <- shiny::getDefaultReactiveDomain()
-    ns <- shiny::NS(id)
-    #inputId <- glue::glue("{outputId}_signal_{name}")
-    inputId <- paste(outputId, "signal", name, sep = "_")
-    shiny::observe({
-      shiny::isolate({
-        handler_body <- vegawidget:::vw_handler_signal(body_value) %>%
-          vegawidget:::vw_handler_add_effect("shiny_input",
-            inputId = ns(inputId)
-          ) %>%
-          vegawidget:::vw_handler_body_compose(n_indent = 0L)
-        vegawidget:::vw_shiny_msg_addSignalListener(ns(outputId),
-          name = name,
-          handlerBody = handler_body
-        )
-      })
-    })
-    shiny::reactive({
-      session$input[[inputId]]
-    })
-  }
