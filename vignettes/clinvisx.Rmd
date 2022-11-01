@@ -1,8 +1,8 @@
 ---
-title: "Quick Start Guide for clinvisx"
+title: "Quick Start Guide for shinyExprPortal"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick Start Guide for clinvisx}
+  %\VignetteIndexEntry{Quick Start Guide for shinyExprPortal}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -104,7 +104,7 @@ In the portal, this will appear as:
 Once the config.yaml file is created, you can edit it to modify the setup of modules that are already defined or add new ones. The modules included in the package vary between their requirements and aims: some of them are more exploratory and only require setting them up in the configuration file, while others were designed to help showcase and explore results of analysis. If you have computed sets of genes using a package such as WGCNA, you can create a table to load them into the geneModulesHeatmap module, for example. In the current version, the following modules are available:
 
 ```{r show_av}
-clinvisx::show_available_modules()
+shinyExprPortal::show_available_modules()
 ```
 
 Below is a summary of which modules work with the basic data files and which ones require additional files:

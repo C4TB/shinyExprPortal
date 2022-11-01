@@ -51,7 +51,7 @@ app_server <- function(input, output, session) {
 
   output$about_info <- renderUI({
     if (is.null(config$about)) {
-      p("Welcome to clinvisx exploration tool. This is a placeholder
+      p("Welcome to shinExprPortal. This is a placeholder
       introduction when the 'about' file has not been defined. The tool supports
       text, HTML and markdown files. Create one in your application folder and
       point to it in your configuration file using 'about: file_name.ext'.

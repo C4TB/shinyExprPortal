@@ -29,8 +29,8 @@ and computing correlations on UNIX-based systems. Default is 1}
 \description{
 This function should be run only after you have created the configuration
 file and placed all required files in the app folder. See
-\code{vignette("quickstart", package = "clinvisx")} for help with setup or
-\code{vignette("fullguide", package = "clinvisx")} for a complete configuration
+\code{vignette("quickstart", package = "shinyExprPortal")} for help with setup or
+\code{vignette("fullguide", package = "shinyExprPortal")} for a complete configuration
 guide.
 }
 \details{
@@ -41,8 +41,11 @@ mod_moduleName_server moduleName_config functions. These functions could be
 placed in a custom_modules.R file, for example, and loaded using \code{source}.
 The package will then parse the configuration file, and if it contains one of
 the custom module names, it will call the module configuration parsing
-function and add it to the interface. See \code{vignette("custom_modules")} for a
+function and add it to the interface. See \code{vignette("customization")} for a
 complete example.
+
+Please note that if running on Windows, nthreads will be always set to 1
+due to limitations on the current implementation.
 }
 \seealso{
 \code{\link[=create_config_wizard]{create_config_wizard()}} to create a configuration using a wizard,

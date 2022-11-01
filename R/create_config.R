@@ -331,7 +331,7 @@ the package website for a complete module configuration guide.")
   cli::cli_alert("Creating {.file app.R} file in {.file {dir}}")
   app_r <- file(file_path(dir, "app.R"))
   app_lines <- c(
-    "library(clinvisx)",
+    "library(shinyExprPortal)",
     "run_app(config = \"config.yaml\")"
   )
   writeLines(app_lines, app_r)

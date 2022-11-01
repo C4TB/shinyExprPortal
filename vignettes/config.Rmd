@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, include = FALSE, eval = FALSE, echo = FALSE}
-library(clinvisx)
+library(shinyExprPortal)
 ```
 
 This guide describes how to set up the configuration file for deploying a project with the package. It includes a minimal setup example, as well as optional advanced and customization settings. It assumes that that you have already created an initial configuration file and prepared the expression, measures and lookup table files.
@@ -206,7 +206,7 @@ adjust_method: fdr
 The final part of the configuration file is the definition of the modules to be included in the portal.  These should be specified in the order that they should appear on the portal menu. The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can also be used as reference. The following modules and grouped modules are currently supported (grouped modules are pseudo-modules that define sub-menus on the portal):
 
 ```{r list_modules, echo=FALSE}
-clinvisx::show_avaiable_modules()
+shinyExprPortal::show_avaiable_modules()
 ```
 The package contains suggested dependencies when they are only needed by specific modules. This guide lists all the additional dependencies for each module. The other way to discover an additional dependency is to set up the configuration file and try to run the portal. If a package is missing, the portal will not run and you will be notified about which package dependency is missing.
 

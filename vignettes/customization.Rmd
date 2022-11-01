@@ -186,7 +186,7 @@ With the approach above, `moduleName` can now be included in config.yaml file al
 At deployment level, besides sourcing the moduleName file if required, two other changes must be made in the app.R file: setting a vector that contains the names of any new modules and passing that variable as the `extra_modules` argument to `run_app`:
 
 ```{r, eval = FALSE}
-library(clinvisx)
+library(shinyExprPortal)
 
 source("newModule.R")
 source("anotherModule.R")

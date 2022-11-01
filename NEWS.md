@@ -1,3 +1,3 @@
-# clinvisx 1.0.0.0000
+# shinyExprPortal 1.0.0.0000
 
 * First release
