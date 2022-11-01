@@ -1,8 +1,8 @@
 ---
-title: "Quick Start Guide for clinvisx"
+title: "Quick Start Guide for shinyExprPortal"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick Start Guide for clinvisx}
+  %\VignetteIndexEntry{Quick Start Guide for shinyExprPortal}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Deploying a portal using the package relies on two data files -- a count expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [dataprep](dataprep.html) vignette describes how to prepare the data to use with the package.
+Deploying a portal using the package relies on two data files -- an expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [dataprep](dataprep.html) vignette describes how to prepare the data to use with the package.
 
 ## Using the wizard
 
@@ -104,7 +104,7 @@ In the portal, this will appear as:
 Once the config.yaml file is created, you can edit it to modify the setup of modules that are already defined or add new ones. The modules included in the package vary between their requirements and aims: some of them are more exploratory and only require setting them up in the configuration file, while others were designed to help showcase and explore results of analysis. If you have computed sets of genes using a package such as WGCNA, you can create a table to load them into the geneModulesHeatmap module, for example. In the current version, the following modules are available:
 
 ```{r show_av}
-clinvisx::show_available_modules()
+shinyExprPortal::show_available_modules()
 ```
 
 Below is a summary of which modules work with the basic data files and which ones require additional files:

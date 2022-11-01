@@ -144,7 +144,7 @@ correlateMatrices <-
 #'
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
-#' @param ... arguments to [clinvisx::correlateMatrices()]
+#' @param ... arguments to [shinyExprPortal::correlateMatrices()]
 #'
 #' @noRd
 #' @return long format data frame
@@ -164,7 +164,7 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
 
 #' Transform correlation data frame to long format
 #'
-#' @param data correlation data frame from [clinvisx::correlateMatrices()]
+#' @param data correlation data frame from [shinyExprPortal::correlateMatrices()]
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
 #'

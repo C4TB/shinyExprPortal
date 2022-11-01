@@ -1,5 +1,5 @@
 default:
-  golem_name: clinvisx
+  golem_name: shinyExprPortal
   golem_version: 1.0.0.0000
   app_prod: no
   available_modules:

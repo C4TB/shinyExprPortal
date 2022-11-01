@@ -10,7 +10,7 @@ show_available_modules()
 list of available modules
 }
 \description{
-See \code{vignette("config", package = "clinvisx")} for details about how to
+See \code{vignette("config", package = "shinyExprPortal")} for details about how to
 configure each module.
 }
 \examples{

@@ -9,8 +9,8 @@ NULL
 #'
 #' This function should be run only after you have created the configuration
 #' file and placed all required files in the app folder. See
-#' `vignette("quickstart", package = "clinvisx")` for help with setup or
-#' `vignette("fullguide", package = "clinvisx")` for a complete configuration
+#' `vignette("quickstart", package = "shinyExprPortal")` for help with setup or
+#' `vignette("fullguide", package = "shinyExprPortal")` for a complete configuration
 #' guide.
 #'
 #' @param config_file The name of the yaml configuration file
@@ -110,7 +110,7 @@ run_module <- function(module_name,
 
 #' Print list of currently supported modules
 #'
-#' See \code{vignette("config", package = "clinvisx")} for details about how to
+#' See \code{vignette("config", package = "shinyExprPortal")} for details about how to
 #' configure each module.
 #'
 #' @return list of available modules
