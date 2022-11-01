@@ -18,9 +18,11 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-*shinyExprPortal* is a configurable Shiny portal for visual exploration and analysis showcase of molecular expression data and phenotype data, such as observed clinical measures. The package is designed for deploying portals using a text-based configuration file with minimal programming. The portal includes modules for exploring correlations between expression and measures, visualizing the results of differential expression analysis and showcasing results of other downstream analysis methods such as pathways and correlated networks.
+*shinyExprPortal* is a configurable Shiny portal for visual exploration and analysis showcase of molecular expression data and phenotype data, such as observed clinical measures. The package is designed for deploying portals using a text-based configuration file with minimal programming. The portal includes modules for exploring correlations between expression and measures, visualizing the results of differential expression analysis and showcasing results of other downstream analysis methods such as pathways and correlated networks. The interface is designed for gene expression, but the computational methods are compatible with any matrix with samples in columns and entities, such as proteins, in rows.
 
-For initial exploration, the package is compatible with any expression matrix containing, for examlpe, abundance or counts, and data frames containing observed measures. For differential expression and other methods, the package is compatible with the outputs of commonly used packages such as limma and WCGNA. The correlation modules can be used early in the lifecycle of a bioinformatics project, while the other modules can be added as new downstream analysis results are produced. The use of the configuration file also means that the portal can be easily versioned.
+<img src="man/figures/example.png"/>
+
+For initial exploration, any expression matrix containing abundance or counts and data frames containing observed measures can be loaded in. For differential expression and other methods, the package is compatible with the outputs of packages such as limma and WCGNA. The correlation modules can be used early in the lifecycle of a bioinformatics project, while the other modules can be added as new downstream analysis results are produced. The use of the configuration file also means that the portal can be easily versioned.
 
 ## How to start
 

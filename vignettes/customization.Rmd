@@ -179,7 +179,7 @@ mod_moduleName_server <- function(module_name, config, module_config) {
   
 ```
 
-With the approach above, `moduleName` can now be included in config.yaml file along with required or optional properties. Note that the config function must be defined otherwise the new module will not be used, although the property validation is not needed. Each new module can be placed in the main `app.R` or in its own `.R` file. If the second option is used, then each R file must be sourced in the `app.R`.
+With the approach above, `moduleName` can now be inclu ded in config.yaml file along with required or optional properties. Note that the config function must be defined otherwise the new module will not be used, although the property validation is not needed. Each new module can be placed in the main `app.R` or in its own `.R` file. If the second option is used, then each R file must be sourced in the `app.R`.
 
 > **Create the template in your code folder:** the package includes a function that will create a file for you with the template above. After loading the package, run `create_module_template("moduleName")` to create the file and edit it.
 
