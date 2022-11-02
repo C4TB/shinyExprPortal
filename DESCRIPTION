@@ -13,7 +13,6 @@ Imports:
     cli,
     dplyr,
     tidyr,
-    ggplot2,
     yaml,
     data.table,
     bslib,

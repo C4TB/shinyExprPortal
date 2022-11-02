@@ -1,5 +1,4 @@
 #' @import shiny
-#' @import ggplot2
 #' @import dplyr
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom DT DTOutput renderDT
