@@ -2,12 +2,10 @@
 #'
 #' @param path (optional) a directory where to create the files, otherwise uses
 #'  the output of getwd()
-#' @param full (optional) TRUE or FALSE (default); if TRUE, creates models and
-#'  modules example files
 #'
 #' @export
 #'
-create_example <- function(path = NULL, full = FALSE) {
+create_example <- function(path = NULL) {
   set.seed(123)
 
   dir <- path %||% getwd()
