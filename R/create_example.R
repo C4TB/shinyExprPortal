@@ -61,14 +61,14 @@ create_example <- function(path = NULL, full = FALSE) {
                    row.names = FALSE)
 
   # Create fake gene symbols
-  m <- 5000
+  m <- 100
   preffix <- do.call(paste0, replicate(4, sample(LETTERS, m, T), F))
   suffix <- do.call(paste0, replicate(3, sample(1:9, m, T), F))
   gene_names <- paste0(preffix, suffix)
 
   expression <-
     matrix(
-      stats::rnorm(m * length(sids)),
+      round(stats::rnorm(m * length(sids)), 2),
       nrow = m,
       ncol = length(sids),
       dimnames = list(gene_names, sids)
