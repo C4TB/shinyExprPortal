@@ -76,7 +76,7 @@ create_example <- function(path = NULL, full = FALSE) {
 
   utils::write.csv(expression,
                    file_path(dir, "expression_matrix.csv"),
-                   row.names = FALSE)
+                   row.names = TRUE)
 
   lookup <- data.frame(
     Subject_ID = rep(ids, each = 6),

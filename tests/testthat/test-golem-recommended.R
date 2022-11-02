@@ -24,7 +24,7 @@ test_that(
       "R",
       c(
         "-e",
-        "pkgload::load_all(here::here());run_app('test.yaml')"
+        "pkgload::load_all(here::here());run_app('config.yaml')"
       )
     )
     Sys.sleep(5)
