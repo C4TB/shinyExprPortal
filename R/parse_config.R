@@ -111,6 +111,9 @@ parseConfig <-
     names(loaded_data) <- names(raw_config$data)
 
     # Set global settings for sample and subject column ----
+    if (is.null(raw_config$sample_categories)) {
+      stop_nice("sample_categories property missing in configuration file")
+    }
     config$sample_categories <- raw_config$sample_categories
     config$sample_variable <-
       raw_config$sample_variable %||% "Sample_ID"
@@ -467,6 +470,8 @@ loadModels <- function(models_file,
 #'
 #' @noRd
 validateAdvancedSettings <- function(config, module_title = "") {
+  if (is.null(names(config)))
+    stop_nice("advanced_settings must be a list of options")
   valid_settings <-
     c(
       "measures_outliers",
