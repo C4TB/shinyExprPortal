@@ -38,3 +38,4 @@ Suggests:
     fst,
     qs
 VignetteBuilder: knitr
+URL: https://c4tb.github.io/shinyExprPortal/
