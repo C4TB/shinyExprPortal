@@ -1,0 +1,13 @@
+pandoc: 2.19.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  clinvisx: clinvisx.html
+  config: config.html
+  customization: customization.html
+  dataprep: dataprep.html
+last_built: 2022-11-02T15:52Z
+urls:
+  reference: https://c4tb.github.io/shinyExprPortal/reference
+  article: https://c4tb.github.io/shinyExprPortal/articles
+
