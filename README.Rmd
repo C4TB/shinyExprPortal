@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # shinyExprPortal
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 *shinyExprPortal* is a configurable Shiny portal for visual exploration and analysis showcase of molecular expression data and phenotype data, such as observed clinical measures. The package is designed for deploying portals using a text-based configuration file with minimal programming. The portal includes modules for exploring correlations between expression and measures, visualizing the results of differential expression analysis and showcasing results of other downstream analysis methods such as pathways and correlated networks. The interface is designed for gene expression, but the computational methods are compatible with any matrix with samples in columns and entities, such as proteins, in rows.
