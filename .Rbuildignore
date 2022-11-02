@@ -12,3 +12,6 @@ $run_dev.*
 ^tests$
 ^doc$
 ^Meta$
+^\.github$
+^CRAN-RELEASE$
+^cran-comments\.md$
