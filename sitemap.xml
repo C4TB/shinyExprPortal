@@ -13,9 +13,6 @@
     <loc>https://c4tb.github.io/shinyExprPortal/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://c4tb.github.io/shinyExprPortal/articles/clinvisx.html</loc>
-  </url>
-  <url>
     <loc>https://c4tb.github.io/shinyExprPortal/articles/config.html</loc>
   </url>
   <url>
@@ -26,6 +23,9 @@
   </url>
   <url>
     <loc>https://c4tb.github.io/shinyExprPortal/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://c4tb.github.io/shinyExprPortal/articles/shinyExprPortal.html</loc>
   </url>
   <url>
     <loc>https://c4tb.github.io/shinyExprPortal/authors.html</loc>

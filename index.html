@@ -36,12 +36,14 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="articles/shinyExprPortal.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/clinvisx.html">Quick Start Guide for shinyExprPortal</a>
     <a class="dropdown-item" href="articles/config.html">Full Configuration Guide</a>
     <a class="dropdown-item" href="articles/customization.html">Portal UI and Code Customization</a>
     <a class="dropdown-item" href="articles/dataprep.html">Data Preparation Guide</a>
@@ -66,7 +68,7 @@
 <div class="page-header"><h1 id="shinyexprportal">shinyExprPortal<a class="anchor" aria-label="anchor" href="#shinyexprportal"></a>
 </h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
+
 <p><em>shinyExprPortal</em> is a configurable Shiny portal for visual exploration and analysis showcase of molecular expression data and phenotype data, such as observed clinical measures. The package is designed for deploying portals using a text-based configuration file with minimal programming. The portal includes modules for exploring correlations between expression and measures, visualizing the results of differential expression analysis and showcasing results of other downstream analysis methods such as pathways and correlated networks. The interface is designed for gene expression, but the computational methods are compatible with any matrix with samples in columns and entities, such as proteins, in rows.</p>
 <p><img src="reference/figures/example.png"></p>
 <p>For initial exploration, any expression matrix containing abundance or counts and data frames containing observed measures can be loaded in. For differential expression and other methods, the package is compatible with the outputs of packages such as limma and WCGNA. The correlation modules can be used early in the lifecycle of a bioinformatics project, while the other modules can be added as new downstream analysis results are produced. The use of the configuration file also means that the portal can be easily versioned.</p>
@@ -76,19 +78,19 @@
 <p>You can install the latest version of the package using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"C4TB/shinExprPortal"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>If you have samples for one set of subjects, you can check <code>vignette("shinyExprPortal")</code> for a quick start guide to set up the configuration file.</p>
-<p>If your subjects have one more samples, e.g. collected over time or from different tissues, you should check the data preparation guide in <code><a href="articles/dataprep.html">vignette("dataprep")</a></code> and the full configuration guide <code><a href="articles/config.html">vignette("config")</a></code></p>
+<p>If you have samples for one set of subjects, you can check <a href="https://c4tb.github.io/shinyExprPortal/articles/shinyExprPortal.html"><code>vignette("shinyExprPortal")</code></a> for a quick start guide to set up the configuration file.</p>
+<p>If your subjects have one more samples, e.g. collected over time or from different tissues, you should check the data preparation guide in <a href="https://c4tb.github.io/shinyExprPortal/articles/dataprep.html"><code>vignette("dataprep")</code></a> and the full configuration guide <a href="https://c4tb.github.io/shinyExprPortal/articles/config.html"><code>vignette("config")</code></a></p>
 <p>Once you have completed either of the steps above, you can open and run the resulting app.R file to test the portal.</p>
 </div>
 <div class="section level2">
 <h2 id="module-documentation">Module documentation<a class="anchor" aria-label="anchor" href="#module-documentation"></a>
 </h2>
-<p>The full configuration guide vignette found through <code><a href="articles/config.html">vignette("config")</a></code> describes all the requirements and settings for each of the modules currently supported by the portal.</p>
+<p>The full configuration guide in <a href="https://c4tb.github.io/shinyExprPortal/articles/config.html"><code>vignette("config")</code></a> describes all the dependencies, file requirements, mandatory and optional settings for each of the modules currently supported by the portal.</p>
 </div>
 <div class="section level2">
 <h2 id="customization-and-extending">Customization and extending<a class="anchor" aria-label="anchor" href="#customization-and-extending"></a>
 </h2>
-<p><code><a href="articles/customization.html">vignette("customization")</a></code> describes how to customize the visual style of the portal and how to add new functionality through programming. The package supports customization through the configuration file at a global level using <a href="https://cran.r-project.org/web/packages/bslib/index.html" class="external-link">bslib</a> and some modules enable customizing colors used in the visualizations.</p>
+<p><a href="https://c4tb.github.io/shinyExprPortal/articles/customization.html"><code>vignette("customization")</code></a> describes how to customize the visual style of the portal and how to add new functionality through programming. The package supports customization through the configuration file at a global level using <a href="https://cran.r-project.org/web/packages/bslib/index.html" class="external-link">bslib</a> and some modules enable customizing colors used in the visualizations.</p>
 <p>The package is also compatible with new modules that are added without modifying the source code of the portal or the package. New functionality can be developed and tested without having to clone the repository or recompile the package.</p>
 </div>
 </div>
@@ -121,7 +123,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
