@@ -4,6 +4,8 @@
 # shinyExprPortal
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 *shinyExprPortal* is a configurable Shiny portal for visual exploration
@@ -38,29 +40,32 @@ devtools::install_github("C4TB/shinExprPortal", dependencies = TRUE)
 ```
 
 If you have samples for one set of subjects, you can check
-`vignette("shinyExprPortal")` for a quick start guide to set up the
-configuration file.
+[`vignette("shinyExprPortal")`](https://c4tb.github.io/shinyExprPortal/articles/shinyExprPortal.html)
+for a quick start guide to set up the configuration file.
 
 If your subjects have one more samples, e.g. collected over time or from
 different tissues, you should check the data preparation guide in
-`vignette("dataprep")` and the full configuration guide
-`vignette("config")`
+[`vignette("dataprep")`](https://c4tb.github.io/shinyExprPortal/articles/dataprep.html)
+and the full configuration guide
+[`vignette("config")`](https://c4tb.github.io/shinyExprPortal/articles/config.html)
 
 Once you have completed either of the steps above, you can open and run
 the resulting app.R file to test the portal.
 
 ## Module documentation
 
-The full configuration guide vignette found through `vignette("config")`
-describes all the requirements and settings for each of the modules
-currently supported by the portal.
+The full configuration guide in
+[`vignette("config")`](https://c4tb.github.io/shinyExprPortal/articles/config.html)
+describes all the dependencies, file requirements, mandatory and
+optional settings for each of the modules currently supported by the
+portal.
 
 ## Customization and extending
 
-`vignette("customization")` describes how to customize the visual style
-of the portal and how to add new functionality through programming. The
-package supports customization through the configuration file at a
-global level using
+[`vignette("customization")`](https://c4tb.github.io/shinyExprPortal/articles/customization.html)
+describes how to customize the visual style of the portal and how to add
+new functionality through programming. The package supports
+customization through the configuration file at a global level using
 [bslib](https://cran.r-project.org/web/packages/bslib/index.html) and
 some modules enable customizing colors used in the visualizations.
 

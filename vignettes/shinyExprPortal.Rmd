@@ -125,3 +125,24 @@ Below is a summary of which modules work with the basic data files and which one
 - 2D gene projection (e.g. MDS, UMAP): data frame with 2D coordinates for all genes
 
 Check [config](config.html) for details about how to specify each module and set up the additional files needed for them.
+
+### Deploying it remotely
+
+You can deploy the app in your Posit/RStudio Connect server or, alternatively, in the public shinyapps.io website (note that the app will be public under the free plan). You can follow the [guide](https://shiny.rstudio.com/articles/shinyapps.html) to set up your account and install the required packages. The only other requirement to make it work is to modify the app.R file to include the optional dependencies for each module (as listed in the configuratoin guide).
+
+For example, the original app.R would look like this:
+
+```{r original, eval=FALSE}
+library(shinyExprPortal)
+run_app("config.yaml")
+```
+
+If you want to use the geneModulesHeatmap module, for visualizing heatmaps of lists of genes, you must also have the RColorBrewer installed. To deploy in shinyapps.io, you must then import it like in the example below:
+
+```{r changed, eval=FALSE}
+library(shinExprPortal)
+library(RColorBrewer)
+run_app("config.yaml")
+```
+
+```
