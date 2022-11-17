@@ -211,8 +211,9 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           outlier_functions(measures_outliers)
         )
       all_na_lv <-
-        sapply(colnames(selected_measures),
-               function(x) all(is.na(selected_measures[[x]])))
+        vapply(colnames(selected_measures),
+               function(x) all(is.na(selected_measures[[x]])),
+               logical(1))
       selected_measures <- selected_measures[ , !all_na_lv]
       measures_vars <- measures_vars[!all_na_lv]
 
@@ -294,8 +295,9 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         )
       
       all_na_lv <-
-        sapply(colnames(subset_measures),
-               function(x) all(is.na(subset_measures[[x]])))
+        vapply(colnames(subset_measures),
+               function(x) all(is.na(subset_measures[[x]])),
+               logical(1))
       measures_vars <- measures_vars[!all_na_lv]
 
       selected_expression <-
@@ -325,8 +327,9 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           subset_vars <- unique(c(output_vars, color_var))
           
           not_na_lv <-
-            sapply(subset_vars,
-                   function(x) all(is.na(subset_measures[[x]])))
+            vapply(subset_vars,
+                   function(x) all(is.na(subset_measures[[x]])),
+                   logical(1))
           subset_vars <- subset_vars[!not_na_lv]
 
           # Check if an optional palette was provided

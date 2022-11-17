@@ -210,7 +210,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       # Select subset of expression matrix
       expmat <- expression_matrix[unique(gene_list),
         selected_samples[[sample_col]],
-        drop = F
+        drop = FALSE
       ]
       annots <- data.frame(selected_samples[[sample_category]])
       names(annots) <- sample_category
@@ -226,8 +226,8 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
         colors = rev(
           RColorBrewer::brewer.pal(11, heatmap_palette)
         ),
-        row_labels = T,
-        col_labels = F,
+        row_labels = TRUE,
+        col_labels = FALSE,
         scale = "rows",
         scale_method = "standardize",
         name = "Expression z-scores",
@@ -285,7 +285,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
       # Select subset of expression matrix
       expmat <- expression_matrix[unique(gene_list),
         selected_samples[[sample_col]],
-        drop = F
+        drop = FALSE
       ]
       annots <- data.frame(selected_samples[[sample_category]])
       names(annots) <- sample_category
@@ -301,8 +301,8 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
         colors = rev(
           RColorBrewer::brewer.pal(11, heatmap_palette)
         ),
-        row_labels = T,
-        col_labels = F,
+        row_labels = TRUE,
+        col_labels = FALSE,
         scale = "rows",
         scale_method = "standardize",
         name = "Expression z-scores",

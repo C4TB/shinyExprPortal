@@ -22,15 +22,15 @@ create_example <- function(path = NULL) {
 
   times <- c("m0", "m3", "m6")
   tissues <- c("A", "B")
-  ids <- paste0("PROJ_", 1:n)
+  ids <- paste0("PROJ_", seq_len(n))
 
   sid_times <- paste0(rep(ids, each = 6), "_S", seq_along(times))
   tissue_suffix <- paste0("_T", rep(seq_along(tissues), each = 3))
   sids <- paste0(sid_times, tissue_suffix)
 
   da_m0 <- stats::rpois(n, 2)
-  da_m3 <- pmax(0, da_m0 + sample(c(-1, 1), n, replace = T))
-  da_m6 <- pmax(0, da_m3 + sample(c(-1, 1), n, replace = T))
+  da_m3 <- pmax(0, da_m0 + sample(c(-1, 1), n, replace = TRUE))
+  da_m6 <- pmax(0, da_m3 + sample(c(-1, 1), n, replace = TRUE))
 
   base_hb <- stats::rnorm(n, 10) + 10
   hb_cor <- 0.95
@@ -60,8 +60,8 @@ create_example <- function(path = NULL) {
 
   # Create fake gene symbols
   m <- 100
-  preffix <- do.call(paste0, replicate(4, sample(LETTERS, m, T), F))
-  suffix <- do.call(paste0, replicate(3, sample(1:9, m, T), F))
+  preffix <- do.call(paste0, replicate(4, sample(LETTERS, m, TRUE), FALSE))
+  suffix <- do.call(paste0, replicate(3, sample(1:9, m, TRUE), FALSE))
   gene_names <- paste0(preffix, suffix)
 
   expression <-

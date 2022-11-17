@@ -46,7 +46,7 @@ advanced_settings_inputs <- function(config, id = NULL) {
       NULL
     }
   )
-  if (!all(sapply(to_include, is.null))) {
+  if (!all(vapply(to_include, is.null, logical(1)))) {
     to_include <- c(list(tags$hr(), tags$b("Other options")), to_include)
   }
   do.call(tagList, list(to_include))

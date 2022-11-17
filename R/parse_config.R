@@ -124,7 +124,7 @@ parseConfig <-
 
     if (is.null(raw_config$data$sample_lookup)) {
       sample_categories_names <-
-        sapply(config$sample_categories, function(x) x$name)
+        vapply(config$sample_categories, function(x) x$name, character(1))
       loaded_data$sample_lookup <- create_lookup(
         loaded_data$measures_data,
         sample_categories_names,
@@ -249,12 +249,12 @@ validateData <-
       nclin <- setdiff(measures_subjects, lookup_subjects)
       if (length(nclin) > 0) {
         message("Subjects in measures_data table not found in lookup:")
-        print(nclin)
+        message(nclin)
       }
       nlookup <- setdiff(lookup_subjects, measures_subjects)
       if (length(nlookup) > 0) {
         message("Subjects in lookup table not found in measures_data:")
-        print(nlookup)
+        message(nlookup)
       }
       error <- TRUE
     }
@@ -265,12 +265,12 @@ validateData <-
       nexp <- setdiff(expression_samples, lookup_samples)
       if (length(nexp) > 0) {
         message("Samples in expression matrix not found in lookup table:")
-        print(nexp)
+        message(nexp)
       }
       nlookup <- setdiff(lookup_samples, expression_samples)
       if (length(nlookup) > 0) {
         message("Samples in lookup table not found in expression matrix:")
-        print(nlookup)
+        message(nlookup)
       }
       error <- TRUE
     }
@@ -454,11 +454,13 @@ loadModels <- function(models_file,
   })
 
   models_table$P <-
-    sapply(models_table$Data,
-           function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]))
+    vapply(models_table$Data,
+           function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]),
+           integer(1))
   models_table$P_adj <-
-    sapply(models_table$Data,
-           function(x) nrow(x[x[[padj_col]] <= padj_max, ]))
+    vapply(models_table$Data,
+           function(x) nrow(x[x[[padj_col]] <= padj_max, ]),
+           integer(1))
 
   models_table
 }

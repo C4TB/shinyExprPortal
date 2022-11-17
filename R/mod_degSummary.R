@@ -73,11 +73,11 @@ mod_degSummary_server <-
         knitr::kable(
           align = "r",
           format = "html",
-          escape = "F",
+          escape = FALSE,
           col.names = c(model_cols, gsub(".*#(.*)", "\\1", header_cols))
         ) %>%
         kableExtra::kable_styling(
-          full_width = F,
+          full_width = FALSE,
           position = "left",
           font_size = 12
         ) %>%

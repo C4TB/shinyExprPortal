@@ -38,16 +38,6 @@ file_path <- function(path = "", ...) {
   }
 }
 
-flattenlist <- function(x) {
-  morelists <- sapply(x, function(xprime) class(xprime)[1] == "list")
-  out <- c(x[!morelists], unlist(x[morelists], recursive = FALSE))
-  if (sum(morelists)) {
-    Recall(out)
-  } else {
-    return(out)
-  }
-}
-
 buildURL <- function(key_values, prefix = NULL) {
   key_values <- key_values[key_values != "-"]
   keys <- names(key_values)

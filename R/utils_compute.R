@@ -191,7 +191,7 @@ correlationResultsToLong <- function(data,
 #' @noRd
 #' @return data frame with HTML b tags
 corrResultsToTable <-
-  function(df, max_pvalue = 0.05, use_padj = F, rowname_col = "Gene") {
+  function(df, max_pvalue = 0.05, use_padj = FALSE, rowname_col = "Gene") {
     # Get only correlation estimates
     selected_df <- df %>% dplyr::select(ends_with("estimate"))
     # Remove estimate suffix

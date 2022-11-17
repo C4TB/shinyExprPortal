@@ -76,7 +76,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
     measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
     sample_lookup <- config$data$sample_lookup
-    all_mean <- rowMeans(expression_matrix, na.rm = T)
+    all_mean <- rowMeans(expression_matrix, na.rm = TRUE)
 
     sample_var <- config$sample_variable
     subject_var <- config$subject_variable
@@ -106,7 +106,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config, module_config)
       if (ncol(subset_mat) == ncol(expression_matrix)) {
         return(list("all_samples", all_mean))
       }
-      subset_mean <- rowMeans(subset_mat, na.rm = T)
+      subset_mean <- rowMeans(subset_mat, na.rm = TRUE)
       fc <- subset_mean - all_mean
       list("subset", fc)
     }) %>% bindCache(selected_lookup())
