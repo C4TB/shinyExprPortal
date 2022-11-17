@@ -15,8 +15,15 @@
 #' @param target_dir optional folder path, otherwise uses current working
 #' directory
 #'
+#' @return Creates configuration file in `target_dir`
+#'
+#' @examples
+#' if (interactive()) {
+#' create_config_wizard()
+#' }
 #' @export
-#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text cli_ol cli_alert_danger cli_alert cli_alert_success cli_alert_info cli_abort
+#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text cli_ol cli_alert_danger 
+#' cli_alert cli_alert_success cli_alert_info cli_abort
 create_config_wizard <- function(target_dir = NULL) {
 
   if (!interactive())
@@ -354,9 +361,15 @@ the package website for a complete module configuration guide.")
 #' @param filename optional filename, default is config.yaml
 #' @param target_dir optional target directory, default is current working
 #' directory
+#' 
+#' @return Creates configuration file in `target_dir`
+#'
+#' @examples
+#' if (interactive()) {
+#' create_config_template()
+#' }
 #'
 #' @export
-#'
 create_config_template <-
   function(filename = "config.yaml", target_dir = NULL) {
   

@@ -6,7 +6,8 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
 
   if (!is.null(config$modules_table)) {
     message("Loading file: modules_table")
-    config$modules_table <- read_file(config$modules_table, "table", data_folder)
+    config$modules_table <-
+      read_file(config$modules_table, "table", data_folder)
   } else {
     stop_nice(
       "geneModulesHeatmap: ",
@@ -46,8 +47,8 @@ geneModulesHeatmap_config <- function(config, data_folder = "") {
       if (!config$custom_heatmap_palette
           %in% rownames(RColorBrewer::brewer.pal.info)) {
         stop_nice(
-          "geneModulesHeatmap: 'custom_heatmap_palette' provided is not a valid ",
-          "RColorBrewer palette"
+        "geneModulesHeatmap: 'custom_heatmap_palette' provided is not a valid ",
+        "RColorBrewer palette"
         )
       }
     } else {

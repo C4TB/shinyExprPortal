@@ -26,16 +26,6 @@ mod_cohortOverview_ui <-
 #'
 #' @return tab panel with inputs
 #'
-#' @examples
-#' if (interactive()) {
-#'   sample_selection <- radioButtons("sample_1", "Select sample", samples)
-#'   gene_selection <- selectizeInput("gene_selection", "Select gene", gene_list)
-#'   cohortOverview_tab(
-#'     sample_selection, gene_selection,
-#'     c("measureA", "measureB"),
-#'     c("measureA_1", "measureA_2")
-#'   )
-#' }
 #' @noRd
 cohortOverview_tab <-
   function(sample_select,

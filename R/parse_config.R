@@ -15,7 +15,7 @@ parseConfig <-
            test_module = NULL,
            custom_modules = NULL,
            nthreads = 1L) {
-    message(paste("Reading configuration file:", fname))
+    message("Reading configuration file: ", fname)
 
     if (!file.exists(fname)) {
       stop_nice("File ", fname, " not found")

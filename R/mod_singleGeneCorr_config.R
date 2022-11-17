@@ -12,9 +12,8 @@ singleGeneCorr_config <- function(config, ...) {
   if (!is.null(config$custom_point_colors)) {
     lv <- which(
       vapply(config$custom_point_colors,
-             function(x)
-               is.character(x) || is.list(x) || is.vector(x)) == FALSE,
-      logical(1)
+           function(x) (is.character(x) || is.list(x) || is.vector(x)) == FALSE,
+      logical(1))
     )
     if (length(lv) >= 1) {
       invalid_colors <-

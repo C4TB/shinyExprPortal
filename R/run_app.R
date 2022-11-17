@@ -20,6 +20,8 @@ NULL
 #' @param nthreads Optional number of threads/cores to speed up loading files
 #' and computing correlations on UNIX-based systems. Default is 1
 #' @param ... Further optional arguments.
+#' 
+#' @return Runs the app
 #'
 #' @details `custom_modules` should contain a list of names for user-defined
 #' modules that are loaded in the environment before calling run_app. Each
@@ -37,6 +39,10 @@ NULL
 #' @seealso [create_config_wizard()] to create a configuration using a wizard,
 #' [create_config_template()] to create a configuration file template.
 #'
+#' @examples
+#' if (interactive()) {
+#' run_app("config.yaml", nthreads = 4)
+#' }
 #' @export
 run_app <- function(config_file,
                     data_folder = "",
@@ -82,6 +88,8 @@ run_app <- function(config_file,
 #' @param config_file The name of the yaml configuration file
 #' @param data_folder Optional directory prefix for data files
 #' @param ...
+#'
+#'
 #'
 #' @noRd
 #'

@@ -12,7 +12,16 @@ create_config_template(filename = "config.yaml", target_dir = NULL)
 \item{target_dir}{optional target directory, default is current working
 directory}
 }
+\value{
+Creates configuration file in \code{target_dir}
+}
 \description{
 The resulting file contain placeholder text in all caps for you to edit
 according to your needs. It also includes the three correlation modules.
+}
+\examples{
+if (interactive()) {
+create_config_template()
+}
+
 }

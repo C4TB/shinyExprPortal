@@ -1,22 +1,21 @@
 #' Create example files
 #'
-#' @param path (optional) a directory where to create the files, otherwise uses
-#'  the output of getwd()
+#' @param target_dir (optional) a directory where to create the files, otherwise
+#' uses the output of getwd()
+#'
+#' @return Create examples files in target_dir
 #'
 #' @export
-#'
-create_example <- function(path = NULL) {
+#' 
+#' @examples 
+#' if (interactive()) {
+#' dir.create("newapp")
+#' create_example("newapp")
+#' }
+create_example <- function(target_dir = NULL) {
   set.seed(123)
 
-  dir <- path %||% getwd()
-
-  # app_r <- file(file_path(dir, "app.R"))
-  # app_lines <- c(
-  #   "library(clinvisx)",
-  #   "run_app(config = \"config.yaml\")"
-  # )
-  # writeLines(app_lines, app_r)
-  # close(app_r)
+  dir <- target_dir %||% getwd()
 
   n <- 100
 

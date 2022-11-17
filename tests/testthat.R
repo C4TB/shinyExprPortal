@@ -1,4 +1,4 @@
 library(testthat)
-library(clinvisx)
+library(shinyExprPortal)
 
-test_check("clinvisx")
+test_check("shinyExprPortal")

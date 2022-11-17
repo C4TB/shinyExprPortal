@@ -35,8 +35,10 @@ vega_volcanoplot <- function(data,
   signif_line <- data.frame(log10 = c(-log10(pvalue_min)))
   
   signif_labels <- list(
-    "not significant", "log FC",
-    "%s", "log FC and %s"
+    "not significant",
+    "log FC",
+    "%s",
+    "log FC and %s"
   )
   
   pvalue_label <- switch(pvalue_col,
@@ -49,6 +51,10 @@ vega_volcanoplot <- function(data,
                          "q.value" = "adj. p-value",
                          "adj. p-value")
   
+  # suppressWarnings:
+  # For "not significant" and "log FC" nothing needs to be done in sprintf
+  # So it gives a warning
+  # But it's easier to just pass the argument even if not needed
   color_domain <-
     suppressWarnings(lapply(signif_labels, sprintf, pvalue_label))
   
@@ -103,12 +109,13 @@ vega_volcanoplot <- function(data,
             opacity = list(value = opacity),
             fill = list(scale = "color", field = "signif_label"),
             tooltip = list(
-              signal = paste0("{\"",gene_col,"\": isValid(datum[\"",gene_col,
-                              "\"]) ? datum[\"",gene_col,"\"] : \"\"+datum[\"",gene_col,
-                              "\"], \"logFC\": isValid(datum[\"logFC\"]) ?
-              datum[\"logFC\"] : \"\"+datum[\"logFC\"], 
-              \"-log10 p\": isValid(datum[\"log10\"]) ? datum[\"log10\"] :
-              \"\"+datum[\"log10\"]}")
+              signal = 
+                paste0("{\"",gene_col,"\": isValid(datum[\"",gene_col,
+                      "\"]) ? datum[\"",gene_col,"\"] : \"\"+datum[\"",gene_col,
+                      "\"], \"logFC\": isValid(datum[\"logFC\"]) ?
+                      datum[\"logFC\"] : \"\"+datum[\"logFC\"], 
+                    \"-log10 p\": isValid(datum[\"log10\"]) ? datum[\"log10\"] :
+                    \"\"+datum[\"log10\"]}")
             ),
             x = list(scale = "x", field = "logFC"),
             y = list(scale = "y", field = "log10")
@@ -251,6 +258,8 @@ prepareModelResultsTable <-
       table$signif <- 2 * table$pvalue_signif
     }
     # Match significance value with label
+    # Note: suppressWarnings is used because sometimes sprintf needs 
+    # no arguments, but this is known
     table$signif_label <-
       suppressWarnings(
         sprintf(as.character(signif_labels[table$signif + 1]), pvalue_label)

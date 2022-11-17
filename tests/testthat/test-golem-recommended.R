@@ -1,7 +1,3 @@
-context("golem tests")
-
-library(golem)
-
 # skip("no tests for now")
 # test_that("app ui", {
 #   ui <- app_ui()

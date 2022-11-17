@@ -105,21 +105,3 @@ stop_nice <- function(...) {
   on.exit(options(opt))
   stop(..., call. = FALSE)
 }
-
-theme_bg <- function() {
-  theme(
-    strip.background = element_blank(),
-    panel.background = element_blank(),
-    plot.background = element_blank(),
-    legend.background = element_rect(fill = "transparent")
-  )
-}
-
-theme_transp_border <- function() {
-  theme(
-    strip.background = element_blank(),
-    panel.background = element_rect(color = "black", fill = NA, size = 1),
-    plot.background = element_blank(),
-    legend.background = element_rect(fill = "transparent")
-  )
-}

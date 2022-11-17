@@ -2,6 +2,11 @@
 #'
 #' @param module_name module name in camelCase 
 #'
+#' @return Create file for `module_name` in current working directory
+#' @examples
+#' if (interactive()) {
+#' create_module_template("newModule")
+#' }
 #' @export
 create_module_template <- function(module_name) {
   MODULENAME <- module_name

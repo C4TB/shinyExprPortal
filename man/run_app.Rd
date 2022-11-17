@@ -26,6 +26,9 @@ and computing correlations on UNIX-based systems. Default is 1}
 
 \item{...}{Further optional arguments.}
 }
+\value{
+Runs the app
+}
 \description{
 This function should be run only after you have created the configuration
 file and placed all required files in the app folder. See
@@ -46,6 +49,11 @@ complete example.
 
 Please note that if running on Windows, nthreads will be always set to 1
 due to limitations on the current implementation.
+}
+\examples{
+if (interactive()) {
+run_app("config.yaml", nthreads = 4)
+}
 }
 \seealso{
 \code{\link[=create_config_wizard]{create_config_wizard()}} to create a configuration using a wizard,
