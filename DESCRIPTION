@@ -1,12 +1,15 @@
 Package: shinyExprPortal
 Title: A Configurable Shiny Portal for Molecular Expression Data
-Version: 1.0.0.0000
+Version: 0.99.0
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut'))
-Description: Enables deploying configuration file-based Shiny apps with minimal programming for interactive exploration and analysis showcase of molecular expression data.
+Description: Enables deploying configuration file-based Shiny apps with minimal programming for interactive exploration and analysis showcase of molecular expression data. Package users can deploy a portal early in a bioinformatics workflow and add new modules as downstream analyses such as differential expression and pathway analysis are performed.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
+biocViews: Software, ShinyApps
 Imports: 
     config,
+    stats,
+    utils,
     shiny,
     htmltools,
     markdown,
