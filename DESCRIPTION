@@ -3,7 +3,7 @@ Title: A Configurable Shiny Portal for Molecular Expression Data
 Version: 0.1.0
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut'))
 Description: Enables deploying configuration file-based Shiny apps with minimal programming for interactive exploration and analysis showcase of molecular expression data. For exploration, supports visualization of correlations between rows of an expression matrix and a table of observations, such as clinical measures, and comparison of expression changes over time. For showcase, enables visualizing results of differential expression, co-expression modules and pathways, co-expression networks and others.
-Depends: R (>= 3.6.0)
+Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
     config,
