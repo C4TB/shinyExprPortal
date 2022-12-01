@@ -10,6 +10,9 @@ create_config_wizard(target_dir = NULL)
 \item{target_dir}{optional folder path, otherwise uses current working
 directory}
 }
+\value{
+Creates configuration file in \code{target_dir}
+}
 \description{
 This function runs an interactive wizard that guides the user through the
 creation of a basic configuration file. The wizard will work with the simple
@@ -23,4 +26,9 @@ matrix should follow the format of sample IDs in columns and genes in rows,
 with gene names in the first column of the table. The measures file should
 follow the format of subjects in rows and measures in columns, and you should
 ensure that all subjects have one sample and vice-versa.
+}
+\examples{
+if (interactive()) {
+create_config_wizard()
+}
 }

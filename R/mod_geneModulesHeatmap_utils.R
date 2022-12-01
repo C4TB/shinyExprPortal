@@ -8,8 +8,10 @@ custom_add_col_annotations <- function(p,
                                        layout = list(),
                                        show_colorbar = TRUE,
                                        range = NULL) {
-  pick_discrete_colors <- utils::getFromNamespace("pick_discrete_colors", "iheatmapr")
-  pick_continuous_colors <- utils::getFromNamespace("pick_continuous_colors", "iheatmapr")
+  pick_discrete_colors <-
+    utils::getFromNamespace("pick_discrete_colors", "iheatmapr")
+  pick_continuous_colors <-
+    utils::getFromNamespace("pick_continuous_colors", "iheatmapr")
 
   side <- match.arg(side)
   # Convert to data.frame

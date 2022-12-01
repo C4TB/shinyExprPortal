@@ -18,7 +18,9 @@ getSelectedSampleCategories <-
     
     for (sc_item in sample_categories) {
       sc_name <- sc_item[["name"]]
-      if (is.null(subset_categories) | (!is.null(subset_categories) & (sc_name %in% subset_categories))) {
+      if (is.null(subset_categories) |
+          (!is.null(subset_categories) &
+           (sc_name %in% subset_categories))) {
         input_names <- c(input_names, sc_name)
         if (is.null(inputs[[sc_name]])) {
           stop("Sample class not found in input list.
@@ -50,7 +52,9 @@ getSubsetSampleCategories <-
       )
     ))
     sample_categories <- sample_categories[which(sc_logic)]
-    subset_values <- sapply(sample_categories, function(x) inputs[[x$name]])
+    subset_values <- vapply(sample_categories,
+                            function(x) inputs[[x$name]],
+                            character(1))
     names(subset_values) <- subset_categories
     subset_values
   }

@@ -15,7 +15,7 @@ parseConfig <-
            test_module = NULL,
            custom_modules = NULL,
            nthreads = 1L) {
-    message(paste("Reading configuration file:", fname))
+    message("Reading configuration file: ", fname)
 
     if (!file.exists(fname)) {
       stop_nice("File ", fname, " not found")
@@ -124,7 +124,7 @@ parseConfig <-
 
     if (is.null(raw_config$data$sample_lookup)) {
       sample_categories_names <-
-        sapply(config$sample_categories, function(x) x$name)
+        vapply(config$sample_categories, function(x) x$name, character(1))
       loaded_data$sample_lookup <- create_lookup(
         loaded_data$measures_data,
         sample_categories_names,
@@ -245,16 +245,18 @@ validateData <-
 
     error <- FALSE
     if (!isTRUE(all.equal(sort(measures_subjects), sort(lookup_subjects)))) {
-      message("ERROR: Subjects in measures_data and lookup tables do not match.")
+      message(
+        "ERROR: Subjects in measures_data and lookup tables do not match."
+        )
       nclin <- setdiff(measures_subjects, lookup_subjects)
       if (length(nclin) > 0) {
         message("Subjects in measures_data table not found in lookup:")
-        print(nclin)
+        message(nclin)
       }
       nlookup <- setdiff(lookup_subjects, measures_subjects)
       if (length(nlookup) > 0) {
         message("Subjects in lookup table not found in measures_data:")
-        print(nlookup)
+        message(nlookup)
       }
       error <- TRUE
     }
@@ -265,12 +267,12 @@ validateData <-
       nexp <- setdiff(expression_samples, lookup_samples)
       if (length(nexp) > 0) {
         message("Samples in expression matrix not found in lookup table:")
-        print(nexp)
+        message(nexp)
       }
       nlookup <- setdiff(lookup_samples, expression_samples)
       if (length(nlookup) > 0) {
         message("Samples in lookup table not found in expression matrix:")
-        print(nlookup)
+        message(nlookup)
       }
       error <- TRUE
     }
@@ -454,11 +456,13 @@ loadModels <- function(models_file,
   })
 
   models_table$P <-
-    sapply(models_table$Data,
-           function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]))
+    vapply(models_table$Data,
+           function(x) nrow(x[x[[pvalue_col]] <= pvalue_max, ]),
+           integer(1))
   models_table$P_adj <-
-    sapply(models_table$Data,
-           function(x) nrow(x[x[[padj_col]] <= padj_max, ]))
+    vapply(models_table$Data,
+           function(x) nrow(x[x[[padj_col]] <= padj_max, ]),
+           integer(1))
 
   models_table
 }
@@ -506,8 +510,8 @@ file_ext <- function(x) {
 #' @return a data frame
 #'
 #' @noRd
-create_lookup <-
-  function(measures_data, sample_categories, sample_variable, subject_variable) {
+create_lookup <- function(measures_data, sample_categories, sample_variable,
+                          subject_variable) {
     samples <- measures_data[[sample_variable]]
     subjects <- measures_data[[subject_variable]]
     lookup <- data.frame(samples, subjects)
@@ -525,7 +529,8 @@ create_lookup <-
 #' columns with unique value per sample, the rows will be kept and the portal
 #' may not work as expected
 #'
-#' @param measures_data data frame with observations for subjects and duplicated rows
+#' @param measures_data data frame with observations for subjects and duplicated
+#'  rows
 #' @param sample_cat_names names of variables used in lookup
 #' @param sample_variable variable that identifies samples
 #'

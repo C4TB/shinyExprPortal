@@ -26,9 +26,9 @@ plotNetwork <- function(edgelist,
         main = "Select node to highlight:"
       ) else FALSE,
       highlightNearest = list(
-        enabled = T,
+        enabled = TRUE,
         degree = 1,
-        hover = T
+        hover = TRUE
       )
     )
   net

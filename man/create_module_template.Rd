@@ -9,6 +9,14 @@ create_module_template(module_name)
 \arguments{
 \item{module_name}{module name in camelCase}
 }
+\value{
+Create file for \code{module_name} in current working directory
+}
 \description{
 Creates a module code template in current working directory
+}
+\examples{
+if (interactive()) {
+create_module_template("newModule")
+}
 }

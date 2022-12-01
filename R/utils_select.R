@@ -21,7 +21,7 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
   }
   if (!is.null(return_col)) {
     if (!return_col %in% colnames(lookup)) {
-      stop(paste("Column", return_col, "does not exist in lookup data frame"))
+      stop("Column ", return_col, " does not exist in lookup data frame")
     }
   }
   for (key in names(values_list)) {
@@ -46,7 +46,7 @@ selectMatchingMultipleValues <-
   }
   if (!is.null(return_col)) {
     if (!return_col %in% colnames(lookup)) {
-      stop(paste("Column", return_col, "does not exist in lookup data frame"))
+      stop("Column ", return_col, " does not exist in lookup data frame")
     }
   }
   # Create a list of conditional expressions
@@ -83,14 +83,14 @@ selectMatchingMultipleValues <-
 selectFromLookup <- function(input_df, lookup_df, matching_col,
                              return_col = NULL) {
   if (!matching_col %in% colnames(input_df)) {
-    stop(paste("Column", matching_col, "does not exist in input data frame"))
+    stop("Column ", matching_col, " does not exist in input data frame")
   }
   if (!matching_col %in% colnames(lookup_df)) {
-    stop(paste("Column", matching_col, "does not exist in lookup data frame"))
+    stop("Column ", matching_col, " does not exist in lookup data frame")
   }
   if (!is.null(return_col)) {
     if (!return_col %in% colnames(input_df)) {
-      stop(paste("Column", return_col, "does not exist in data frame"))
+      stop("Column ", return_col, " does not exist in data frame")
     }
   }
   return_df <-

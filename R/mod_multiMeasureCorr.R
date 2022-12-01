@@ -184,8 +184,9 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
       subset_measures <- selected_measures[, cols_lv]
 
       all_na_lv <-
-        sapply(colnames(subset_measures),
-               function(x) all(is.na(subset_measures[[x]])))
+        vapply(colnames(subset_measures),
+               function(x) all(is.na(subset_measures[[x]])),
+               logical(1))
       subset_measures <- subset_measures[, !all_na_lv]
       # Apply outlier functions to measures
       subset_measures <-
@@ -225,7 +226,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
     )
 
     output$heatmap <- vegawidget::renderVegawidget({
-      hm <- heatmap_data()[1:50, ] %>%
+      hm <- heatmap_data()[seq_len(50), ] %>%
         correlationResultsToLong("Gene", "Measures")
       vega_heatmap(
         hm,
@@ -254,7 +255,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
       },
       options = list(scrollX = TRUE),
       caption = "Significant correlations highlighted in bold",
-      escape = F,
+      escape = FALSE,
       rownames = FALSE
     )
 

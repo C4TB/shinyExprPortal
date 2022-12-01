@@ -4,12 +4,21 @@
 \alias{create_example}
 \title{Create example files}
 \usage{
-create_example(path = NULL)
+create_example(target_dir = NULL)
 }
 \arguments{
-\item{path}{(optional) a directory where to create the files, otherwise uses
-the output of getwd()}
+\item{target_dir}{(optional) a directory where to create the files, otherwise
+uses the output of getwd()}
+}
+\value{
+Create examples files in target_dir
 }
 \description{
 Create example files
+}
+\examples{
+if (interactive()) {
+dir.create("newapp")
+create_example("newapp")
+}
 }

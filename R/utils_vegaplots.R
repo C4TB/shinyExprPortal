@@ -69,7 +69,7 @@ vega_layer_scatterplot <-
       if (!is.null(custom_colors)) {
         if (length(custom_colors) > 1)
           point_layer$encoding$color$scale <-
-            list(range = unlist(custom_colors, use.names = F))
+            list(range = unlist(custom_colors, use.names = FALSE))
         else {
           point_layer$encoding$color$scale <-
             list(scheme = custom_colors)
@@ -160,7 +160,8 @@ vega_add_fitline <-
           na.action = stats::na.exclude
         )
       # Predict values and upper and lower CI
-      predictions <- stats::predict(model, se = T, na.action = stats::na.exclude)
+      predictions <-
+        stats::predict(model, se = TRUE, na.action = stats::na.exclude)
       data.frame(
         fit = predictions$fit,
         upper_ci = predictions$fit + 2 * predictions$se.fit,
@@ -202,7 +203,7 @@ vega_add_fitline <-
         y = list(
           field = "upper_ci",
           type = "quantitative",
-          scale = list(zero = F),
+          scale = list(zero = FALSE),
           axis = list(domainColor = "black")
         ),
         y2 = list(field = "lower_ci")

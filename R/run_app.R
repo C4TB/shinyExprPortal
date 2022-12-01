@@ -9,8 +9,8 @@ NULL
 #' This function should be run only after you have created the configuration
 #' file and placed all required files in the app folder. See
 #' `vignette("quickstart", package = "shinyExprPortal")` for help with setup or
-#' `vignette("fullguide", package = "shinyExprPortal")` for a complete configuration
-#' guide.
+#' `vignette("fullguide", package = "shinyExprPortal")` for a complete
+#' configuration guide.
 #'
 #' @param config_file The name of the yaml configuration file
 #' @param data_folder Optional directory prefix for data files. Use this
@@ -20,6 +20,8 @@ NULL
 #' @param nthreads Optional number of threads/cores to speed up loading files
 #' and computing correlations on UNIX-based systems. Default is 1
 #' @param ... Further optional arguments.
+#' 
+#' @return Runs the app
 #'
 #' @details `custom_modules` should contain a list of names for user-defined
 #' modules that are loaded in the environment before calling run_app. Each
@@ -37,6 +39,10 @@ NULL
 #' @seealso [create_config_wizard()] to create a configuration using a wizard,
 #' [create_config_template()] to create a configuration file template.
 #'
+#' @examples
+#' if (interactive()) {
+#' run_app("config.yaml", nthreads = 4)
+#' }
 #' @export
 run_app <- function(config_file,
                     data_folder = "",
@@ -46,7 +52,7 @@ run_app <- function(config_file,
   
   if ((nthreads > 1) && (.Platform$OS.type == "windows")) {
     nthreads <- 1
-    message("Multiple threads are not currently supported on Windows. Running ", 
+    message("Multiple threads are not currently supported on Windows. Running ",
             "portal in single-threaded mode.")
   }
   
@@ -83,6 +89,8 @@ run_app <- function(config_file,
 #' @param data_folder Optional directory prefix for data files
 #' @param ...
 #'
+#'
+#'
 #' @noRd
 #'
 run_module <- function(module_name,
@@ -109,8 +117,8 @@ run_module <- function(module_name,
 
 #' Print list of currently supported modules
 #'
-#' See \code{vignette("config", package = "shinyExprPortal")} for details about how to
-#' configure each module.
+#' See \code{vignette("config", package = "shinyExprPortal")} for details on how
+#' to configure each module.
 #'
 #' @return list of available modules
 #' @export
