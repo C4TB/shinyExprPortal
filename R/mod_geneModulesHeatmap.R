@@ -300,7 +300,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
           name <- x[["Measure"]]
           corr <- round(as.numeric(x[["estimate"]]), digits = 2)
           pvalue <- round(as.numeric(x[["pvalue"]]), digits = 2)
-          # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
+  # glue::glue("'{name}': ['{name}', 'r: {corr}, p: {pvalue}, p_adj: {padj}']")
           paste0(
             "'", name, "': ['", name,
             "', 'r: ",

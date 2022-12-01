@@ -7,8 +7,8 @@
 create_example(target_dir = NULL)
 }
 \arguments{
-\item{target_dir}{(optional) a directory where to create the files, otherwise uses
-the output of getwd()}
+\item{target_dir}{(optional) a directory where to create the files, otherwise
+uses the output of getwd()}
 }
 \value{
 Create examples files in target_dir

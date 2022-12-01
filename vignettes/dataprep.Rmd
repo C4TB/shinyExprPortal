@@ -131,7 +131,7 @@ Code to transform:
 ```{r groupby, eval=FALSE}
 table <- data %>%
   dplyr::group_by(module) %>%
-  transmute(list = paste(gene, collapse = ","))
+  dplyr::transmute(list = paste(gene, collapse = ","))
 ```
 :::
 

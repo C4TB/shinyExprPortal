@@ -7,15 +7,15 @@
 #' @return vector with p-values
 #' @importFrom stats pt
 compute_pval <- function(x, n) {
-  if (!is.matrix(x)) x <- as.matrix(x)
+    if (!is.matrix(x)) x <- as.matrix(x)
   dof <- n - 2
   t <- (sqrt(dof) * abs(x)) / sqrt(1 - x^2)
   2 * pt(t, dof, lower.tail = FALSE)
 }
 
 #' Parallel computation of correlation of data frame vs matrix
-#' 
-#' Uses mclapply so it won't run in parallel on Windows 
+#'
+#' Uses mclapply so it won't run in parallel on Windows
 #'
 #' @param x numeric data frame
 #' @param y matrix
@@ -29,7 +29,7 @@ fast_cor <- function(x,
                      method = c("pearson", "spearman", "kendall"),
                      cores = 1) {
   method <- match.arg(method)
-  
+
   spearman_func <- function(vector, matrix) {
     lv <- !is.na(vector)
     new_v <- vector[lv]
@@ -37,14 +37,14 @@ fast_cor <- function(x,
                          Rfast::colRanks(matrix[lv,],
                                          parallel = TRUE),
                          use = "pairwise.complete.obs"))
-  } 
+  }
   pearson_func <- function(vector, matrix) {
     lv <- !is.na(vector)
     new_v <- vector[lv]
     as.vector(stats::cor(new_v,
                          matrix[lv,],
                          use = "pairwise.complete.obs"))
-  } 
+  }
   kendall_func <- function(vector, matrix) {
     lv <- !is.na(vector)
     new_v <- vector[lv]
@@ -57,7 +57,7 @@ fast_cor <- function(x,
                          pearson = pearson_func,
                          spearman = spearman_func,
                          kendall = kendall_func)
-  cor_mat <- do.call(cbind, parallel::mclapply(x, 
+  cor_mat <- do.call(cbind, parallel::mclapply(x,
                                                FUN = selected_fun,
                                                matrix = y,
                                                mc.cores = cores))
@@ -91,11 +91,11 @@ correlateMatrices <-
            colname_var = "var",
            cores = 1) {
     method <- match.arg(method)
-    
+
     if (is.vector(x)) {
       x <- as.data.frame(x)
     }
-    
+
     if (is.vector(y)) {
       y <- matrix(y, ncol = 1, dimnames = list(NULL, colname_var))
     }
@@ -164,12 +164,13 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
 
 #' Transform correlation data frame to long format
 #'
-#' @param data correlation data frame from [shinyExprPortal::correlateMatrices()]
+#' @param data correlation data frame from
+#' [shinyExprPortal::correlateMatrices()]
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
 #'
 #' @noRd
-#' @return long format data frame
+#' @return long format data framew
 correlationResultsToLong <- function(data,
                                      first_col_name = "Gene",
                                      name_to = "Measure") {

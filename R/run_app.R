@@ -9,8 +9,8 @@ NULL
 #' This function should be run only after you have created the configuration
 #' file and placed all required files in the app folder. See
 #' `vignette("quickstart", package = "shinyExprPortal")` for help with setup or
-#' `vignette("fullguide", package = "shinyExprPortal")` for a complete configuration
-#' guide.
+#' `vignette("fullguide", package = "shinyExprPortal")` for a complete
+#' configuration guide.
 #'
 #' @param config_file The name of the yaml configuration file
 #' @param data_folder Optional directory prefix for data files. Use this
@@ -52,7 +52,7 @@ run_app <- function(config_file,
   
   if ((nthreads > 1) && (.Platform$OS.type == "windows")) {
     nthreads <- 1
-    message("Multiple threads are not currently supported on Windows. Running ", 
+    message("Multiple threads are not currently supported on Windows. Running ",
             "portal in single-threaded mode.")
   }
   
@@ -117,8 +117,8 @@ run_module <- function(module_name,
 
 #' Print list of currently supported modules
 #'
-#' See \code{vignette("config", package = "shinyExprPortal")} for details about how to
-#' configure each module.
+#' See \code{vignette("config", package = "shinyExprPortal")} for details on how
+#' to configure each module.
 #'
 #' @return list of available modules
 #' @export

@@ -652,3 +652,9 @@ corrModules:
   multiMeasureCorr:
     ...
 ```
+
+### sessionInfo
+
+```{r sessioninfo}
+sessionInfo()
+```

@@ -33,8 +33,8 @@ Runs the app
 This function should be run only after you have created the configuration
 file and placed all required files in the app folder. See
 \code{vignette("quickstart", package = "shinyExprPortal")} for help with setup or
-\code{vignette("fullguide", package = "shinyExprPortal")} for a complete configuration
-guide.
+\code{vignette("fullguide", package = "shinyExprPortal")} for a complete
+configuration guide.
 }
 \details{
 \code{custom_modules} should contain a list of names for user-defined

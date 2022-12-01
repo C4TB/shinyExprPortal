@@ -31,7 +31,6 @@ networkViewer_tab <- function(network_names,
       verticalLayout(
         wellPanel(
           ## INPUTS
-          # selectizeInput(ns("node_type"), "Select node type:", choices = node_types),
           selectizeInput(ns("network1"),
             "Select first network:",
             network_names,

@@ -69,7 +69,8 @@ geneProjectionOverlay_tab <- function(list_of_groups,
   )
 }
 
-mod_geneProjectionOverlay_server <- function(module_name, config, module_config) {
+mod_geneProjectionOverlay_server <- function(module_name, config,
+                                             module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 

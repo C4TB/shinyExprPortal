@@ -245,7 +245,9 @@ validateData <-
 
     error <- FALSE
     if (!isTRUE(all.equal(sort(measures_subjects), sort(lookup_subjects)))) {
-      message("ERROR: Subjects in measures_data and lookup tables do not match.")
+      message(
+        "ERROR: Subjects in measures_data and lookup tables do not match."
+        )
       nclin <- setdiff(measures_subjects, lookup_subjects)
       if (length(nclin) > 0) {
         message("Subjects in measures_data table not found in lookup:")
@@ -508,8 +510,8 @@ file_ext <- function(x) {
 #' @return a data frame
 #'
 #' @noRd
-create_lookup <-
-  function(measures_data, sample_categories, sample_variable, subject_variable) {
+create_lookup <- function(measures_data, sample_categories, sample_variable,
+                          subject_variable) {
     samples <- measures_data[[sample_variable]]
     subjects <- measures_data[[subject_variable]]
     lookup <- data.frame(samples, subjects)
@@ -527,7 +529,8 @@ create_lookup <-
 #' columns with unique value per sample, the rows will be kept and the portal
 #' may not work as expected
 #'
-#' @param measures_data data frame with observations for subjects and duplicated rows
+#' @param measures_data data frame with observations for subjects and duplicated
+#'  rows
 #' @param sample_cat_names names of variables used in lookup
 #' @param sample_variable variable that identifies samples
 #'
