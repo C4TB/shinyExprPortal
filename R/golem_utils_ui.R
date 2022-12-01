@@ -9,96 +9,96 @@
 #' @examples
 #' list_to_li(c("a", "b"))
 list_to_li <- function(list, class = NULL) {
-  if (is.null(class)) {
-    tagList(
-      lapply(
-        list,
-        tags$li
-      )
-    )
-  } else {
-    res <- lapply(
-      list,
-      tags$li
-    )
-    res <- lapply(
-      res,
-      function(x) {
-        tagAppendAttributes(
-          x,
-          class = class
+    if (is.null(class)) {
+        tagList(
+            lapply(
+                list,
+                tags$li
+            )
         )
-      }
-    )
-    tagList(res)
-  }
+    } else {
+        res <- lapply(
+            list,
+            tags$li
+        )
+        res <- lapply(
+            res,
+            function(x) {
+                tagAppendAttributes(
+                    x,
+                    class = class
+                )
+            }
+        )
+        tagList(res)
+    }
 }
 
 list_to_p <- function(list, class = NULL) {
-  if (is.null(class)) {
-    tagList(
-      lapply(
-        list,
-        tags$p
-      )
-    )
-  } else {
-    res <- lapply(
-      list,
-      tags$p
-    )
-    res <- lapply(
-      res,
-      function(x) {
-        tagAppendAttributes(
-          x,
-          class = class
+    if (is.null(class)) {
+        tagList(
+            lapply(
+                list,
+                tags$p
+            )
         )
-      }
-    )
-    tagList(res)
-  }
+    } else {
+        res <- lapply(
+            list,
+            tags$p
+        )
+        res <- lapply(
+            res,
+            function(x) {
+                tagAppendAttributes(
+                    x,
+                    class = class
+                )
+            }
+        )
+        tagList(res)
+    }
 }
 
 named_to_li <- function(list, class = NULL) {
-  if (is.null(class)) {
-    res <- mapply(
-      function(x, y) {
-        tags$li(
-          HTML(
-            sprintf("<b>%s:</b> %s", y, x)
-          )
+    if (is.null(class)) {
+        res <- mapply(
+            function(x, y) {
+                tags$li(
+                    HTML(
+                        sprintf("<b>%s:</b> %s", y, x)
+                    )
+                )
+            },
+            list,
+            names(list),
+            SIMPLIFY = FALSE
         )
-      },
-      list,
-      names(list),
-      SIMPLIFY = FALSE
-    )
-    tagList(res)
-  } else {
-    res <- mapply(
-      function(x, y) {
-        tags$li(
-          HTML(
-            sprintf("<b>%s:</b> %s", y, x)
-          )
+        tagList(res)
+    } else {
+        res <- mapply(
+            function(x, y) {
+                tags$li(
+                    HTML(
+                        sprintf("<b>%s:</b> %s", y, x)
+                    )
+                )
+            },
+            list,
+            names(list),
+            SIMPLIFY = FALSE
         )
-      },
-      list,
-      names(list),
-      SIMPLIFY = FALSE
-    )
-    res <- lapply(
-      res,
-      function(x) {
-        tagAppendAttributes(
-          x,
-          class = class
+        res <- lapply(
+            res,
+            function(x) {
+                tagAppendAttributes(
+                    x,
+                    class = class
+                )
+            }
         )
-      }
-    )
-    tagList(res)
-  }
+        tagList(res)
+    }
 }
 
 #' Remove a tag attribute
@@ -113,11 +113,11 @@ named_to_li <- function(list, class = NULL) {
 #' a <- shiny::tags$p(src = "plop", "pouet")
 #' tagRemoveAttributes(a, "src")
 tagRemoveAttributes <- function(tag, ...) {
-  attrs <- as.character(list(...))
-  for (i in seq_along(attrs)) {
-    tag$attribs[[attrs[i]]] <- NULL
-  }
-  tag
+    attrs <- as.character(list(...))
+    for (i in seq_along(attrs)) {
+        tag$attribs[[attrs[i]]] <- NULL
+    }
+    tag
 }
 
 #' Hide or display a tag
@@ -134,33 +134,33 @@ tagRemoveAttributes <- function(tag, ...) {
 #' b <- shiny::actionButton("go_filter", "go")
 #' undisplay(b)
 undisplay <- function(tag) {
-  # if not already hidden
-  if (
-    !is.null(tag$attribs$style) &&
-      !grepl("display:\\s+none", tag$attribs$style)
-  ) {
-    tag$attribs$style <- paste(
-      "display: none;",
-      tag$attribs$style
-    )
-  } else {
-    tag$attribs$style <- "display: none;"
-  }
-  tag
+    # if not already hidden
+    if (
+        !is.null(tag$attribs$style) &&
+            !grepl("display:\\s+none", tag$attribs$style)
+    ) {
+        tag$attribs$style <- paste(
+            "display: none;",
+            tag$attribs$style
+        )
+    } else {
+        tag$attribs$style <- "display: none;"
+    }
+    tag
 }
 
 display <- function(tag) {
-  if (
-    !is.null(tag$attribs$style) &&
-      grepl("display:\\s+none", tag$attribs$style)
-  ) {
-    tag$attribs$style <- gsub(
-      "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
-      "",
-      tag$attribs$style
-    )
-  }
-  tag
+    if (
+        !is.null(tag$attribs$style) &&
+            grepl("display:\\s+none", tag$attribs$style)
+    ) {
+        tag$attribs$style <- gsub(
+            "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
+            "",
+            tag$attribs$style
+        )
+    }
+    tag
 }
 
 #' Hide an elements by calling jquery hide on it
@@ -170,7 +170,7 @@ display <- function(tag) {
 #' @noRd
 #'
 jq_hide <- function(id) {
-  tags$script(sprintf("$('#%s').hide()", id))
+    tags$script(sprintf("$('#%s').hide()", id))
 }
 
 #' Add a red star at the end of the text
@@ -186,16 +186,16 @@ jq_hide <- function(id) {
 #' @examples
 #' with_red_star("Enter your name here")
 with_red_star <- function(text) {
-  tags$span(
-    HTML(
-      paste0(
-        text,
-        tags$span(
-          style = "color:red", "*"
+    tags$span(
+        HTML(
+            paste0(
+                text,
+                tags$span(
+                    style = "color:red", "*"
+                )
+            )
         )
-      )
     )
-  )
 }
 
 
@@ -210,7 +210,7 @@ with_red_star <- function(text) {
 #' @examples
 #' rep_br(5)
 rep_br <- function(times = 1) {
-  HTML(rep("<br/>", times = times))
+    HTML(rep("<br/>", times = times))
 }
 
 #' Create an url
@@ -224,7 +224,7 @@ rep_br <- function(times = 1) {
 #' @examples
 #' enurl("https://www.thinkr.fr", "ThinkR")
 enurl <- function(url, text) {
-  tags$a(href = url, text)
+    tags$a(href = url, text)
 }
 
 #' Columns wrappers
@@ -235,68 +235,67 @@ enurl <- function(url, text) {
 #' @noRd
 #'
 col_12 <- function(...) {
-  column(12, ...)
+    column(12, ...)
 }
 
 col_10 <- function(...) {
-  column(10, ...)
+    column(10, ...)
 }
 
 col_8 <- function(...) {
-  column(8, ...)
+    column(8, ...)
 }
 
 col_6 <- function(...) {
-  column(6, ...)
+    column(6, ...)
 }
 
 col_4 <- function(...) {
-  column(4, ...)
+    column(4, ...)
 }
 
 col_3 <- function(...) {
-  column(3, ...)
+    column(3, ...)
 }
 
 col_2 <- function(...) {
-  column(2, ...)
+    column(2, ...)
 }
 
 col_1 <- function(...) {
-  column(1, ...)
+    column(1, ...)
 }
 
 itemURL <- function(content, href) {
-  tags$li(tags$a(
-    href = href,
-    content
-  ))
+    tags$li(tags$a(
+        href = href,
+        content
+    ))
 }
 
 characterURL <- function(content, href) {
-  as.character(tags$a(
-    href = href,
-    content
-  ))
+    as.character(tags$a(
+        href = href,
+        content
+    ))
 }
 
 characterURLsub <- function(href) {
-  as.character(tags$a(
-    href = href,
-    sub(".*\\=", "", href)
-  ))
+    as.character(tags$a(
+        href = href,
+        sub(".*\\=", "", href)
+    ))
 }
 
 bg_color <- function() {
-  bslib::bs_get_variables(bslib::bs_current_theme(), c("bg"))
+    bslib::bs_get_variables(bslib::bs_current_theme(), c("bg"))
 }
 
 #' @importFrom markdown markdownToHTML
-.includeMarkdown <- function(path) 
-{
-  html <- markdown::markdownToHTML(path, fragment.only = TRUE)
-  Encoding(html) <- "UTF-8"
-  return(HTML(html))
+.includeMarkdown <- function(path) {
+    html <- markdown::markdownToHTML(path, fragment.only = TRUE)
+    Encoding(html) <- "UTF-8"
+    return(HTML(html))
 }
 
 # UNCOMMENT AND USE
