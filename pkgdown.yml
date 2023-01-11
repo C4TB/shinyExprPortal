@@ -1,12 +1,12 @@
 pandoc: 2.19.2
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   config: config.html
   customization: customization.html
   dataprep: dataprep.html
   shinyExprPortal: shinyExprPortal.html
-last_built: 2022-12-01T19:11Z
+last_built: 2023-01-11T14:53Z
 urls:
   reference: https://c4tb.github.io/shinyExprPortal/reference
   article: https://c4tb.github.io/shinyExprPortal/articles

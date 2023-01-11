@@ -8,10 +8,10 @@
 <meta name="description" content="shinyExprPortal">
 <title>Data Preparation Guide • shinyExprPortal</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Data Preparation Guide">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Data Preparation Guide">
 <meta property="og:description" content="shinyExprPortal">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -116,93 +116,93 @@ file, simply run:<br><code>saveRDS(matrix_object, "matrix_object.rds")</code></p
 <tbody>
 <tr class="odd">
 <td align="left">ABC</td>
-<td align="right">-1.2746090</td>
-<td align="right">-0.4529597</td>
-<td align="right">0.9640927</td>
-<td align="right">-0.1146866</td>
-<td align="right">0.1848295</td>
-<td align="right">0.8079674</td>
+<td align="right">0.5816466</td>
+<td align="right">-0.6241201</td>
+<td align="right">-2.3308978</td>
+<td align="right">-0.1525113</td>
+<td align="right">1.0769234</td>
+<td align="right">1.2165668</td>
 </tr>
 <tr class="even">
 <td align="left">BCD</td>
-<td align="right">-0.2369179</td>
-<td align="right">0.0743748</td>
-<td align="right">-0.3042483</td>
-<td align="right">-0.2561562</td>
-<td align="right">-0.0088458</td>
-<td align="right">-0.8274394</td>
+<td align="right">0.2166207</td>
+<td align="right">0.4237991</td>
+<td align="right">1.1678357</td>
+<td align="right">-1.2282887</td>
+<td align="right">-0.4260946</td>
+<td align="right">-0.2372780</td>
 </tr>
 <tr class="odd">
 <td align="left">CDE</td>
-<td align="right">-0.4304415</td>
-<td align="right">0.9321899</td>
-<td align="right">-0.1471570</td>
-<td align="right">-0.2370982</td>
-<td align="right">0.0390098</td>
-<td align="right">0.6758755</td>
+<td align="right">0.4789823</td>
+<td align="right">-1.4296494</td>
+<td align="right">-1.6034594</td>
+<td align="right">0.9544785</td>
+<td align="right">-2.1002952</td>
+<td align="right">0.9251595</td>
 </tr>
 <tr class="even">
 <td align="left">DEF</td>
-<td align="right">0.5467633</td>
-<td align="right">0.4510343</td>
-<td align="right">-1.6592648</td>
-<td align="right">-0.3509271</td>
-<td align="right">-2.3450539</td>
-<td align="right">-1.0251360</td>
+<td align="right">-0.4421979</td>
+<td align="right">-1.5851298</td>
+<td align="right">-2.4459589</td>
+<td align="right">-0.6107010</td>
+<td align="right">-1.2814829</td>
+<td align="right">0.2095625</td>
 </tr>
 <tr class="odd">
 <td align="left">EFG</td>
-<td align="right">-1.0279504</td>
-<td align="right">-1.1761373</td>
-<td align="right">0.3104131</td>
-<td align="right">0.7980906</td>
-<td align="right">0.2112531</td>
-<td align="right">-0.6776240</td>
+<td align="right">0.1904976</td>
+<td align="right">0.7032926</td>
+<td align="right">-0.4413425</td>
+<td align="right">1.2558263</td>
+<td align="right">2.2208570</td>
+<td align="right">-0.2540816</td>
 </tr>
 <tr class="even">
 <td align="left">FGH</td>
-<td align="right">0.8101059</td>
-<td align="right">-0.2681739</td>
-<td align="right">-0.1675561</td>
-<td align="right">0.3689794</td>
-<td align="right">1.6007461</td>
-<td align="right">-1.1426787</td>
+<td align="right">-0.5349218</td>
+<td align="right">0.3584608</td>
+<td align="right">0.5889773</td>
+<td align="right">0.6804477</td>
+<td align="right">-0.8446433</td>
+<td align="right">-0.8975336</td>
 </tr>
 <tr class="odd">
 <td align="left">GHI</td>
-<td align="right">-0.2098146</td>
-<td align="right">-0.4228329</td>
-<td align="right">-0.3466656</td>
-<td align="right">0.4499885</td>
-<td align="right">0.9283252</td>
-<td align="right">0.1607246</td>
+<td align="right">0.3431401</td>
+<td align="right">-1.4882212</td>
+<td align="right">-0.8698697</td>
+<td align="right">1.5493081</td>
+<td align="right">0.8985795</td>
+<td align="right">0.8454144</td>
 </tr>
 <tr class="even">
 <td align="left">HIJ</td>
-<td align="right">-1.3823658</td>
-<td align="right">-0.3644195</td>
-<td align="right">0.2710906</td>
-<td align="right">0.6788193</td>
-<td align="right">-0.0760767</td>
-<td align="right">-0.6164909</td>
+<td align="right">1.7050301</td>
+<td align="right">-1.3336138</td>
+<td align="right">1.0095297</td>
+<td align="right">0.4951493</td>
+<td align="right">0.0122367</td>
+<td align="right">0.4869992</td>
 </tr>
 <tr class="odd">
 <td align="left">IJK</td>
-<td align="right">0.0895269</td>
-<td align="right">-1.9264467</td>
-<td align="right">0.6728186</td>
-<td align="right">0.6606081</td>
-<td align="right">0.9084592</td>
-<td align="right">-0.9856562</td>
+<td align="right">0.5281605</td>
+<td align="right">0.1867136</td>
+<td align="right">0.7282202</td>
+<td align="right">-1.4138095</td>
+<td align="right">-1.2049882</td>
+<td align="right">-0.8130748</td>
 </tr>
 <tr class="even">
 <td align="left">JKL</td>
-<td align="right">0.5917514</td>
-<td align="right">1.4434893</td>
-<td align="right">1.1844308</td>
-<td align="right">-0.2329591</td>
-<td align="right">1.2621934</td>
-<td align="right">0.7794865</td>
+<td align="right">-0.8168697</td>
+<td align="right">-0.4480060</td>
+<td align="right">0.9226553</td>
+<td align="right">0.6144280</td>
+<td align="right">0.0299843</td>
+<td align="right">-0.0268502</td>
 </tr>
 </tbody>
 </table>
@@ -237,23 +237,23 @@ separator can be modified in the configuration file by setting
 <tbody>
 <tr class="odd">
 <td align="left">p01</td>
-<td align="right">236.1843</td>
-<td align="right">194.2294</td>
-<td align="right">74</td>
+<td align="right">247.8729</td>
+<td align="right">208.9285</td>
+<td align="right">72</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="even">
 <td align="left">p02</td>
-<td align="right">207.3336</td>
-<td align="right">215.8863</td>
-<td align="right">70</td>
+<td align="right">246.6814</td>
+<td align="right">180.2122</td>
+<td align="right">89</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="odd">
 <td align="left">p03</td>
-<td align="right">241.9900</td>
-<td align="right">183.2631</td>
-<td align="right">56</td>
+<td align="right">154.3548</td>
+<td align="right">229.4244</td>
+<td align="right">40</td>
 <td align="left">No</td>
 </tr>
 </tbody>
@@ -490,7 +490,7 @@ issue on the package GitHub.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
