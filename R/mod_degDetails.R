@@ -71,7 +71,21 @@ degDetails_tab <- function(categories,
           vegawidget::vegawidgetOutput(ns("results_plot"),
             width = "700px"
           ),
-          cellWidths = c(700, 200)
+          verticalLayout(
+            radioButtons(
+              ns("label_method"),
+              label = "Gene labels:",
+              choices = list("Significant only" = "signif",
+                             "From list" = "list")
+            ),
+            textAreaInput(
+              ns("highlight_genes"),
+              label = "Comma-separated list of gene symbols to highlight:",
+              cols = 80,
+              rows = 5
+            )
+          ),
+          cellWidths = c("50%", "50%")
         ),
         hr(),
         verticalLayout(
@@ -96,7 +110,7 @@ mod_degDetails_server <-
 
     valid_symbol_cols <-
       c("Gene", "GeneSymbol", "Symbol", "symbol", "Gene_ID", "Protein")
-    
+
     pvalue_col <- module_config$pvalue_col
     padj_col <- module_config$padj_col
     custom_point_colors <- module_config$custom_point_colors
@@ -165,21 +179,26 @@ mod_degDetails_server <-
       selected_model <- selected_model_r()
       selected_model$ModelFileType[[1]]
     })
-    
+
     model_results <- reactive({
       selected_model <- selected_model_r()
       selected_model$Data[[1]]
     })
-    
+
     signif_labels <- list(
       "not significant", "log FC",
       "%s", "log FC and %s"
     )
-    
+
     fc_threshold_d <- debounce(reactive({ input$fc_threshold }), 500)
     pvalue_threshold_d <- debounce(reactive({ input$pvalue_threshold }), 500)
-    
+
     # Volcano plot table
+    # Change table when user changes:
+    # - selected model
+    # - FC significance threhold
+    # - p value significance threshold
+    # - use p-value or adjusted p-value
     vp_table <- reactive({
       table <- model_results()
       pcol <- if (input$use_padj) padj_col else pvalue_col
@@ -195,25 +214,38 @@ mod_degDetails_server <-
                 pvalue_threshold_d(),
                 input$use_padj)
 
+    # Change label displayed in volcano plot
+    # Use fully significant only or from list of genes
+    gene_list <- reactive({
+      if (input$label_method == "list") {
+        as.list(vapply(strsplit(input$highlight_genes, ",")[[1]],
+                       character(1),
+                       FUN = function(x) toupper(trimws(x))))
+      } else {
+        NULL
+      }
+    }) %>% debounce(500)
+
     output$results_plot <- vegawidget::renderVegawidget({
       table <- vp_table()
-      
+
       valid_log_cols <- c("logFC", "log2FoldChange")
-      
+
       validate(need(
         intersect(valid_log_cols, colnames(table)) > 0,
-        "Volcano plot can't be displayed for model results"
+        "Volcano plot can't be displayed for selected model results"
       ))
-      
+
       gene_column <- intersect(colnames(table), valid_symbol_cols)[[1]]
       pcol <- if (input$use_padj) padj_col else pvalue_col
       vega_volcanoplot(
-        table,
-        fc_threshold_d(),
-        pvalue_threshold_d(),
-        pcol,
-        gene_column,
-        custom_point_colors
+        data = table,
+        fc_min = fc_threshold_d(),
+        pvalue_min = pvalue_threshold_d(),
+        pvalue_col = pcol,
+        gene_col = gene_column,
+        colors = custom_point_colors,
+        gene_list = gene_list()
         ) %>%
         vegawidget::as_vegaspec()
     })

@@ -17,6 +17,6 @@ Creates a module code template in current working directory
 }
 \examples{
 if (interactive()) {
-create_module_template("newModule")
+    create_module_template("newModule")
 }
 }
