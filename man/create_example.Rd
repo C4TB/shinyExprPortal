@@ -18,7 +18,7 @@ Create example files
 }
 \examples{
 if (interactive()) {
-dir.create("newapp")
-create_example("newapp")
+    dir.create("newapp")
+    create_example("newapp")
 }
 }

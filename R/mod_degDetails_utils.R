@@ -23,10 +23,19 @@ vega_volcanoplot <- function(data,
     gene_col = "Gene",
     colors = c("black", "green", "blue", "red"),
     strokeDash = c(4, 4),
-    opacity = 0.5) {
+    opacity = 0.5,
+    gene_list = NULL) {
     data$log10 <- -log10(data[[pvalue_col]])
 
-    data$displayGene <- ifelse(data$signif == 3, data[[gene_col]], "")
+    if (!is.null(gene_list)) {
+        data$displayGene <- ifelse(data[[gene_col]] %in% gene_list,
+                                   data[[gene_col]],
+                                   "")
+        avoidFlag <- FALSE
+    } else {
+        data$displayGene <- ifelse(data$signif == 3, data[[gene_col]], "")
+        avoidFlag <- TRUE
+    }
 
     logfc_limit <- max(max(abs(data$logFC)) * 1.5, 1.2, fc_min)
 
@@ -138,17 +147,16 @@ vega_volcanoplot <- function(data,
             list(
                 type = "text",
                 from = list(data = "points"),
-                encode = list(
-                    enter = list(
-                        text = list(field = "datum.displayGene"),
-                        fontSize = list(value = 8)
-                    )
-                ),
+                encode = list(enter = list(
+                    text = list(field = "datum.displayGene"),
+                    fontSize = list(value = 10)
+                )),
                 transform = list(
                     list(
                         type = "label",
-                        anchor = list("top", "bottom", "right", "left"),
-                        offset = list(1),
+                        avoidBaseMark = avoidFlag,
+                        #anchor = list("top", "bottom", "right", "left"),
+                        #offset = list(1),
                         size = list(signal = "[width+60,height]")
                     )
                 )

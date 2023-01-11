@@ -29,6 +29,6 @@ ensure that all subjects have one sample and vice-versa.
 }
 \examples{
 if (interactive()) {
-create_config_wizard()
+    create_config_wizard()
 }
 }

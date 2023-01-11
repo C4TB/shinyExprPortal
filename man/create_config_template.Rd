@@ -21,7 +21,7 @@ according to your needs. It also includes the three correlation modules.
 }
 \examples{
 if (interactive()) {
-create_config_template()
+    create_config_template()
 }
 
 }
