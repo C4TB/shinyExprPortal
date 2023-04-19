@@ -89,9 +89,9 @@ degDetails_tab <- function(categories,
         ),
         hr(),
         verticalLayout(
-          uiOutput(ns(
+          flowLayout(uiOutput(ns(
             "ui_table_checkbox"
-          )),
+          )), downloadButton(ns("download_deg_table"), "Download table")),
           DT::DTOutput(ns("deg_table"))
         )
       ),
@@ -291,7 +291,21 @@ mod_degDetails_server <-
       filter = "top",
       escape = FALSE,
       rownames = FALSE,
-      options = list(scrollX = TRUE)
+      options = list(dom = "lrtip", scrollX = TRUE)
+    )
+
+    output$download_deg_table <- downloadHandler(
+      filename = function() paste0(input$selected_model, ".csv"),
+      content = function(file) {
+        model_table <- vp_table()
+        gene_column <- intersect(colnames(model_table), valid_symbol_cols)[[1]]
+        view_cols <- setdiff(colnames(model_table),
+                   c("pvalue_signif", "fc_signif", "signif", "signif_label"))
+        utils::write.csv(
+          model_table[model_table$signif_label %in% input$deg_table_checkbox,
+                                      view_cols], file, row.names = FALSE)
+      },
+      contentType = "text/csv"
     )
   })
 }
