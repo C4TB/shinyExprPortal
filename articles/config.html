@@ -78,11 +78,13 @@
 
     
     
-<p>This guide describes how to set up the configuration file for
-deploying a project with the package. It includes a minimal setup
-example, as well as optional advanced and customization settings. It
-assumes that that you have already created an initial configuration file
-and prepared the expression, measures and lookup table files.</p>
+<p>This is a complete guide to create a configuration file for all
+modules supported by the current version of shinyExprPortal. It includes
+a minimal setup example, as well as optional advanced and customization
+settings. It assumes that that you have already created an initial
+configuration file and prepared the expression, measures and lookup
+table files. If you have not concluded that first step yet, please check
+the <a href="dataprep.html">Data Preparation Guide</a>.</p>
 <div class="section level2">
 <h2 id="configuration-file">Configuration file<a class="anchor" aria-label="anchor" href="#configuration-file"></a>
 </h2>
@@ -103,12 +105,13 @@ need double quotes, but it is not a problem to use them. Examples:</p>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">"Key2"</span><span class="kw">:</span><span class="at"> </span><span class="st">"Value2"</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Key3</span><span class="kw">:</span><span class="at"> Value3</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyphen + Key-value</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value2</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value3</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value4</span></span></code></pre></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyphen + Key-value </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Each hyphenated group corresponds to a list</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value2</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value3</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value4</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="project-details-configuration">Project details configuration<a class="anchor" aria-label="anchor" href="#project-details-configuration"></a>
 </h3>
@@ -129,13 +132,14 @@ appear in the browser.</p>
 <p><strong>Logo</strong></p>
 <p>A custom logo for the top-left corner can be provided as any
 web-supported format (e.g. png, jpeg). If a logo is not provided, the
-project name will be used instead.</p>
+short project name will be used instead.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">logo</span><span class="kw">:</span><span class="at"> logo.png</span></span></code></pre></div>
 <p><strong>Bootswatch theme</strong></p>
 <p>A custom <a href="http://www.bootswatch.com" class="external-link">Bootswatch</a> theme can
 be used instead of the default one. You can use versions 3, 4 or 5 but
-there is no guarantee of how the style will look across versions. Dark
-themes are not supported at the moment.</p>
+there is no guarantee of how the style will look across versions.
+Although dark themes can be used, the visualizations will not be adapted
+to them.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bootstrap</span><span class="kw">:</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">bootswatch</span><span class="kw">:</span><span class="at"> cosmo</span></span></code></pre></div>
@@ -250,8 +254,8 @@ singleGeneCorr and compareTrajGropus.</li>
 <li>adjust_method: <code>holm</code>, <code>hochberg</code>,
 <code>hommel</code>, <code>bonferroni</code>, <code>BH</code>,
 <code>BY</code>, <code>fdr</code>, <code>none</code> or
-<code>q.value</code>. Default is <code>q.value</code> from
-<code>q.value</code> package. Affects correlation and degDetails
+<code>q.value</code>. Default is <code>q.value</code> from the
+<code>qvalue</code> package. Affects correlation and degDetails
 modules.</li>
 </ul>
 <p>Example:</p>
@@ -309,39 +313,46 @@ from a set of variables.</p>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">colour_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Age</span><span class="kw">,</span><span class="at"> Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"cohortoverview.png"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="compareTrajGroups">compareTrajGroups<a class="anchor" aria-label="anchor" href="#compareTrajGroups"></a>
 </h3>
 <p><strong>Optional required packages:</strong>
-<code>{RColorBrewer}</code></p>
+<code>[{RColorBrewer}](https://cran.r-project.org/web/packages/RColorBrewer/indexhtml)</code></p>
 <p>This module shows the combined expression and measure trajectory of
-subjects over time, for a pair of a selected gene and one measure from a
-list of possible measures. The basic idea of the module is to split
-subjects in two or more groups using a <code>sidebyside_category</code>
-from the lookup table (e.g. two drug groups). Samples for all time
-values defined by a <code>trajectory_category</code> are taken and
-filtered from a user selection based on the remaining
-<code>subset_categories</code> (e.g. if the lookup table contains
-<code>DrugGroup</code>, <code>Time</code> and <code>Tissue</code>, the
-only remaining valid category here is <code>Tissue</code>). The measures
-to be paired with the samples are taken by combining
-<code>compare_variables</code> with the time-values from
-<code>trajectory_category</code>. For example, if <code>Platelets</code>
-is one of the possible variables and times <code>m01</code> and
-<code>m02</code>, the trajectory will be constructed from the
-observations of <code>Platelets_m01</code> and
-<code>Platelets_m02</code> in the measures table. In the interface,
-users will be able to select from any of the variables listed under
+subjects over time. The user can select one gene and one measure that
+was taken over time. The idea of the module is to split subjects in two
+or more groups using a <code>sidebyside_category</code> from the lookup
+table (e.g. two drug groups). Samples for all time values defined by a
+<code>trajectory_category</code> are taken and filtered from a user
+selection based on the remaining <code>subset_categories</code> (e.g. if
+the lookup table contains <code>DrugGroup</code>, <code>Time</code> and
+<code>Tissue</code>, the only remaining valid category here is
+<code>Tissue</code>). The measures to be paired with the samples are
+taken by combining <code>compare_variables</code> with the time-values
+from <code>trajectory_category</code>. For example, if
+<code>Platelets</code> is one of the possible variables and the times
+are <code>m01</code> and <code>m02</code>, the trajectory will be
+constructed from the observations of <code>Platelets_m01</code> and
+<code>Platelets_m02</code> in the measures table. The expression of the
+selected gene will also be taken using observations of samples in
+<code>m01</code> and <code>m2</code>. In the interface, users will be
+able to select from any of the variables listed under
 <code>compare_variables</code>.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Tissue</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sidebyside_category</span><span class="kw">:</span><span class="at"> DrugGroup</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">trajectory_category</span><span class="kw">:</span><span class="at"> Time</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">compare_variables</span><span class="kw">:</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Tissue</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sidebyside_category</span><span class="kw">:</span><span class="at"> DrugGroup</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">trajectory_category</span><span class="kw">:</span><span class="at"> Time</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">compare_variables</span><span class="kw">:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"comparetraj.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
 </summary><p><strong>custom_traj_palette:</strong> the name of a <a href="https://cran.r-project.org/web/packages/RColorBrewer/index.html" class="external-link">RColorBrewer</a>
 palette or a list of valid colours (e.g. hex value) can be supplied
@@ -359,11 +370,11 @@ available ones (<code>linear</code>, <code>quadratic</code> or
 the interface.</li>
 </ul>
 <p>*<strong>Example of optional settings</strong></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_traj_palette</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"purple"</span><span class="kw">,</span><span class="at"> </span><span class="st">"yellow"</span><span class="kw">,</span><span class="at"> </span><span class="st">"red"</span><span class="kw">,</span><span class="at"> </span><span class="st">"blue"</span><span class="kw">]</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_traj_palette</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"purple"</span><span class="kw">,</span><span class="at"> </span><span class="st">"yellow"</span><span class="kw">,</span><span class="at"> </span><span class="st">"red"</span><span class="kw">,</span><span class="at"> </span><span class="st">"blue"</span><span class="kw">]</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -435,9 +446,12 @@ following is a valid minimal model results table:</p>
 tab-separated or comma-separated values file. Individual model results
 should be placed inside a <code>models</code> folder.</p>
 <p><strong>Minimum configuration:</strong></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degDetails</span><span class="kw">:</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Model</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> model.tsv</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degDetails</span><span class="kw">:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Model</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> model.tsv</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"volcanoplot.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
 </summary><strong>link_to</strong>: name of another module to create a link to in
 the results table. In combination with the remaining variables in the
@@ -461,25 +475,26 @@ vertically. With two drugs d1 and d2, this means that the table will
 contain 4 columns: number of significant d1 p-value genes, d1 adjusted
 p-value genes, d2 p-value genes and d2 adjusted p-value genes.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degSummary</span><span class="kw">:</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">partition_variable</span><span class="kw">:</span><span class="at"> Drug</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degSummary</span><span class="kw">:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">partition_variable</span><span class="kw">:</span><span class="at"> Drug</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="geneModulesHeatmap">geneModulesHeatmap<a class="anchor" aria-label="anchor" href="#geneModulesHeatmap"></a>
 </h3>
 <p><strong>Required packages:</strong> <code>{RColorBrewer}</code></p>
-<p>This modules enables visualizing a subset of genes related to a
-downstream analysis method (e.g. regulatory networks). It displays a
-heatmap with expression of the genes from a selected module, and
-scatterplots with the association between the module eigengene and
-measures defined in the configuration file. Gene modules must be
-specified in a table with a model/analysis category or source, valid
-sample categories associated with that module, module name and a list of
-associated genes is required. It is also possible to include annotations
-in the heatmap by defining a list of valid measures or categorical
-variables that the user can select. The following is an example of a
-valid modules table:</p>
+<p>This modules enables visualizing a subset of genes, e.g. a
+co-expression module, cluster or signature, related to a downstream
+analysis method such as regulatory networks. It displays a heatmap with
+the expression of the genes from a user-selected module and scatterplots
+with the association between the module eigengene and measures defined
+in the configuration file. Gene modules must be specified in a table
+with a model/analysis category or source, valid sample categories
+associated with that module, module name and a list of associated genes
+is required. It is also possible to include annotations in the heatmap
+by defining a list of valid measures or categorical variables that the
+user can select. The following is an example of a valid modules
+table:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Category</th>
@@ -616,18 +631,28 @@ the table column that contains a list of gene symbols separated by
 comma. In the interface, users will select a Category and subsets from
 the remaining sample categories on the table (e.g. above, Time and Drug)
 to see a list of modules associated with that category and sample
-classes. An optional <code>rank</code> column can be included in the
-table, and set in the config file in <code>rank_variable</code>, to
-choose a custom appearance order for each modules, as in the example
-above.</p>
+classes. An optional ordering column can be included in the table, and
+set in the config file in <code>rank_variable</code>, to choose a custom
+appearance order for each modules, as in the example above.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_table</span><span class="kw">:</span><span class="at"> modules.csv</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Category</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_variable</span><span class="kw">:</span><span class="at"> ModuleName</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">genes_variable</span><span class="kw">:</span><span class="at"> targetGenes</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_table</span><span class="kw">:</span><span class="at"> modules.csv</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Category</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_variable</span><span class="kw">:</span><span class="at"> ModuleName</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">genes_variable</span><span class="kw">:</span><span class="at"> targetGenes</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"modulesheatmap.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
-</summary><p><strong>annotation_variables</strong>: a list of measures can be
+</summary><p><strong>subset_categories:</strong> list of categories to display as
+filter. To be used if not every sample category in the lookup table
+should be use to create subsets of samples. For example, if a
+pseudo-category was created to split patients based on a clinical
+measure, you may not want to show that filter in every module in the
+app. <strong>scatterplot_variables</strong>: a list of measures to
+correlate with the module eigengene and display in scatterplots similar
+to those in the single gene module.
+<strong>annotation_variables</strong>: a list of measures can be
 supplied so that users can add annotations above the heatmap. The
 variable names should match the measures table, independent of their
 timepoint.<br><strong>custom_annotation_colors:</strong> by default, the heatmap
@@ -646,23 +671,28 @@ as patients improve.<br><strong>custom_heatmap_palette</strong>: a custom RColor
 can be provided to override the default <code>RdBu</code> palette used
 in the heatmap.</p>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Age</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m01</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m02</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">drugNaive</span><span class="kw">:</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> Reds</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m01</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m02</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_heatmap_palette</span><span class="kw">:</span><span class="at"> BrBG</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">scatterplot_variables</span><span class="kw">:</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Age</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m01</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m02</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">drugNaive</span><span class="kw">:</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> Reds</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m01</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m02</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_heatmap_palette</span><span class="kw">:</span><span class="at"> BrBG</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -691,70 +721,77 @@ following:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">ZFELI</td>
-<td align="right">-1.0374640</td>
-<td align="right">0.1438425</td>
+<td align="left">MJEAB</td>
+<td align="right">1.0340290</td>
+<td align="right">-0.1195533</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">XTNMM</td>
-<td align="right">-1.1924893</td>
-<td align="right">0.3043185</td>
+<td align="left">RBFBF</td>
+<td align="right">-0.0080424</td>
+<td align="right">-1.9170998</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="left">LFHBK</td>
-<td align="right">1.7896260</td>
-<td align="right">-0.1729151</td>
+<td align="left">YULXN</td>
+<td align="right">2.2508664</td>
+<td align="right">-1.6006505</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">NGQZS</td>
-<td align="right">2.0789131</td>
-<td align="right">-2.0227110</td>
+<td align="left">QIZLW</td>
+<td align="right">1.5869345</td>
+<td align="right">-0.0649277</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">DDESE</td>
-<td align="right">-0.0053820</td>
-<td align="right">0.0137140</td>
+<td align="left">MDEML</td>
+<td align="right">0.1002165</td>
+<td align="right">-0.9993447</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">ZFELI</td>
-<td align="right">0.1608972</td>
-<td align="right">1.8738816</td>
+<td align="left">MJEAB</td>
+<td align="right">-0.5036049</td>
+<td align="right">-0.2976852</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">XTNMM</td>
-<td align="right">0.3259479</td>
-<td align="right">0.3894647</td>
+<td align="left">RBFBF</td>
+<td align="right">-0.6986009</td>
+<td align="right">0.8586447</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="left">LFHBK</td>
-<td align="right">0.0958066</td>
-<td align="right">-1.2789785</td>
+<td align="left">YULXN</td>
+<td align="right">1.0468394</td>
+<td align="right">-1.8868524</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">NGQZS</td>
-<td align="right">0.4436800</td>
-<td align="right">-0.3523020</td>
+<td align="left">QIZLW</td>
+<td align="right">0.8759777</td>
+<td align="right">-1.1146587</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">DDESE</td>
-<td align="right">0.7895796</td>
-<td align="right">0.1012105</td>
+<td align="left">MDEML</td>
+<td align="right">-0.6192926</td>
+<td align="right">0.4203603</td>
 <td align="right">3</td>
 </tr>
 </tbody>
 </table>
 <p>This table can be an .rds, .csv or .tsv file and must be defined in
-the <code>coordinates_file</code> setting The group column must be
+the <code>coordinates_file</code> setting. The group column must be
 indicated using the <code>group_variable</code> setting.</p>
+<p><strong>Minimum configuration</strong></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">coordinates_file</span><span class="kw">:</span><span class="at"> coordinates.csv</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">group_variable</span><span class="kw">:</span><span class="at"> group</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"projectionoverlay.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
 </summary><p>The module also includes a heatmap to view the individual expression
 of samples for the genes that belong to a selected group, and it can
@@ -773,23 +810,23 @@ palette or a list of colors (e.g. hex values) can be assigned to
 selected individual variables (a variable with no custom palette will
 use a default palette). For continuous variables, interpolation will be
 applied to a list of colors.<br><strong>annotation_range:</strong> for numeric variables that share a
-theoretical range of values, but this range varies in observed data, it
+theoretical range of values but which range varies in observed data, it
 is possible to define individual ranges so that the color scale is the
 same across annotations. For each annotation variable, a minimum and
 maximum value can be provided through a list. A common use case is for
 disease activity variables with a maximum value that decreases over time
-as patients improve.</p>
+as patients improve, or blood samples.</p>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m06</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> BrBG</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> 0-20</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Plaetelts_m06</span><span class="kw">:</span><span class="at"> 0-20</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m06</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> BrBG</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> 0-20</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Plaetelts_m06</span><span class="kw">:</span><span class="at"> 0-20</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -801,26 +838,30 @@ as patients improve.</p>
 such as ARACNe. It supports reading a list of edges that represent
 connected components of a whole network, that is, the list of edges
 should produce multiple separate subnetworks. The user selects a source
-for the edges and a node; the module then displays the component that
-contains that node. A second source is also selected and, if it exists,
-a second component is shown next to the first. This enables comparing
-the connections between that node and other nodes at two time points,
-for example. The edge list file should contain names of nodes with a
-prefix corresponding to a type of sample category and and the name of
-the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list
-table can be a comma- or tab-separated values fie without header and
-must contain, in order, source name, target name and node weight.</p>
+file for the edges and a node; the module then displays the component
+that contains that node. A second source is also selected and, if it
+exists, a second component is shown next to the first. This enables
+comparing the connections between that node and other nodes at two time
+points, for example. The edge list file should contain names of nodes
+with a prefix corresponding to a type of sample category and and the
+name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge
+list table can be a comma- or tab-separated values file without header
+and must contain columns corresponding to, in order: source name, target
+name and node weight.</p>
 <p>The configuration section for this module requires the specification
 of the <code>network_files</code> corresponding to the edge lists and a
 <code>sample_category</code> corresponding to what the prefixes in the
 nodes mean. The following is a valid configuration for this module:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">networkViewer</span><span class="kw">:</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">network_files</span><span class="kw">:</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">"First Month Network"</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">file</span><span class="kw">:</span><span class="at"> first_month.edge</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">"Second Month Network"</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">file</span><span class="kw">:</span><span class="at"> second_month.edge</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_category</span><span class="kw">:</span><span class="at"> TissueType</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">networkViewer</span><span class="kw">:</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">network_files</span><span class="kw">:</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">"First Month Network"</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">file</span><span class="kw">:</span><span class="at"> first_month.edge</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">"Second Month Network"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">file</span><span class="kw">:</span><span class="at"> second_month.edge</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_category</span><span class="kw">:</span><span class="at"> TissueType</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"networkviewer.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
 </summary><p>It is possible to customize the appearance of the network nodes
 through their background and text colors:</p>
@@ -828,16 +869,16 @@ through their background and text colors:</p>
 the desired HTML-compatible colors <strong>custom_font_colors</strong>:
 a named list of prefixes with the desired HTML-compatible colors</p>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">networkViewer</span><span class="kw">:</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_node_colors</span><span class="kw">:</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue1</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FF0000"</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue2</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFF00"</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue3</span><span class="kw">:</span><span class="at"> </span><span class="st">"#00FF00"</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_font_colors</span><span class="kw">:</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue1</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFFFF"</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue2</span><span class="kw">:</span><span class="at"> </span><span class="st">"#000000"</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue3</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFFFF"</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">networkViewer</span><span class="kw">:</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_node_colors</span><span class="kw">:</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue1</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FF0000"</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue2</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFF00"</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue3</span><span class="kw">:</span><span class="at"> </span><span class="st">"#00FF00"</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_font_colors</span><span class="kw">:</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue1</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFFFF"</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue2</span><span class="kw">:</span><span class="at"> </span><span class="st">"#000000"</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Tissue3</span><span class="kw">:</span><span class="at"> </span><span class="st">"#FFFFFF"</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -854,16 +895,24 @@ scatterplots in a tab will have the same horizontal axis), and a list of
 variables for each scatterplot. This module can be passed as a name to
 <code>link_to</code> in other modules.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Platelets</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">scale</span><span class="kw">:</span><span class="at"> free</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Platelets</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">scale</span><span class="kw">:</span><span class="at"> free</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"singlegenecorr.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
-</summary><p><strong>color_variables</strong>: a list of variables, either numeric
-or discrete, can be supplied so that users can assign a color to
+</summary><p><strong>subset_categories:</strong> list of categories to display as
+filter. To be used if not every sample category in the lookup table
+should be use to create subsets of samples. For example, if a
+pseudo-category was created to split patients based on a clinical
+measure, you may not want to show that filter in every module in the
+app. <strong>color_variables</strong>: a list of variables, either
+numeric or discrete, can be supplied so that users can assign a color to
 subjects. <strong>custom_point_colors</strong>: optionally, for the
 color variables, it is possible to supply custom colors as: valid <a href="https://vega.github.io/vega/docs/schemes/" class="external-link">Vega schemes</a>, list
 of colors or named list of colors (see DrugNaive in the example
@@ -895,20 +944,22 @@ available ones (<code>linear</code>, <code>quadratic</code> or
 the interface.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">color_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">DrugNaive</span><span class="kw">,</span><span class="at"> Age</span><span class="kw">]</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_point_colors</span><span class="kw">:</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> purpleblue</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="at">    DrugNaive</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">color_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">DrugNaive</span><span class="kw">,</span><span class="at"> Age</span><span class="kw">]</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_point_colors</span><span class="kw">:</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> purpleblue</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="at">    DrugNaive</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -921,21 +972,29 @@ interface and the optional advanced settings of correlation method and
 outlier removal. As a default, the module can be defined simply as TRUE
 to include all numeric measures and no advanced settings:</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="ch">TRUE</span></span></code></pre></div>
 <p>A list of variables can be provided through
 <code>dropdown_variables</code>:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dropdown_variables</span><span class="kw">:</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m03</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dropdown_variables</span><span class="kw">:</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m03</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"singlemeasure.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
-</summary><p><strong>link_to</strong>: name of another module to create a link to
-in the results table. Every gene on the table will be a clickable link
-to the module, with the subset matching the ones selected by the user.
-The module linked to should also support this functionality for this
-setting to work.</p>
+</summary><p><strong>subset_categories:</strong> list of categories to display as
+filter. To be used if not every sample category in the lookup table
+should be use to create subsets of samples. For example, if a
+pseudo-category was created to split patients based on a clinical
+measure, you may not want to show that filter in every module in the
+app.<br><strong>link_to</strong>: name of another module to create a link to in
+the results table. Every gene on the table will be a clickable link to
+the module, with the subset matching the ones selected by the user. The
+module linked to should also support this functionality for this setting
+to work.</p>
 <p><strong>advanced</strong>: the following advanced options can be
 defined, otherwise the defaults described earlier in this guide will be
 used:</p>
@@ -956,11 +1015,13 @@ users to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -973,11 +1034,20 @@ categories. This module requires the specification of
 <code>heatmap_variables</code>, with multiple named lists of
 variables.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">heatmap_variables</span><span class="kw">:</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">heatmap_variables</span><span class="kw">:</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"multimeasure.png"</span><span class="op">)</span></span></code></pre></div>
 <details><summary><strong>Optional settings</strong>
-</summary><p><strong>custom_heatmap_scheme</strong>: a valid <a href="https://vega.github.io/vega/docs/schemes/" class="external-link">Vega schemes</a> can be
+</summary><p><strong>subset_categories:</strong> list of categories to display as
+filter. To be used if not every sample category in the lookup table
+should be use to create subsets of samples. For example, if a
+pseudo-category was created to split patients based on a clinical
+measure, you may not want to show that filter in every module in the
+app.</p>
+<p><strong>custom_heatmap_scheme</strong>: a valid <a href="https://vega.github.io/vega/docs/schemes/" class="external-link">Vega schemes</a> can be
 provided to override the default <code>redblue</code> scheme.</p>
 <p><strong>link_to</strong>: name of another module to create a link to
 in the results table. Every gene on the table will be a clickable link
@@ -1004,12 +1074,14 @@ users to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ..</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ..</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
 </details>
 </div>
 </div>
@@ -1034,14 +1106,14 @@ part of the data section of the configuration and avoid reading all
 models twice. Please note below the indentation that is required when
 defining the sub-modules.</p>
 <p><strong>Configuration example</strong></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">degModules</span><span class="kw">:</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degSummary</span><span class="kw">:</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degDetails</span><span class="kw">:</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">degModules</span><span class="kw">:</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degSummary</span><span class="kw">:</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degDetails</span><span class="kw">:</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="corrModules">corrModules<a class="anchor" aria-label="anchor" href="#corrModules"></a>
@@ -1050,19 +1122,13 @@ defining the sub-modules.</p>
 <code>singleMeasureCorr</code> and <code>multiMeasureCorr</code>. To use
 it, only a correct indentation is needed:</p>
 <p><strong>Configuration example</strong></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrModules</span><span class="kw">:</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="sessioninfo">sessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
-</h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrModules</span><span class="kw">:</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
