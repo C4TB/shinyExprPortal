@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 library(shinyExprPortal)
 ```
 
-This guide describes how to set up the configuration file for deploying a project with the package. It includes a minimal setup example, as well as optional advanced and customization settings. It assumes that that you have already created an initial configuration file and prepared the expression, measures and lookup table files.
+This is a complete guide to create a configuration file for all modules supported by the current version of shinyExprPortal. It includes a minimal setup example, as well as optional advanced and customization settings. It assumes that that you have already created an initial configuration file and prepared the expression, measures and lookup table files. If you have not concluded that first step yet, please check the [Data Preparation Guide](dataprep.html).
 
 ## Configuration file 
 
@@ -41,7 +41,8 @@ FieldName:
   Key1: Value1
   "Key2": "Value2"
   Key3: Value3
-# Hyphen + Key-value
+# Hyphen + Key-value 
+# Each hyphenated group corresponds to a list
 FieldName:
   - Key1: Value1
     Key2: Value2
@@ -81,7 +82,7 @@ windowtitle: My Full Project Name Expression Analyiss Portal
 
 **Logo**
 
-A custom logo for the top-left corner can be provided as any web-supported format (e.g. png, jpeg). If a logo is not provided, the project name will be used instead.
+A custom logo for the top-left corner can be provided as any web-supported format (e.g. png, jpeg). If a logo is not provided, the short project name will be used instead.
 
 ```yaml
 logo: logo.png
@@ -89,7 +90,7 @@ logo: logo.png
 
 **Bootswatch theme**
 
-A custom [Bootswatch](http://www.bootswatch.com) theme can be used instead of the default one. You can use versions 3, 4 or 5 but there is no guarantee of how the style will look across versions. Dark themes are not supported at the moment.
+A custom [Bootswatch](http://www.bootswatch.com) theme can be used instead of the default one. You can use versions 3, 4 or 5 but there is no guarantee of how the style will look across versions. Although dark themes can be used, the visualizations will not be adapted to them.
 
 ```yaml
 bootstrap:
@@ -189,7 +190,7 @@ For some modules, the package includes default parameters for some computation m
 - default_expression_outliers: automatically remove expression outliers (for each gene) with `5/95 percentiles` method or Tukey's `IQR` method. Package default is `No`. Affects correlation modules.
 - default_correlation_method: `pearson`, `spearman` or `kendall` correlation measures. Default is `pearson`. Affects correlation modules.
 - default_fit_method: `none`, `linear`, `quadratic` and `cubic`. Affects scatterplots in singleGeneCorr and compareTrajGropus.
-- adjust_method: `r paste0("\x60\x60", p.adjust.methods, "\x60\x60", collapse = ", ")` or `q.value`. Default is `q.value` from `q.value` package. Affects correlation and degDetails modules.
+- adjust_method: `r paste0("\x60\x60", p.adjust.methods, "\x60\x60", collapse = ", ")` or `q.value`. Default is `q.value` from the `qvalue` package. Affects correlation and degDetails modules.
 
 Example:
 
@@ -250,11 +251,16 @@ cohortOverview:
   colour_variables: [Age, Platelets_m01, Platelets_m02]
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("cohortoverview.png")
+```
+
 ### compareTrajGroups {#compareTrajGroups}
 
-**Optional required packages:** `{RColorBrewer}`
+**Optional required packages:** `[{RColorBrewer}](https://cran.r-project.org/web/packages/RColorBrewer/indexhtml)`
 
-This module shows the combined expression and measure trajectory of subjects over time, for a pair of a selected gene and one measure from a list of possible measures. The basic idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples for all time values defined by a `trajectory_category` are taken and filtered from a user selection based on the remaining `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`). The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the possible variables and times `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. In the interface, users will be able to select from any of the variables listed under `compare_variables`.
+This module shows the combined expression and measure trajectory of subjects over time. The user can select one gene and one measure that was taken over time. The idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples for all time values defined by a `trajectory_category` are taken and filtered from a user selection based on the remaining `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`). The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the possible variables and the times are `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. The expression of the selected gene will also be taken using observations of samples in `m01` and `m2`. In the interface, users will be able to select from any of the variables listed under `compare_variables`.
 
 **Minimum configuration**
 ```yaml
@@ -265,6 +271,11 @@ compareTrajGroups:
   trajectory_category: Time
   compare_variables:
     - Platelets
+```
+
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("comparetraj.png")
 ```
 
 <details>
@@ -317,6 +328,11 @@ degDetails:
   models: model.tsv
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("volcanoplot.png")
+```
+
 <details>
 <summary>**Optional settings**</summary>
 
@@ -340,7 +356,7 @@ degSummary:
 
 **Required packages:** `{RColorBrewer}`
 
-This modules enables visualizing a subset of genes related to a downstream analysis method (e.g. regulatory networks). It displays a heatmap with expression of the genes from a selected module, and scatterplots with the association between the module eigengene and measures defined in the configuration file. Gene modules must be specified in a table with a model/analysis category or source, valid sample categories associated with that module, module name and a list of associated genes is required. It is also possible to include annotations in the heatmap by defining a list of valid measures or categorical variables that the user can select. The following is an example of a valid modules table:
+This modules enables visualizing a subset of genes, e.g. a co-expression module, cluster or signature, related to a downstream analysis method such as regulatory networks. It displays a heatmap with the expression of the genes from a user-selected module and scatterplots with the association between the module eigengene and measures defined in the configuration file. Gene modules must be specified in a table with a model/analysis category or source, valid sample categories associated with that module, module name and a list of associated genes is required. It is also possible to include annotations in the heatmap by defining a list of valid measures or categorical variables that the user can select. The following is an example of a valid modules table:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -369,7 +385,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-The configuration requires a `modules_table` pointing to the table file above, a `category_variable` that identifies the table column with highest-level category of modules, a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column that contains a list of gene symbols separated by comma. In the interface, users will select a Category and subsets from the remaining sample categories on the table (e.g. above, Time and Drug) to see a list of modules associated with that category and sample classes. An optional `rank` column can be included in the table, and set in the config file in `rank_variable`, to choose a custom appearance order for each modules, as in the example above.
+The configuration requires a `modules_table` pointing to the table file above, a `category_variable` that identifies the table column with highest-level category of modules, a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column that contains a list of gene symbols separated by comma. In the interface, users will select a Category and subsets from the remaining sample categories on the table (e.g. above, Time and Drug) to see a list of modules associated with that category and sample classes. An optional ordering column can be included in the table, and set in the config file in `rank_variable`, to choose a custom appearance order for each modules, as in the example above.
 
 **Minimum configuration**
 ```yaml
@@ -380,9 +396,16 @@ geneModulesHeatmap:
   genes_variable: targetGenes
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("modulesheatmap.png")
+```
+
+
 <details>
   <summary>**Optional settings**</summary>
-
+**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
+**scatterplot_variables**: a list of measures to correlate with the module eigengene and display in scatterplots similar to those in the single gene module.
 **annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should match the measures table, independent of their timepoint.  
 **custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
 **annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve.  
@@ -392,6 +415,11 @@ geneModulesHeatmap:
 ```yaml
 geneModulesHeatmap:
   ...
+  subset_categories:
+    - Cell_Type
+  scatterplot_variables:
+    - Platelets_m01
+    - Platelets_m02
   annotation_variables:
     - Age
     - Platelets_m01
@@ -423,7 +451,19 @@ knitr::kable(data.frame(
 ))
 ```
 
-This table can be an .rds, .csv or .tsv file and must be defined in the `coordinates_file` setting The group column must be indicated using the `group_variable` setting.  
+This table can be an .rds, .csv or .tsv file and must be defined in the `coordinates_file` setting. The group column must be indicated using the `group_variable` setting.
+
+**Minimum configuration**
+```yaml
+geneProjectionOverlay:
+  coordinates_file: coordinates.csv
+  group_variable: group
+```
+
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("projectionoverlay.png")
+```
 
 <details>
   <summary>**Optional settings**</summary>
@@ -432,7 +472,7 @@ The module also includes a heatmap to view the individual expression of samples 
 
 **annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should fully match the measures table names, including the time point.
 **custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
-**annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve.
+**annotation_range:** for numeric variables that share a theoretical range of values but which range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve, or blood samples.
 
 **Example of optional settings:**
 
@@ -455,7 +495,7 @@ geneProjectionOverlay:
 
 **Required packages**: [{visNetwork}](https://cran.r-project.org/web/packages/visNetwork/index.html), [{igraph}](https://cran.r-project.org/web/packages/igraph/index.html),
 
-This module allows exploring networks of genes as produced by methods such as ARACNe. It supports reading a list of edges that represent connected components of a whole network, that is, the list of edges should produce multiple separate subnetworks. The user selects a source for the edges and a node; the module then displays the component that contains that node. A second source is also selected and, if it exists, a second component is shown next to the first. This enables comparing the connections between that node and other nodes at two time points, for example. The edge list file should contain names of nodes with a prefix corresponding to a type of sample category and and the name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list table can be a comma- or tab-separated values fie without header and must contain, in order, source name, target name and node weight.
+This module allows exploring networks of genes as produced by methods such as ARACNe. It supports reading a list of edges that represent connected components of a whole network, that is, the list of edges should produce multiple separate subnetworks. The user selects a source file for the edges and a node; the module then displays the component that contains that node. A second source is also selected and, if it exists, a second component is shown next to the first. This enables comparing the connections between that node and other nodes at two time points, for example. The edge list file should contain names of nodes with a prefix corresponding to a type of sample category and and the name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list table can be a comma- or tab-separated values file without header and must contain columns corresponding to, in order: source name, target name and node weight.
 
 The configuration section for this module requires the specification of the `network_files` corresponding to the edge lists and a `sample_category` corresponding to what the prefixes in the nodes mean.  The following is a valid configuration for this module:
 
@@ -467,6 +507,11 @@ networkViewer:
     - name: "Second Month Network"
       file: second_month.edge
   sample_category: TissueType
+```
+
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("networkviewer.png")
 ```
 
 <details>
@@ -508,9 +553,15 @@ singleGeneCorr:
         - Platelets_m02
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("singlegenecorr.png")
+```
+
 <details>
 <summary>**Optional settings**</summary>
 
+**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
 **color_variables**: a list of variables, either numeric or discrete, can be supplied so that users can assign a color to subjects.
 **custom_point_colors**: optionally, for the color variables, it is possible to supply custom colors as: valid [Vega schemes](https://vega.github.io/vega/docs/schemes/), list of colors or named list of colors (see DrugNaive in the example below).
 
@@ -527,6 +578,8 @@ singleGeneCorr:
 singleGeneCorr:
   tabs:
     ...
+  subset_categories:
+    - Cell Type
   color_variables: [DrugNaive, Age]
   custom_point_colors:
     Age: purpleblue
@@ -561,9 +614,15 @@ singleMeasureCorr:
     - Platelets_m03
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("singlemeasure.png")
+```
+
 <details>
   <summary>**Optional settings**</summary>
-
+  
+**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.  
 **link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
@@ -575,6 +634,8 @@ singleMeasureCorr:
 **Example of optional settings:**
 ```yaml
 singleMeasureCorr:
+  subset_categories:
+    - Cell Type
   link_to: singleGeneCorr
   advanced:
     correlation_method: TRUE
@@ -593,11 +654,18 @@ multiMeasureCorr:
     Platelets: [Platelets_m01, Platelets_m02]
 ```
 
+**Example:**
+```{r, out.width = "800px"}
+knitr::include_graphics("multimeasure.png")
+```
+
 <details>
   <summary>**Optional settings**</summary>
   
-**custom_heatmap_scheme**: a valid [Vega schemes](https://vega.github.io/vega/docs/schemes/) can be provided to override the default `redblue` scheme.  
-  
+**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
+
+**custom_heatmap_scheme**: a valid [Vega schemes](https://vega.github.io/vega/docs/schemes/) can be provided to override the default `redblue` scheme.
+
 **link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:  
@@ -610,6 +678,8 @@ multiMeasureCorr:
 ```yaml
 multiMeasureCorr:
   ..
+  subset_categories:
+    - Cell_Type
   link_to: singleGeneCorr
   advanced:
     correlation_method: TRUE
@@ -651,10 +721,4 @@ corrModules:
     ...
   multiMeasureCorr:
     ...
-```
-
-### sessionInfo
-
-```{r sessioninfo}
-sessionInfo()
 ```

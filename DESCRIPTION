@@ -1,5 +1,5 @@
 Package: shinyExprPortal
-Title: A Configurable Shiny Portal for Molecular Expression Data
+Title: A Configurable Shiny Portal for Sharing Analysis of Molecular Expression Data
 Version: 1.0.0
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut', 'cph'))
 Maintainer: Rafael Henkin <r.henkin@qmul.ac.uk>
@@ -24,7 +24,8 @@ Imports:
     DT,
     qvalue,
     parallel,
-    Rfast
+    Rfast,
+    rlang
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

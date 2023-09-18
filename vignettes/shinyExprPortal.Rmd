@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Deploying a portal using the package relies on two data files -- an expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [dataprep](dataprep.html) vignette describes how to prepare the data to use with the package.
+Deploying a portal using the package relies on two data files -- an expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [Data Preparation Guide](dataprep.html) vignette describes how to prepare the data to use with the package.
 
 ## Using the wizard
 
@@ -124,7 +124,7 @@ Below is a summary of which modules work with the basic data files and which one
 - Network viewer (i.e. correlated gene modules as networks): edge lists for networks (e.g. ARACNe)
 - 2D gene projection (e.g. MDS, UMAP): data frame with 2D coordinates for all genes
 
-Check [config](config.html) for details about how to specify each module and set up the additional files needed for them.
+Check the [Full Configuration Guide](config.html) for details about each module and how to set up the additional files required by each of them.
 
 ### Deploying it remotely
 

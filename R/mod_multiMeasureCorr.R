@@ -1,7 +1,10 @@
 # multiMeasureCorr UI Function
 mod_multiMeasureCorr_ui <- function(module_name, config, module_config) {
   multiMeasureCorr_tab(
-    sample_select = sampleCategoryInputs(config$sample_categories, module_name),
+    sample_select =
+      sampleCategoryInputs(config$sample_categories,
+                           module_name,
+                           module_config$subset_categories),
     measures_variables = names(module_config$heatmap_variables),
     advanced = module_config$advanced,
     title = module_config$title,
@@ -122,19 +125,20 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
     sample_categories <- config$sample_categories
 
     cores <- config$nthreads
-    
+
     adjust_method <- config$adjust_method
 
     default_measures_outliers <- config$default_measures_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
 
+    subset_categories <- module_config$subset_categories
     link_to <- module_config$link_to
     heatmap_variables <- module_config$heatmap_variables
     custom_heatmap_scheme <- module_config$custom_heatmap_scheme
-    
+
     user_selection <- reactive({
-      getSelectedSampleCategories(sample_categories, input)
+      getSelectedSampleCategories(sample_categories, input, subset_categories)
     })
 
     selected_lookup <- reactive({
@@ -147,7 +151,9 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
     })
 
     expression_from_lookup <- reactive({
-      expression_matrix[, selected_lookup()[[sample_var]]]
+      samples <- selected_lookup()[[sample_var]]
+      samples <- samples[!is.na(samples)]
+      expression_matrix[, ]
     })
 
     measures_from_lookup <- reactive({
@@ -242,7 +248,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
     })
 
     output$table <- DT::renderDataTable({
-        df <- 
+        df <-
           corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
         if (!is.null(link_to)) {
           isolate({

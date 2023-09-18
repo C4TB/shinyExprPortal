@@ -121,7 +121,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     custom_node_colors <- module_config$custom_node_colors
     custom_font_colors <- module_config$custom_font_colors
     heatmap_palette <- module_config$custom_heatmap_palette
-    
+
     observeEvent(input$network1, {
       nodes <- nodes_table[[input$network1]]
       updateSelectizeInput(
@@ -142,14 +142,17 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
 
     results_list <- reactive({
       req(input$node_name)
-      Filter(
+      node <- Filter(
         function(x) input$node_name %in% names(igraph::V(x)),
         igraph::decompose(selected_network_list())
       )
+      if (is.null(node)) return(list())
+      node
     })
 
     results_list2 <- reactive({
       req(input$node_name)
+      validate(need(length(results_list()) > 0, "Node not found"))
       # Remove vertices that are NOT in the first network
       igraph::delete_vertices(selected_network_list2(),
             !names(igraph::V(selected_network_list2())) %in%
@@ -158,6 +161,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
 
     # There will only be 1 result if the subnetworks are connected components
     selected_network1 <- reactive({
+      validate(need(length(results_list()) > 0, "Node not found"))
       results_list()[[1]]
     })
 
@@ -320,6 +324,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     })
 
     output$network_output1 <- visNetwork::renderVisNetwork({
+      validate(need(nodes_table[[input$network1]] > 0, "Empty network"))
       plotNetwork(
         selected_network1(),
         nodes_table[[input$network1]],
@@ -330,6 +335,7 @@ mod_networkViewer_server <- function(module_name, config, module_config) {
     })
 
     output$network_output2 <- visNetwork::renderVisNetwork({
+      validate(need(nodes_table[[input$network2]] > 0, "Empty network"))
       plotNetwork(
         selected_network2(),
         nodes_table[[input$network2]],

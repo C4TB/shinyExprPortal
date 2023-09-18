@@ -31,6 +31,9 @@ while the other modules can be added as new downstream analysis results
 are produced. The use of the configuration file also means that the
 portal can be easily versioned.
 
+A demo of the portal is available
+[here](https://rhenkin.shinyapps.io/ramap_demo/).
+
 ## How to start
 
 You can install the latest version of the package using:

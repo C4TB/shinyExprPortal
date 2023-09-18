@@ -34,7 +34,7 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
     lookup
   }
 }
-
+#' @importFrom rlang parse_expr
 selectMatchingMultipleValues <-
   function(lookup, values_list, return_col = NULL) {
   if (!is.data.frame(lookup)) {
@@ -57,8 +57,8 @@ selectMatchingMultipleValues <-
     paste0("(", paste(key, value, sep = op, collapse = " | "), ")")
   }, character(1))
   # Parse list of expression and apply filter
-  parsed_cond <- parse(text = paste(cond, collapse = " & "))
-  subset <- lookup %>% dplyr::filter(eval(parsed_cond))
+  parsed_cond <- rlang::parse_expr(text = paste(cond, collapse = " & "))
+  subset <- lookup %>% dplyr::filter(!!parsed_cond)
   if (!is.null(return_col)) {
     subset[, return_col]
   } else {
@@ -96,8 +96,7 @@ selectFromLookup <- function(input_df, lookup_df, matching_col,
   return_df <-
     input_df[input_df[[matching_col]] %in% lookup_df[[matching_col]], ]
   if (!is.null(return_col)) {
-    # Use unlist to return vector
-    unlist(return_df[, return_col])
+    return_df[, return_col,drop=TRUE]
   } else {
     return_df
   }

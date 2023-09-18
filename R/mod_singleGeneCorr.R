@@ -2,7 +2,9 @@
 mod_singleGeneCorr_ui <- function(module_name, config, module_config) {
   singleGeneCorr_tab(
     sample_select =
-      sampleCategoryInputs(config$sample_categories, module_name),
+      sampleCategoryInputs(config$sample_categories,
+                           module_name,
+                           module_config$subset_categories),
     gene_select = geneSelectInput(NULL, module_name),
     colors = module_config$color_variables,
     outputs = module_config$tabs,
@@ -109,7 +111,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
   moduleServer(module_name, function(input, output, session) {
     ns <- session$ns
 
-    
+
     # App level config/defaults
     measures_data <- config$data$measures_data
     expression_matrix <- config$data$expression_matrix
@@ -117,7 +119,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
     cores <- config$nthreads
     adjust_method <- config$adjust_method
-    
+
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
@@ -127,7 +129,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     default_corr_method <- config$default_correlation_method
     default_fit_method <- config$default_fit_method
 
-    
+    subset_categories <- module_config$subset_categories
     # Module defaults
     custom_point_colors <- module_config$custom_point_colors
 
@@ -170,13 +172,15 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       )
 
     selected_lookup <- reactive({
-      list_of_values <- getSelectedSampleCategories(sample_categories, input)
+      list_of_values <-
+        getSelectedSampleCategories(sample_categories, input, subset_categories)
       selectMatchingValues(sample_lookup, list_of_values)
     })
 
     expression_from_lookup <- reactive({
-      sel_lookup <- selected_lookup()
-      expression_matrix[, sel_lookup[[sample_var]]]
+      samples <- selected_lookup()[[sample_var]]
+      samples <- samples[!is.na(samples)]
+      expression_matrix[, samples]
     })
 
     measures_from_lookup <- reactive({
@@ -204,7 +208,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         tab_output_list,
         function(x) x$variables
       )))
-      
+
       selected_measures <-
         replaceFalseWithNA(
           subset_measures[, measures_vars],
@@ -293,7 +297,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           subset_measures[, measures_vars],
           outlier_functions(measures_outliers)
         )
-      
+
       all_na_lv <-
         vapply(colnames(subset_measures),
                function(x) all(is.na(subset_measures[[x]])),
@@ -325,7 +329,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           # If NULL nothing is added
           # unique makes it so that it's not repeated
           subset_vars <- unique(c(output_vars, color_var))
-          
+
           not_na_lv <-
             vapply(subset_vars,
                    function(x) all(is.na(subset_measures[[x]])),
@@ -340,7 +344,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               manual_colors <- NULL
             }
           }
-          
+
           # Get only the variables for this tab
           tab_measures <- subset_measures[, subset_vars]
 
@@ -358,7 +362,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                 names_to = "Measure",
                 values_to = "Value"
               )
-  
+
             # Use output_vars as levels to preserve order defined in config
             combined_df[["Measure"]] <-
               factor(combined_df[["Measure"]],
@@ -378,13 +382,13 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                 ifelse(!is.null(out_width), out_width, 800)
               }
             }
-  
+
             corr_labels <- c(
               "pearson" = "r",
               "spearman" = "\u03c1",
               "kendall" = "\u03C4"
             )
-  
+
             # TODO: refactor this with padj being optional
             corr_lookup <-
               paste0("{", paste(apply(corr_df_subset, 1, function(x) {
@@ -402,7 +406,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
           plotName <- paste0(output_name,"_vw")
           output[[output_name]] <- renderUI({
-            
+
             vegawidget::vegawidgetOutput(ns(plotName),
                                          width = "auto",
                                          height = "auto")
