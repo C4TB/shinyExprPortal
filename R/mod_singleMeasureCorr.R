@@ -5,7 +5,9 @@ mod_singleMeasureCorr_ui <- function(module_name, config, module_config) {
     names(config$data$measures_data %>% dplyr::select(where(is.numeric)))
 
   singleMeasureCorr_tab(
-    sampleCategoryInputs(config$sample_categories, module_name),
+    sampleCategoryInputs(config$sample_categories,
+                         module_name,
+                         module_config$subset_categories),
     varsSelectInput(var_list, module_name),
     module_config$advanced,
     module_config$title,
@@ -81,17 +83,19 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
     sample_categories <- config$sample_categories
 
     cores <- config$nthreads
-    
+
     adjust_method <- config$adjust_method
 
     default_measures_outliers <- config$default_measures_outliers
     default_expr_outliers <- config$default_expression_outliers
     default_corr_method <- config$default_correlation_method
 
+    subset_categories <- module_config$subset_categories
+
     link_to <- module_config$link_to
 
     user_selection <- reactive({
-      getSelectedSampleCategories(sample_categories, input)
+      getSelectedSampleCategories(sample_categories, input, subset_categories)
     })
 
     selected_lookup <- reactive({
@@ -104,7 +108,9 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
     })
 
     expression_from_lookup <- reactive({
-      expression_matrix[, selected_lookup()[[sample_var]]]
+      samples <- selected_lookup()[[sample_var]]
+      samples <- samples[!is.na(samples)]
+      expression_matrix[, samples]
     })
 
     measures_from_lookup <- reactive({
@@ -149,7 +155,6 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
         )
       validate(need(!all(is.na(selected_measures)),
                     "Selected subset has no data for chosen variable"))
-
       # Use the transposed expression to multiple columns vs vector
       correlation_df <- correlateMatrices(
         y = selected_expression,
