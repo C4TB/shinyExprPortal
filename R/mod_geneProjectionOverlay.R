@@ -4,7 +4,10 @@ mod_geneProjectionOverlay_ui <- function(module_name, config, module_config) {
 
   geneProjectionOverlay_tab(
     as.factor(sort(unique(coordinates_data[[group_variable]]))),
-    sample_select = sampleCategoryInputs(config$sample_categories, module_name),
+    sample_select =
+      sampleCategoryInputs(config$sample_categories,
+                           module_name,
+                           module_config$subset_categories),
     module_config$annotation_variables,
     module_config$title,
     module_config$description,
@@ -83,6 +86,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
     subject_var <- config$subject_variable
     sample_classes <- config$sample_categories
 
+    subset_categories <- module_config$subset_categories
     custom_annotation_colors <- module_config$custom_annotation_colors
     annotation_range <- module_config$annotation_range
     coordinates_data <- module_config$coordinates_data
@@ -96,14 +100,17 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
     y <- cols_df[[3]]
 
     selected_lookup <- reactive({
-      list_of_values <- getSelectedSampleCategories(sample_classes, input)
+      list_of_values <-
+        getSelectedSampleCategories(sample_classes, input, subset_categories)
       selectMatchingValues(sample_lookup, list_of_values)
     })
 
     fc_from_lookup <- reactive({
       sel_lookup <- selected_lookup()
       validate(need(nrow(sel_lookup) > 0, "No samples found for combination"))
-      subset_mat <- expression_matrix[, sel_lookup[[sample_var]], drop = FALSE]
+      samples <- sel_lookup[[sample_var]]
+      samples <- samples[!is.na(samples)]
+      subset_mat <- expression_matrix[, samples, drop = FALSE]
       if (ncol(subset_mat) == ncol(expression_matrix)) {
         return(list("all_samples", all_mean))
       }
@@ -204,7 +211,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
     heatmap_height <- function(n) {
       if (n > 200) 50 + (5 * n) else 50 + (10 * n)
     }
-  
+
     # Modal dialog to show heatmap
     observeEvent(input$show_heatmap, {
       showModal(
@@ -238,8 +245,9 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
       list_of_genes <- rev(subset_genes())
       if (length(list_of_genes) > 0) {
         output$group_heatmap <- renderIheatmap({
+          samples <- sel_lookup[[sample_var]]
           subset_mat <-
-            expression_matrix[list_of_genes, sel_lookup[[sample_var]]]
+            expression_matrix[list_of_genes, samples[!is.na(samples)]]
           hm <- iheatmap(
             subset_mat,
             colors = rev(

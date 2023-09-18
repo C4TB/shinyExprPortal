@@ -9,6 +9,7 @@ mod_geneModulesHeatmap_ui <- function(module_name, config, module_config) {
       module_config$subset_categories
     ),
     module_config$annotation_variables,
+    module_config$scatterplot_variables,
     module_config$title,
     module_config$description,
     module_name
@@ -18,6 +19,7 @@ mod_geneModulesHeatmap_ui <- function(module_name, config, module_config) {
 geneModulesHeatmap_tab <- function(categories,
                                    sample_select,
                                    annotation_variables,
+                                   scatterplot_variables = NULL,
                                    title = NULL,
                                    description = NULL,
                                    module_name = NULL) {
@@ -66,8 +68,12 @@ geneModulesHeatmap_tab <- function(categories,
             verticalLayout(
               actionButton(ns("show_genes"), label = "View genes"),
               uiOutput(ns("heatmap_ui")),
-              h5("Association of measures with module eigengene"),
-              vegawidget::vegawidgetOutput(ns("scatterplots"))
+              if (!is.null(scatterplot_variables))
+                {
+                list(h5("Association of measures with module eigengene"),
+                vegawidget::vegawidgetOutput(ns("scatterplots")))
+              }
+              else NULL
             )
           )
         )
@@ -88,17 +94,22 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     sample_lookup <- config$data$sample_lookup
 
     cores <- config$nthreads
-    
+
     subject_var <- config$subject_variable
     sample_var <- config$sample_variable
     sample_categories <- config$sample_categories
 
+    # These are all required
     category_variable <- module_config$category_variable
     modules_table <- module_config$modules_table
     modules_variable <- module_config$modules_variable
     genes_variable <- module_config$genes_variable
+
+    # This is optional, if it's defined, it will be used to order the modules
     rank_variable <- module_config$rank_variable
 
+    # This is optional, if undefined there will be no scatterplots below the
+    # heatmap
     scatterplot_vars <- module_config$scatterplot_variables
 
     annotation_vars <- module_config$annotation_variables
@@ -171,11 +182,11 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         return(NULL)
       }
       selected_measures <- measures_from_lookup()
-      selected_annot_df <- 
+      selected_annot_df <-
         selected_measures[, c(rev(input$selected_annotations)), drop=FALSE] %>%
         select(where(function(x) !all(is.na(x))))
       if (ncol(selected_annot_df) == 0) return(NULL)
-      
+
       return(selected_annot_df)
     })
 
@@ -185,9 +196,11 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       row_id <- input$modules_list_row_last_clicked
       module_info <- as.list(selected_modules_table()[row_id, ])
       list_of_genes <- unlist(strsplit(module_info[[genes_variable]], ","))
+      samples <- selected_lookup()[[sample_var]]
+      samples <- samples[!is.na(samples)]
       m <- expression_matrix[
         rownames(expression_matrix) %in% list_of_genes,
-        selected_lookup()[[sample_var]]
+        samples
       ]
       m <- m[rowSums(is.na(m)) != ncol(m), ]
       m
@@ -236,7 +249,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
               plot_bgcolor = "transparent",
               paper_bgcolor = "transparent"
             )
-          ) 
+          )
           hm <- hm %>% add_row_clustering()
 
           # Optional annotations
@@ -254,6 +267,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     })
 
     output$scatterplots <- vegawidget::renderVegawidget({
+      req(scatterplot_vars)
       req(heatmap_data())
 
       isolate({
@@ -275,7 +289,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         Eigengene = eigengene,
         selected_measures
       )
-      
+      browser()
       corr_df <- longCorrelationMatrix(
         x = combined_df[, scatterplot_vars],
         y = combined_df[["Eigengene"]],
@@ -283,7 +297,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         name_to = "Measure",
         cores = cores
       )
-      
+
       # Reassign measure names to preserver order from configuration
       corr_df$Measure <- factor(corr_df$Measure,
         levels = scatterplot_vars
@@ -294,7 +308,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         )
       combined_df[["Measure"]] <-
         factor(combined_df[["Measure"]], levels = scatterplot_vars)
-      
+
       corr_lookup <-
         paste0("{", paste(apply(corr_df, 1, function(x) {
           name <- x[["Measure"]]
@@ -307,7 +321,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
             corr, ", P: ", pvalue, "']"
           )
         }), collapse = ","), "}")
-      
+
       vega_layer_scatterplot(combined_df,
         x = "Value",
         y = "Eigengene",
