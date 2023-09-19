@@ -53,6 +53,6 @@ The full configuration guide in [`vignette("config")`](https://c4tb.github.io/sh
 
 ## Customization and extending the package
 
-[`vignette("customization")`](https://c4tb.github.io/shinyExprPortal/articles/customization.html) describes how to customize the visual style of the portal and how to add new functionality through programming new modules. The package supports customization via the configuration file at a global level using [bslib](https://cran.r-project.org/web/packages/bslib/index.html). Some modules also support the customization of the colors used in the visualizations.
+[`vignette("customization")`](https://c4tb.github.io/shinyExprPortal/articles/customization.html) describes how to customize the visual style of the portal and how to add new functionality through programming new modules. The package supports customization via the configuration file at a global level using [bslib](https://CRAN.R-project.org/package=bslib). Some modules also support the customization of the colors used in the visualizations.
 
 The package is also compatible with new modules that can be added without modifying the source code of the portal or the package. New functionality can be developed and tested without having to clone the repository or recompile the package. We are also open for suggestions of new modules, please use the GitHub issues page for that.
