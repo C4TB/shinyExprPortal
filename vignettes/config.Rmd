@@ -90,7 +90,7 @@ logo: logo.png
 
 **Bootswatch theme**
 
-A custom [Bootswatch](http://www.bootswatch.com) theme can be used instead of the default one. You can use versions 3, 4 or 5 but there is no guarantee of how the style will look across versions. Although dark themes can be used, the visualizations will not be adapted to them.
+A custom [Bootswatch](https://bootswatch.com) theme can be used instead of the default one. You can use versions 3, 4 or 5 but there is no guarantee of how the style will look across versions. Although dark themes can be used, the visualizations will not be adapted to them.
 
 ```yaml
 bootstrap:
@@ -258,7 +258,7 @@ knitr::include_graphics("cohortoverview.png")
 
 ### compareTrajGroups {#compareTrajGroups}
 
-**Optional required packages:** `[{RColorBrewer}](https://cran.r-project.org/web/packages/RColorBrewer/indexhtml)`
+**Optional required packages:** `[{RColorBrewer}](https://CRAN.R-project.org/package=RColorBrewer)`
 
 This module shows the combined expression and measure trajectory of subjects over time. The user can select one gene and one measure that was taken over time. The idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples for all time values defined by a `trajectory_category` are taken and filtered from a user selection based on the remaining `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`). The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the possible variables and the times are `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. The expression of the selected gene will also be taken using observations of samples in `m01` and `m2`. In the interface, users will be able to select from any of the variables listed under `compare_variables`.
 
@@ -281,7 +281,7 @@ knitr::include_graphics("comparetraj.png")
 <details>
 <summary>**Optional settings**</summary>
 
-**custom_traj_palette:** the name of a [RColorBrewer](https://cran.r-project.org/web/packages/RColorBrewer/index.html) palette or a list of valid colours (e.g. hex value) can be supplied using this keyword. The colors will be used in order of appearance to color the points for each value of `trajectory_category`.
+**custom_traj_palette:** the name of a [RColorBrewer](https://CRAN.R-project.org/package=RColorBrewer) palette or a list of valid colours (e.g. hex value) can be supplied using this keyword. The colors will be used in order of appearance to color the points for each value of `trajectory_category`.
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
@@ -493,7 +493,7 @@ geneProjectionOverlay:
 
 ### networkViewer {#networkViewer}
 
-**Required packages**: [{visNetwork}](https://cran.r-project.org/web/packages/visNetwork/index.html), [{igraph}](https://cran.r-project.org/web/packages/igraph/index.html),
+**Required packages**: [{visNetwork}](https://CRAN.R-project.org/package=visNetwork), [{igraph}](https://CRAN.R-project.org/package=igraph),
 
 This module allows exploring networks of genes as produced by methods such as ARACNe. It supports reading a list of edges that represent connected components of a whole network, that is, the list of edges should produce multiple separate subnetworks. The user selects a source file for the edges and a node; the module then displays the component that contains that node. A second source is also selected and, if it exists, a second component is shown next to the first. This enables comparing the connections between that node and other nodes at two time points, for example. The edge list file should contain names of nodes with a prefix corresponding to a type of sample category and and the name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list table can be a comma- or tab-separated values file without header and must contain columns corresponding to, in order: source name, target name and node weight.
 
