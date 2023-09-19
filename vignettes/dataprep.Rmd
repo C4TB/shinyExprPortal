@@ -36,7 +36,7 @@ colnames(x) <- smp_ids
 knitr::kable(as.data.frame(x))
 ```
 
-It is also possible to use the [{fst}](https://cran.r-project.org/web/packages/fst/index.html) and [{qs}](https://cran.r-project.org/web/packages/qs/index.html) packages for compressed data files. If using any of these packages, use .fst or .qs as file extensions.
+It is also possible to use the [{fst}](https://CRAN.R-project.org/package=fst) and [{qs}](https://CRAN.R-project.org/package=qs) packages for compressed data files. If using any of these packages, use .fst or .qs as file extensions.
 
 **Measures table**
 

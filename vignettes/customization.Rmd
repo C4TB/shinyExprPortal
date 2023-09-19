@@ -22,7 +22,7 @@ There are two ways to customize the interface of a deployed portal: global setti
 
 ### Global customizations
 
-In the current version, you can add an acronym or logo, change the title of the tab in the browser, add an icon-based shortcut menu to the landing page and modify the [Bootswatch](http://www.bootswatch.com) theme.
+In the current version, you can add an acronym or logo, change the title of the tab in the browser, add an icon-based shortcut menu to the landing page and modify the [Bootswatch](https://bootswatch.com) theme.
 
 The configuration file should look like this for each of the settings above:
 
