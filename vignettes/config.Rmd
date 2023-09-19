@@ -252,9 +252,7 @@ cohortOverview:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("cohortoverview.png")
-```
+![](cohortoverview.png){width=500px}
 
 ### compareTrajGroups {#compareTrajGroups}
 
@@ -274,6 +272,7 @@ compareTrajGroups:
 ```
 
 **Example:**
+![](comparetraj.png){width=400px}
 ```{r, out.width = "800px"}
 knitr::include_graphics("comparetraj.png")
 ```
@@ -329,9 +328,7 @@ degDetails:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("volcanoplot.png")
-```
+![](volcanoplot.png){width=800px}
 
 <details>
 <summary>**Optional settings**</summary>
@@ -397,10 +394,7 @@ geneModulesHeatmap:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("modulesheatmap.png")
-```
-
+![](modulesheatmap.png){width=800px}
 
 <details>
   <summary>**Optional settings**</summary>
@@ -461,9 +455,7 @@ geneProjectionOverlay:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("projectionoverlay.png")
-```
+![](projectionoverlay.png){width=800px}
 
 <details>
   <summary>**Optional settings**</summary>
@@ -510,9 +502,7 @@ networkViewer:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("networkviewer.png")
-```
+![](networkviewer.png){width=800px}
 
 <details>
   <summary>**Optional settings**</summary>
@@ -554,10 +544,7 @@ singleGeneCorr:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("singlegenecorr.png")
-```
-
+![](singlegenecorr.png){width=800px}
 <details>
 <summary>**Optional settings**</summary>
 
@@ -615,9 +602,7 @@ singleMeasureCorr:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("singlemeasure.png")
-```
+![](singlemeasure.png){width=800px}
 
 <details>
   <summary>**Optional settings**</summary>
@@ -655,10 +640,7 @@ multiMeasureCorr:
 ```
 
 **Example:**
-```{r, out.width = "800px"}
-knitr::include_graphics("multimeasure.png")
-```
-
+![](multimeasure.png){width=800px}
 <details>
   <summary>**Optional settings**</summary>
   
