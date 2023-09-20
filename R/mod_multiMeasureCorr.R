@@ -153,7 +153,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
     expression_from_lookup <- reactive({
       samples <- selected_lookup()[[sample_var]]
       samples <- samples[!is.na(samples)]
-      expression_matrix[, ]
+      expression_matrix[, samples]
     })
 
     measures_from_lookup <- reactive({
@@ -208,8 +208,8 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
         )
 
       corr_df <- correlateMatrices(
-        y = selected_expression,
         x = subset_measures,
+        y = selected_expression,
         adjust_method = adjust_method,
         method = correlation_method,
         rowname_var = "Gene",
@@ -233,7 +233,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
 
     output$heatmap <- vegawidget::renderVegawidget({
       hm <- heatmap_data()[seq_len(50), ] %>%
-        correlationResultsToLong("Gene", "Measures")
+        correlationResultsToLong("Gene", "Measures", TRUE)
       vega_heatmap(
         hm,
         "Measures",
@@ -249,7 +249,8 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
 
     output$table <- DT::renderDataTable({
         df <-
-          corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj)
+          corrResultsToTable(heatmap_data(), input$max_pvalue, input$use_padj,
+                             rowname_col = "Gene")
         if (!is.null(link_to)) {
           isolate({
             list_of_values <- user_selection()

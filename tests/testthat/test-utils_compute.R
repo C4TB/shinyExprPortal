@@ -87,7 +87,7 @@ test_that("rowname_col does not exist in df", {
     expect_error(corrResultsToTable(cormat, rowname_col = "won't work"))
 })
 
-test_that("rowname_col does not exist in df", {
+test_that("wrong input format", {
     cormat <- fast_cor(measures_data[,c("age","var_a")], t(exp_matrix))
     expect_error(corrResultsToTable(cormat))
 })

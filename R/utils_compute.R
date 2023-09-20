@@ -91,7 +91,6 @@ correlateMatrices <-
            colname_var = "var",
            cores = 1) {
     method <- match.arg(method)
-
     if (is.vector(x)) {
       x <- as.data.frame(x)
     }
@@ -156,7 +155,7 @@ longCorrelationMatrix <- function(first_col_name,
     ...
   ) %>%
     pivot_longer(
-      cols = -.data[[first_col_name]],
+      cols = -all_of(first_col_name),
       names_to = c(name_to, ".value"),
       names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
     )
@@ -178,13 +177,13 @@ correlationResultsToLong <- function(data,
                                      pvalue_rank_col = FALSE) {
   if (pvalue_rank_col) {
     pivot_longer(data,
-                 cols = c(-.data[[first_col_name]], -.data[["pvaluesrank"]]),
+                 cols = -all_of(c(first_col_name, "pvaluesrank")),
                  names_to = c(name_to, ".value"),
                  names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
     )
   } else {
     pivot_longer(data,
-                 cols = c(-.data[[first_col_name]]),
+                 cols = -all_of(first_col_name),
                  names_to = c(name_to, ".value"),
                  names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
     )
