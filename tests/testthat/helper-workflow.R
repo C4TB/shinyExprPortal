@@ -10,7 +10,7 @@ measures_data <- data.frame(
     subject_id = c("P1", "P2", "P3", "P4"),
     age = c(30, 35, 40, 45),
     sex = c("Male", "Male", "Male", "Female"),
-    var_a = c(1, 2, 3, 4),
+    var_a = c(1, 2, 3, NA),
     var_b = c("a", "a", "b", "b")
 )
 
