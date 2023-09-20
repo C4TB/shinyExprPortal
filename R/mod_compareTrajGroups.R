@@ -85,10 +85,10 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
         # For each class, get the value selected by the user and filter the
         # lookup
         selected_lookup <- reactive({
-            subset_values <- getSubsetSampleCategories(
-                subset_categories,
+            subset_values <- getSelectedSampleCategories(
                 sample_categories,
-                input
+                input,
+                subset_categories
             )
             selectMatchingValues(sample_lookup, subset_values)
         })
