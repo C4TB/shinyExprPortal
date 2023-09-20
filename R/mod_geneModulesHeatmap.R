@@ -289,8 +289,7 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         Eigengene = eigengene,
         selected_measures
       )
-      browser()
-      corr_df <- longCorrelationMatrix(
+      corr_df <- longCorrelationMatrix("Gene", "Measure",
         x = combined_df[, scatterplot_vars],
         y = combined_df[["Eigengene"]],
         adjust_method = NULL,

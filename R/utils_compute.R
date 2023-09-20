@@ -7,7 +7,7 @@
 #' @return vector with p-values
 #' @importFrom stats pt
 compute_pval <- function(x, n) {
-    if (!is.matrix(x)) x <- as.matrix(x)
+  if (!is.matrix(x)) x <- as.matrix(x)
   dof <- n - 2
   t <- (sqrt(dof) * abs(x)) / sqrt(1 - x^2)
   2 * pt(t, dof, lower.tail = FALSE)
@@ -148,7 +148,7 @@ correlateMatrices <-
 #'
 #' @noRd
 #' @return long format data frame
-longCorrelationMatrix <- function(first_col_name = "Gene",
+longCorrelationMatrix <- function(first_col_name,
                                   name_to = "Measure",
                                   ...) {
   correlateMatrices(
@@ -168,17 +168,28 @@ longCorrelationMatrix <- function(first_col_name = "Gene",
 #' [shinyExprPortal::correlateMatrices()]
 #' @param first_col_name name to set the first column (colnames of matrix)
 #' @param name_to name of column for long format
+#' @param pvalue_rank_col is there a pvaluesrank column?
 #'
 #' @noRd
 #' @return long format data framew
 correlationResultsToLong <- function(data,
-                                     first_col_name = "Gene",
-                                     name_to = "Measure") {
-  pivot_longer(data,
-    cols = c(-.data[[first_col_name]], -.data[["pvaluesrank"]]),
-    names_to = c(name_to, ".value"),
-    names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
-  )
+                                     first_col_name ,
+                                     name_to,
+                                     pvalue_rank_col = FALSE) {
+  if (pvalue_rank_col) {
+    pivot_longer(data,
+                 cols = c(-.data[[first_col_name]], -.data[["pvaluesrank"]]),
+                 names_to = c(name_to, ".value"),
+                 names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
+    )
+  } else {
+    pivot_longer(data,
+                 cols = c(-.data[[first_col_name]]),
+                 names_to = c(name_to, ".value"),
+                 names_pattern = "(.*_*.*)_(estimate|pvalue|padj)"
+    )
+  }
+
 }
 
 #' Collapse data frame into table with highlights
@@ -192,7 +203,10 @@ correlationResultsToLong <- function(data,
 #' @noRd
 #' @return data frame with HTML b tags
 corrResultsToTable <-
-  function(df, max_pvalue = 0.05, use_padj = FALSE, rowname_col = "Gene") {
+  function(df, max_pvalue = 0.05, use_padj = FALSE, rowname_col = "variable") {
+    if (!rowname_col %in% colnames(df)) {
+      stop("`rowname_col` not found in data frame")
+    }
     # Get only correlation estimates
     selected_df <- df %>% dplyr::select(ends_with("estimate"))
     # Remove estimate suffix
