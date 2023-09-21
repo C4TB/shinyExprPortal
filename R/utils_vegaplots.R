@@ -176,9 +176,8 @@ vega_add_fitline <-
     } else {
       model <- data
     }
-    model <- model %>%
-      select(all_of(c(x, y, facet_var))) %>%
-      tidyr::nest(data = c(x, y)) %>%
+    model <- model[, c(x, y, facet_var)] %>%
+      tidyr::nest(data = all_of(c(x, y))) %>%
       mutate(fit_model = lapply(data, predict_m, lhs = y, rhs = x)) %>%
       tidyr::unnest(all_of(c("data", "fit_model")))
 
