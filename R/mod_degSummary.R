@@ -20,9 +20,9 @@ degSummary_tab <- function(title = NULL, description = NULL, id = NULL) {
 
 mod_degSummary_server <-
   function(module_name, config, module_config, parent_config = NULL) {
-    
+
   moduleServer(module_name, function(input, output, session) {
-    
+
     models <- parent_config$models %||% module_config$models
     partition <- module_config$partition_variable
     if (!is.null(partition))
@@ -46,16 +46,14 @@ mod_degSummary_server <-
         header_spec <- NULL
         header_cols <- c("#P", "#P_adj")
       }
-      
+
       # Get only the columns that define models (e.g. Response, Tissue, Time)
       exc_cols <- c("P", "P_adj", "File", "Data", "ModelFileType", partition)
       model_cols <- colnames(models[, !colnames(models) %in% exc_cols])
-      
+
       # We don't need the actual data or file names here
       models_only <- models %>%
-        dplyr::select(-.data[["Data"]],
-                      -.data[["File"]],
-                      -.data[["ModelFileType"]])
+        dplyr::select(-all_of("Data","File","ModelFileType"))
       # By default pivot_wider will order by the values_from
       # We use relocate to rearrange only the pivoted columns
       if (!is.null(header_spec)) {

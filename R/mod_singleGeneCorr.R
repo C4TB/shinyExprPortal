@@ -348,8 +348,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           # Get only the variables for this tab
           tab_measures <- subset_measures[, subset_vars]
 
-          corr_df_subset <- corr_df %>%
-            filter(.data[["Measure"]] %in% subset_vars)
+          corr_df_subset <- corr_df[corr_df[["Measure"]] %in% subset_vars, ]
 
           # Filter to selected gene
           if (ncol(tab_measures) > 0) {

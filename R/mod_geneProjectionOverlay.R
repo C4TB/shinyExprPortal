@@ -126,8 +126,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
         fc[match(coordinates_data[[1]], names(fc))]
       # fc_list[[1]] can be "all_samples" or "subset"
       coordinates_data$mean_type <- fc_list[[1]]
-      coordinates_data %>%
-        filter(.data[[group_variable]] %in% input$list_of_groups)
+      lv <- coordinates_data[[group_variable]] %in% input$list_of_groups
+      coordinates_data[lv, ]
     })
 
     # Using custom function for now until vegawidget is updated

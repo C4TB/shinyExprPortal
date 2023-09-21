@@ -172,7 +172,7 @@ vega_add_fitline <-
     # Compute models per facet
     if (!is.null(facet_var)) {
       model <- data %>%
-        group_by(.data[[facet_var]])
+        group_by(across(all_of(facet_var)))
     } else {
       model <- data
     }

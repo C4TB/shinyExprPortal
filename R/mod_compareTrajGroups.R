@@ -126,7 +126,7 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
                 selected_measures[, c(subject_var, compare_col_vars)]
             # Convert to long and separate unique variable from suffix
             subset_long <- pivot_longer(subset_measures,
-                -.data[[subject_var]],
+                -all_of(subject_var),
                 names_to = c(".value", trajectory_category),
                 names_sep = timesep
             )
@@ -154,7 +154,8 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
             df <- combined[, traj_vars]
 
             trajplot <- vega_traj_scatterplot(
-                data = df[order(df[[subject_var]], df[[trajectory_category]]), ],
+                data = df[order(df[[subject_var]],
+                                df[[trajectory_category]]), ],
                 x = input$selected_variable,
                 facet_var = sidebyside_category,
                 color_var = trajectory_category,
