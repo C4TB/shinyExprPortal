@@ -310,7 +310,7 @@ the package website for a complete module configuration guide.")
     }
 
     if (continue_yn == "y") {
-        if (target_dir.exists(file.path(target_dir, "models"))) {
+        if (dir.exists(file.path(target_dir, "models"))) {
             file_list <- list.files(file.path(target_dir, "models"))
             cli::cli_text("Adding the following files to files table:")
             cli::cli_li(file_list)

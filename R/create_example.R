@@ -65,7 +65,8 @@ create_example <- function(target_dir) {
 
     expression <-
         matrix(
-            round(stats::rnorm(m * length(sids))+rpois(m*length(sids), 4), 2),
+            round(stats::rnorm(m * length(sids)) +
+                      stats::rpois(m*length(sids), 4), 2),
             nrow = m,
             ncol = length(sids),
             dimnames = list(gene_names, sids)
