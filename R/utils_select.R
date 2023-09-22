@@ -1,7 +1,7 @@
 # All functions here should return actual values (data frames, vectors)
 
 #' Filter a lookup table based on a list of key-value pairs. Optionally,
-#' if there is a * the lookup table, that row will be returned for that
+#' if there is a * in the lookup table, that row will be returned for that
 #' condition.
 #'
 #'
@@ -13,11 +13,11 @@
 #' @return a data frame or vector (if `return_col` is provided)
 #' @noRd
 selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
-  if (!is.data.frame(lookup)) {
-    lookup <- as.data.frame(lookup)
-  }
   if (!is.vector(values_list) | is.null(names(values_list))) {
     stop("Argument values_list must be a named vector or list")
+  }
+  if (!all(names(values_list) %in% colnames(lookup))) {
+    stop("All keys in argument values_list should be found in lookup table")
   }
   if (!is.null(return_col)) {
     if (!return_col %in% colnames(lookup)) {
@@ -29,7 +29,7 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
       lookup[, key] == "*", ]
   }
   if (!is.null(return_col)) {
-    lookup[, return_col]
+    lookup[[return_col]]
   } else {
     lookup
   }
@@ -37,12 +37,12 @@ selectMatchingValues <- function(lookup, values_list, return_col = NULL) {
 #' @importFrom rlang parse_expr
 selectMatchingMultipleValues <-
   function(lookup, values_list, return_col = NULL) {
-  if (!is.data.frame(lookup)) {
-    lookup <- as.data.frame(lookup)
-  }
   # Error checking
   if (!is.vector(values_list) | is.null(names(values_list))) {
     stop("Argument values_list must be a named vector or list")
+  }
+  if (!all(names(values_list) %in% colnames(lookup))) {
+      stop("All keys in argument values_list should be found in lookup table")
   }
   if (!is.null(return_col)) {
     if (!return_col %in% colnames(lookup)) {
@@ -57,10 +57,10 @@ selectMatchingMultipleValues <-
     paste0("(", paste(key, value, sep = op, collapse = " | "), ")")
   }, character(1))
   # Parse list of expression and apply filter
-  parsed_cond <- rlang::parse_expr(text = paste(cond, collapse = " & "))
+  parsed_cond <- rlang::parse_expr(paste(cond, collapse = " & "))
   subset <- lookup %>% dplyr::filter(!!parsed_cond)
   if (!is.null(return_col)) {
-    subset[, return_col]
+    subset[[return_col]]
   } else {
     subset
   }
@@ -96,7 +96,7 @@ selectFromLookup <- function(input_df, lookup_df, matching_col,
   return_df <-
     input_df[input_df[[matching_col]] %in% lookup_df[[matching_col]], ]
   if (!is.null(return_col)) {
-    return_df[, return_col,drop=TRUE]
+    return_df[[return_col]]
   } else {
     return_df
   }

@@ -36,8 +36,6 @@ colnames(x) <- smp_ids
 knitr::kable(as.data.frame(x))
 ```
 
-It is also possible to use the [{fst}](https://CRAN.R-project.org/package=fst) and [{qs}](https://CRAN.R-project.org/package=qs) packages for compressed data files. If using any of these packages, use .fst or .qs as file extensions.
-
 **Measures table**
 
 The measures table follows the format of one row per subject (even if they have more than one sample collected) with the measures across columns. A data.frame or tibble object can be saved in an .rds file and used, otherwise CSV or TSV files are also supported.

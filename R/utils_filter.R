@@ -1,4 +1,5 @@
-outlier_functions <- function(key) {
+outlier_functions <- function(key = c("5/95 percentiles", "IQR", "No")) {
+  key = match.arg(key)
   switch(key,
   "5/95 percentiles" = valuesInsideQuantileRange,
   "IQR" = valuesInsideTukeyFences,
@@ -29,21 +30,16 @@ replaceFalseWithNA <- function(x, fun) {
 #' Flags if values in vector are within or outside Tukey fences
 #'
 #' @param x a vector
-#' @param onesided if TRUE, only tests upper fence
 #' @noRd
 #' @return a logical vector
 #'
 #' @importFrom stats quantile
-valuesInsideTukeyFences <- function(x, onesided = FALSE) {
+valuesInsideTukeyFences <- function(x) {
   qt <- quantile(x, probs = c(.25, .75), na.rm = TRUE)
   iqr <- qt[2] - qt[1]
   upper_fence <- qt[2] + 1.5 * iqr
   lower_fence <- qt[1] - 1.5 * iqr
-  if (onesided) {
-    x <= upper_fence & !is.na(x)
-  } else {
-    x >= lower_fence & x <= upper_fence & !is.na(x)
-  }
+  x >= lower_fence & x <= upper_fence & !is.na(x)
 }
 
 #' Flag if values

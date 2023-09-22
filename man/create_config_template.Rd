@@ -2,26 +2,27 @@
 % Please edit documentation in R/create_config.R
 \name{create_config_template}
 \alias{create_config_template}
-\title{Create a barebones configuration file template}
+\title{Create a bare-bones configuration file template}
 \usage{
-create_config_template(filename = "config.yaml", target_dir = NULL)
+create_config_template(target_dir, filename = "config.yaml")
 }
 \arguments{
-\item{filename}{optional filename, default is config.yaml}
+\item{target_dir}{location to create the configuration file}
 
-\item{target_dir}{optional target directory, default is current working
-directory}
+\item{filename}{optional file name, default is config.yaml}
 }
 \value{
 Creates configuration file in \code{target_dir}
 }
 \description{
-The resulting file contain placeholder text in all caps for you to edit
-according to your needs. It also includes the three correlation modules.
+The resulting file contain placeholder text in upper case for you to edit
+according to your needs. It also includes the three correlation modules by
+default.
 }
 \examples{
 if (interactive()) {
-    create_config_template()
+    dir.create("newapp")
+    create_config_template("newapp")
 }
 
 }

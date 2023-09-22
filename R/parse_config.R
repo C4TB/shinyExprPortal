@@ -5,7 +5,7 @@
 #' Enables using the same configuration file under different file structures.
 #' @param test_module A module_name to parse configuration and ignore all others
 #' @param custom_modules List of custom modules name to load
-#' @param nthreads Optional number of threads for qs and data.table
+#' @param nthreads Optional number of threads for data.table
 #'
 #' @return config named list
 #' @noRd
@@ -38,7 +38,7 @@ parseConfig <-
     # - logo
     # - iconMenu
     # - about
-    
+
     config$bootstrap <-
       raw_config$bootstrap %||% list(version = 4)
     config$name <- raw_config$name %||% ""
@@ -300,30 +300,6 @@ read_file <-
   tryCatch({
       if (fext == "rds") {
         df <- readRDS(filename)
-        if (filetype == "expression_matrix" & !is.matrix(df)) {
-          stop_nice(
-            "For expression_matrix file, object must be stored as matrix"
-          )
-        }
-        df
-      } else if (fext == "fst") {
-        if (!requireNamespace("fst", quietly = TRUE)) {
-          stop_nice("Package fst is required for reading .fst files")
-        }
-        df <- fst::read_fst(filename)
-        if (filetype == "expression_matrix") {
-          rnames <- df[, 1]
-          df <- as.matrix(df[-1])
-          rownames(df) <- rnames
-          df
-        } else {
-          df
-        }
-      } else if (fext == "qs") {
-        if (!requireNamespace("qs", quietly = TRUE)) {
-          stop_nice("Package qs is required for reading .qs files")
-        }
-        df <- qs::qread(filename, nthreads = nthreads)
         if (filetype == "expression_matrix" & !is.matrix(df)) {
           stop_nice(
             "For expression_matrix file, object must be stored as matrix"

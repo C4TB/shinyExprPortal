@@ -143,6 +143,7 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
       ))
 
       # Apply outlier filters
+      # And transpose expression matrix
       selected_expression <-
         replaceFalseWithNA(
           t(selected_expression),

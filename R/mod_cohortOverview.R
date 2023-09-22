@@ -65,15 +65,9 @@ cohortOverview_tab <-
                         height = "500px", width =
                             "500px"
                     )
-                    # plotOutput(
-                    #   ns("cohort_expression"),
-                    #   height = 'auto',
-                    #   width = "60%"
-                    # )
                 ),
                 cellWidths = c("20%", "80%"),
                 cellArgs = list(style = "white-space: normal;")
-                # mainPanel(textOutput(ns("cohort_overview")))
             )
         )
     }
@@ -132,17 +126,12 @@ mod_cohortOverview_server <- function(module_name, config, module_config) {
                 selected_measures[order(selected_measures[[profile_order]],
                     decreasing = TRUE
                 ), ]
-            r2d3::r2d3(
-                data = selected_measures,
-                script = app_sys("app/build/cohort_overview.js"),
-                d3_version = 5,
-                dependencies = app_sys("app/build/d3-legend.js"),
-                options = list(
-                    id = module_name,
-                    color = profile_color,
-                    color_type = profile_color_type,
-                    columns = profile_variable_list
-                )
+            add_cohort_overview(
+                selected_measures,
+                module_name,
+                profile_color,
+                profile_color_type,
+                profile_variable_list
             )
         })
     })

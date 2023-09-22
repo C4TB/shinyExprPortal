@@ -69,18 +69,6 @@ outlier_inputs <- function(id) {
   )
 }
 
-#' Add radio buttons
-#
-#' @param inputId the inputID
-#' @param label label for the radio button
-#' @param choices choices
-#'
-#' @return radioButtons
-#' @noRd
-addRadioInputUI <- function(inputId, label, choices) {
-  radioButtons(inputId, label, choices)
-}
-
 #' Create selectize input for gene list
 #'
 #' @param gene_list list of gene symbols

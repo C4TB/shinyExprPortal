@@ -1,9 +1,9 @@
 Package: shinyExprPortal
-Title: A Configurable Shiny Portal for Sharing Analysis of Molecular Expression Data
+Title: A Configurable 'shiny' Portal for Sharing Analysis of Molecular Expression Data
 Version: 1.0.0
 Authors@R: person('Rafael', 'Henkin', email = 'r.henkin@qmul.ac.uk', role = c('cre', 'aut', 'cph'))
 Maintainer: Rafael Henkin <r.henkin@qmul.ac.uk>
-Description: Enables deploying configuration file-based Shiny apps with minimal programming for interactive exploration and analysis showcase of molecular expression data. For exploration, supports visualization of correlations between rows of an expression matrix and a table of observations, such as clinical measures, and comparison of expression changes over time. For showcase, enables visualizing results of differential expression, co-expression modules and pathways, co-expression networks and others.
+Description: Enables deploying configuration file-based 'shiny' apps with minimal programming for interactive exploration and analysis showcase of molecular expression data. For exploration, supports visualization of correlations between rows of an expression matrix and a table of observations, such as clinical measures, and comparison of changes in expression over time. For showcase, enables visualizing the results of differential expression from package such as 'limma', co-expression modules from 'WGCNA' and lower dimensional projections.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports: 
@@ -30,7 +30,7 @@ Encoding: UTF-8
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 Suggests: 
-    testthat,
+    testthat (>= 3.0.0),
     whisker,
     knitr,
     rmarkdown,
@@ -38,8 +38,7 @@ Suggests:
     kableExtra,
     RColorBrewer,
     visNetwork,
-    igraph,
-    fst,
-    qs
+    igraph
 VignetteBuilder: knitr
 URL: https://c4tb.github.io/shinyExprPortal/
+Config/testthat/edition: 3
