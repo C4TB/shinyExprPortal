@@ -16,7 +16,7 @@
 vega_traj_scatterplot <-
     function(data,
     x,
-    facet_var,
+    facet_var = NULL,
     color_var,
     color_palette = NULL) {
         point_layer <- list(

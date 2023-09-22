@@ -19,7 +19,7 @@ preffix <- do.call(paste0, replicate(4, sample(LETTERS, m, TRUE), FALSE))
 suffix <- do.call(paste0, replicate(3, sample(1:9, m, TRUE), FALSE))
 gene_names <- paste0(preffix, suffix)
 exp_matrix <- matrix(
-    round(stats::rnorm(m * 4), 2),
+    round(stats::rnorm(m * 4)+rpois(m*4, 4), 2),
     nrow = m,
     ncol = 4,
     dimnames = list(gene_names, c("P1", "P2", "P3", "P4"))
