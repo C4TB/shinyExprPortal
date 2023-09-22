@@ -38,9 +38,7 @@ Suggests:
     kableExtra,
     RColorBrewer,
     visNetwork,
-    igraph,
-    fst,
-    qs
+    igraph
 VignetteBuilder: knitr
 URL: https://c4tb.github.io/shinyExprPortal/
 Config/testthat/edition: 3

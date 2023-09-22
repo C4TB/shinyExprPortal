@@ -26,7 +26,7 @@ If using RStudio, create a new project to facilitate the rest of the setup.
 
 2. **Place an expression matrix file in the project folder**
 
-With HGNC or similar gene names in rows and samples in columns. The file can be a .csv, .tsv/txt, .fst, .qs or .rds file. If using an .rds file, save it as a `matrix` object, not a `data.frame`.
+With HGNC or similar gene names in rows and samples in columns. The file can be a .csv, .tsv/txt or .rds file. If using an .rds file, save it as a `matrix` object, not a `data.frame`.
 
 Go to the next step if your expression matrix is structured in this way and you saved it in the project folder:
 
