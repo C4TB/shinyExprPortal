@@ -4,11 +4,10 @@
 \alias{create_config_wizard}
 \title{Create configuration and app.R files}
 \usage{
-create_config_wizard(target_dir = NULL)
+create_config_wizard(target_dir)
 }
 \arguments{
-\item{target_dir}{optional folder path, otherwise uses current working
-directory}
+\item{target_dir}{location where the configuration will be saved}
 }
 \value{
 Creates configuration file in \code{target_dir}
@@ -19,8 +18,7 @@ creation of a basic configuration file. The wizard will work with the simple
 case of expression data where one sample matches exactly to one subject.
 }
 \details{
-Before you run the wizard, you should ensure that the target folder (passed
-through the target_dir argument or the current working directory) contains
+Before you run the wizard, you should ensure that the target folder contains
 at least the expression matrix and measures data files. The expression
 matrix should follow the format of sample IDs in columns and genes in rows,
 with gene names in the first column of the table. The measures file should
@@ -29,6 +27,7 @@ ensure that all subjects have one sample and vice-versa.
 }
 \examples{
 if (interactive()) {
-    create_config_wizard()
+    dir.create("newapp")
+    create_config_wizard("newapp")
 }
 }

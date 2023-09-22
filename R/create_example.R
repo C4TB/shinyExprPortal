@@ -1,7 +1,8 @@
 #' Create example files
 #'
-#' @param target_dir (optional) a directory where to create the files, otherwise
-#' uses the output of getwd()
+#' Create example files for measures, expression matrix and lookup table
+#'
+#' @param target_dir location where to create the files
 #'
 #' @return Create examples files in target_dir
 #'
@@ -12,10 +13,7 @@
 #'     dir.create("newapp")
 #'     create_example("newapp")
 #' }
-create_example <- function(target_dir = NULL) {
-    set.seed(123)
-
-    dir <- target_dir %||% getwd()
+create_example <- function(target_dir) {
 
     n <- 100
 
@@ -67,7 +65,7 @@ create_example <- function(target_dir = NULL) {
 
     expression <-
         matrix(
-            round(stats::rnorm(m * length(sids)), 2),
+            round(stats::rnorm(m * length(sids))+rpois(m*length(sids), 4), 2),
             nrow = m,
             ncol = length(sids),
             dimnames = list(gene_names, sids)
