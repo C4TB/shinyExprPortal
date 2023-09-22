@@ -1,3 +1,17 @@
+## Resubmission
+
+This is a resubmission. I have:
+
+* Fixed the references to packages in DESCRIPTION
+
+* Added tests to the shiny app interactions and outputs that depend on external packages
+
+* Removed any file writing to working directory. Users must always provide a directory
+
+* Removed a fixed seed
+
+There are no references describing this package yet so I have not added any.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
