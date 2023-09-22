@@ -91,22 +91,6 @@ geneModulesHeatmap:
 multiMeasureCorr:
   custom_heatmap_palette: "BrBG"
 ```
-
-**networkViewer**: list of colors for node categories and fonts, and RColorBrewer palette for heatmap colors.
-
-```yaml
-networkViewer:
-  custom_node_colors:
-    CellType1: "red"
-    CellType2: "blue"
-    OtherDataSet: "green"
-  custom_font_colors:
-    CellType1: white
-    CellType2: white
-    OtherDataSet: black
-  custom_heatmap_palette: BrBG
-```
-
 **singleGeneCorr**: list of colors for categorical variables in scatterplot.
 
 ```yaml
