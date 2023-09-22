@@ -1,3 +1,35 @@
+add_heatmap <-
+  function(m, heatmap_palette, annotations = NULL, annot_colors = NULL, annot_range = NULL) {
+  row_labels <- ifelse(nrow(m) > 80, FALSE, TRUE)
+  hm <- iheatmap(
+    m,
+    colors = rev(
+      RColorBrewer::brewer.pal(11, heatmap_palette)
+    ),
+    row_labels = row_labels,
+    scale = "rows",
+    scale_method = "standardize",
+    name = "Expression z-scores",
+    layout = list(
+      font = list(size = 9),
+      plot_bgcolor = "transparent",
+      paper_bgcolor = "transparent"
+    )
+  )
+  hm <- hm %>% add_row_clustering()
+
+  # Optional annotations
+  if (!is.null(annotations)) {
+    hm <- hm %>%
+      custom_add_col_annotations(annotations,
+                                 colors = annot_colors,
+                                 range = annot_range
+      )
+  }
+  hm %>% add_col_clustering()
+  hm
+}
+
 custom_add_col_annotations <- function(p,
                                        annotation,
                                        colors = NULL,

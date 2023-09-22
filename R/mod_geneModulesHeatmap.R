@@ -234,34 +234,11 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
 
       if (nrow(m) > 0) {
         output$module_heatmap <- renderIheatmap({
-          row_labels <- ifelse(nrow(m) > 80, FALSE, TRUE)
-          hm <- iheatmap(
-            m,
-            colors = rev(
-              RColorBrewer::brewer.pal(11, heatmap_palette)
-            ),
-            row_labels = row_labels,
-            scale = "rows",
-            scale_method = "standardize",
-            name = "Expression z-scores",
-            layout = list(
-              font = list(size = 9),
-              plot_bgcolor = "transparent",
-              paper_bgcolor = "transparent"
-            )
-          )
-          hm <- hm %>% add_row_clustering()
-
-          # Optional annotations
-          annots <- annotations()
-          if (!is.null(annots)) {
-            hm <- hm %>%
-              custom_add_col_annotations(annots,
-                colors = custom_annotation_colors,
-                range = annotation_range
-              )
-          }
-          hm %>% add_col_clustering()
+          add_heatmap(m,
+                      heatmap_palette,
+                      annotations(),
+                      custom_annotation_colors,
+                      annotation_range)
         })
       }
     })
@@ -289,11 +266,10 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
         Eigengene = eigengene,
         selected_measures
       )
-      corr_df <- longCorrelationMatrix("Gene", "Measure",
+      corr_df <- longCorrelationMatrix(first_col_name = "Gene", name_to = "Measure",
         x = combined_df[, scatterplot_vars],
         y = combined_df[["Eigengene"]],
         adjust_method = NULL,
-        name_to = "Measure",
         cores = cores
       )
 

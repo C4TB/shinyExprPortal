@@ -217,7 +217,7 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
       )
       rank_suffix <- if (input$use_padj) "padj" else "pvalue"
       pvaluesrank <-
-        do.call(pmin, c(corr_df[, endsWith(colnames(corr_df), rank_suffix)],
+        do.call(pmin, c(corr_df[, endsWith(colnames(corr_df), rank_suffix), drop = FALSE],
           na.rm = TRUE
         ))
       combined_df <- cbind(corr_df, pvaluesrank)
