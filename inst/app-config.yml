@@ -13,7 +13,6 @@ default:
   - geneModulesHeatmap
   - multiMeasureCorr
   - compareTrajGroups
-  - networkViewer
   - geneProjectionOverlay
   degModules:
   - degSummary

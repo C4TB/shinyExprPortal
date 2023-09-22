@@ -483,51 +483,6 @@ geneProjectionOverlay:
 
 </details>
 
-### networkViewer {#networkViewer}
-
-**Required packages**: [{visNetwork}](https://CRAN.R-project.org/package=visNetwork), [{igraph}](https://CRAN.R-project.org/package=igraph),
-
-This module allows exploring networks of genes as produced by methods such as ARACNe. It supports reading a list of edges that represent connected components of a whole network, that is, the list of edges should produce multiple separate subnetworks. The user selects a source file for the edges and a node; the module then displays the component that contains that node. A second source is also selected and, if it exists, a second component is shown next to the first. This enables comparing the connections between that node and other nodes at two time points, for example. The edge list file should contain names of nodes with a prefix corresponding to a type of sample category and and the name of the node in the suffix, for example, WHOLEBLOOD_IFNG. The edge list table can be a comma- or tab-separated values file without header and must contain columns corresponding to, in order: source name, target name and node weight.
-
-The configuration section for this module requires the specification of the `network_files` corresponding to the edge lists and a `sample_category` corresponding to what the prefixes in the nodes mean.  The following is a valid configuration for this module:
-
-```yaml
-networkViewer:
-  network_files:
-    - name: "First Month Network"
-      file: first_month.edge
-    - name: "Second Month Network"
-      file: second_month.edge
-  sample_category: TissueType
-```
-
-**Example:**
-![](networkviewer.png){width=800px}
-
-<details>
-  <summary>**Optional settings**</summary>
-
-It is possible to customize the appearance of the network nodes through their background and text colors:
-
-**custom_node_colors**: a named list of prefixes with the desired HTML-compatible colors
-**custom_font_colors**: a named list of prefixes with the desired HTML-compatible colors
-
-**Example of optional settings:**
-```yaml
-networkViewer:
-  ...
-  custom_node_colors:
-    Tissue1: "#FF0000"
-    Tissue2: "#FFFF00"
-    Tissue3: "#00FF00"
-  custom_font_colors:
-    Tissue1: "#FFFFFF"
-    Tissue2: "#000000"
-    Tissue3: "#FFFFFF"
-```
-  
-</details>
-
 ### singleGeneCorr {#singleGeneCorr}
 
 This module allows users to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. This module can be passed as a name to `link_to` in other modules.

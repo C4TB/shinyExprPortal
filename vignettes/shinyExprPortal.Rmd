@@ -118,10 +118,9 @@ Below is a summary of which modules work with the basic data files and which one
 
 **Additional files needed**
 
-- Differential expression models summary page: table of models, DE packages outputs (e.g. limma, deseq2. edgeR)
-- Differential expression models visualization: table of models, DE packages outputs (e.g. limma, deseq2. edgeR)
+- Differential expression models summary page: table of models, DE packages outputs (e.g. limma, deseq2, edgeR)
+- Differential expression models visualization: table of models, DE packages outputs (e.g. limma, deseq2, edgeR)
 - Gene modules heatmap: data frame with gene lists (WGCNA, genes of interest, etc.)
-- Network viewer (i.e. correlated gene modules as networks): edge lists for networks (e.g. ARACNe)
 - 2D gene projection (e.g. MDS, UMAP): data frame with 2D coordinates for all genes
 
 Check the [Full Configuration Guide](config.html) for details about each module and how to set up the additional files required by each of them.
