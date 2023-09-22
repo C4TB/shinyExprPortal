@@ -377,7 +377,8 @@ loadModels <- function(models_file,
     delim <- ifelse(fext == "csv", ",", "\t")
     models_table <- data.table::fread(file_path(data_folder, models_file),
       sep = delim,
-      data.table = FALSE
+      data.table = FALSE,
+      nThread = nthreads
     )
   }
   if (ncol(models_table) < 2) {
