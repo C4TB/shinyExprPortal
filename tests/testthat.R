@@ -5,8 +5,8 @@
 # Learn more about the roles of various files in:
 # * https://r-pkgs.org/testing-design.html#sec-tests-files-overview
 # * https://testthat.r-lib.org/articles/special-files.html
-
+Sys.setenv("OMP_THREAD_LIMIT" = 2)
 library(testthat)
 library(shinyExprPortal)
-
+data.table::setDTthreads(1)
 test_check("shinyExprPortal")
