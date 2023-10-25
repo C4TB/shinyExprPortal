@@ -56,7 +56,17 @@ geneProjectionOverlay_tab <- function(list_of_groups,
       ),
       verticalLayout(
         ## OUTPUTS
-        vegawidget::vegawidgetOutput(ns("scatterplot"), width = "auto"),
+        conditionalPanel(
+          condition = "input.list_of_groups.length >= 1",
+          ns = ns,
+          vegawidget::vegawidgetOutput(ns("scatterplot"), width = "auto")
+        ),
+        conditionalPanel(
+          condition = "input.list_of_groups.length == 0",
+          ns = ns,
+          p("Please select at least one group for overlay",
+            class = "shiny-output-error-validation")
+        ),
         conditionalPanel(
           condition = "output.show_heatmap == true",
           ns = ns,
@@ -126,6 +136,7 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
         fc[match(coordinates_data[[1]], names(fc))]
       # fc_list[[1]] can be "all_samples" or "subset"
       coordinates_data$mean_type <- fc_list[[1]]
+      validate(need(length(input$list_of_groups) >= 1, "Please select at least one group to display"))
       lv <- coordinates_data[[group_variable]] %in% input$list_of_groups
       coordinates_data[lv, ]
     })
