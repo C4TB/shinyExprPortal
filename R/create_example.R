@@ -53,7 +53,7 @@ create_example <- function(target_dir) {
     )
 
     utils::write.csv(measures_data,
-        file_path(dir, "measures_data.csv"),
+        file_path(target_dir, "measures_data.csv"),
         row.names = FALSE
     )
 
@@ -73,7 +73,7 @@ create_example <- function(target_dir) {
         )
 
     utils::write.csv(expression,
-        file_path(dir, "expression_matrix.csv"),
+        file_path(target_dir, "expression_matrix.csv"),
         row.names = TRUE
     )
 
@@ -86,7 +86,7 @@ create_example <- function(target_dir) {
     )
 
     utils::write.csv(lookup,
-        file_path(dir, "lookup_table.csv"),
+        file_path(target_dir, "lookup_table.csv"),
         row.names = FALSE
     )
 }
