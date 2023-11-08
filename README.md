@@ -20,7 +20,7 @@ The interface is designed for gene expression, but the computational
 methods are compatible with any matrix with samples in columns and
 entities, such as proteins, in rows.
 
-<img src="man/figures/example.png"/>
+<img src="man/figures/example2.png"/>
 
 For initial exploration, any expression matrix containing abundance or
 counts and data frames containing observed measures can be loaded in.
