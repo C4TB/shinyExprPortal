@@ -40,3 +40,4 @@ Suggests:
 VignetteBuilder: knitr
 URL: https://c4tb.github.io/shinyExprPortal/
 Config/testthat/edition: 3
+BugReports: https://github.com/C4TB/shinyExprPortal/issues
