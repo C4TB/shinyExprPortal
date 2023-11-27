@@ -8,8 +8,8 @@
 <meta name="description" content="shinyExprPortal">
 <title>Data Preparation Guide • shinyExprPortal</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Data Preparation Guide">
 <meta property="og:description" content="shinyExprPortal">
@@ -123,93 +123,93 @@ file, simply run:<br><code>saveRDS(matrix_object, "matrix_object.rds")</code></p
 <tbody>
 <tr class="odd">
 <td align="left">ABC</td>
-<td align="right">1.5491228</td>
-<td align="right">0.0530968</td>
-<td align="right">-0.4948121</td>
-<td align="right">-0.4627533</td>
-<td align="right">-0.1883311</td>
-<td align="right">-0.5234767</td>
+<td align="right">-0.7001511</td>
+<td align="right">-1.6573064</td>
+<td align="right">0.9325073</td>
+<td align="right">-0.4016764</td>
+<td align="right">0.2957714</td>
+<td align="right">-0.6768984</td>
 </tr>
 <tr class="even">
 <td align="left">BCD</td>
-<td align="right">-0.8987772</td>
-<td align="right">-0.7275725</td>
-<td align="right">0.8394528</td>
-<td align="right">0.7010681</td>
-<td align="right">0.2720971</td>
-<td align="right">1.1829669</td>
+<td align="right">-0.6562120</td>
+<td align="right">-0.5929695</td>
+<td align="right">0.1375098</td>
+<td align="right">-2.1431172</td>
+<td align="right">-1.2751126</td>
+<td align="right">0.0294541</td>
 </tr>
 <tr class="odd">
 <td align="left">CDE</td>
-<td align="right">0.7533106</td>
-<td align="right">-0.0249973</td>
-<td align="right">1.1841495</td>
-<td align="right">-0.0695050</td>
-<td align="right">1.0319621</td>
-<td align="right">0.5475033</td>
+<td align="right">-1.3555762</td>
+<td align="right">-0.0322137</td>
+<td align="right">0.5203044</td>
+<td align="right">0.1829352</td>
+<td align="right">-1.2137705</td>
+<td align="right">0.1102793</td>
 </tr>
 <tr class="even">
 <td align="left">DEF</td>
-<td align="right">0.2709793</td>
-<td align="right">0.2019791</td>
-<td align="right">0.0522640</td>
-<td align="right">-0.6375857</td>
-<td align="right">1.0905379</td>
-<td align="right">-1.2625930</td>
+<td align="right">1.8113077</td>
+<td align="right">-1.5884522</td>
+<td align="right">-0.3234335</td>
+<td align="right">0.9019996</td>
+<td align="right">-0.4161345</td>
+<td align="right">-1.0733703</td>
 </tr>
 <tr class="odd">
 <td align="left">EFG</td>
-<td align="right">-0.9704668</td>
-<td align="right">0.8772680</td>
-<td align="right">1.4023543</td>
-<td align="right">0.3562616</td>
-<td align="right">0.7593790</td>
-<td align="right">0.1607302</td>
+<td align="right">-0.0627798</td>
+<td align="right">1.4872318</td>
+<td align="right">1.0931955</td>
+<td align="right">0.3056091</td>
+<td align="right">1.9772215</td>
+<td align="right">-0.1190892</td>
 </tr>
 <tr class="even">
 <td align="left">FGH</td>
-<td align="right">0.2468323</td>
-<td align="right">-1.7786975</td>
-<td align="right">1.6304313</td>
-<td align="right">-1.1252489</td>
-<td align="right">-2.0396204</td>
-<td align="right">1.1202610</td>
+<td align="right">-1.6423745</td>
+<td align="right">-1.3684302</td>
+<td align="right">0.9782394</td>
+<td align="right">-0.2283084</td>
+<td align="right">-0.3332254</td>
+<td align="right">-1.1913556</td>
 </tr>
 <tr class="odd">
 <td align="left">GHI</td>
-<td align="right">0.2311652</td>
-<td align="right">1.9971883</td>
-<td align="right">0.9993096</td>
-<td align="right">-1.8816814</td>
-<td align="right">-0.2444803</td>
-<td align="right">0.4743551</td>
+<td align="right">1.1842835</td>
+<td align="right">-0.3542533</td>
+<td align="right">-0.9196000</td>
+<td align="right">-1.4401255</td>
+<td align="right">0.2209667</td>
+<td align="right">-0.1739077</td>
 </tr>
 <tr class="even">
 <td align="left">HIJ</td>
-<td align="right">3.1332353</td>
-<td align="right">1.2441624</td>
-<td align="right">-0.9127706</td>
-<td align="right">-0.0699520</td>
-<td align="right">-0.6266827</td>
-<td align="right">0.5748748</td>
+<td align="right">0.4637819</td>
+<td align="right">0.2758673</td>
+<td align="right">0.0225145</td>
+<td align="right">0.7243837</td>
+<td align="right">-0.4071297</td>
+<td align="right">-0.9925151</td>
 </tr>
 <tr class="odd">
 <td align="left">IJK</td>
-<td align="right">-1.4532593</td>
-<td align="right">0.2637898</td>
-<td align="right">-1.0318804</td>
-<td align="right">-0.2545659</td>
-<td align="right">-1.4562127</td>
-<td align="right">-0.5763725</td>
+<td align="right">0.4846335</td>
+<td align="right">-0.1660923</td>
+<td align="right">0.5854796</td>
+<td align="right">-0.5778617</td>
+<td align="right">1.3580690</td>
+<td align="right">0.3820960</td>
 </tr>
 <tr class="even">
 <td align="left">JKL</td>
-<td align="right">-1.1914738</td>
-<td align="right">1.2457021</td>
-<td align="right">-1.1927520</td>
-<td align="right">-0.0378381</td>
-<td align="right">1.0577250</td>
-<td align="right">-1.0639859</td>
+<td align="right">0.6458030</td>
+<td align="right">0.1316386</td>
+<td align="right">-1.8697697</td>
+<td align="right">-0.1543528</td>
+<td align="right">0.4905123</td>
+<td align="right">-0.8158405</td>
 </tr>
 </tbody>
 </table>
@@ -240,23 +240,23 @@ separator can be modified in the configuration file by setting
 <tbody>
 <tr class="odd">
 <td align="left">p01</td>
-<td align="right">183.3595</td>
-<td align="right">184.9651</td>
-<td align="right">72</td>
+<td align="right">223.8200</td>
+<td align="right">217.7193</td>
+<td align="right">32</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="even">
 <td align="left">p02</td>
-<td align="right">174.8209</td>
-<td align="right">164.1190</td>
-<td align="right">72</td>
+<td align="right">183.2417</td>
+<td align="right">156.3302</td>
+<td align="right">67</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="odd">
 <td align="left">p03</td>
-<td align="right">189.0180</td>
-<td align="right">168.4257</td>
-<td align="right">50</td>
+<td align="right">174.6947</td>
+<td align="right">197.0528</td>
+<td align="right">88</td>
 <td align="left">No</td>
 </tr>
 </tbody>
