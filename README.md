@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/C4TB/shinyExprPortal/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/shinyExprPortal)](https://CRAN.R-project.org/package=shinyExprPortal)
 <!-- badges: end -->
 
 *shinyExprPortal* is a configurable Shiny portal for the visual
@@ -36,15 +38,24 @@ A demo of the portal is available
 
 ## How to start
 
-You can install the latest version of the package using:
+The package relies on other packages from CRAN and Bioconductor. To
+ensure the installation goes smoothly, install BiocManager by running:
+
+``` r
+install.packages("BiocManager)
+```
+
+You can then install the latest version of the package using:
 
 ``` r
 install.packages("shinyExprPortal")
 ```
 
-Alternatively, you can install the current development version using:
+Alternatively, you can install the current development version using
+devtools (installing devtools first if necessary):
 
 ``` r
+install.packages("devtools")
 devtools::install_github("C4TB/shinyExprPortal", dependencies = TRUE)
 ```
 
