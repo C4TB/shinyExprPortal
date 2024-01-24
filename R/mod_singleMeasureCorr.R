@@ -42,7 +42,8 @@ singleMeasureCorr_tab <- function(sample_select,
     splitLayout(
       verticalLayout(
         wellPanel(
-          vars_select,
+          vars_select %>%
+            shinyhelper::helper(content = "singleMeasureCorr", size = "l"),
           tags$hr(),
           tags$b("Sample selection"),
           sample_select,

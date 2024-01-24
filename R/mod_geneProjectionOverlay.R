@@ -32,7 +32,8 @@ geneProjectionOverlay_tab <- function(list_of_groups,
     splitLayout(
       verticalLayout(
         wellPanel(
-          tags$b("Sample selection"),
+          tags$b("Sample selection") %>%
+            shinyhelper::helper(content = "geneProjectionOverlay", size = "l"),
           sample_select,
           tags$hr(),
           tags$b("Plot options"),

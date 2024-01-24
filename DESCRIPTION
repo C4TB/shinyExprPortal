@@ -26,7 +26,8 @@ Imports:
     qvalue,
     parallel,
     Rfast,
-    rlang
+    rlang,
+    shinyhelper
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

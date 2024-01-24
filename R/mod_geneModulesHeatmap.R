@@ -38,7 +38,8 @@ geneModulesHeatmap_tab <- function(categories,
             label = "Select category:",
             choices = categories,
             selected = categories[[1]]
-          ),
+          ) %>%
+            shinyhelper::helper(content = "geneModulesHeatmap", size = "l"),
           tags$hr(),
           tags$b("Sample selection"),
           sample_select,

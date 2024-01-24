@@ -50,7 +50,8 @@ multiMeasureCorr_tab <-
                 dropdownParent = "body",
                 onInitialize = I('function(){this.setValue("");}')
               )
-            ),
+            ) %>%
+              shinyhelper::helper(content = "multiMeasureCorr", size = "l"),
             tags$hr(),
             tags$b("Sample selection"),
             sample_select,
