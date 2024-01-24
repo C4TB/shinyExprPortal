@@ -38,7 +38,8 @@ degDetails_tab <- function(categories,
             label = "Select category:",
             choices = categories,
             selected = categories[[1]]
-          ),
+          ) %>%
+            shinyhelper::helper(content = "degDetails", size = "l"),
           radioButtons(
             ns("selected_model"),
             label = "Select model:",

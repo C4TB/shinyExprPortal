@@ -57,7 +57,8 @@ singleGeneCorr_tab <-
       splitLayout(
         verticalLayout(
           wellPanel(
-            gene_select,
+            gene_select %>%
+              shinyhelper::helper(content = "singleGeneCorr", size = "l"),
             tags$hr(),
             tags$b("Sample selection"),
             sample_select,

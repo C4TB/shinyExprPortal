@@ -43,7 +43,8 @@ cohortOverview_tab <-
             splitLayout(
                 verticalLayout(
                     wellPanel(
-                        h5("Profile settings"),
+                        h5("Profile settings") %>%
+                    shinyhelper::helper(content = "cohortOverview", size = "l"),
                         selectizeInput(
                             ns("profile_variable"),
                             label = "Select measures variable for trajectory:",
