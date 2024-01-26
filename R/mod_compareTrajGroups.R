@@ -37,7 +37,9 @@ compareTrajGroups_tab <-
             splitLayout(
                 verticalLayout(
                     wellPanel(
-                        gene_select,
+                        gene_select %>%
+                            shinyhelper::helper(content = "compareTrajGroups",
+                                                size = "l"),
                         vars_select,
                         tags$hr(),
                         tags$b("Sample selection"),
