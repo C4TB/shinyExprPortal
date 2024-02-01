@@ -24,6 +24,10 @@
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text cli_ol cli_alert_danger
 #' cli_alert cli_alert_success cli_alert_info cli_abort
 create_config_wizard <- function(target_dir) {
+    if (missing(target_dir)) {
+        stop(" The target_dir argument must be passed to the function. This is
+             the folder where your files have been placed.")
+    }
     if (!interactive()) {
         stop("create_config must be run in an interactive terminal")
     }
@@ -382,6 +386,9 @@ the package website for a complete module configuration guide.")
 #' @export
 create_config_template <-
     function(target_dir, filename = "config.yaml") {
+        if (missing(target_dir)) {
+            stop("target_dir must be passed as an argument to the function")
+        }
         config <- list(
             name = "REPLACE_WITH_PROJECT_NAME",
             logo = "PROJECT_LOGO.png",
