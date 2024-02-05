@@ -1,5 +1,7 @@
 ### Cohort overview
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module shows a map of temporal trajectories for a selected measure over time. Each patient is represented by a small line, and the lines are ordered in a left-to-right, top-bottom manner. The measures shown over time are defined by the authors of the study shared in this portal.
 
 <table>

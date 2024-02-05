@@ -123,7 +123,7 @@ data:
 
 **Sample and subject variables**
 
-The package does not make any assumptions about the order of the columns containing the subject or sample identifiers in the measures and lookup table files, so the names of these columns must be provided. Alternatively, name them as Subject_ID and Sample_ID and the package will look for these names by default.
+If your data contains many samples per subject, the package will not make any assumptions about the order of the columns of the subject or sample identifiers in the measures and lookup table files, so the names of these columns must be provided. Alternatively, name them as Subject_ID and Sample_ID and the package will look for these names by default.
 
 ```yaml
 subject_variable: Subject_ID
@@ -140,7 +140,7 @@ timesep: "."
 
 **Sample categories**
 
-The property `sample_categories` define metadata variables that are used in the interface to select subsets of samples. Each sample class should be defined through its corresponding variable name in the sample lookup file, a nice label to be displayed and a list of valid values for subsetting samples. The valid values can also be assigned nice labels for display through the format `Nice Label: originalValue`. In this case, hyphens or square brackets should not be used, as in the example below.
+The property `sample_categories` defines metadata variables that are used in the interface to select subsets of samples. Each sample category should be defined through (a) its corresponding variable name in the sample lookup file, (b) a nice label to be displayed and (c) a list of valid values for subsetting samples. The valid values can also be assigned nice labels for display through the format `Nice Label: originalValue`. In this case, hyphens or square brackets should not be used, as in the example below.
 
 Example:
 
@@ -161,7 +161,7 @@ sample_categories:
 <details>
 <summary>**Advanced setting: All subsets**</summary>
 
-An advanced option allows selecting all samples for a particular category. To do that, a custom pair of label and value `All: NA` can be used. This is useful to explore subsets of samples that do not have a sample-based partition (e.g. a subset of samples from patients with a high disease burden). 
+An advanced option allows the selection of all samples for a particular category. To do that, a custom pair of label and value `All: NA` can be used. This is useful to explore subsets of samples for a subject-based partition (e.g. a subset of samples from patients with a high disease burden). 
 
 Example:
 
@@ -184,7 +184,7 @@ global:
 
 **Default advanced settings**
 
-For some modules, the package includes default parameters for some computation methods, such as the correlation metric used. These can be overridden and displayed as options in the portal for users, but the defaults can also be defined in the configuration file and applied to all the modules that would look for them. The following properties can be defined:
+Some modules have default parameters for computation methods, such as the correlation metric. These parameters can be overridden and displayed as options in the portal for visitors, but the defaults can also be defined in the configuration file and applied across all the modules that use them. The following properties can be defined:
 
 - default_measures_outliers: automatically remove measures outliers (for each measure) with `5/95 percentiles` method or Tukey's `IQR` method. Package default is `No`. Affects correlation modules.
 - default_expression_outliers: automatically remove expression outliers (for each gene) with `5/95 percentiles` method or Tukey's `IQR` method. Package default is `No`. Affects correlation modules.
@@ -204,23 +204,23 @@ adjust_method: fdr
 
 ## Modules 
 
-The final part of the configuration file is the definition of the modules to be included in the portal.  These should be specified in the order that they should appear on the portal menu. The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can also be used as reference. The following modules and grouped modules are currently supported (grouped modules are pseudo-modules that define sub-menus on the portal):
+The final part of the configuration file is the definition of the modules that should be included in the portal. These should be specified in the order that they should appear on the portal menu. The function `show_available_modules()` can be used to check which modules are currently supported after the package is loaded; this guide is also up to date and can also be used as reference. The following modules and grouped modules are currently supported (grouped modules are pseudo-modules that appear in sub-menus on the portal):
 
 ```{r list_modules, echo=FALSE}
 shinyExprPortal::show_avaiable_modules()
 ```
-The package contains suggested dependencies when they are only needed by specific modules. This guide lists all the additional dependencies for each module. The other way to discover an additional dependency is to set up the configuration file and try to run the portal. If a package is missing, the portal will not run and you will be notified about which package dependency is missing.
+The package contains suggested dependencies when they are only needed by specific modules. This guide lists all these additional dependencies for each module. The other way to discover an additional dependency is to set up the configuration file and try to run the portal. If a package is missing, the portal will not run and you will be notified about which package dependency is missing.
 
-There are also optional settings supported by all modules, most of them for customization purposes.
+Many modules also have optional settings, often for customization.
 
 <details>
 <summary>**Optional settings supported by all modules**</summary>
 
 **title**  
-A custom name for the module can be defined for every module
+A custom name for the module can be defined for every module.
 
 **description**
-A description paragraph can be defined to instruct users on usage of a module or to provide additional information, such as descriptions of the data being visualized or links to external references.
+A description paragraph can be defined to instruct visitors on usage of a module or to provide additional information, such as descriptions of the data being visualized or links to external references.
 
 Example:
 
@@ -239,7 +239,7 @@ moduleName:
 
 **Required packages:** `{r2d3}`
 
-This module displays a grid of small line plots for each subject in the measures file. The line plots show each subjects' trajectory for various measures over time, with the line colors selected by the user from a set of variables.
+This module displays a grid of small line plots for each subject in the measures file. The line plots show each subjects' trajectory for various measures over time and viewers can select the line color from a set of variables defined in the configuration file.
 
 **Minimum configuration**
 
@@ -258,7 +258,7 @@ cohortOverview:
 
 **Optional required packages:** `[{RColorBrewer}](https://CRAN.R-project.org/package=RColorBrewer)`
 
-This module shows the combined expression and measure trajectory of subjects over time. The user can select one gene and one measure that was taken over time. The idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples for all time values defined by a `trajectory_category` are taken and filtered from a user selection based on the remaining `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`). The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the possible variables and the times are `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. The expression of the selected gene will also be taken using observations of samples in `m01` and `m2`. In the interface, users will be able to select from any of the variables listed under `compare_variables`.
+This module shows the combined expression and measure trajectory of subjects over time. Viewers can select one gene and one measure that was observed over time. The idea of the module is to split subjects in two or more groups using a `sidebyside_category` from the lookup table (e.g. two drug groups). Samples are initially filtered from a visitor selection following `subset_categories` (e.g. if the lookup table contains `DrugGroup`, `Time` and `Tissue`, the only remaining valid category here is `Tissue`, so visitors can select between different tissue types). Samples are further selected based on the time variable defined in the configuration file through `trajectory_category`, which is also a column in the lookup table. The measures to be paired with the samples are taken by combining `compare_variables` with the time-values from `trajectory_category`. For example, if `Platelets` is one of the variables listed as `compare_variables` and the times are `m01` and `m02`, the trajectory will be constructed from the observations of `Platelets_m01` and `Platelets_m02` in the measures table. The expression of the selected gene will also be taken using observations of samples at times `m01` and `m2`. In the interface, visitors can change the measure used for the trajectory from the list of `compare_variables`.
 
 **Minimum configuration**
 ```yaml
@@ -284,7 +284,7 @@ knitr::include_graphics("comparetraj.png")
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
-- **fit_method**: if `TRUE` or `AllowHide`, lets users choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
+- **fit_method**: if `TRUE` or `AllowHide`, lets visitors choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
 
 ***Example of optional settings**
 ```yaml
@@ -298,7 +298,7 @@ compareTrajGroups:
 
 ### degDetails {#degDetails}
 
-This module displays volcano plots and a table with the results of differential expression analysis exported by packages such as `limma`, `deseq2`, and `edgeR`. It depends on a separate table that categorizes the DE results files. This table should contain a high level category variable that identifies different types of models and a `File` column with the corresponding file names. Other columns in this table should partially match the sample classes defined in global, when meaningful. The following is a valid minimal model results table:
+This module displays a volcano plot and a table with the results of differential expression analysis exported by packages such as `limma`, `deseq2`, and `edgeR`. It requires a tabular file that organizes the results of differential expressions and that should contain a high level category variable that identifies different types of models and a `File` column with the corresponding file names. The following is a valid minimal model results table:
 
 ```{r simple_models, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -307,7 +307,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-The following is an example of a more layered model setup:
+The following is an example of a more layered model setup, with two files per set of models (two files for Linear and two files for Nonlinear):
 
 ```{r models, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -318,7 +318,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-The configuration for this module requires a `category_variable` to identify the models and a `models` file with the table; this file can be a tab-separated or comma-separated values file. Individual model results should be placed inside a `models` folder.
+The configuration for this module requires a `category_variable` to group the models and a `models` file pointing to the table; this file can be a tab-separated or comma-separated values file. Individual model results should be placed inside a `models` subfolder.
 
 **Minimum configuration:**
 ```yaml
@@ -353,7 +353,7 @@ degSummary:
 
 **Required packages:** `{RColorBrewer}`
 
-This modules enables visualizing a subset of genes, e.g. a co-expression module, cluster or signature, related to a downstream analysis method such as regulatory networks. It displays a heatmap with the expression of the genes from a user-selected module and scatterplots with the association between the module eigengene and measures defined in the configuration file. Gene modules must be specified in a table with a model/analysis category or source, valid sample categories associated with that module, module name and a list of associated genes is required. It is also possible to include annotations in the heatmap by defining a list of valid measures or categorical variables that the user can select. The following is an example of a valid modules table:
+This modules enables the visualization of a subset of genes, e.g. a co-expression module, cluster or signature, related to a downstream analysis method such as regulatory networks. It displays a heatmap with the expression of the genes from a viewer-selected module and scatterplots with the association between the module eigengene and measures defined in the configuration file. Gene modules must be specified in a table with a model/analysis category or source, valid sample categories associated with that module, module name and a list of associated genes is required. It is also possible to include annotations in the heatmap by defining a list of valid measures or categorical variables that the viewer can select. The following is an example of a valid modules table:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -368,7 +368,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-This module also support generic lists of genes that can be made visible to any selection of subsets of samples. To define lists of genes for this purpose, you can use `*` as a wildcard in a sample category column. The following is an example of that in hypothetical co-expression modules (e.g. outputs from WGCNA or CEMiTool), which allows the user to explore the same modules for any subset of Time and Drug.
+This module also support generic lists of genes that can be made visible to any selection of subsets of samples. To define lists of genes for this purpose, you can use `*` as a wildcard in a sample category column. The following is an example of that in hypothetical co-expression modules (e.g. outputs from WGCNA or CEMiTool), which allows the viewer to explore the same modules for any subset of Time and Drug.
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -382,7 +382,7 @@ knitr::kable(data.frame(
 ))
 ```
 
-The configuration requires a `modules_table` pointing to the table file above, a `category_variable` that identifies the table column with highest-level category of modules, a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column that contains a list of gene symbols separated by comma. In the interface, users will select a Category and subsets from the remaining sample categories on the table (e.g. above, Time and Drug) to see a list of modules associated with that category and sample classes. An optional ordering column can be included in the table, and set in the config file in `rank_variable`, to choose a custom appearance order for each modules, as in the example above.
+The configuration requires a `modules_table` that points to the table file above, a `category_variable` that identifies the table column with highest-level category of modules, a `modules_variable` that identifies the table column with the names of the modules and a `genes_variable`, which identifies the table column that contains a list of gene symbols separated by comma. In the interface, viewers will select a Category and subsets from the remaining sample categories on the table (e.g. above, Time and Drug) to see a list of modules associated with that category and sample classes. An optional ordering column can be included in the table, and set in the config file in `rank_variable`, to choose a custom appearance order for each modules, as in the example above.
 
 **Minimum configuration**
 ```yaml
@@ -398,9 +398,9 @@ geneModulesHeatmap:
 
 <details>
   <summary>**Optional settings**</summary>
-**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
+**subset_categories:** list of categories to display as filter. This option should be used if one or more sample categories from the lookup table should not be used to subset samples, such as pseudo-categories that partition subjects.
 **scatterplot_variables**: a list of measures to correlate with the module eigengene and display in scatterplots similar to those in the single gene module.
-**annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should match the measures table, independent of their timepoint.  
+**annotation_variables**: a list of measures can be supplied so that viewers can add annotations above the heatmap. The variable names should match the measures table, independent of their timepoint.  
 **custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
 **annotation_range:** for numeric variables that share a theoretical range of values, but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve.  
 **custom_heatmap_palette**: a custom RColorBrewer palette can be provided to override the default `RdBu` palette used in the heatmap.
@@ -434,7 +434,7 @@ geneModulesHeatmap:
 
 ### geneProjectionOverlay {#geneProjectionOverlay}
 
-This module allow users to explore expression variation in pre-computed clusters of genes across subsets of subjects, following a pre-computed 2D projection of the genes in the whole dataset. This module was developed considering a 1:1 subject-to-sample ratio rather than multiple samples per subject. It display the 2D projection in two scatterplots: one displays the points colored by the group membership and the other displays the mean expression of the gene relative to the mean expression of all genes (i.e. a fold change). Sample categories can be used to define subsets of samples based on a characteristic of the subjects, such as a disease activity measure. The scatterplot will then show the expression in variation for that subset only. The coordinates file must contain gene symbols, two columns for position and a column for group. The first three must appear in that exact order, as the following:
+This module allow viewers to explore the variation of expression between pre-computed clusters of genes across subsets of subjects, following a pre-computed 2D projection of the genes from the whole dataset. This module was developed considering a 1:1 subject-to-sample scenario rather than multiple samples per subject. It display the 2D projection in two scatterplots: one scatteprlot shows the points colored by the group membership and the other shows the mean expression of the gene relative to the mean expression of all genes (i.e. a fold change). Sample categories can be used to define subsets of samples based on a characteristic of the subjects, such as a disease activity measure. The scatterplot will then show the expression in variation for that subset only. The coordinates file must contain gene symbols, two columns for position and a column for group. The first three must appear in that exact order, as the following:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(data.frame(
@@ -462,9 +462,9 @@ geneProjectionOverlay:
   
 The module also includes a heatmap to view the individual expression of samples for the genes that belong to a selected group, and it can display annotations based on the measures table. These should be defined through `annotation_variables`, and, as with the previous module, there is also the option of defining custom colors through `custom_annotation_colors` and fix variable ranges through `annotation_range`.
 
-**annotation_variables**: a list of measures can be supplied so that users can add annotations above the heatmap. The variable names should fully match the measures table names, including the time point.
-**custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors for the annotations. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
-**annotation_range:** for numeric variables that share a theoretical range of values but which range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve, or blood samples.
+**annotation_variables**: a list of measures can be supplied so that viewers can add annotations above the heatmap. The variable names should fully match the measures table names, including the time point suffix.
+**custom_annotation_colors:** by default, the heatmap package (the plotly-powered iheatmapr) will automatically assign colors to the annotation variables. Alternatively, an RColorBrewer palette or a list of colors (e.g. hex values) can be assigned to selected individual variables (a variable with no custom palette will use a default palette). For continuous variables, interpolation will be applied to a list of colors.  
+**annotation_range:** for numeric variables that share a theoretical range of values but this range varies in observed data, it is possible to define individual ranges so that the color scale is the same across annotations. For each annotation variable, a minimum and maximum value can be provided through a list. A common use case is for disease activity variables with a maximum value that decreases over time as patients improve, or blood samples.
 
 **Example of optional settings:**
 
@@ -485,7 +485,7 @@ geneProjectionOverlay:
 
 ### singleGeneCorr {#singleGeneCorr}
 
-This module allows users to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. This module can be passed as a name to `link_to` in other modules.
+This module allows viewers to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. This module can be passed as a name to `link_to` in other modules.
 
 **Minimum configuration**
 ```yaml
@@ -503,16 +503,16 @@ singleGeneCorr:
 <details>
 <summary>**Optional settings**</summary>
 
-**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
-**color_variables**: a list of variables, either numeric or discrete, can be supplied so that users can assign a color to subjects.
+**subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be used to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.
+**color_variables**: a list of variables, either numeric or discrete, can be supplied so that vi can assign a color to subjects.
 **custom_point_colors**: optionally, for the color variables, it is possible to supply custom colors as: valid [Vega schemes](https://vega.github.io/vega/docs/schemes/), list of colors or named list of colors (see DrugNaive in the example below).
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
-- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **fit_method**: if `TRUE` or `AllowHide`, lets users choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
+- **correlation_method**: if `TRUE`, allows visitors to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows visitors to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows visitors to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **fit_method**: if `TRUE` or `AllowHide`, allows visitors to choose a regression method from the available ones (`linear`, `quadratic` or `cubic`). `AllowHide` includes a None option in the interface.
 
 
 **Example of optional settings:**
@@ -539,7 +539,7 @@ singleGeneCorr:
 
 ### singleMeasureCorr {#singleMeasureCorr}
 
-This module allows users to view a table with the correlation between one single measure and all genes from a selected subset. The module can be set up with a list of measures from which users can select in the interface and the optional advanced settings of correlation method and outlier removal. As a default, the module can be defined simply as TRUE to include all numeric measures and no advanced settings:
+This module allows viewers to explore a table with the correlation between one single measure and all genes from a subset of samples. The module can be set up with a list of measures from which viewers can select in the interface and the optional advanced settings for correlation method and outlier removal. As a default, the module can be defined simply as TRUE to include all numeric measures and no advanced settings:
 
 **Minimum configuration**
 ```yaml
@@ -563,13 +563,13 @@ singleMeasureCorr:
   <summary>**Optional settings**</summary>
   
 **subset_categories:** list of categories to display as filter. To be used if not every sample category in the lookup table should be use to create subsets of samples. For example, if a pseudo-category was created to split patients based on a clinical measure, you may not want to show that filter in every module in the app.  
-**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
+**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the visitor. The module linked to should also support this functionality for this setting to work.
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:
 
-- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+- **correlation_method**: if `TRUE`, allows visitors to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows visitors to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows visitors to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
 
 **Example of optional settings:**
 ```yaml
@@ -585,7 +585,7 @@ singleMeasureCorr:
 
 ### multiMeasureCorr {#multiMeasureCorr}
 
-This module allows users to view a heatmap and a table with the most significantly correlated genes across a predefined set of measures. The genes are taken from a subset selected by user, based on the sample categories. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
+This module allows visitors to view a heatmap and a table with the most significantly correlated genes across a predefined set of measures. The genes are taken from a subset selected by visitors, based on the sample categories. This module requires the specification of `heatmap_variables`, with multiple named lists of variables.
 
 **Minimum configuration**
 ```yaml
@@ -603,13 +603,13 @@ multiMeasureCorr:
 
 **custom_heatmap_scheme**: a valid [Vega schemes](https://vega.github.io/vega/docs/schemes/) can be provided to override the default `redblue` scheme.
 
-**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the user. The module linked to should also support this functionality for this setting to work.
+**link_to**: name of another module to create a link to in the results table. Every gene on the table will be a clickable link to the module, with the subset matching the ones selected by the visitor. The module linked to should also support this functionality for this setting to work.
 
 **advanced**: the following advanced options can be defined, otherwise the defaults described earlier in this guide will be used:  
 
-- **correlation_method**: if `TRUE`, allows users to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
-- **expression_outliers**: if `TRUE`, allows users to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
-- **measures_outliers**: if `TRUE`, allows users to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
+- **correlation_method**: if `TRUE`, allows visitors to alternate between Pearson, Spearman and Kendall methods for computing correlation.  
+- **expression_outliers**: if `TRUE`, allows visitors to exclude expression outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.  
+- **measures_outliers**: if `TRUE`, allows visitors to exclude measures outliers from scatterplots, either through Tukey's IQR range filtering, 5/95 percentiles or none.
   
 **Example of optional settings:**
 ```yaml

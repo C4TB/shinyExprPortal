@@ -14,21 +14,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-Deploying a portal using the package relies on two data files -- an expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that tells the package how to display the portal. For the simple case where each subject in the dataset only has one sample, there is a command-line wizard that will guide you step-by-step through the creation of the configuration file. Alternatively, there is a function that creates an empty configuration file with placeholders for the required properties, which can then be edited in any text editor. For more complex cases, such as multiple samples per subject, the [Data Preparation Guide](dataprep.html) vignette describes how to prepare the data to use with the package.
+The deployment of a portal relies on two data files -- an expression matrix and a table with observed measures (e.g. clinical measures) -- and a configuration file that defines which modules should be displayed in the portal. In the simplest case, the data will have only one sample per subject -- an interactive command-line wizard can guide you step-by-step through the creation of the configuration file. If your data contains more than one sample per subject, for example, for different time points, the best approach is to run a function that creates an empty configuration file with placeholders for the fields in the configuration file that must be completed. This configuration file can then be modified in an editor such as RStudio or any other text editor. If your data has multiple samples per subject, you should also check the [Data Preparation Guide](dataprep.html) vignette, which describes the expected format for each data file.
 
 ## Using the wizard
 
-Before starting the wizard, ensure you do the following
+The use of the interactive wizard requires placing files in the correct folders before starting. The following steps guide you through this. 
 
 1. **Create a folder where the app will be located**
 
-If using RStudio, create a new project to facilitate the rest of the setup.
+To facilitate the organization and deployment of the portal, it is better to create a folder that contains only the files that are related to the project. If you use RStudio, you may prefer to create a project.
 
-2. **Place an expression matrix file in the project folder**
+2. **Copy the expression matrix file to the project folder**
 
-With HGNC or similar gene names in rows and samples in columns. The file can be a .csv, .tsv/txt or .rds file. If using an .rds file, save it as a `matrix` object, not a `data.frame`.
+The matrix can be a CSV, TSV (tab-separated columns) or .rds file with a `matrix` object (not a `data.frame`). The matrix should have HGNC or similar gene names in rows and sample identifiers in columns.
 
-Go to the next step if your expression matrix is structured in this way and you saved it in the project folder:
+If your matrix has the following format, you can move on to the next step:
 
 ```{r, eval=TRUE, echo = FALSE}
 x <- t(sapply(1:10, function(x) rnorm(6)))
@@ -41,11 +41,11 @@ colnames(x) <- smp_ids
 knitr::kable(as.data.frame(x))
 ```
 
-3. **Place a measures table file in the project folder**
+3. **Copy a measures table file to the project folder**
 
-With variables in columns and subjects in rows. The subjects must be in the same order as their samples in the expression matrix. Again most formats can be used, but if using a .rds file, the measures file must be saved as a `data.frame`.
+This table can be a CSV, TSV or .rds file with a `data.frame` object. In this file, each row corresponds to a different subject and the order must match the order of samples in the expression matrix (if your data contains more than one sample per subject, you should follow the [Data Preparation Guide](dataprep.html) and not follow these steps). The first column of this table should be named and contain subject or sample identifiers.
 
-Go to the next step if your measures table is structured in this way and you saved it in the project folder:
+If your measures table has the following format, you can move on to the next step:
 
 ```{r, eval = TRUE, echo = FALSE}
 knitr::kable(
@@ -57,25 +57,25 @@ knitr::kable(
 )
 ```
 
-4. *Optionally place a metadata table file in the folder*
+4. *Optionally copy a metadata table file to the folder*
 
-A table that contains sample information such as control group, age, etc. This will add radio buttons on the interface for selecting subsets based on these variables. It should also follow a one row per subject/sample format.
+This table should also be in any the formats above and should not have any sample or subject identifier columns. The columns of this table will be used to populate the interface with radio buttons to allow sample subset selection. It should also follow a one row per subject/sample format.
 
 Finally,
 
 5. **In R, load the package and run `create_config_wizard()`**
 
-If you are not using an RStudio project, ensure that the folder with the files is the current working directory (check with `getwd()`).
+If you are not using an RStudio project, ensure that the folder with the files is the current working directory. You can check the current working directory with `getwd()` and use `setwd("path/to/folder")` to modify it.
 
-*The wizard will inform you about each stage and ask questions to set up the configuration file*. It will also wait when you are required to do additional actions such as creating folders and moving files. Depending on your choices, at least two files will have been created: `app.R` and `config.yaml`.
+*The wizard will inform you about what each step is doing and will ask you questions about names of files and other details to create the configuration file*. It will also wait when you are required to do additional actions such as creating folders and copying files. Depending on your choices, at least two files will have been created when you finish it: `app.R` and `config.yaml`.
 
-6. **Open and run the contents of app.R to test the portal**
+6. **Open and execute the code of app.R to test the portal**
 
-You can also copy the project folder to a Shiny server or use the [rsconnect](https://rstudio.github.io/rsconnect/) package to deploy it to shinyapps.io.
+Still using R (or RStudio) you can source the app.R file to run the code and open the portal on your browser. You can also copy the project folder to a Shiny server or use the [rsconnect](https://rstudio.github.io/rsconnect/) package to deploy it to shinyapps.io.
 
 ## Creating a config template
 
-Alternatively, you can run `create_config_template()` to create a config.yaml file that will contain placeholders that you can edit. If you decide on this method, you will have to create a lookup table file, by default named `lookup_table.csv`, which matches samples with subjects in the measures table and looks like the following:
+If your data is more complex than the case outlined above, you can run `create_config_template()` to create a config.yaml file that will contain placeholder names to be replaced. If you decide to use this method, you will have to create a lookup table file, by default named `lookup_table.csv`, which matches samples with subjects in the measures table and looks like the following:
 
 ```{r lookup_example, echo=FALSE}
 print(data.frame(
@@ -95,19 +95,19 @@ sample_categories:
       - control
 ```
 
-In the portal, this will appear as:
+In the modules of the portal that allow the selection of subset of samples, the configuration above will appear as the following control: 
 
 ![](samplecat-example.png){width=33%}
 
-### Adding modules
+### Including new modules in the configuration
 
-Once the config.yaml file is created, you can edit it to modify the setup of modules that are already defined or add new ones. The modules included in the package vary between their requirements and aims: some of them are more exploratory and only require setting them up in the configuration file, while others were designed to help showcase and explore results of analysis. If you have computed sets of genes using a package such as WGCNA, you can create a table to load them into the geneModulesHeatmap module, for example. In the current version, the following modules are available:
+After the config.yaml file has been created, you can edit it to modify the setup of modules that have already been defined or include new ones. The modules available in the package vary between their requirements and aims: some of them are more exploratory and only require changes to the configuration file, while others were designed to help showcase and explore results of analysis. If you have computed sets of genes using a package such as WGCNA, you can create a table to load them into the geneModulesHeatmap module, for example. In the current version, the following modules are available:
 
 ```{r show_av}
 shinyExprPortal::show_available_modules()
 ```
 
-Below is a summary of which modules work with the basic data files and which ones require additional files:
+The modules are split in their requirements as follows:
 
 **No additional files needed**
 
@@ -125,9 +125,9 @@ Below is a summary of which modules work with the basic data files and which one
 
 Check the [Full Configuration Guide](config.html) for details about each module and how to set up the additional files required by each of them.
 
-### Deploying it remotely
+### Deploying the portal remotely
 
-You can deploy the app in your Posit/RStudio Connect server or, alternatively, in the public shinyapps.io website (note that the app will be public under the free plan). You can follow the [guide](https://shiny.rstudio.com/articles/shinyapps.html) to set up your account and install the required packages. The only other requirement to make it work is to modify the app.R file to include the optional dependencies for each module (as listed in the configuratoin guide).
+You can deploy the app in your Posit/RStudio Connect server or in the public shinyapps.io website (note that you cannot password-protect the portal under the free plan). You can follow the [guide](https://shiny.rstudio.com/articles/shinyapps.html) to set up your account and install the required packages. The only other requirement is to change the app.R file by including the optional dependencies for each module (as listed in the configuration guide).
 
 For example, the original app.R would look like this:
 
@@ -136,7 +136,7 @@ library(shinyExprPortal)
 run_app("config.yaml")
 ```
 
-If you want to use the geneModulesHeatmap module, for visualizing heatmaps of lists of genes, you must also have the RColorBrewer installed. To deploy in shinyapps.io, you must then import it like in the example below:
+If you want to use the geneModulesHeatmap module, to visualize heatmaps of lists of genes, you must also have the RColorBrewer installed. To deploy it in shinyapps.io, you must then import it as in the example below:
 
 ```{r changed, eval=FALSE}
 library(shinExprPortal)

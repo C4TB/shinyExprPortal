@@ -24,6 +24,10 @@
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text cli_ol cli_alert_danger
 #' cli_alert cli_alert_success cli_alert_info cli_abort
 create_config_wizard <- function(target_dir) {
+    if (missing(target_dir)) {
+        stop(" The target_dir argument must be passed to the function. This is
+             the folder where your files have been placed.")
+    }
     if (!interactive()) {
         stop("create_config must be run in an interactive terminal")
     }
@@ -129,7 +133,9 @@ the package website for a complete module configuration guide.")
 
     cli::cli_text("If you have a separate file with metadata separate from the
                 measures, enter the name of the file. Leave it blank if you
-                don't have one.")
+                don't have one. The metadata file should have one row per
+                 subject, in the samer order of the measures and no
+                  identifier columns.")
 
     metadata_file <- readline("Enter name of sample metadata file:")
 
@@ -236,6 +242,7 @@ the package website for a complete module configuration guide.")
         cli::cli_alert_success("Done!")
     }
 
+    if (continue_yn == "y") {
     cli::cli_h3("Correlation modules")
 
     cli::cli_text("The correlation modules will be set up to include all
@@ -343,6 +350,7 @@ the package website for a complete module configuration guide.")
     cli::cli_alert("Creating {.file config.yaml} file in {.file {target_dir}}")
     yaml::write_yaml(config, file.path(target_dir, "config.yaml"))
     cli::cli_alert_success("Done!")
+    }
     Sys.sleep(1)
     cli::cli_alert("Creating {.file app.R} file in {.file {target_dir}}")
     app_r <- file(file_path(target_dir, "app.R"))
@@ -382,6 +390,9 @@ the package website for a complete module configuration guide.")
 #' @export
 create_config_template <-
     function(target_dir, filename = "config.yaml") {
+        if (missing(target_dir)) {
+            stop("target_dir must be passed as an argument to the function")
+        }
         config <- list(
             name = "REPLACE_WITH_PROJECT_NAME",
             logo = "PROJECT_LOGO.png",

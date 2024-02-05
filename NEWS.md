@@ -8,6 +8,11 @@
 
 - Corrected Bioconductor package dependency (#136)
 
+### DOCUMENTATION
+
+- Edited vignettes for better reading (#143)
+- Added friendlier error messages to functions that require target_dir
+
 # shinyExprPortal 1.0.1
 
 - Plots not shown when no groups are selected in overlay module (#131)

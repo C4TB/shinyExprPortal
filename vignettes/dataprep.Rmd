@@ -14,11 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-The package was developed to support the most common data shapes and file formats used in bioinformatics. This guide describes how each filed used by the portal should be structured.
+The package was developed to support the most common data shapes and file formats used in bioinformatics. This guide describes how to structure each file used by the portal.
 
 **Expression matrix**
 
-The expected format for matrices contains sample identifiers in columns and symbols in rows. The **best** format for the portal is saving an R object of matrix type as an .rds file because it will load faster, although it is also possible to save the matrix as a CSV or TSV file. If using the latter, ensure that the first row (with exception of the first column) contain the sample identifiers and that the first column contain the transcript identifiers.
+The expected format for a matrix is sample identifiers in columns and symbols in rows. The optimal file format for the portal is an R object of matrix type saved as an .rds file, because it will load faster, although it is also possible to save the matrix as a CSV or TSV file. If using the latter, ensure that the first row (with exception of the first column) contain the sample identifiers and that the first column contains the transcript identifiers.
 
 > **Saving an RDS file**: to export a matrix as an rds file, simply run:  
 `saveRDS(matrix_object, "matrix_object.rds")`
@@ -38,9 +38,9 @@ knitr::kable(as.data.frame(x))
 
 **Measures table**
 
-The measures table follows the format of one row per subject (even if they have more than one sample collected) with the measures across columns. A data.frame or tibble object can be saved in an .rds file and used, otherwise CSV or TSV files are also supported.
+The measures table follows the format of one row per subject (even if they have more than one sample collected) with the measures across columns. A data.frame can be saved in an .rds file, but CSV or TSV files are also supported.
 
-Measures collected over time should be represented in separate columns, with the convention (enforced by default) of a time code as a suffix for measure names, separated by underscore (`_`) -- this means that underscore cannot be used in long measure names as well. For example, for disease activity collected over four time points, the expected names are: diseaseActivity_Baseline, diseaseActivity_Week1, diseaseActivity_Week2 and diseaseActivity_Week3. By default, it is invalid to use a name such as Disease_Activity_Baseline. The time separator can be modified in the configuration file by setting `timesep` to the desired separator.
+Measures collected over time should be represented in separate columns, with the convention (enforced by default) of a time code as a suffix for measure names, separated by underscore (`_`) -- this means that underscore cannot be used in long measure names as well. For example, for disease activity collected over four time points, the expected names are: diseaseActivity_Baseline, diseaseActivity_Week1, diseaseActivity_Week2 and diseaseActivity_Week3. Using the default settings, it is invalid to use a name such as Disease_Activity_Baseline. The time separator can be modified in the configuration file by setting `timesep` to the desired separator.
 
 The following is a valid example of a measures table:
 
@@ -56,9 +56,9 @@ knitr::kable(
 
 **Lookup table**
 
-For datasets where a subject has more than one sample (e.g. samples over time, from different tissues or combinations thereof), a lookup table should be constructed and saved as a data.frame or tibble format in rds, CSV or TSV. 
+For datasets where a subject has more than one sample (e.g. samples over time, from different tissues or combinations thereof), a lookup table should be constructed and saved as a data.frame in an .rds file, CSV or TSV.
 
-This table will map subject identifiers to sample identifiers, with the expression matrix containing data for *all* samples in the dataset. The table should also contain metadata that allows selection of groups of samples. For example, if subjects and samples vary on time, drug groups and tissues, the lookup table should have one column for each category. The following is an example of such a table:
+This table maps subject identifiers to sample identifiers, with the expression matrix containing data for *all* samples in the dataset. The table should also contain metadata that allows subsetting samples. For example, if subjects and samples vary over time, drug groups and tissues, the lookup table should have one column for each category. The following is an example of such a table:
 
 ```{r, eval=TRUE, echo = FALSE}
 knitr::kable(data.frame(Sample_ID = smp_ids,
@@ -69,17 +69,17 @@ knitr::kable(data.frame(Sample_ID = smp_ids,
 )
 ```
 
-In the case above, patients p01 and p02 belong to drug group d1, while patient p03 belongs to group d2. All patients have samples collected at months 1 and 2 (encoded as m01 and m02), and all samples are from the same tissue (A). Note that, in this example, drug group differentiates samples from different subjects, but not necessarily samples from the same subject.
+In the case above, patients p01 and p02 belong to drug group d1, while patient p03 belongs to group d2. All patients have samples collected at months 1 and 2 (encoded as m01 and m02), and all samples are from the same tissue (A). In this example, drug groups samples from different subjects (i.e. there is no overlap of subjects between the two drug groups).
 
-The lookup table can also be enriched with other characteristics of subjects that can be use to partition them, such as age, gender, or others. Outputs of methods such as clustering can also be added to the table: this enables exploring, for example, correlations in different clusters, or comparing trajectories across different clusters.
+The lookup table can also be enriched with other characteristics of subjects that can be use to partition samples, such as age, sex, or others. Outputs of methods such as clustering can also be added to the table: this enables the exploration of correlations in different clusters, or comparing trajectories across different clusters, for example.
 
 ### Validation checks
 
-The package does a very lightweight validation of the loaded files, only checking if subjects and samples match. It does not ensure that the correct transformations have been applied to the expression data, nor does it warn about or modify missing data -- in modules where expression is paired with a measure, if a subject's measure is missing that will be excluded from plots and calculations that include that measure.
+The package does a very lightweight validation of the loaded files, only checking if subjects and samples match. It does not ensure that the correct transformations have been applied to the expression data, nor does it warn about or modify missing data -- a subject is not included in calculations if they have a missing value for a particular measure.
 
 The following checks ARE made:
 
-**Matching samples and subjects**: the package will confirm that every sample in the expression matrix is matched to at least one subject in the lookup table. It will also ensure that all subjects in the measures table match to at least one sample in the lookup table. That is, there can be no excess of samples or subjects in each table.
+**Matching samples and subjects**: the package will confirm that every sample in the expression matrix is matched to at least one subject in the lookup table. It also checks that all subjects in the measures table match to at least one sample in the lookup table. That is, there can be no excess of samples or subjects in each table.
 
 **Matrix format:** if using an .rds file, the package will check that the expression matrix was indeed saved as a matrix object in the rds file. This is to ensure that the rownames are read properly.
 
@@ -87,7 +87,7 @@ The following checks ARE made:
 
 ### Differential expression analysis results
 
-The package includes two modules to showcase results of differential expression analysis (see [config](config.html) for more details). These modules will read files created using `limma`, `edgeR` or `deseq2`. All files should be saved with column names and the column names must not be changed -- the only exception is you want to mix models from different packages, then you should rename the columns so that all results have the same column names (e.g. p-values are identified in the same way across all files).
+The package includes two modules to showcase results of differential expression analysis (see [config](config.html) for more details). These modules read files created using `limma`, `edgeR` or `deseq2`. All files should be saved with column names and the column names must not be changed -- the only exception is you want to mix models from different packages, then you should rename the columns so that all results have the same column names (e.g. p-values are identified in the same way across all files).
 
 These modules require the creation of a table that lists all model results and they support the use of additional columns in the table to organize results from different types of models or subsets of samples. All model results file should be placed into a `models` folder within the project folder.
 
