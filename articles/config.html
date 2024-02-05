@@ -182,11 +182,12 @@ for more details).</p>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">expression_matrix</span><span class="kw">:</span><span class="at"> matrix.csv</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
 <p><strong>Sample and subject variables</strong></p>
-<p>The package does not make any assumptions about the order of the
-columns containing the subject or sample identifiers in the measures and
-lookup table files, so the names of these columns must be provided.
-Alternatively, name them as Subject_ID and Sample_ID and the package
-will look for these names by default.</p>
+<p>If your data contains many samples per subject, the package will not
+make any assumptions about the order of the columns of the subject or
+sample identifiers in the measures and lookup table files, so the names
+of these columns must be provided. Alternatively, name them as
+Subject_ID and Sample_ID and the package will look for these names by
+default.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subject_variable</span><span class="kw">:</span><span class="at"> Subject_ID</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_variable</span><span class="kw">:</span><span class="at"> Sample_ID</span></span></code></pre></div>
 <p><strong>Time separator</strong></p>
@@ -196,14 +197,14 @@ measures names. While the default is <code>_</code>,
 this is only used in the <code>compareTrajGroups</code> module.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">timesep</span><span class="kw">:</span><span class="at"> </span><span class="st">"."</span></span></code></pre></div>
 <p><strong>Sample categories</strong></p>
-<p>The property <code>sample_categories</code> define metadata variables
-that are used in the interface to select subsets of samples. Each sample
-class should be defined through its corresponding variable name in the
-sample lookup file, a nice label to be displayed and a list of valid
-values for subsetting samples. The valid values can also be assigned
-nice labels for display through the format
-<code>Nice Label: originalValue</code>. In this case, hyphens or square
-brackets should not be used, as in the example below.</p>
+<p>The property <code>sample_categories</code> defines metadata
+variables that are used in the interface to select subsets of samples.
+Each sample category should be defined through (a) its corresponding
+variable name in the sample lookup file, (b) a nice label to be
+displayed and (c) a list of valid values for subsetting samples. The
+valid values can also be assigned nice labels for display through the
+format <code>Nice Label: originalValue</code>. In this case, hyphens or
+square brackets should not be used, as in the example below.</p>
 <p>Example:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_categories</span><span class="kw">:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name</span></span>
@@ -217,11 +218,11 @@ brackets should not be used, as in the example below.</p>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
 <details><summary><strong>Advanced setting: All subsets</strong>
-</summary><p>An advanced option allows selecting all samples for a particular
-category. To do that, a custom pair of label and value
+</summary><p>An advanced option allows the selection of all samples for a
+particular category. To do that, a custom pair of label and value
 <code>All: NA</code> can be used. This is useful to explore subsets of
-samples that do not have a sample-based partition (e.g. a subset of
-samples from patients with a high disease burden).</p>
+samples for a subject-based partition (e.g. a subset of samples from
+patients with a high disease burden).</p>
 <p>Example:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span><span class="kw">:</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_classes</span><span class="kw">:</span></span>
@@ -237,12 +238,11 @@ samples from patients with a high disease burden).</p>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
 </details><p><strong>Default advanced settings</strong></p>
-<p>For some modules, the package includes default parameters for some
-computation methods, such as the correlation metric used. These can be
-overridden and displayed as options in the portal for users, but the
-defaults can also be defined in the configuration file and applied to
-all the modules that would look for them. The following properties can
-be defined:</p>
+<p>Some modules have default parameters for computation methods, such as
+the correlation metric. These parameters can be overridden and displayed
+as options in the portal for visitors, but the defaults can also be
+defined in the configuration file and applied across all the modules
+that use them. The following properties can be defined:</p>
 <ul>
 <li>default_measures_outliers: automatically remove measures outliers
 (for each measure) with <code>5/95 percentiles</code> method or Tukey’s
@@ -277,26 +277,26 @@ modules.</li>
 <h2 id="modules">Modules<a class="anchor" aria-label="anchor" href="#modules"></a>
 </h2>
 <p>The final part of the configuration file is the definition of the
-modules to be included in the portal. These should be specified in the
-order that they should appear on the portal menu. The function
+modules that should be included in the portal. These should be specified
+in the order that they should appear on the portal menu. The function
 <code><a href="../reference/show_available_modules.html">show_available_modules()</a></code> can be used to check which modules
 are currently supported after the package is loaded; this guide is also
 up to date and can also be used as reference. The following modules and
 grouped modules are currently supported (grouped modules are
-pseudo-modules that define sub-menus on the portal):</p>
+pseudo-modules that appear in sub-menus on the portal):</p>
 <p>The package contains suggested dependencies when they are only needed
-by specific modules. This guide lists all the additional dependencies
+by specific modules. This guide lists all these additional dependencies
 for each module. The other way to discover an additional dependency is
 to set up the configuration file and try to run the portal. If a package
 is missing, the portal will not run and you will be notified about which
 package dependency is missing.</p>
-<p>There are also optional settings supported by all modules, most of
-them for customization purposes.</p>
+<p>Many modules also have optional settings, often for
+customization.</p>
 <details><summary><strong>Optional settings supported by all modules</strong>
 </summary><p><strong>title</strong><br>
-A custom name for the module can be defined for every module</p>
+A custom name for the module can be defined for every module.</p>
 <p><strong>description</strong> A description paragraph can be defined
-to instruct users on usage of a module or to provide additional
+to instruct visitors on usage of a module or to provide additional
 information, such as descriptions of the data being visualized or links
 to external references.</p>
 <p>Example:</p>
@@ -312,8 +312,8 @@ to external references.</p>
 <p><strong>Required packages:</strong> <a href="https://rstudio.github.io/r2d3/" class="external-link">r2d3</a></p>
 <p>This module displays a grid of small line plots for each subject in
 the measures file. The line plots show each subjects’ trajectory for
-various measures over time, with the line colors selected by the user
-from a set of variables.</p>
+various measures over time and viewers can select the line color from a
+set of variables defined in the configuration file.</p>
 <p><strong>Minimum configuration</strong></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortOverview</span><span class="kw">:</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">profile_variables</span><span class="kw">:</span></span>
@@ -328,24 +328,27 @@ from a set of variables.</p>
 <p><strong>Optional required packages:</strong>
 <code>[{RColorBrewer}](https://CRAN.R-project.org/package=RColorBrewer)</code></p>
 <p>This module shows the combined expression and measure trajectory of
-subjects over time. The user can select one gene and one measure that
-was taken over time. The idea of the module is to split subjects in two
+subjects over time. Viewers can select one gene and one measure that was
+observed over time. The idea of the module is to split subjects in two
 or more groups using a <code>sidebyside_category</code> from the lookup
-table (e.g. two drug groups). Samples for all time values defined by a
-<code>trajectory_category</code> are taken and filtered from a user
-selection based on the remaining <code>subset_categories</code> (e.g. if
-the lookup table contains <code>DrugGroup</code>, <code>Time</code> and
+table (e.g. two drug groups). Samples are initially filtered from a
+visitor selection following <code>subset_categories</code> (e.g. if the
+lookup table contains <code>DrugGroup</code>, <code>Time</code> and
 <code>Tissue</code>, the only remaining valid category here is
-<code>Tissue</code>). The measures to be paired with the samples are
-taken by combining <code>compare_variables</code> with the time-values
-from <code>trajectory_category</code>. For example, if
-<code>Platelets</code> is one of the possible variables and the times
-are <code>m01</code> and <code>m02</code>, the trajectory will be
-constructed from the observations of <code>Platelets_m01</code> and
+<code>Tissue</code>, so visitors can select between different tissue
+types). Samples are further selected based on the time variable defined
+in the configuration file through <code>trajectory_category</code>,
+which is also a column in the lookup table. The measures to be paired
+with the samples are taken by combining <code>compare_variables</code>
+with the time-values from <code>trajectory_category</code>. For example,
+if <code>Platelets</code> is one of the variables listed as
+<code>compare_variables</code> and the times are <code>m01</code> and
+<code>m02</code>, the trajectory will be constructed from the
+observations of <code>Platelets_m01</code> and
 <code>Platelets_m02</code> in the measures table. The expression of the
-selected gene will also be taken using observations of samples in
-<code>m01</code> and <code>m2</code>. In the interface, users will be
-able to select from any of the variables listed under
+selected gene will also be taken using observations of samples at times
+<code>m01</code> and <code>m2</code>. In the interface, visitors can
+change the measure used for the trajectory from the list of
 <code>compare_variables</code>.</p>
 <p><strong>Minimum configuration</strong></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
@@ -369,8 +372,8 @@ used:</p>
 <ul>
 <li>
 <strong>fit_method</strong>: if <code>TRUE</code> or
-<code>AllowHide</code>, lets users choose a regression method from the
-available ones (<code>linear</code>, <code>quadratic</code> or
+<code>AllowHide</code>, lets visitors choose a regression method from
+the available ones (<code>linear</code>, <code>quadratic</code> or
 <code>cubic</code>). <code>AllowHide</code> includes a None option in
 the interface.</li>
 </ul>
@@ -385,15 +388,14 @@ the interface.</li>
 <div class="section level3">
 <h3 id="degDetails">degDetails<a class="anchor" aria-label="anchor" href="#degDetails"></a>
 </h3>
-<p>This module displays volcano plots and a table with the results of
+<p>This module displays a volcano plot and a table with the results of
 differential expression analysis exported by packages such as
 <code>limma</code>, <code>deseq2</code>, and <code>edgeR</code>. It
-depends on a separate table that categorizes the DE results files. This
-table should contain a high level category variable that identifies
-different types of models and a <code>File</code> column with the
-corresponding file names. Other columns in this table should partially
-match the sample classes defined in global, when meaningful. The
-following is a valid minimal model results table:</p>
+requires a tabular file that organizes the results of differential
+expressions and that should contain a high level category variable that
+identifies different types of models and a <code>File</code> column with
+the corresponding file names. The following is a valid minimal model
+results table:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Model</th>
@@ -410,7 +412,9 @@ following is a valid minimal model results table:</p>
 </tr>
 </tbody>
 </table>
-<p>The following is an example of a more layered model setup:</p>
+<p>The following is an example of a more layered model setup, with two
+files per set of models (two files for Linear and two files for
+Nonlinear):</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Model</th>
@@ -446,10 +450,10 @@ following is a valid minimal model results table:</p>
 </tbody>
 </table>
 <p>The configuration for this module requires a
-<code>category_variable</code> to identify the models and a
-<code>models</code> file with the table; this file can be a
+<code>category_variable</code> to group the models and a
+<code>models</code> file pointing to the table; this file can be a
 tab-separated or comma-separated values file. Individual model results
-should be placed inside a <code>models</code> folder.</p>
+should be placed inside a <code>models</code> subfolder.</p>
 <p><strong>Minimum configuration:</strong></p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degDetails</span><span class="kw">:</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Model</span></span>
@@ -486,18 +490,18 @@ p-value genes, d2 p-value genes and d2 adjusted p-value genes.</p>
 <h3 id="geneModulesHeatmap">geneModulesHeatmap<a class="anchor" aria-label="anchor" href="#geneModulesHeatmap"></a>
 </h3>
 <p><strong>Required packages:</strong> <code>{RColorBrewer}</code></p>
-<p>This modules enables visualizing a subset of genes, e.g. a
+<p>This modules enables the visualization of a subset of genes, e.g. a
 co-expression module, cluster or signature, related to a downstream
 analysis method such as regulatory networks. It displays a heatmap with
-the expression of the genes from a user-selected module and scatterplots
-with the association between the module eigengene and measures defined
-in the configuration file. Gene modules must be specified in a table
-with a model/analysis category or source, valid sample categories
-associated with that module, module name and a list of associated genes
-is required. It is also possible to include annotations in the heatmap
-by defining a list of valid measures or categorical variables that the
-user can select. The following is an example of a valid modules
-table:</p>
+the expression of the genes from a viewer-selected module and
+scatterplots with the association between the module eigengene and
+measures defined in the configuration file. Gene modules must be
+specified in a table with a model/analysis category or source, valid
+sample categories associated with that module, module name and a list of
+associated genes is required. It is also possible to include annotations
+in the heatmap by defining a list of valid measures or categorical
+variables that the viewer can select. The following is an example of a
+valid modules table:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Category</th>
@@ -563,7 +567,7 @@ visible to any selection of subsets of samples. To define lists of genes
 for this purpose, you can use <code>*</code> as a wildcard in a sample
 category column. The following is an example of that in hypothetical
 co-expression modules (e.g. outputs from WGCNA or CEMiTool), which
-allows the user to explore the same modules for any subset of Time and
+allows the viewer to explore the same modules for any subset of Time and
 Drug.</p>
 <table class="table">
 <thead><tr class="header">
@@ -625,13 +629,13 @@ Drug.</p>
 </tr>
 </tbody>
 </table>
-<p>The configuration requires a <code>modules_table</code> pointing to
-the table file above, a <code>category_variable</code> that identifies
-the table column with highest-level category of modules, a
+<p>The configuration requires a <code>modules_table</code> that points
+to the table file above, a <code>category_variable</code> that
+identifies the table column with highest-level category of modules, a
 <code>modules_variable</code> that identifies the table column with the
 names of the modules and a <code>genes_variable</code>, which identifies
 the table column that contains a list of gene symbols separated by
-comma. In the interface, users will select a Category and subsets from
+comma. In the interface, viewers will select a Category and subsets from
 the remaining sample categories on the table (e.g. above, Time and Drug)
 to see a list of modules associated with that category and sample
 classes. An optional ordering column can be included in the table, and
@@ -646,17 +650,15 @@ appearance order for each modules, as in the example above.</p>
 <p><strong>Example:</strong> <img src="modulesheatmap.png" width="800"></p>
 <details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
-filter. To be used if not every sample category in the lookup table
-should be use to create subsets of samples. For example, if a
-pseudo-category was created to split patients based on a clinical
-measure, you may not want to show that filter in every module in the
-app. <strong>scatterplot_variables</strong>: a list of measures to
-correlate with the module eigengene and display in scatterplots similar
-to those in the single gene module.
-<strong>annotation_variables</strong>: a list of measures can be
-supplied so that users can add annotations above the heatmap. The
-variable names should match the measures table, independent of their
-timepoint.<br><strong>custom_annotation_colors:</strong> by default, the heatmap
+filter. This option should be used if one or more sample categories from
+the lookup table should not be used to subset samples, such as
+pseudo-categories that partition subjects.
+<strong>scatterplot_variables</strong>: a list of measures to correlate
+with the module eigengene and display in scatterplots similar to those
+in the single gene module. <strong>annotation_variables</strong>: a list
+of measures can be supplied so that viewers can add annotations above
+the heatmap. The variable names should match the measures table,
+independent of their timepoint.<br><strong>custom_annotation_colors:</strong> by default, the heatmap
 package (the plotly-powered iheatmapr) will automatically assign colors
 for the annotations. Alternatively, an RColorBrewer palette or a list of
 colors (e.g. hex values) can be assigned to selected individual
@@ -699,20 +701,20 @@ in the heatmap.</p>
 <div class="section level3">
 <h3 id="geneProjectionOverlay">geneProjectionOverlay<a class="anchor" aria-label="anchor" href="#geneProjectionOverlay"></a>
 </h3>
-<p>This module allow users to explore expression variation in
-pre-computed clusters of genes across subsets of subjects, following a
-pre-computed 2D projection of the genes in the whole dataset. This
-module was developed considering a 1:1 subject-to-sample ratio rather
-than multiple samples per subject. It display the 2D projection in two
-scatterplots: one displays the points colored by the group membership
-and the other displays the mean expression of the gene relative to the
-mean expression of all genes (i.e. a fold change). Sample categories can
-be used to define subsets of samples based on a characteristic of the
-subjects, such as a disease activity measure. The scatterplot will then
-show the expression in variation for that subset only. The coordinates
-file must contain gene symbols, two columns for position and a column
-for group. The first three must appear in that exact order, as the
-following:</p>
+<p>This module allow viewers to explore the variation of expression
+between pre-computed clusters of genes across subsets of subjects,
+following a pre-computed 2D projection of the genes from the whole
+dataset. This module was developed considering a 1:1 subject-to-sample
+scenario rather than multiple samples per subject. It display the 2D
+projection in two scatterplots: one scatteprlot shows the points colored
+by the group membership and the other shows the mean expression of the
+gene relative to the mean expression of all genes (i.e. a fold change).
+Sample categories can be used to define subsets of samples based on a
+characteristic of the subjects, such as a disease activity measure. The
+scatterplot will then show the expression in variation for that subset
+only. The coordinates file must contain gene symbols, two columns for
+position and a column for group. The first three must appear in that
+exact order, as the following:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">gene</th>
@@ -722,63 +724,63 @@ following:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">FKYNW</td>
-<td align="right">0.7788156</td>
-<td align="right">-1.8518997</td>
+<td align="left">QDLPZ</td>
+<td align="right">-0.6739119</td>
+<td align="right">0.3947319</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">LPFCB</td>
-<td align="right">-1.5965871</td>
-<td align="right">-0.3382115</td>
+<td align="left">DAYVE</td>
+<td align="right">0.2266630</td>
+<td align="right">0.0653385</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="left">DPDTF</td>
-<td align="right">0.9141156</td>
-<td align="right">-0.3684038</td>
+<td align="left">NNNFQ</td>
+<td align="right">0.6329596</td>
+<td align="right">1.7657270</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">HJGXL</td>
-<td align="right">-0.5256782</td>
-<td align="right">0.6389851</td>
+<td align="left">IDKNE</td>
+<td align="right">-1.8501824</td>
+<td align="right">-1.3586639</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">SMXLL</td>
-<td align="right">0.3848489</td>
-<td align="right">0.1339304</td>
+<td align="left">DAVMY</td>
+<td align="right">0.9861204</td>
+<td align="right">-0.3282591</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">FKYNW</td>
-<td align="right">-0.6148548</td>
-<td align="right">0.7302558</td>
+<td align="left">QDLPZ</td>
+<td align="right">1.4789183</td>
+<td align="right">-0.7076002</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">LPFCB</td>
-<td align="right">-0.4323247</td>
-<td align="right">-0.8616168</td>
+<td align="left">DAYVE</td>
+<td align="right">-0.0420805</td>
+<td align="right">-0.0963053</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="left">DPDTF</td>
-<td align="right">-1.4935446</td>
-<td align="right">-0.5960817</td>
+<td align="left">NNNFQ</td>
+<td align="right">-0.2457400</td>
+<td align="right">-0.9913921</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">HJGXL</td>
-<td align="right">0.3500673</td>
-<td align="right">0.1272625</td>
+<td align="left">IDKNE</td>
+<td align="right">-0.2359437</td>
+<td align="right">-1.2855661</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">SMXLL</td>
-<td align="right">-0.2485495</td>
-<td align="right">-0.3649116</td>
+<td align="left">DAVMY</td>
+<td align="right">-0.9434068</td>
+<td align="right">-0.5863889</td>
 <td align="right">3</td>
 </tr>
 </tbody>
@@ -800,16 +802,16 @@ module, there is also the option of defining custom colors through
 <code>custom_annotation_colors</code> and fix variable ranges through
 <code>annotation_range</code>.</p>
 <p><strong>annotation_variables</strong>: a list of measures can be
-supplied so that users can add annotations above the heatmap. The
+supplied so that viewers can add annotations above the heatmap. The
 variable names should fully match the measures table names, including
-the time point. <strong>custom_annotation_colors:</strong> by default,
-the heatmap package (the plotly-powered iheatmapr) will automatically
-assign colors for the annotations. Alternatively, an RColorBrewer
-palette or a list of colors (e.g. hex values) can be assigned to
-selected individual variables (a variable with no custom palette will
-use a default palette). For continuous variables, interpolation will be
-applied to a list of colors.<br><strong>annotation_range:</strong> for numeric variables that share a
-theoretical range of values but which range varies in observed data, it
+the time point suffix. <strong>custom_annotation_colors:</strong> by
+default, the heatmap package (the plotly-powered iheatmapr) will
+automatically assign colors to the annotation variables. Alternatively,
+an RColorBrewer palette or a list of colors (e.g. hex values) can be
+assigned to selected individual variables (a variable with no custom
+palette will use a default palette). For continuous variables,
+interpolation will be applied to a list of colors.<br><strong>annotation_range:</strong> for numeric variables that share a
+theoretical range of values but this range varies in observed data, it
 is possible to define individual ranges so that the color scale is the
 same across annotations. For each annotation variable, a minimum and
 maximum value can be provided through a list. A common use case is for
@@ -831,7 +833,7 @@ as patients improve, or blood samples.</p>
 <div class="section level3">
 <h3 id="singleGeneCorr">singleGeneCorr<a class="anchor" aria-label="anchor" href="#singleGeneCorr"></a>
 </h3>
-<p>This module allows users to compare the expression of a single gene
+<p>This module allows viewers to compare the expression of a single gene
 from a selected subset of samples with observed measures through
 scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups
 are specified as a list through the <code>tabs</code> field. Each tab
@@ -852,11 +854,11 @@ variables for each scatterplot. This module can be passed as a name to
 <strong>Example:</strong> <img src="singlegenecorr.png" width="800"><details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
 filter. To be used if not every sample category in the lookup table
-should be use to create subsets of samples. For example, if a
+should be used to create subsets of samples. For example, if a
 pseudo-category was created to split patients based on a clinical
 measure, you may not want to show that filter in every module in the
 app. <strong>color_variables</strong>: a list of variables, either
-numeric or discrete, can be supplied so that users can assign a color to
+numeric or discrete, can be supplied so that vi can assign a color to
 subjects. <strong>custom_point_colors</strong>: optionally, for the
 color variables, it is possible to supply custom colors as: valid <a href="https://vega.github.io/vega/docs/schemes/" class="external-link">Vega schemes</a>, list
 of colors or named list of colors (see DrugNaive in the example
@@ -867,23 +869,23 @@ used:</p>
 <ul>
 <li>
 <strong>correlation_method</strong>: if <code>TRUE</code>, allows
-users to alternate between Pearson, Spearman and Kendall methods for
+visitors to alternate between Pearson, Spearman and Kendall methods for
 computing correlation.<br>
 </li>
 <li>
 <strong>expression_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude expression outliers from scatterplots, either through
-Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
+visitors to exclude expression outliers from scatterplots, either
+through Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
 </li>
 <li>
 <strong>measures_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude measures outliers from scatterplots, either through
+visitors to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
 </li>
 <li>
 <strong>fit_method</strong>: if <code>TRUE</code> or
-<code>AllowHide</code>, lets users choose a regression method from the
-available ones (<code>linear</code>, <code>quadratic</code> or
+<code>AllowHide</code>, allows visitors to choose a regression method
+from the available ones (<code>linear</code>, <code>quadratic</code> or
 <code>cubic</code>). <code>AllowHide</code> includes a None option in
 the interface.</li>
 </ul>
@@ -909,12 +911,13 @@ the interface.</li>
 <div class="section level3">
 <h3 id="singleMeasureCorr">singleMeasureCorr<a class="anchor" aria-label="anchor" href="#singleMeasureCorr"></a>
 </h3>
-<p>This module allows users to view a table with the correlation between
-one single measure and all genes from a selected subset. The module can
-be set up with a list of measures from which users can select in the
-interface and the optional advanced settings of correlation method and
-outlier removal. As a default, the module can be defined simply as TRUE
-to include all numeric measures and no advanced settings:</p>
+<p>This module allows viewers to explore a table with the correlation
+between one single measure and all genes from a subset of samples. The
+module can be set up with a list of measures from which viewers can
+select in the interface and the optional advanced settings for
+correlation method and outlier removal. As a default, the module can be
+defined simply as TRUE to include all numeric measures and no advanced
+settings:</p>
 <p><strong>Minimum configuration</strong></p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="ch">TRUE</span></span></code></pre></div>
@@ -934,26 +937,26 @@ pseudo-category was created to split patients based on a clinical
 measure, you may not want to show that filter in every module in the
 app.<br><strong>link_to</strong>: name of another module to create a link to in
 the results table. Every gene on the table will be a clickable link to
-the module, with the subset matching the ones selected by the user. The
-module linked to should also support this functionality for this setting
-to work.</p>
+the module, with the subset matching the ones selected by the visitor.
+The module linked to should also support this functionality for this
+setting to work.</p>
 <p><strong>advanced</strong>: the following advanced options can be
 defined, otherwise the defaults described earlier in this guide will be
 used:</p>
 <ul>
 <li>
 <strong>correlation_method</strong>: if <code>TRUE</code>, allows
-users to alternate between Pearson, Spearman and Kendall methods for
+visitors to alternate between Pearson, Spearman and Kendall methods for
 computing correlation.<br>
 </li>
 <li>
 <strong>expression_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude expression outliers from scatterplots, either through
-Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
+visitors to exclude expression outliers from scatterplots, either
+through Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
 </li>
 <li>
 <strong>measures_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude measures outliers from scatterplots, either through
+visitors to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
@@ -969,10 +972,10 @@ Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 <div class="section level3">
 <h3 id="multiMeasureCorr">multiMeasureCorr<a class="anchor" aria-label="anchor" href="#multiMeasureCorr"></a>
 </h3>
-<p>This module allows users to view a heatmap and a table with the most
-significantly correlated genes across a predefined set of measures. The
-genes are taken from a subset selected by user, based on the sample
-categories. This module requires the specification of
+<p>This module allows visitors to view a heatmap and a table with the
+most significantly correlated genes across a predefined set of measures.
+The genes are taken from a subset selected by visitors, based on the
+sample categories. This module requires the specification of
 <code>heatmap_variables</code>, with multiple named lists of
 variables.</p>
 <p><strong>Minimum configuration</strong></p>
@@ -990,26 +993,26 @@ app.</p>
 provided to override the default <code>redblue</code> scheme.</p>
 <p><strong>link_to</strong>: name of another module to create a link to
 in the results table. Every gene on the table will be a clickable link
-to the module, with the subset matching the ones selected by the user.
-The module linked to should also support this functionality for this
-setting to work.</p>
+to the module, with the subset matching the ones selected by the
+visitor. The module linked to should also support this functionality for
+this setting to work.</p>
 <p><strong>advanced</strong>: the following advanced options can be
 defined, otherwise the defaults described earlier in this guide will be
 used:</p>
 <ul>
 <li>
 <strong>correlation_method</strong>: if <code>TRUE</code>, allows
-users to alternate between Pearson, Spearman and Kendall methods for
+visitors to alternate between Pearson, Spearman and Kendall methods for
 computing correlation.<br>
 </li>
 <li>
 <strong>expression_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude expression outliers from scatterplots, either through
-Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
+visitors to exclude expression outliers from scatterplots, either
+through Tukey’s IQR range filtering, 5/95 percentiles or none.<br>
 </li>
 <li>
 <strong>measures_outliers</strong>: if <code>TRUE</code>, allows
-users to exclude measures outliers from scatterplots, either through
+visitors to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>

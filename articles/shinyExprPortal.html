@@ -85,36 +85,42 @@
 
     
     
-<p>Deploying a portal using the package relies on two data files – an
-expression matrix and a table with observed measures (e.g. clinical
-measures) – and a configuration file that tells the package how to
-display the portal. For the simple case where each subject in the
-dataset only has one sample, there is a command-line wizard that will
-guide you step-by-step through the creation of the configuration file.
-Alternatively, there is a function that creates an empty configuration
-file with placeholders for the required properties, which can then be
-edited in any text editor. For more complex cases, such as multiple
-samples per subject, the <a href="dataprep.html">Data Preparation
-Guide</a> vignette describes how to prepare the data to use with the
-package.</p>
+<p>The deployment of a portal relies on two data files – an expression
+matrix and a table with observed measures (e.g. clinical measures) – and
+a configuration file that defines which modules should be displayed in
+the portal. In the simplest case, the data will have only one sample per
+subject – an interactive command-line wizard can guide you step-by-step
+through the creation of the configuration file. If your data contains
+more than one sample per subject, for example, for different time
+points, the best approach is to run a function that creates an empty
+configuration file with placeholders for the fields in the configuration
+file that must be completed. This configuration file can then be
+modified in an editor such as RStudio or any other text editor. If your
+data has multiple samples per subject, you should also check the <a href="dataprep.html">Data Preparation Guide</a> vignette, which
+describes the expected format for each data file.</p>
 <div class="section level2">
 <h2 id="using-the-wizard">Using the wizard<a class="anchor" aria-label="anchor" href="#using-the-wizard"></a>
 </h2>
-<p>Before starting the wizard, ensure you do the following</p>
+<p>The use of the interactive wizard requires placing files in the
+correct folders before starting. The following steps guide you through
+this.</p>
 <ol style="list-style-type: decimal">
 <li><strong>Create a folder where the app will be located</strong></li>
 </ol>
-<p>If using RStudio, create a new project to facilitate the rest of the
-setup.</p>
+<p>To facilitate the organization and deployment of the portal, it is
+better to create a folder that contains only the files that are related
+to the project. If you use RStudio, you may prefer to create a
+project.</p>
 <ol start="2" style="list-style-type: decimal">
-<li><strong>Place an expression matrix file in the project
+<li><strong>Copy the expression matrix file to the project
 folder</strong></li>
 </ol>
-<p>With HGNC or similar gene names in rows and samples in columns. The
-file can be a .csv, .tsv/txt or .rds file. If using an .rds file, save
-it as a <code>matrix</code> object, not a <code>data.frame</code>.</p>
-<p>Go to the next step if your expression matrix is structured in this
-way and you saved it in the project folder:</p>
+<p>The matrix can be a CSV, TSV (tab-separated columns) or .rds file
+with a <code>matrix</code> object (not a <code>data.frame</code>). The
+matrix should have HGNC or similar gene names in rows and sample
+identifiers in columns.</p>
+<p>If your matrix has the following format, you can move on to the next
+step:</p>
 <table class="table">
 <colgroup>
 <col width="5%">
@@ -137,106 +143,109 @@ way and you saved it in the project folder:</p>
 <tbody>
 <tr class="odd">
 <td align="left">ABC</td>
-<td align="right">-0.1726952</td>
-<td align="right">-0.1688758</td>
-<td align="right">-0.9444069</td>
-<td align="right">-1.2513473</td>
-<td align="right">-0.8519946</td>
-<td align="right">-0.9286170</td>
+<td align="right">0.2727694</td>
+<td align="right">1.0666935</td>
+<td align="right">-1.4289251</td>
+<td align="right">0.5307509</td>
+<td align="right">-0.0850449</td>
+<td align="right">-0.2842419</td>
 </tr>
 <tr class="even">
 <td align="left">BCD</td>
-<td align="right">0.5137561</td>
-<td align="right">2.5959915</td>
-<td align="right">-0.9958405</td>
-<td align="right">1.4382839</td>
-<td align="right">0.3367584</td>
-<td align="right">1.2278698</td>
+<td align="right">2.5987693</td>
+<td align="right">0.9052453</td>
+<td align="right">0.1175593</td>
+<td align="right">-0.4193945</td>
+<td align="right">0.3645619</td>
+<td align="right">0.2028977</td>
 </tr>
 <tr class="odd">
 <td align="left">CDE</td>
-<td align="right">-1.0239345</td>
-<td align="right">0.7870523</td>
-<td align="right">2.4760934</td>
-<td align="right">-0.9425531</td>
-<td align="right">-0.1813001</td>
-<td align="right">-1.0538815</td>
+<td align="right">-0.6122476</td>
+<td align="right">-3.4481060</td>
+<td align="right">0.7357771</td>
+<td align="right">0.1193577</td>
+<td align="right">0.5062316</td>
+<td align="right">1.7093110</td>
 </tr>
 <tr class="even">
 <td align="left">DEF</td>
-<td align="right">-0.6147969</td>
-<td align="right">1.7401413</td>
-<td align="right">2.8685158</td>
-<td align="right">0.5405327</td>
-<td align="right">0.3779355</td>
-<td align="right">-0.6863575</td>
+<td align="right">-0.3044409</td>
+<td align="right">-1.0806161</td>
+<td align="right">1.6589523</td>
+<td align="right">-1.3440877</td>
+<td align="right">0.5702218</td>
+<td align="right">-0.6903771</td>
 </tr>
 <tr class="odd">
 <td align="left">EFG</td>
-<td align="right">0.2493683</td>
-<td align="right">-0.3453217</td>
-<td align="right">0.5515088</td>
-<td align="right">0.2688324</td>
-<td align="right">-0.6708451</td>
-<td align="right">0.0367117</td>
+<td align="right">0.3376163</td>
+<td align="right">0.0706914</td>
+<td align="right">0.0371079</td>
+<td align="right">-1.1695909</td>
+<td align="right">0.8457435</td>
+<td align="right">0.5532119</td>
 </tr>
 <tr class="even">
 <td align="left">FGH</td>
-<td align="right">-0.8885123</td>
-<td align="right">-0.7393011</td>
-<td align="right">0.3108603</td>
-<td align="right">0.3973110</td>
-<td align="right">0.7599349</td>
-<td align="right">-0.7186652</td>
+<td align="right">-2.5313860</td>
+<td align="right">2.0077110</td>
+<td align="right">-0.7217812</td>
+<td align="right">0.1745478</td>
+<td align="right">-0.1287176</td>
+<td align="right">-1.5560240</td>
 </tr>
 <tr class="odd">
 <td align="left">GHI</td>
-<td align="right">0.4813683</td>
-<td align="right">0.6071515</td>
-<td align="right">-1.0362991</td>
-<td align="right">0.2943386</td>
-<td align="right">-0.4682777</td>
-<td align="right">-0.3416587</td>
+<td align="right">-1.8399370</td>
+<td align="right">0.0251317</td>
+<td align="right">0.0580363</td>
+<td align="right">-0.5415200</td>
+<td align="right">-2.5306874</td>
+<td align="right">1.7864911</td>
 </tr>
 <tr class="even">
 <td align="left">HIJ</td>
-<td align="right">0.3008663</td>
-<td align="right">-0.8637503</td>
-<td align="right">-1.2817837</td>
-<td align="right">-0.0699495</td>
-<td align="right">0.7578046</td>
-<td align="right">-0.0445109</td>
+<td align="right">0.9004802</td>
+<td align="right">-0.9749742</td>
+<td align="right">-1.6514224</td>
+<td align="right">-0.1312949</td>
+<td align="right">-2.2824987</td>
+<td align="right">-0.0502241</td>
 </tr>
 <tr class="odd">
 <td align="left">IJK</td>
-<td align="right">0.8727186</td>
-<td align="right">1.2106053</td>
-<td align="right">-1.0009297</td>
-<td align="right">0.2991156</td>
-<td align="right">-2.2122460</td>
-<td align="right">0.9126326</td>
+<td align="right">1.5320453</td>
+<td align="right">1.0740107</td>
+<td align="right">0.7495479</td>
+<td align="right">0.2812497</td>
+<td align="right">-0.5818158</td>
+<td align="right">-0.4257532</td>
 </tr>
 <tr class="even">
 <td align="left">JKL</td>
-<td align="right">1.3945941</td>
-<td align="right">0.9061363</td>
-<td align="right">-0.7066490</td>
-<td align="right">1.2118199</td>
-<td align="right">0.3472258</td>
-<td align="right">0.7134515</td>
+<td align="right">-0.1302306</td>
+<td align="right">0.3374960</td>
+<td align="right">-0.5601316</td>
+<td align="right">0.8466850</td>
+<td align="right">-0.8067444</td>
+<td align="right">0.4577298</td>
 </tr>
 </tbody>
 </table>
 <ol start="3" style="list-style-type: decimal">
-<li><strong>Place a measures table file in the project
+<li><strong>Copy a measures table file to the project
 folder</strong></li>
 </ol>
-<p>With variables in columns and subjects in rows. The subjects must be
-in the same order as their samples in the expression matrix. Again most
-formats can be used, but if using a .rds file, the measures file must be
-saved as a <code>data.frame</code>.</p>
-<p>Go to the next step if your measures table is structured in this way
-and you saved it in the project folder:</p>
+<p>This table can be a CSV, TSV or .rds file with a
+<code>data.frame</code> object. In this file, each row corresponds to a
+different subject and the order must match the order of samples in the
+expression matrix (if your data contains more than one sample per
+subject, you should follow the <a href="dataprep.html">Data Preparation
+Guide</a> and not follow these steps). The first column of this table
+should be named and contain subject or sample identifiers.</p>
+<p>If your measures table has the following format, you can move on to
+the next step:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Sample_ID</th>
@@ -248,33 +257,34 @@ and you saved it in the project folder:</p>
 <tbody>
 <tr class="odd">
 <td align="left">S1</td>
-<td align="right">167.4426</td>
-<td align="right">169.9059</td>
-<td align="right">33</td>
+<td align="right">206.9744</td>
+<td align="right">213.6075</td>
+<td align="right">40</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="even">
 <td align="left">S2</td>
-<td align="right">201.5683</td>
-<td align="right">207.0806</td>
-<td align="right">76</td>
+<td align="right">211.1314</td>
+<td align="right">192.7132</td>
+<td align="right">46</td>
 <td align="left">Yes</td>
 </tr>
 <tr class="odd">
 <td align="left">S3</td>
-<td align="right">213.5513</td>
-<td align="right">220.4506</td>
-<td align="right">33</td>
+<td align="right">173.4272</td>
+<td align="right">207.9911</td>
+<td align="right">35</td>
 <td align="left">No</td>
 </tr>
 </tbody>
 </table>
 <ol start="4" style="list-style-type: decimal">
-<li><em>Optionally place a metadata table file in the folder</em></li>
+<li><em>Optionally copy a metadata table file to the folder</em></li>
 </ol>
-<p>A table that contains sample information such as control group, age,
-etc. This will add radio buttons on the interface for selecting subsets
-based on these variables. It should also follow a one row per
+<p>This table should also be in any the formats above and should not
+have any sample or subject identifier columns. The columns of this table
+will be used to populate the interface with radio buttons to allow
+sample subset selection. It should also follow a one row per
 subject/sample format.</p>
 <p>Finally,</p>
 <ol start="5" style="list-style-type: decimal">
@@ -282,29 +292,33 @@ subject/sample format.</p>
 <code><a href="../reference/create_config_wizard.html">create_config_wizard()</a></code></strong></li>
 </ol>
 <p>If you are not using an RStudio project, ensure that the folder with
-the files is the current working directory (check with
-<code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>).</p>
-<p><em>The wizard will inform you about each stage and ask questions to
-set up the configuration file</em>. It will also wait when you are
-required to do additional actions such as creating folders and moving
-files. Depending on your choices, at least two files will have been
-created: <code>app.R</code> and <code>config.yaml</code>.</p>
+the files is the current working directory. You can check the current
+working directory with <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code> and use
+<code>setwd("path/to/folder")</code> to modify it.</p>
+<p><em>The wizard will inform you about what each step is doing and will
+ask you questions about names of files and other details to create the
+configuration file</em>. It will also wait when you are required to do
+additional actions such as creating folders and copying files. Depending
+on your choices, at least two files will have been created when you
+finish it: <code>app.R</code> and <code>config.yaml</code>.</p>
 <ol start="6" style="list-style-type: decimal">
-<li><strong>Open and run the contents of app.R to test the
+<li><strong>Open and execute the code of app.R to test the
 portal</strong></li>
 </ol>
-<p>You can also copy the project folder to a Shiny server or use the <a href="https://rstudio.github.io/rsconnect/" class="external-link">rsconnect</a> package to
+<p>Still using R (or RStudio) you can source the app.R file to run the
+code and open the portal on your browser. You can also copy the project
+folder to a Shiny server or use the <a href="https://rstudio.github.io/rsconnect/" class="external-link">rsconnect</a> package to
 deploy it to shinyapps.io.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-a-config-template">Creating a config template<a class="anchor" aria-label="anchor" href="#creating-a-config-template"></a>
 </h2>
-<p>Alternatively, you can run <code><a href="../reference/create_config_template.html">create_config_template()</a></code> to
-create a config.yaml file that will contain placeholders that you can
-edit. If you decide on this method, you will have to create a lookup
-table file, by default named <code>lookup_table.csv</code>, which
-matches samples with subjects in the measures table and looks like the
-following:</p>
+<p>If your data is more complex than the case outlined above, you can
+run <code><a href="../reference/create_config_template.html">create_config_template()</a></code> to create a config.yaml file
+that will contain placeholder names to be replaced. If you decide to use
+this method, you will have to create a lookup table file, by default
+named <code>lookup_table.csv</code>, which matches samples with subjects
+in the measures table and looks like the following:</p>
 <pre><code><span><span class="co">#&gt;       source sample_id subject_id     group</span></span>
 <span><span class="co">#&gt; 1 microarray  sample_1  subject_1   control</span></span>
 <span><span class="co">#&gt; 2 microarray  sample_2  subject_2 treatment</span></span>
@@ -320,28 +334,29 @@ file under sample_categories, as following:</p>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">values</span><span class="kw">:</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> treatment</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> control</span></span></code></pre></div>
-<p>In the portal, this will appear as:</p>
+<p>In the modules of the portal that allow the selection of subset of
+samples, the configuration above will appear as the following
+control:</p>
 <p><img src="samplecat-example.png" style="width:33.0%"></p>
 <div class="section level3">
-<h3 id="adding-modules">Adding modules<a class="anchor" aria-label="anchor" href="#adding-modules"></a>
+<h3 id="including-new-modules-in-the-configuration">Including new modules in the configuration<a class="anchor" aria-label="anchor" href="#including-new-modules-in-the-configuration"></a>
 </h3>
-<p>Once the config.yaml file is created, you can edit it to modify the
-setup of modules that are already defined or add new ones. The modules
-included in the package vary between their requirements and aims: some
-of them are more exploratory and only require setting them up in the
-configuration file, while others were designed to help showcase and
-explore results of analysis. If you have computed sets of genes using a
-package such as WGCNA, you can create a table to load them into the
-geneModulesHeatmap module, for example. In the current version, the
-following modules are available:</p>
+<p>After the config.yaml file has been created, you can edit it to
+modify the setup of modules that have already been defined or include
+new ones. The modules available in the package vary between their
+requirements and aims: some of them are more exploratory and only
+require changes to the configuration file, while others were designed to
+help showcase and explore results of analysis. If you have computed sets
+of genes using a package such as WGCNA, you can create a table to load
+them into the geneModulesHeatmap module, for example. In the current
+version, the following modules are available:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">shinyExprPortal</span><span class="fu">::</span><span class="fu"><a href="../reference/show_available_modules.html">show_available_modules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "cohortOverview"        "degModules"            "degSummary"           </span></span>
 <span><span class="co">#&gt;  [4] "degDetails"            "corrModules"           "singleGeneCorr"       </span></span>
 <span><span class="co">#&gt;  [7] "singleMeasureCorr"     "geneModulesHeatmap"    "multiMeasureCorr"     </span></span>
 <span><span class="co">#&gt; [10] "compareTrajGroups"     "geneProjectionOverlay"</span></span></code></pre></div>
-<p>Below is a summary of which modules work with the basic data files
-and which ones require additional files:</p>
+<p>The modules are split in their requirements as follows:</p>
 <p><strong>No additional files needed</strong></p>
 <ul>
 <li>Single gene/multiple measures correlations</li>
@@ -365,22 +380,21 @@ details about each module and how to set up the additional files
 required by each of them.</p>
 </div>
 <div class="section level3">
-<h3 id="deploying-it-remotely">Deploying it remotely<a class="anchor" aria-label="anchor" href="#deploying-it-remotely"></a>
+<h3 id="deploying-the-portal-remotely">Deploying the portal remotely<a class="anchor" aria-label="anchor" href="#deploying-the-portal-remotely"></a>
 </h3>
-<p>You can deploy the app in your Posit/RStudio Connect server or,
-alternatively, in the public shinyapps.io website (note that the app
-will be public under the free plan). You can follow the <a href="https://shiny.rstudio.com/articles/shinyapps.html" class="external-link">guide</a> to
+<p>You can deploy the app in your Posit/RStudio Connect server or in the
+public shinyapps.io website (note that you cannot password-protect the
+portal under the free plan). You can follow the <a href="https://shiny.rstudio.com/articles/shinyapps.html" class="external-link">guide</a> to
 set up your account and install the required packages. The only other
-requirement to make it work is to modify the app.R file to include the
-optional dependencies for each module (as listed in the configuratoin
-guide).</p>
+requirement is to change the app.R file by including the optional
+dependencies for each module (as listed in the configuration guide).</p>
 <p>For example, the original app.R would look like this:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://c4tb.github.io/shinyExprPortal/">shinyExprPortal</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/run_app.html">run_app</a></span><span class="op">(</span><span class="st">"config.yaml"</span><span class="op">)</span></span></code></pre></div>
-<p>If you want to use the geneModulesHeatmap module, for visualizing
+<p>If you want to use the geneModulesHeatmap module, to visualize
 heatmaps of lists of genes, you must also have the RColorBrewer
-installed. To deploy in shinyapps.io, you must then import it like in
+installed. To deploy it in shinyapps.io, you must then import it as in
 the example below:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">shinExprPortal</span><span class="op">)</span></span>

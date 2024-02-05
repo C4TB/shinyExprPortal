@@ -92,16 +92,14 @@ modules.</p>
 <h2 id="customizing-the-portal-ui">Customizing the portal UI<a class="anchor" aria-label="anchor" href="#customizing-the-portal-ui"></a>
 </h2>
 <p>There are two ways to customize the interface of a deployed portal:
-global settings and module-specific settings. Existing module-specific
-settings should be stable, but new ones may be added over time.</p>
+global settings and module-specific settings.</p>
 <div class="section level3">
 <h3 id="global-customizations">Global customizations<a class="anchor" aria-label="anchor" href="#global-customizations"></a>
 </h3>
 <p>In the current version, you can add an acronym or logo, change the
 title of the tab in the browser, add an icon-based shortcut menu to the
 landing page and modify the <a href="https://bootswatch.com" class="external-link">Bootswatch</a> theme.</p>
-<p>The configuration file should look like this for each of the settings
-above:</p>
+<p>The configuration file should look like the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> PROJ</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">logo</span><span class="kw">:</span><span class="at"> logo.png</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">windowtitle</span><span class="kw">:</span><span class="at"> MyProject analysis portal</span></span>
@@ -131,7 +129,7 @@ shown above.</p>
 <p>Regarding the themes, the current version of the package will work
 well with most light-based themes. Not every theme was tested so it’s
 recommended that you test different themes until you find one that works
-well.</p>
+well for your project.</p>
 </div>
 <div class="section level3">
 <h3 id="module-customization">Module customization<a class="anchor" aria-label="anchor" href="#module-customization"></a>
@@ -140,7 +138,7 @@ well.</p>
 <code>description</code> fields. The title is the entry on the menu,
 whereas the description field is the text that appears between the menu
 and the content of the module. The description should be used to
-indicate to the user how to use the module and also describe some
+instruct visitors about how to use the module and also describe some
 aspects of that module if needed. For example, it could include a link
 to an external resource or references.</p>
 <p>Besides these two fields, most modules include some degree of
@@ -182,11 +180,12 @@ variables in scatterplot.</p>
 <div class="section level2">
 <h2 id="using-custom-modules">Using custom modules<a class="anchor" aria-label="anchor" href="#using-custom-modules"></a>
 </h2>
-<p>It is also possible to include new modules without modifying the
-source code of the package. The feature is primarily aimed at supporting
-features that may have a more niche use case, but it is also useful to
-experiment with new ideas. New code should be implemented based on the
-following template, for a new <code>moduleName</code>:</p>
+<p>The package also supports the inclusion of new external models,
+without requiring any changes to the source code of the package. The
+feature is primarily aimed at supporting features that may have a more
+niche use case or experimenting with new ideas. Any new code should be
+implemented based on the following template, for a new
+<code>moduleName</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">moduleName_config</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">config</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Checking moduleName configuration"</span><span class="op">)</span></span>
@@ -242,17 +241,17 @@ following template, for a new <code>moduleName</code>:</p>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span>  </span></code></pre></div>
-<p>With the approach above, <code>moduleName</code> can now be inclu ded
-in config.yaml file along with required or optional properties. Note
-that the config function must be defined otherwise the new module will
-not be used, although the property validation is not needed. Each new
-module can be placed in the main <code>app.R</code> or in its own
-<code>.R</code> file. If the second option is used, then each R file
-must be sourced in the <code>app.R</code>.</p>
+<p><code>moduleName</code> can now be included in config.yaml file along
+with required or optional properties. Note that the config function
+above must be defined otherwise the new module will not be used,
+although the property validation step is not needed. Each new module can
+be placed in the main <code>app.R</code> or in its own <code>.R</code>
+file. If the second option is used, then each R file must be sourced in
+the <code>app.R</code>, e.g. <code>source("newCode.R")</code>.</p>
 <blockquote>
 <p><strong>Create the template in your code folder:</strong> the package
-includes a function that will create a file for you with the template
-above. After loading the package, run
+includes a function that will create a file with the above themplate.
+After loading the package, run
 <code>create_module_template("moduleName")</code> to create the file and
 edit it.</p>
 </blockquote>
@@ -271,7 +270,7 @@ variable as the <code>extra_modules</code> argument to
 <span></span>
 <span><span class="fu"><a href="../reference/run_app.html">run_app</a></span><span class="op">(</span><span class="st">"config.yaml"</span>, extra_modules <span class="op">=</span> <span class="va">extra_modules</span><span class="op">)</span></span></code></pre></div>
 <p>If you are unsure about how to implement a feature in a new module,
-please post an issue on the package github or check the source code for
+please post an issue on the package GitHub or check the source code for
 the existing modules.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
