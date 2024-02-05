@@ -18,13 +18,13 @@ This article describes how to customize certain visual aspects using the configu
 
 ## Customizing the portal UI
 
-There are two ways to customize the interface of a deployed portal: global settings and module-specific settings. Existing module-specific settings should be stable, but new ones may be added over time.
+There are two ways to customize the interface of a deployed portal: global settings and module-specific settings.
 
 ### Global customizations
 
 In the current version, you can add an acronym or logo, change the title of the tab in the browser, add an icon-based shortcut menu to the landing page and modify the [Bootswatch](https://bootswatch.com) theme.
 
-The configuration file should look like this for each of the settings above:
+The configuration file should look like the following:
 
 ```yaml
 name: PROJ
@@ -53,11 +53,11 @@ project/
 
 The icon menu enables using a screenshot of a module to highlight results and provide a shortcut to it. A PNG file named for each module should be created and placed inside the www folder and the names of the modules should be listed under iconMenu in the configuration file, as shown above.
 
-Regarding the themes, the current version of the package will work well with most light-based themes. Not every theme was tested so it's recommended that you test different themes until you find one that works well.
+Regarding the themes, the current version of the package will work well with most light-based themes. Not every theme was tested so it's recommended that you test different themes until you find one that works well for your project.
 
 ### Module customization
 
-Every module included in the package supports `title` and `description` fields. The title is the entry on the menu, whereas the description field is the text that appears between the menu and the content of the module. The description should be used to indicate to the user how to use the module and also describe some aspects of that module if needed. For example, it could include a link to an external resource or references.
+Every module included in the package supports `title` and `description` fields. The title is the entry on the menu, whereas the description field is the text that appears between the menu and the content of the module. The description should be used to instruct visitors about how to use the module and also describe some aspects of that module if needed. For example, it could include a link to an external resource or references.
 
 Besides these two fields, most modules include some degree of customization of colors:
 
@@ -104,7 +104,7 @@ singleGeneCorr:
 
 ## Using custom modules
 
-It is also possible to include new modules without modifying the source code of the package. The feature is primarily aimed at supporting features that may have a more niche use case, but it is also useful to experiment with new ideas. New code should be implemented based on the following template, for a new `moduleName`:
+The package also supports the inclusion of new external models, without requiring any changes to the source code of the package. The feature is primarily aimed at supporting features that may have a more niche use case or experimenting with new ideas. Any new code should be implemented based on the following template, for a new `moduleName`:
 
 ```{r, eval = FALSE}
 moduleName_config <- function(config, ...) { 
@@ -163,9 +163,9 @@ mod_moduleName_server <- function(module_name, config, module_config) {
   
 ```
 
-With the approach above, `moduleName` can now be inclu ded in config.yaml file along with required or optional properties. Note that the config function must be defined otherwise the new module will not be used, although the property validation is not needed. Each new module can be placed in the main `app.R` or in its own `.R` file. If the second option is used, then each R file must be sourced in the `app.R`.
+`moduleName` can now be included in config.yaml file along with required or optional properties. Note that the config function above must be defined otherwise the new module will not be used, although the property validation step is not needed. Each new module can be placed in the main `app.R` or in its own `.R` file. If the second option is used, then each R file must be sourced in the `app.R`, e.g. `source("newCode.R")`.
 
-> **Create the template in your code folder:** the package includes a function that will create a file for you with the template above. After loading the package, run `create_module_template("moduleName")` to create the file and edit it.
+> **Create the template in your code folder:** the package includes a function that will create a file with the above themplate. After loading the package, run `create_module_template("moduleName")` to create the file and edit it.
 
 At deployment level, besides sourcing the moduleName file if required, two other changes must be made in the app.R file: setting a vector that contains the names of any new modules and passing that variable as the `extra_modules` argument to `run_app`:
 
@@ -180,4 +180,4 @@ extra_modules <- c("newModule", "anotherModule")
 run_app("config.yaml", extra_modules = extra_modules)
 ```
 
-If you are unsure about how to implement a feature in a new module, please post an issue on the package github or check the source code for the existing modules.
+If you are unsure about how to implement a feature in a new module, please post an issue on the package GitHub or check the source code for the existing modules.
