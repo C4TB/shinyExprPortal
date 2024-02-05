@@ -1,5 +1,7 @@
 ### Correlations between all genes and multiple measures
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module allows you to explore the relationship between the expression of all genes and sets of measures through correlation, with results displayed on a heatmap.
 
 <table>

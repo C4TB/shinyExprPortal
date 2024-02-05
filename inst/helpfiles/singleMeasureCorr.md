@@ -1,5 +1,7 @@
 ### Correlations between single measure and all genes 
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module allows you to explore the relationship between the expression of all genes and a single observed measure through correlation.
 
 <table>

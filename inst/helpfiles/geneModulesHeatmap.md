@@ -1,5 +1,7 @@
 ### Gene modules heatmap
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module displays heatmaps and scatterplots of modules/clusters/groups of genes. The heatmaps show the expression, while the scatterplots (if defined by the study authors) show observed measures and the average module expression for each sample.
 
 <table>

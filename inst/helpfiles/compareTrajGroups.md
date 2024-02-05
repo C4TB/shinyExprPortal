@@ -1,5 +1,7 @@
 ### Compare trajectories of groups
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module displays scatterplots with the expression of a selected gene and a selected observed measure over time. Each scatterplot contains a subset of samples/patients that is defined by the study authors. This module is useful to see how expression changes over time relative to a measure such as disease activity.
 
 <table>

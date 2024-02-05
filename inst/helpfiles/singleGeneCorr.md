@@ -1,5 +1,7 @@
 ### Correlations between single gene and measures
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module allows you to explore the relationship between the expression of a single gene and various observed measures through scatterplots and correlation measures.
 
 <table>

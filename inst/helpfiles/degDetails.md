@@ -1,5 +1,7 @@
 ### Detailed results of differential expression analysis
-
+<style>
+td { padding: 5px; border-spacing: 5px; }
+</style>
 This module displays volcano plots and tables of results of differential expression models that have been precomputed and loaded by the study authors.
 
 <table>
