@@ -34,7 +34,7 @@ are produced. The use of the configuration file also means that the
 portal can be easily versioned.
 
 A demo of the portal is available
-[here](https://rhenkin.shinyapps.io/ramap_demo/).
+[here](https://c4tb.github.io/ramap_demo/).
 
 ## How to start
 
