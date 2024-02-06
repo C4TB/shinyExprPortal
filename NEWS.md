@@ -1,4 +1,4 @@
-# shinyExprPortal (development version)
+# shinyExprPortal 1.1.0
 
 ### NEW FEATURES
 
