@@ -4,10 +4,13 @@
 \alias{create_module_template}
 \title{Creates a module code template in current working directory}
 \usage{
-create_module_template(module_name)
+create_module_template(module_name, target_dir = "")
 }
 \arguments{
 \item{module_name}{module name in camelCase}
+
+\item{target_dir}{Optional folder where to save the file. Saves in current
+folder otherwise.}
 }
 \value{
 Create file for \code{module_name} in current working directory

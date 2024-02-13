@@ -1,6 +1,8 @@
 #' Creates a module code template in current working directory
 #'
 #' @param module_name module name in camelCase
+#' @param target_dir Optional folder where to save the file. Saves in current
+#' folder otherwise.
 #'
 #' @return Create file for `module_name` in current working directory
 #' @examples
@@ -8,7 +10,7 @@
 #'     create_module_template("newModule")
 #' }
 #' @export
-create_module_template <- function(module_name) {
+create_module_template <- function(module_name, target_dir = "") {
     MODULENAME <- module_name
     template <-
         'mod_{{MODULENAME}}_ui <- function(module_name, config, module_config) {
@@ -62,7 +64,7 @@ mod_{{MODULENAME}}_server <- function(module_name, config, module_config) {
     config
 }'
 
-    f <- file(paste0("mod_", MODULENAME, ".R"))
+    f <- file(file_path(target_dir, paste0("mod_", MODULENAME, ".R")))
     writeLines(whisker::whisker.render(template), f)
     close(f)
 }
