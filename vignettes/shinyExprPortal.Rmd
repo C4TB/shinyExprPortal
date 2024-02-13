@@ -63,9 +63,9 @@ This table should also be in any the formats above and should not have any sampl
 
 Finally,
 
-5. **In R, load the package and run `create_config_wizard()`**
+5. **In R, load the package and run `create_config_wizard(getwd())`**
 
-If you are not using an RStudio project, ensure that the folder with the files is the current working directory. You can check the current working directory with `getwd()` and use `setwd("path/to/folder")` to modify it.
+If you are not using an RStudio project, ensure that the folder with the files is the current working directory. You can check the current working directory with `getwd()` and use `setwd("path/to/folder")` to modify it. You should then run `create_config_wizard(getwd())`.
 
 *The wizard will inform you about what each step is doing and will ask you questions about names of files and other details to create the configuration file*. It will also wait when you are required to do additional actions such as creating folders and copying files. Depending on your choices, at least two files will have been created when you finish it: `app.R` and `config.yaml`.
 
@@ -75,7 +75,7 @@ Still using R (or RStudio) you can source the app.R file to run the code and ope
 
 ## Creating a config template
 
-If your data is more complex than the case outlined above, you can run `create_config_template()` to create a config.yaml file that will contain placeholder names to be replaced. If you decide to use this method, you will have to create a lookup table file, by default named `lookup_table.csv`, which matches samples with subjects in the measures table and looks like the following:
+If your data is more complex than the case outlined above, you can run `create_config_template(getwd())` to create a config.yaml file that will contain placeholder names to be replaced. If you decide to use this method, you will have to create a lookup table file, by default named `lookup_table.csv`, which matches samples with subjects in the measures table and looks like the following:
 
 ```{r lookup_example, echo=FALSE}
 print(data.frame(

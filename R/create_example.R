@@ -15,6 +15,10 @@
 #' }
 create_example <- function(target_dir) {
 
+    if (missing(target_dir)) {
+        stop(" The target_dir argument must be passed to the function. This is
+             the folder where the files will be placed.")
+    }
     n <- 100
 
     times <- c("m0", "m3", "m6")
