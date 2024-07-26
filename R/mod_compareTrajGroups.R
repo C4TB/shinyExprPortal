@@ -92,7 +92,8 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
                 input,
                 subset_categories
             )
-            selectMatchingValues(sample_lookup, subset_values)
+            selectMatchingValues(sample_lookup, subset_values) %>%
+                dplyr::arrange(.data[[subject_var]])
         })
 
         expression_from_lookup <- reactive({
@@ -104,7 +105,8 @@ mod_compareTrajGroups_server <- function(module_name, config, module_config) {
             sel_lookup <- selected_lookup()
             selectFromLookup(measures_data, sel_lookup,
                 matching_col = subject_var
-            )
+            ) %>%
+                dplyr::arrange(.data[[subject_var]])
         })
 
         output$trajplot <- vegawidget::renderVegawidget({

@@ -168,14 +168,16 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
     outputOptions(output, "modules_list", suspendWhenHidden = TRUE)
 
     selected_lookup <- reactive({
-      selectMatchingValues(sample_lookup, user_selection())
+      selectMatchingValues(sample_lookup, user_selection()) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     measures_from_lookup <- eventReactive(selected_lookup(), {
       sel_lookup <- selected_lookup()
       selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
-      )
+      ) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     annotations <- reactive({
@@ -201,9 +203,10 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       samples <- samples[!is.na(samples)]
       m <- expression_matrix[
         rownames(expression_matrix) %in% list_of_genes,
-        samples
+        samples,
+        drop = FALSE
       ]
-      m <- m[rowSums(is.na(m)) != ncol(m), ]
+      m <- m[rowSums(is.na(m)) != ncol(m), , drop = FALSE]
       m
     }) %>% bindCache(
       input$modules_list_row_last_clicked,
@@ -258,10 +261,14 @@ mod_geneModulesHeatmap_server <- function(module_name, config, module_config) {
       )
       selected_measures <- subset_measures[, scatterplot_vars]
       # Compute eigengene
-      eigengene <- stats::prcomp(t(heatmap_data()),
-        center = TRUE,
-        scale = TRUE
-      )[["x"]][, 1]
+      if (nrow(heatmap_data()) == 1) {
+        eigengene <- heatmap_data()[1,]
+      } else {
+        eigengene <- stats::prcomp(t(heatmap_data()),
+            center = TRUE,
+            scale = TRUE
+          )[["x"]][, 1]
+      }
 
       combined_df <- cbind(
         Eigengene = eigengene,
