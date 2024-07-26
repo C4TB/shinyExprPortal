@@ -5,69 +5,51 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="shinyExprPortal">
 <title>Full Configuration Guide • shinyExprPortal</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Full Configuration Guide">
-<meta property="og:description" content="shinyExprPortal">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Full Configuration Guide">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">shinyExprPortal</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/shinyExprPortal.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/shinyExprPortal.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/config.html">Full Configuration Guide</a>
-    <a class="dropdown-item" href="../articles/customization.html">Portal UI and Code Customization</a>
-    <a class="dropdown-item" href="../articles/dataprep.html">Data Preparation Guide</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/config.html">Full Configuration Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/customization.html">Portal UI and Code Customization</a></li>
+    <li><a class="dropdown-item" href="../articles/dataprep.html">Data Preparation Guide</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/C4TB/shinyExprPortal/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/C4TB/shinyExprPortal/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -76,10 +58,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Full Configuration Guide</h1>
+
+      <h1>Full Configuration Guide</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/C4TB/shinyExprPortal/blob/HEAD/vignettes/config.Rmd" class="external-link"><code>vignettes/config.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/C4TB/shinyExprPortal/blob/main/vignettes/config.Rmd" class="external-link"><code>vignettes/config.Rmd</code></a></small>
       <div class="d-none name"><code>config.Rmd</code></div>
     </div>
 
@@ -100,25 +83,25 @@ colon (:). Lists of values are defined using hyphens or square brackets
 (e.g. [“A”, “B”, “C”]. Besides text, lists can contain complex objects,
 with fields listed with a key-value pair. Values without spaces do not
 need double quotes, but it is not a problem to use them. Examples:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyphenated list example</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Name</span><span class="kw">:</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value1</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value2</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value3</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative with square brackets</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Name2</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"A"</span><span class="kw">,</span><span class="at"> </span><span class="st">"B"</span><span class="kw">,</span><span class="at"> </span><span class="st">"C"</span><span class="kw">]</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Key-value list example</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">"Key2"</span><span class="kw">:</span><span class="at"> </span><span class="st">"Value2"</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">Key3</span><span class="kw">:</span><span class="at"> Value3</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Hyphen + Key-value </span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Each hyphenated group corresponds to a list</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value2</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value3</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value4</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Hyphenated list example</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">Name</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value1</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value2</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Value3</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Alternative with square brackets</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">Name2</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"A"</span><span class="kw">,</span><span class="at"> </span><span class="st">"B"</span><span class="kw">,</span><span class="at"> </span><span class="st">"C"</span><span class="kw">]</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># Key-value list example</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="at">  </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="at">  </span><span class="fu">"Key2"</span><span class="kw">:</span><span class="at"> </span><span class="st">"Value2"</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="at">  </span><span class="fu">Key3</span><span class="kw">:</span><span class="at"> Value3</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># Hyphen + Key-value </span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># Each hyphenated group corresponds to a list</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="fu">FieldName</span><span class="kw">:</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value1</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value2</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">Key1</span><span class="kw">:</span><span class="at"> Value3</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="at">    </span><span class="fu">Key2</span><span class="kw">:</span><span class="at"> Value4</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="project-details-configuration">Project details configuration<a class="anchor" aria-label="anchor" href="#project-details-configuration"></a>
 </h3>
@@ -127,29 +110,29 @@ need double quotes, but it is not a problem to use them. Examples:</p>
 <p>The name of a text, markdown or HTML file located in the same folder
 of the app.R file. If a file is not provided, the application will show
 a default placeholder text.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">about</span><span class="kw">:</span><span class="at"> about.md</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">about</span><span class="kw">:</span><span class="at"> about.md</span></span></code></pre></div>
 <p><em>Optional settings</em></p>
 <p><strong>Name</strong></p>
 <p>A short name for a project (e.g. the acronym).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> PROJ</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> PROJ</span></span></code></pre></div>
 <p><strong>Window title name</strong></p>
 <p>If no name is provided, you can still define a windowtitle that will
 appear in the browser.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">windowtitle</span><span class="kw">:</span><span class="at"> My Full Project Name Expression Analyiss Portal</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">windowtitle</span><span class="kw">:</span><span class="at"> My Full Project Name Expression Analyiss Portal</span></span></code></pre></div>
 <p><strong>Logo</strong></p>
 <p>A custom logo for the top-left corner can be provided as any
 web-supported format (e.g. png, jpeg). If a logo is not provided, the
 short project name will be used instead.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">logo</span><span class="kw">:</span><span class="at"> logo.png</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">logo</span><span class="kw">:</span><span class="at"> logo.png</span></span></code></pre></div>
 <p><strong>Bootswatch theme</strong></p>
 <p>A custom <a href="https://bootswatch.com" class="external-link">Bootswatch</a> theme can be
 used instead of the default one. You can use versions 3, 4 or 5 but
 there is no guarantee of how the style will look across versions.
 Although dark themes can be used, the visualizations will not be adapted
 to them.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bootstrap</span><span class="kw">:</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">bootswatch</span><span class="kw">:</span><span class="at"> cosmo</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">bootstrap</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="at">  </span><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="at">  </span><span class="fu">bootswatch</span><span class="kw">:</span><span class="at"> cosmo</span></span></code></pre></div>
 <p>Under bootstrap, any other additional setting will be passed to the
 <code>bslib::theme()</code> command, allowing further customization. For
 further information, check the <a href="https://rstudio.github.io/bslib/reference/bs_theme.html" class="external-link">bs_theme</a>
@@ -164,8 +147,8 @@ app.R is). For example, to include a highlight shortcut to
 singleGeneCorr, the module name must be listed and a file
 singleGeneCorr.png placed under a <code>www</code> folder. The images
 will be rendered as 250px x 250px. Example:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">iconMenu</span><span class="kw">:</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> singleGeneCorr</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">iconMenu</span><span class="kw">:</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> singleGeneCorr</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-and-global-configurations">Data and global configurations<a class="anchor" aria-label="anchor" href="#data-and-global-configurations"></a>
@@ -176,11 +159,11 @@ files must be defined. Additional files that are shared across multiple
 modules can also be defined in this section, e.g. the models table for
 the DE modules (see <a href="#degModules">degModules</a> further down
 for more details).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">measures</span><span class="kw">:</span><span class="at"> measures.csv</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_lookup</span><span class="kw">:</span><span class="at"> sample_lookup.csv</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">expression_matrix</span><span class="kw">:</span><span class="at"> matrix.csv</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="at">  </span><span class="fu">measures</span><span class="kw">:</span><span class="at"> measures.csv</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_lookup</span><span class="kw">:</span><span class="at"> sample_lookup.csv</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="at">  </span><span class="fu">expression_matrix</span><span class="kw">:</span><span class="at"> matrix.csv</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
 <p><strong>Sample and subject variables</strong></p>
 <p>If your data contains many samples per subject, the package will not
 make any assumptions about the order of the columns of the subject or
@@ -188,14 +171,14 @@ sample identifiers in the measures and lookup table files, so the names
 of these columns must be provided. Alternatively, name them as
 Subject_ID and Sample_ID and the package will look for these names by
 default.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subject_variable</span><span class="kw">:</span><span class="at"> Subject_ID</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_variable</span><span class="kw">:</span><span class="at"> Sample_ID</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">subject_variable</span><span class="kw">:</span><span class="at"> Subject_ID</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">sample_variable</span><span class="kw">:</span><span class="at"> Sample_ID</span></span></code></pre></div>
 <p><strong>Time separator</strong></p>
 <p>A custom separator can be used to identify a temporal suffix in
 measures names. While the default is <code>_</code>,
 <code>timesep</code> can be used to define another separator. Currently,
 this is only used in the <code>compareTrajGroups</code> module.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">timesep</span><span class="kw">:</span><span class="at"> </span><span class="st">"."</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">timesep</span><span class="kw">:</span><span class="at"> </span><span class="st">"."</span></span></code></pre></div>
 <p><strong>Sample categories</strong></p>
 <p>The property <code>sample_categories</code> defines metadata
 variables that are used in the interface to select subsets of samples.
@@ -206,17 +189,17 @@ valid values can also be assigned nice labels for display through the
 format <code>Nice Label: originalValue</code>. In this case, hyphens or
 square brackets should not be used, as in the example below.</p>
 <p>Example:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_categories</span><span class="kw">:</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Variable Name</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">values</span><span class="kw">:</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Optional Label 1</span><span class="kw">:</span><span class="at"> value1</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Optional Label 2</span><span class="kw">:</span><span class="at"> value2</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name_2</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Another Variable</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">values</span><span class="kw">:</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">sample_categories</span><span class="kw">:</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Variable Name</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="at">    </span><span class="fu">values</span><span class="kw">:</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="at">      </span><span class="fu">Optional Label 1</span><span class="kw">:</span><span class="at"> value1</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="at">      </span><span class="fu">Optional Label 2</span><span class="kw">:</span><span class="at"> value2</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name_2</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Another Variable</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="at">    </span><span class="fu">values</span><span class="kw">:</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
 <details><summary><strong>Advanced setting: All subsets</strong>
 </summary><p>An advanced option allows the selection of all samples for a
 particular category. To do that, a custom pair of label and value
@@ -224,19 +207,19 @@ particular category. To do that, a custom pair of label and value
 samples for a subject-based partition (e.g. a subset of samples from
 patients with a high disease burden).</p>
 <p>Example:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span><span class="kw">:</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_classes</span><span class="kw">:</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Variable Name</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">Optional Label 1</span><span class="kw">:</span><span class="at"> value1</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">Optional Label 2</span><span class="kw">:</span><span class="at"> value2</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">All</span><span class="kw">:</span><span class="at"> NA</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name_2</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Another Variable</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">global</span><span class="kw">:</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="at">  </span><span class="fu">sample_classes</span><span class="kw">:</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="at">      </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Variable Name</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="at">        </span><span class="fu">Optional Label 1</span><span class="kw">:</span><span class="at"> value1</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="at">        </span><span class="fu">Optional Label 2</span><span class="kw">:</span><span class="at"> value2</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="at">        </span><span class="fu">All</span><span class="kw">:</span><span class="at"> NA</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> variable_name_2</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="at">      </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Another Variable</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value1</span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> anothervar_value2</span></span></code></pre></div>
 </details><p><strong>Default advanced settings</strong></p>
 <p>Some modules have default parameters for computation methods, such as
 the correlation metric. These parameters can be overridden and displayed
@@ -266,11 +249,11 @@ singleGeneCorr and compareTrajGropus.</li>
 modules.</li>
 </ul>
 <p>Example:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">default_measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">No</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">default_expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">No</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">default_correlation_method</span><span class="kw">:</span><span class="at"> spearman</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">default_fit_method</span><span class="kw">:</span><span class="at"> linear</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">adjust_method</span><span class="kw">:</span><span class="at"> fdr</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">default_measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">No</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">default_expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">No</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">default_correlation_method</span><span class="kw">:</span><span class="at"> spearman</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="fu">default_fit_method</span><span class="kw">:</span><span class="at"> linear</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">adjust_method</span><span class="kw">:</span><span class="at"> fdr</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -300,11 +283,11 @@ to instruct visitors on usage of a module or to provide additional
 information, such as descriptions of the data being visualized or links
 to external references.</p>
 <p>Example:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moduleName</span><span class="kw">:</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">title</span><span class="kw">:</span><span class="at"> New Title</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> New description for this module</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">requiredSetting1</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">requiredSetting2</span><span class="kw">:</span><span class="at"> </span><span class="ch">FALSE</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">moduleName</span><span class="kw">:</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="at">  </span><span class="fu">title</span><span class="kw">:</span><span class="at"> New Title</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> New description for this module</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="at">  </span><span class="fu">requiredSetting1</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="at">  </span><span class="fu">requiredSetting2</span><span class="kw">:</span><span class="at"> </span><span class="ch">FALSE</span></span></code></pre></div>
 </details><p><strong>Modules</strong>:</p>
 <div class="section level3">
 <h3 id="cohortOverview">cohortOverview<a class="anchor" aria-label="anchor" href="#cohortOverview"></a>
@@ -315,11 +298,11 @@ the measures file. The line plots show each subjects’ trajectory for
 various measures over time and viewers can select the line color from a
 set of variables defined in the configuration file.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohortOverview</span><span class="kw">:</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">profile_variables</span><span class="kw">:</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">colour_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Age</span><span class="kw">,</span><span class="at"> Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">cohortOverview</span><span class="kw">:</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="at">  </span><span class="fu">profile_variables</span><span class="kw">:</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="at">      </span><span class="fu">values</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="at">  </span><span class="fu">colour_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Age</span><span class="kw">,</span><span class="at"> Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="cohortoverview.png" width="500"></p>
 </div>
 <div class="section level3">
@@ -351,13 +334,13 @@ selected gene will also be taken using observations of samples at times
 change the measure used for the trajectory from the list of
 <code>compare_variables</code>.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Tissue</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">sidebyside_category</span><span class="kw">:</span><span class="at"> DrugGroup</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">trajectory_category</span><span class="kw">:</span><span class="at"> Time</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">compare_variables</span><span class="kw">:</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Tissue</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="at">  </span><span class="fu">sidebyside_category</span><span class="kw">:</span><span class="at"> DrugGroup</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="at">  </span><span class="fu">trajectory_category</span><span class="kw">:</span><span class="at"> Time</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="at">  </span><span class="fu">compare_variables</span><span class="kw">:</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="comparetraj.png" width="400"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"comparetraj.png"</span><span class="op">)</span></span></code></pre></div>
@@ -378,11 +361,11 @@ the available ones (<code>linear</code>, <code>quadratic</code> or
 the interface.</li>
 </ul>
 <p>*<strong>Example of optional settings</strong></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_traj_palette</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"purple"</span><span class="kw">,</span><span class="at"> </span><span class="st">"yellow"</span><span class="kw">,</span><span class="at"> </span><span class="st">"red"</span><span class="kw">,</span><span class="at"> </span><span class="st">"blue"</span><span class="kw">]</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">compareTrajGroups</span><span class="kw">:</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_traj_palette</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"purple"</span><span class="kw">,</span><span class="at"> </span><span class="st">"yellow"</span><span class="kw">,</span><span class="at"> </span><span class="st">"red"</span><span class="kw">,</span><span class="at"> </span><span class="st">"blue"</span><span class="kw">]</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -455,9 +438,9 @@ Nonlinear):</p>
 tab-separated or comma-separated values file. Individual model results
 should be placed inside a <code>models</code> subfolder.</p>
 <p><strong>Minimum configuration:</strong></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degDetails</span><span class="kw">:</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Model</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> model.tsv</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">degDetails</span><span class="kw">:</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Model</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> model.tsv</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="volcanoplot.png" width="800"></p>
 <details><summary><strong>Optional settings</strong>
 </summary><strong>link_to</strong>: name of another module to create a link to in
@@ -482,9 +465,9 @@ vertically. With two drugs d1 and d2, this means that the table will
 contain 4 columns: number of significant d1 p-value genes, d1 adjusted
 p-value genes, d2 p-value genes and d2 adjusted p-value genes.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">degSummary</span><span class="kw">:</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">partition_variable</span><span class="kw">:</span><span class="at"> Drug</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">degSummary</span><span class="kw">:</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="at">  </span><span class="fu">partition_variable</span><span class="kw">:</span><span class="at"> Drug</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="geneModulesHeatmap">geneModulesHeatmap<a class="anchor" aria-label="anchor" href="#geneModulesHeatmap"></a>
@@ -642,11 +625,11 @@ classes. An optional ordering column can be included in the table, and
 set in the config file in <code>rank_variable</code>, to choose a custom
 appearance order for each modules, as in the example above.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_table</span><span class="kw">:</span><span class="at"> modules.csv</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Category</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_variable</span><span class="kw">:</span><span class="at"> ModuleName</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">genes_variable</span><span class="kw">:</span><span class="at"> targetGenes</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_table</span><span class="kw">:</span><span class="at"> modules.csv</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="at">  </span><span class="fu">category_variable</span><span class="kw">:</span><span class="at"> Category</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="at">  </span><span class="fu">modules_variable</span><span class="kw">:</span><span class="at"> ModuleName</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="at">  </span><span class="fu">genes_variable</span><span class="kw">:</span><span class="at"> targetGenes</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="modulesheatmap.png" width="800"></p>
 <details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
@@ -674,28 +657,28 @@ as patients improve.<br><strong>custom_heatmap_palette</strong>: a custom RColor
 can be provided to override the default <code>RdBu</code> palette used
 in the heatmap.</p>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">scatterplot_variables</span><span class="kw">:</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Age</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m01</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m02</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">drugNaive</span><span class="kw">:</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> Reds</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m01</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m02</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_heatmap_palette</span><span class="kw">:</span><span class="at"> BrBG</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">geneModulesHeatmap</span><span class="kw">:</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="at">  </span><span class="fu">scatterplot_variables</span><span class="kw">:</span></span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Age</span></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m01</span></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> diseaseActivity_m02</span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a><span class="at">    </span><span class="fu">drugNaive</span><span class="kw">:</span></span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
+<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
+<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> Reds</span></span>
+<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
+<span id="cb22-20"><a href="#cb22-20" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m01</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
+<span id="cb22-21"><a href="#cb22-21" tabindex="-1"></a><span class="at">    </span><span class="fu">diseaseActivity_m02</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="dv">0</span><span class="kw">,</span><span class="at"> </span><span class="dv">99</span><span class="kw">]</span></span>
+<span id="cb22-22"><a href="#cb22-22" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_heatmap_palette</span><span class="kw">:</span><span class="at"> BrBG</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -724,63 +707,63 @@ exact order, as the following:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">OCQES</td>
-<td align="right">-0.3839180</td>
-<td align="right">0.3674675</td>
+<td align="left">MWLEF</td>
+<td align="right">0.3490274</td>
+<td align="right">0.0792259</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">SSAVE</td>
-<td align="right">1.5783878</td>
-<td align="right">-1.1880053</td>
+<td align="left">OODFI</td>
+<td align="right">-0.1708490</td>
+<td align="right">0.7698603</td>
 <td align="right">2</td>
 </tr>
 <tr class="odd">
-<td align="left">PVPCI</td>
-<td align="right">-0.8420491</td>
-<td align="right">-0.1368591</td>
+<td align="left">EEXOM</td>
+<td align="right">1.6312060</td>
+<td align="right">0.5633370</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">GBKJT</td>
-<td align="right">-0.5152816</td>
-<td align="right">-1.4357772</td>
+<td align="left">BWKKE</td>
+<td align="right">-0.7827060</td>
+<td align="right">-0.3739875</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">NGFJU</td>
-<td align="right">0.4512987</td>
-<td align="right">0.0362425</td>
+<td align="left">ULBFD</td>
+<td align="right">-0.0028936</td>
+<td align="right">-0.6013056</td>
 <td align="right">3</td>
 </tr>
 <tr class="even">
-<td align="left">OCQES</td>
-<td align="right">-0.2702500</td>
-<td align="right">1.2703743</td>
+<td align="left">MWLEF</td>
+<td align="right">0.4132393</td>
+<td align="right">-0.4241750</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">SSAVE</td>
-<td align="right">-1.3459204</td>
-<td align="right">0.7116896</td>
+<td align="left">OODFI</td>
+<td align="right">0.7244335</td>
+<td align="right">-0.8723159</td>
 <td align="right">2</td>
 </tr>
 <tr class="even">
-<td align="left">PVPCI</td>
-<td align="right">0.8848601</td>
-<td align="right">0.5733464</td>
+<td align="left">EEXOM</td>
+<td align="right">2.3539448</td>
+<td align="right">0.1066846</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">GBKJT</td>
-<td align="right">-0.3381230</td>
-<td align="right">0.7440663</td>
+<td align="left">BWKKE</td>
+<td align="right">-0.2814497</td>
+<td align="right">-0.5870140</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">NGFJU</td>
-<td align="right">-0.1664388</td>
-<td align="right">-0.0487995</td>
+<td align="left">ULBFD</td>
+<td align="right">-0.4810464</td>
+<td align="right">-0.3278536</td>
 <td align="right">3</td>
 </tr>
 </tbody>
@@ -789,9 +772,9 @@ exact order, as the following:</p>
 the <code>coordinates_file</code> setting. The group column must be
 indicated using the <code>group_variable</code> setting.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">coordinates_file</span><span class="kw">:</span><span class="at"> coordinates.csv</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">group_variable</span><span class="kw">:</span><span class="at"> group</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="at">  </span><span class="fu">coordinates_file</span><span class="kw">:</span><span class="at"> coordinates.csv</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="at">  </span><span class="fu">group_variable</span><span class="kw">:</span><span class="at"> group</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="projectionoverlay.png" width="800"></p>
 <details><summary><strong>Optional settings</strong>
 </summary><p>The module also includes a heatmap to view the individual expression
@@ -818,16 +801,16 @@ maximum value can be provided through a list. A common use case is for
 disease activity variables with a maximum value that decreases over time
 as patients improve, or blood samples.</p>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m06</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> BrBG</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> 0-20</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Plaetelts_m06</span><span class="kw">:</span><span class="at"> 0-20</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">geneProjectionOverlay</span><span class="kw">:</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_variables</span><span class="kw">:</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m06</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_annotation_colors</span><span class="kw">:</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> BrBG</span></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="at">  </span><span class="fu">annotation_range</span><span class="kw">:</span></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets_m01</span><span class="kw">:</span><span class="at"> 0-20</span></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a><span class="at">    </span><span class="fu">Plaetelts_m06</span><span class="kw">:</span><span class="at"> 0-20</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -844,13 +827,13 @@ scatterplots in a tab will have the same horizontal axis), and a list of
 variables for each scatterplot. This module can be passed as a name to
 <code>link_to</code> in other modules.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Platelets</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">scale</span><span class="kw">:</span><span class="at"> free</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Platelets</span></span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="at">      </span><span class="fu">scale</span><span class="kw">:</span><span class="at"> free</span></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span></code></pre></div>
 <strong>Example:</strong> <img src="singlegenecorr.png" width="800"><details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
 filter. To be used if not every sample category in the lookup table
@@ -890,22 +873,22 @@ from the available ones (<code>linear</code>, <code>quadratic</code> or
 the interface.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">color_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">DrugNaive</span><span class="kw">,</span><span class="at"> Age</span><span class="kw">]</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_point_colors</span><span class="kw">:</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> purpleblue</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">    DrugNaive</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="at">  </span><span class="fu">tabs</span><span class="kw">:</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a><span class="at">  </span><span class="fu">color_variables</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">DrugNaive</span><span class="kw">,</span><span class="at"> Age</span><span class="kw">]</span></span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a><span class="at">  </span><span class="fu">custom_point_colors</span><span class="kw">:</span></span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a><span class="at">    </span><span class="fu">Age</span><span class="kw">:</span><span class="at"> purpleblue</span></span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a><span class="at">    DrugNaive</span></span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a><span class="at">      </span><span class="fu">Yes</span><span class="kw">:</span><span class="at"> yellow</span></span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a><span class="at">      </span><span class="fu">No</span><span class="kw">:</span><span class="at"> green</span></span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a><span class="at">    </span><span class="fu">expression_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a><span class="at">    </span><span class="fu">fit_method</span><span class="kw">:</span><span class="at"> AllowHide</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -919,15 +902,15 @@ correlation method and outlier removal. As a default, the module can be
 defined simply as TRUE to include all numeric measures and no advanced
 settings:</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="at">  </span><span class="ch">TRUE</span></span></code></pre></div>
 <p>A list of variables can be provided through
 <code>dropdown_variables</code>:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dropdown_variables</span><span class="kw">:</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m03</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="at">  </span><span class="fu">dropdown_variables</span><span class="kw">:</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m01</span></span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m02</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Platelets_m03</span></span></code></pre></div>
 <p><strong>Example:</strong> <img src="singlemeasure.png" width="800"></p>
 <details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
@@ -960,13 +943,13 @@ visitors to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell Type</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level3">
@@ -979,9 +962,9 @@ sample categories. This module requires the specification of
 <code>heatmap_variables</code>, with multiple named lists of
 variables.</p>
 <p><strong>Minimum configuration</strong></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">heatmap_variables</span><span class="kw">:</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="at">  </span><span class="fu">heatmap_variables</span><span class="kw">:</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="at">    </span><span class="fu">Platelets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Platelets_m01</span><span class="kw">,</span><span class="at"> Platelets_m02</span><span class="kw">]</span></span></code></pre></div>
 <strong>Example:</strong> <img src="multimeasure.png" width="800"><details><summary><strong>Optional settings</strong>
 </summary><p><strong>subset_categories:</strong> list of categories to display as
 filter. To be used if not every sample category in the lookup table
@@ -1016,14 +999,14 @@ visitors to exclude measures outliers from scatterplots, either through
 Tukey’s IQR range filtering, 5/95 percentiles or none.</li>
 </ul>
 <p><strong>Example of optional settings:</strong></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ..</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="at">  ..</span></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="at">  </span><span class="fu">subset_categories</span><span class="kw">:</span></span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Cell_Type</span></span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a><span class="at">  </span><span class="fu">link_to</span><span class="kw">:</span><span class="at"> singleGeneCorr</span></span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a><span class="at">  </span><span class="fu">advanced</span><span class="kw">:</span></span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a><span class="at">    </span><span class="fu">correlation_method</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a><span class="at">    </span><span class="fu">measures_outliers</span><span class="kw">:</span><span class="at"> </span><span class="ch">TRUE</span></span></code></pre></div>
 </details>
 </div>
 </div>
@@ -1048,14 +1031,14 @@ part of the data section of the configuration and avoid reading all
 models twice. Please note below the indentation that is required when
 defining the sub-modules.</p>
 <p><strong>Configuration example</strong></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">degModules</span><span class="kw">:</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degSummary</span><span class="kw">:</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">degDetails</span><span class="kw">:</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">data</span><span class="kw">:</span></span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a><span class="at">  </span><span class="fu">models</span><span class="kw">:</span><span class="at"> models.tsv</span></span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="fu">degModules</span><span class="kw">:</span></span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="at">  </span><span class="fu">degSummary</span><span class="kw">:</span></span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a><span class="at">  </span><span class="fu">degDetails</span><span class="kw">:</span></span>
+<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="corrModules">corrModules<a class="anchor" aria-label="anchor" href="#corrModules"></a>
@@ -1064,37 +1047,35 @@ defining the sub-modules.</p>
 <code>singleMeasureCorr</code> and <code>multiMeasureCorr</code>. To use
 it, only a correct indentation is needed:</p>
 <p><strong>Configuration example</strong></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrModules</span><span class="kw">:</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">corrModules</span><span class="kw">:</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="at">  </span><span class="fu">singleGeneCorr</span><span class="kw">:</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a><span class="at">  </span><span class="fu">singleMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a><span class="at">    ...</span></span>
+<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a><span class="at">  </span><span class="fu">multiMeasureCorr</span><span class="kw">:</span></span>
+<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Rafael Henkin.</p>
+  <p>Developed by Rafael Henkin.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
