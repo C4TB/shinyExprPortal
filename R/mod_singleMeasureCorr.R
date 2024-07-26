@@ -105,7 +105,8 @@ mod_singleMeasureCorr_server <- function(module_name, config, module_config) {
         nrow(sel_lookup) > 0,
         "No data for selected parameters."
       ))
-      sel_lookup
+      sel_lookup %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     expression_from_lookup <- reactive({

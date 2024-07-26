@@ -148,7 +148,8 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
         nrow(sel_lookup) > 0,
         "No data for selected parameters."
       ))
-      sel_lookup
+      sel_lookup %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     expression_from_lookup <- reactive({
@@ -161,7 +162,8 @@ mod_multiMeasureCorr_server <- function(module_name, config, module_config) {
       sel_lookup <- selected_lookup()
       selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
-      )
+      ) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     rank_suffix <- reactive({

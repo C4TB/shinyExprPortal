@@ -175,11 +175,13 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
     selected_lookup <- reactive({
       list_of_values <-
         getSelectedSampleCategories(sample_categories, input, subset_categories)
-      selectMatchingValues(sample_lookup, list_of_values)
+      selectMatchingValues(sample_lookup, list_of_values) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     expression_from_lookup <- reactive({
-      samples <- selected_lookup()[[sample_var]]
+      samples <- selected_lookup() %>%
+        dplyr::pull(!! sample_var)
       samples <- samples[!is.na(samples)]
       expression_matrix[, samples]
     })
@@ -188,7 +190,8 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
       sel_lookup <- selected_lookup()
       selectFromLookup(measures_data, sel_lookup,
         matching_col = subject_var
-      )
+      ) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     # Compute correlation matrix and use cacheing

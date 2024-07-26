@@ -9,7 +9,7 @@ app_server <- function(input, output, session) {
     config <- get_opts("config")
     modules_to_include <- Filter(Negate(is.null), config$modules)
 
-    shinyhelper::observe_helpers(help_dir = system.file("helpfiles",
+    shinyhelper::observe_helpers(help_dir = base::system.file("helpfiles",
                                             package = utils::packageName()))
 
     observe({

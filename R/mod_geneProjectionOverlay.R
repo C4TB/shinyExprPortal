@@ -113,7 +113,8 @@ mod_geneProjectionOverlay_server <- function(module_name, config,
     selected_lookup <- reactive({
       list_of_values <-
         getSelectedSampleCategories(sample_classes, input, subset_categories)
-      selectMatchingValues(sample_lookup, list_of_values)
+      selectMatchingValues(sample_lookup, list_of_values) %>%
+        dplyr::arrange(.data[[subject_var]])
     })
 
     fc_from_lookup <- reactive({

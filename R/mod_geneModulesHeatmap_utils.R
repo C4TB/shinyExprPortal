@@ -16,7 +16,8 @@ add_heatmap <-
       paper_bgcolor = "transparent"
     )
   )
-  hm <- hm %>% add_row_clustering()
+  if (nrow(m) > 2)
+    hm <- hm %>% add_row_clustering()
 
   # Optional annotations
   if (!is.null(annotations)) {
