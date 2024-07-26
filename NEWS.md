@@ -1,5 +1,9 @@
 # shinyExprPortal 1.2.0
 
+### BUG FIXES
+
+- Correct the selection of measures (#149)
+
 # shinyExprPortal 1.1.0
 
 ### NEW FEATURES
