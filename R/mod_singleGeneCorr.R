@@ -350,12 +350,10 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           }
 
           # Get only the variables for this tab
-          tab_measures <- subset_measures[, subset_vars]
-
+          tab_measures <- subset_measures[, subset_vars, drop = FALSE]
           corr_df_subset <- corr_df[corr_df[["Measure"]] %in% subset_vars, ]
-
           # Filter to selected gene
-          if (ncol(tab_measures) > 0) {
+          if (nrow(corr_df_subset) > 0) {
             combined_df <-
               cbind(
                 Expression = selected_expression[, selected_gene],

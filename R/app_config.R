@@ -5,7 +5,7 @@
 #'
 #' @noRd
 app_sys <- function(...) {
-    base::system.file(..., package = "shinyExprPortal")
+    system.file(..., package = "shinyExprPortal")
 }
 
 
