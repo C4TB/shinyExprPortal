@@ -1,4 +1,4 @@
-# shinyExprPortal (development version)
+# shinyExprPortal 1.2.1
 
 ### BUG FIXES
 
