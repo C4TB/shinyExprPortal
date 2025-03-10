@@ -485,7 +485,7 @@ geneProjectionOverlay:
 
 ### singleGeneCorr {#singleGeneCorr}
 
-This module allows viewers to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. This module can be passed as a name to `link_to` in other modules.
+This module allows viewers to compare the expression of a single gene from a selected subset of samples with observed measures through scatterplots. Groups of scatterplots are arranged in sub-tabs. Groups are specified as a list through the `tabs` field. Each tab contains a `name` to be displayed, a `scale` setting, which can be either `free` (each scatterplot has its own range in the horizontal axis) or `fixed` (all scatterplots in a tab will have the same horizontal axis), and a list of variables for each scatterplot. Categorical variables can be visualised by setting "type: cat" in the tab definition. Data points will be arranged under each category in the horizontal axis, with jitter added to each point so that it is easier to compare between categories. In this case, correlation is not calculated. In modules that include a `link_to` setting, `singleGeneCorr` is a valid value for that setting.
 
 **Minimum configuration**
 ```yaml
@@ -496,6 +496,12 @@ singleGeneCorr:
       variables:
         - Platelets_m01
         - Platelets_m02
+   - name: Categories
+     scale: free
+     type: cat
+     variables:
+        - cat_var1
+        - cat_var2
 ```
 
 **Example:**

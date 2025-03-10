@@ -8,7 +8,12 @@ singleGeneCorr_config <- function(config, ...) {
   if (is.null(config$tabs)) {
     stop_nice("singleGeneCorr: 'tabs' definitions are missing")
   }
-  
+
+  config$tabs <- lapply(config$tabs, function(x) {
+    if (!"type" %in% names(x)) x$type <- "num"
+    x
+  })
+
   if (!is.null(config$custom_point_colors)) {
     lv <- which(
       vapply(config$custom_point_colors,

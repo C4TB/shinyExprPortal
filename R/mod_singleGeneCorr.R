@@ -210,7 +210,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
 
       measures_vars <- unique(unlist(lapply(
         tab_output_list,
-        function(x) x$variables
+        function(x) if (x$type != "cat") x$variables
       )))
 
       selected_measures <-
@@ -291,23 +291,29 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
         (length(selected_expression) > 0))
       tab_output_list <- module_config$tabs
 
+      # Get all the measure vars listed in each tab
+      # In categorical tabs, we do not get the variables
       measures_vars <- unique(unlist(lapply(
         tab_output_list,
-        function(x) x$variables
+        function(x) if (x$type != "cat") x$variables
       )))
 
+      # Replace outlier values with NA in measurement variables
       subset_measures[, measures_vars] <-
         replaceFalseWithNA(
           subset_measures[, measures_vars],
           outlier_functions(measures_outliers)
         )
 
+      # Find the columns where all values are outliers (thus NA)
       all_na_lv <-
         vapply(colnames(subset_measures),
                function(x) all(is.na(subset_measures[[x]])),
                logical(1))
+      # Keep only the columns that have at least one non-NA
       measures_vars <- measures_vars[!all_na_lv]
 
+      # apply similar logic to the expression data
       selected_expression <-
         replaceFalseWithNA(
           t(na.omit(selected_expression)),
@@ -327,6 +333,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           tab_output <- tab_output_list[[i]]
           output_name <- tab_output$name
           output_scale <- tab_output$scale
+          output_type <- tab_output$type
           output_vars <- unique(tab_output$variables)
 
           # Add color_var to list of variables to subset
@@ -353,7 +360,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
           tab_measures <- subset_measures[, subset_vars, drop = FALSE]
           corr_df_subset <- corr_df[corr_df[["Measure"]] %in% subset_vars, ]
           # Filter to selected gene
-          if (nrow(corr_df_subset) > 0) {
+          if (nrow(corr_df_subset) > 0 || output_type == "cat") {
             combined_df <-
               cbind(
                 Expression = selected_expression[, selected_gene],
@@ -391,6 +398,9 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
             )
 
             # TODO: refactor this with padj being optional
+            if (output_type == "cat") {
+              corr_lookup <- NULL
+            } else {
             corr_lookup <-
               paste0("{", paste(apply(corr_df_subset, 1, function(x) {
                 name <- x[["Measure"]]
@@ -404,6 +414,7 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
                   corr, ", P: ", pvalue, ", P_adj: ", padj, "']"
                 )
               }), collapse = ","), "}")
+            }
 
           plotName <- paste0(output_name,"_vw")
           output[[output_name]] <- renderUI({
@@ -425,9 +436,10 @@ mod_singleGeneCorr_server <- function(module_name, config, module_config) {
               color_var = color_var,
               custom_colors = manual_colors,
               gene_name = input$selected_gene,
-              opts = list(ncolumns = 4)
+              opts = list(ncolumns = 4),
+              type = output_type
             )
-
+            if (output_type == "cat") fit_method <- "none"
             scatterplot %>%
               vega_add_fitline(fit_method) %>%
               vegawidget::as_vegaspec()
